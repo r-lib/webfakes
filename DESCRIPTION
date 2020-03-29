@@ -1,0 +1,13 @@
+Package: pressr
+Title: Lightweight Web Server for Testing
+Version: 0.0.0.9000
+Author: Gábor Csárdi
+Maintainer: Gábor Csárdi <csardi.gabor@gmail.com>
+Description: Lightweight Web Server for Testing
+License: MIT + file LICENSE
+LazyData: true
+URL: https://github.com/gaborcsardi/pressr#readme
+BugReports: https://github.com/gaborcsardi/pressr/issues
+RoxygenNote: 7.1.0
+Suggests: 
+    testthat
