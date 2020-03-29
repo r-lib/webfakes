@@ -11,3 +11,4 @@ BugReports: https://github.com/gaborcsardi/pressr/issues
 RoxygenNote: 7.1.0
 Suggests: 
     testthat
+Encoding: UTF-8

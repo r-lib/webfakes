@@ -1,4 +1,6 @@
 
+
+
 # pressr
 
 > Lightweight Web Server for Testing
@@ -8,10 +10,10 @@
 [![](http://www.r-pkg.org/badges/version/pressr)](http://www.r-pkg.org/pkg/pressr)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/pressr)](http://www.r-pkg.org/pkg/pressr)
 
-
 Lightweight Web Server for Testing
 
 ## Installation
+
 
 ```r
 devtools::install_github("gaborcsardi/pressr")
@@ -19,10 +21,11 @@ devtools::install_github("gaborcsardi/pressr")
 
 ## Usage
 
+
 ```r
 library(pressr)
 ```
 
 ## License
 
-MIT + file LICENSE © 
+MIT © RStudio
