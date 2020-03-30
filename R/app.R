@@ -61,6 +61,10 @@ new_app <- function() {
       self$.config[[key]]
     },
 
+    get_port = function() {
+      self$.port
+    },
+
     listen = function(port = NULL)  {
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
@@ -76,6 +80,7 @@ new_app <- function() {
       on.exit({
         assign("httpd", pkg_data$tools_httpd, envir = asNamespace("tools"))
         try(tools::startDynamicHelp(FALSE), silent = TRUE)
+        self$.port <- NULL
       }, add = TRUE)
       assign("httpd", self$.run, envir = asNamespace("tools"))
 
