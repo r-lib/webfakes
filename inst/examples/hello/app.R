@@ -20,7 +20,7 @@ app$post("/hello", function(req, res) {
 app$get("/view", function(req, res) {
   txt <- res$render("test")
   res$
-    set_header("content-type", "text/plain")$
+    set_type("text/plain")$
     send(txt)
 })
 

@@ -88,7 +88,17 @@ new_response <- function(app, api) {
       invisible(self)
     },
 
-    set_type = function(type) { stop("TODO") },
+    set_type = function(type) {
+      if (!grepl("/", type)) {
+        self$set_header("content-type", type)
+      } else {
+        ct <- mime_find(type)
+        if (!is.na(ct)) {
+          self$set_header("content-type", ct)
+        }
+      }
+      invisible()
+    },
 
     .body = NULL,
     .status = NULL,
