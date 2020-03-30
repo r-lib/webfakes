@@ -36,4 +36,8 @@ app$all(
   }
 )
 
+app$all("/redirect-to", function(req, res) {
+  res$redirect(req$query$url, req$query$status_code %||% 302)
+})
+
 app$listen(as.integer(Sys.getenv("PORT", NA_character_)))

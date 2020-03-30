@@ -17,7 +17,17 @@ new_response <- function(app, api) {
       invisible(self)
     },
 
-    redirect = function(path, status = 302) { stop("TODO") },
+    redirect = function(path, status = 302) {
+      self$
+        set_status(status)$
+        set_header("location", path)$
+        set_type("text/plain")$
+        send(paste0(
+          status, " ", http_statuses[as.character(status)],
+          ". Redirecting to ", path
+        ))
+      invisible(self)
+    },
 
     render = function(view, locals = list()) {
       locals <- as.environment(as.list(locals))
