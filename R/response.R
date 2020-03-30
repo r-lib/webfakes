@@ -97,7 +97,7 @@ new_response <- function(app, api) {
           self$set_header("content-type", ct)
         }
       }
-      invisible()
+      invisible(self)
     },
 
     .body = NULL,
