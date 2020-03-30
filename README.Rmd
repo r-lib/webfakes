@@ -21,8 +21,10 @@ Lightweight Web Server for Testing
 
 ## Installation
 
-```{r eval = FALSE}
-devtools::install_github("gaborcsardi/pressr")
+Once on CRAN, install the packaeg as usual:
+
+```r
+install.packages("pressr")
 ```
 
 ## Usage
