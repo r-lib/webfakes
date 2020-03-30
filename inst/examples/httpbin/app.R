@@ -13,9 +13,7 @@ app$get("/get", function(req, res) {
     headers = req$headers,
     path = req$path
   )
-  res$
-    set_header("content-type", "application/json")$
-    send(toJSON(ret, auto_unbox = TRUE, pretty = TRUE))
+  res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
 })
 
 app$post("/post", function(req, res) {
@@ -28,9 +26,7 @@ app$post("/post", function(req, res) {
   if (!is.null(req$text)) ret$data <- req$text
   if (!is.null(req$json)) ret$json <- req$json
 
-  res$
-    set_header("content-type", "application/json")$
-    send(toJSON(ret, auto_unbox = TRUE, pretty = TRUE))
+  res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
 })
 
 app$all(

@@ -30,7 +30,19 @@ new_response <- function(app, api) {
       stop("Cannot find template engine for view '", view, "'")
     },
 
-    send_json = function(object, text) { stop("TODO") },
+    send_json = function(object = NULL, text = NULL, ...) {
+      if (!is.null(object) && !is.null(text)) {
+        stop("Specify only one of `object` and `text` in `send_json()`")
+      }
+
+      if (is.null(text)) {
+        text <- jsonlite::toJSON(object, ...)
+      }
+
+      self$
+        set_header("content-type", "application/json")$
+        send(text)
+    },
 
     send = function(body) self$.body <- body,
 
