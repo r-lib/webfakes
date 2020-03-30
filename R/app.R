@@ -162,8 +162,8 @@ new_app <- function() {
       ans <- list(
         res$.body,
         content_type,
-        if (length(res$headers)) {
-          paste0(names(res$.headers), ": ", res$.headers)
+        if (length(res$.headers)) {
+          paste0(names(res$.headers), ": ", unlist(res$.headers))
         },
         res$.status
       )

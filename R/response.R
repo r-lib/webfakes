@@ -102,7 +102,7 @@ new_response <- function(app, api) {
 
     .body = NULL,
     .status = NULL,
-    .headers = NULL,
+    .headers = list(),
     .on_response = NULL
   )
 
