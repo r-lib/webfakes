@@ -32,9 +32,7 @@ app$post("/post", function(req, res) {
 app$all(
   new_regexp("^/status/(?<status>[0-9][0-9][0-9])$"),
   function(req, res) {
-    res$
-      set_status(req$params$status)$
-      send("")
+    res$send_status(req$params$status)
   }
 )
 

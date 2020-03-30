@@ -71,7 +71,12 @@ new_response <- function(app, api) {
       invisible(self)
     },
 
-    send_status = function(status) { stop("TODO") },
+    send_status = function(status) {
+      self$
+        set_status(status)$
+        send("")
+      invisible(self)
+    },
 
     set_header = function(field, value) {
       self$.headers[[tolower(field)]] <- value
