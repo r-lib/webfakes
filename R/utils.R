@@ -5,6 +5,10 @@ new_object <- function(class_name, ...) {
   structure(as.environment(list(...)), class = class_name)
 }
 
+is_string <- function(x) {
+  is.character(x) && length(x) == 1 && !is.na(x)
+}
+
 is_count <- function(x) {
   is.integer(x) && length(x) == 1 && !is.na(x)
 }

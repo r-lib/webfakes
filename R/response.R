@@ -42,11 +42,35 @@ new_response <- function(app, api) {
       self$
         set_header("content-type", "application/json")$
         send(text)
+
+      invisible(self)
     },
 
-    send = function(body) self$.body <- body,
+    send = function(body) {
+      self$.body <- body
+      invisible(self)
+    },
 
-    send_file = function(path, ...) { stop("TODO") },
+    send_file = function(path, max_age = NA, root = ".",
+                         last_modified = TRUE, headers = NULL,
+                         dotfiles = "ignore",
+                         cache_control = TRUE,
+                         immutable = FALSE) {
+      # TODO: implement options
+      self$.body <- c(file = normalizePath(file.path(root, path)))
+
+      # Set content type automatically
+      if (is.null(self$get_header("content-type"))) {
+        ext <- tools::file_ext(basename(path))
+        ct <- mime_find(ext)
+        if (!is.na(ct)) {
+          self$set_header("content-type", ct)
+        }
+      }
+
+      invisible(self)
+    },
+
     send_status = function(status) { stop("TODO") },
 
     set_header = function(field, value) {

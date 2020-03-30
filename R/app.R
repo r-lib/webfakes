@@ -159,7 +159,7 @@ new_app <- function() {
 
       on.exit(for (fn in res$.on_response) try(fn(req, res)), add = TRUE)
 
-      list(
+      ans <- list(
         res$.body,
         content_type,
         if (length(res$headers)) {
@@ -167,6 +167,12 @@ new_app <- function() {
         },
         res$.status
       )
+
+      if (identical(names(res$.body), "file")) {
+        names(ans) <- "file"
+      }
+
+      ans
     }
   )
 
