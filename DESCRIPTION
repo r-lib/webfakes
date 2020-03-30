@@ -9,6 +9,10 @@ LazyData: true
 URL: https://github.com/gaborcsardi/pressr#readme
 BugReports: https://github.com/gaborcsardi/pressr/issues
 RoxygenNote: 7.1.0
-Suggests: 
+Roxygen: list(markdown = TRUE)
+Suggests:
+    callr,
+    glue,
+    jsonlite,
     testthat
 Encoding: UTF-8
