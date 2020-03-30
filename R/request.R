@@ -38,6 +38,6 @@ parse_query <- function(query) {
   if (length(query) == 0) {
     structure(list(), names = character())
   } else {
-    query
+    as.list(query)
   }
 }
