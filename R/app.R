@@ -157,7 +157,7 @@ new_app <- function() {
         res$.body <- "Not found"
       }
 
-      on.exit(for (fn in res$.on_response) try(fn(req, res)), add = TRUE)
+      for (fn in res$.on_response) try(fn(req, res))
 
       ans <- list(
         res$.body,

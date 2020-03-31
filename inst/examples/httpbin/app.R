@@ -6,6 +6,7 @@ app <- new_app()
 app$use(mdd_log())
 app$use(mdd_json())
 app$use(mdd_text(type = c("text/plain", "application/json")))
+app$use(mdd_etag())
 
 app$get("/get", function(req, res) {
   ret <- list(
