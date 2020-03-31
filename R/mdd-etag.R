@@ -9,10 +9,11 @@ mdd_etag <- function(algorithm = "crc32") {
       if (length(res$.body) == 0) {
         etag <- "\"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk\""
       } else {
+        is_file <- identical(names(res$.body), "file")
         etag <- paste0(
           "\"",
           digest::digest(res$.body, algo = algorithm,
-                         serialize = FALSE),
+                         serialize = FALSE, file = is_file),
           "\""
         )
       }
