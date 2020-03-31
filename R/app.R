@@ -65,7 +65,7 @@ new_app <- function() {
       self$.port
     },
 
-    listen = function(port = NULL)  {
+    listen = function(port = NULL, block = TRUE)  {
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
 
@@ -77,11 +77,13 @@ new_app <- function() {
 
       do.call(paste0("unlock", "Binding"), list("httpd", asNamespace("tools")))
       pkg_data$tools_httpd <- asNamespace("tools")$httpd
-      on.exit({
-        assign("httpd", pkg_data$tools_httpd, envir = asNamespace("tools"))
-        try(tools::startDynamicHelp(FALSE), silent = TRUE)
-        self$.port <- NULL
-      }, add = TRUE)
+      if (block) {
+        on.exit({
+          assign("httpd", pkg_data$tools_httpd, envir = asNamespace("tools"))
+          try(tools::startDynamicHelp(FALSE), silent = TRUE)
+          self$.port <- NULL
+        }, add = TRUE)
+      }
       assign("httpd", self$.run, envir = asNamespace("tools"))
 
       port2 <- suppressMessages(tools::startDynamicHelp(TRUE))
@@ -92,7 +94,11 @@ new_app <- function() {
       self$.port <- port2
 
       message("Running pressr web app on port ", self$.port)
-      while (TRUE) Sys.sleep(1000)
+      if (block) {
+        while (TRUE) Sys.sleep(1000)
+      }
+
+      invisible(self)
     },
 
     path = function() {
@@ -131,6 +137,9 @@ new_app <- function() {
     .config = as.environment(list(
       views = file.path(getwd(), "views")
     )),
+
+    # subprocess
+    .process = NULL,
 
     # The request processing function
     .run = function(path, query, body, headers) {
