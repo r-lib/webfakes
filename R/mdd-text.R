@@ -10,7 +10,7 @@ mdd_text <- function(default_charset = "utf-8",
   function(req, res) {
     ct <- req$get_header("content-type") %||% ""
     if (! ct %in% tolower(type)) return("next")
-    req$text <- rawToChar(req$.body)
+    req$text <- rawToChar(req$.body %||% raw())
     Encoding(req$text) <- default_charset
     "next"
   }
