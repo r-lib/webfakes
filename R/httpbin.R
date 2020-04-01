@@ -34,6 +34,8 @@ httpbin_app <- function(log = TRUE) {
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
+  # TODO: other methods, once we have a proper web server
+
   # Auth =================================================================
 
   app$get("/basic-auth/:user/:passwd", function(req, res) {
@@ -54,6 +56,8 @@ httpbin_app <- function(log = TRUE) {
     }
   })
 
+  # TODO: /bearer * /digest-auth * /hidden-basic-auth
+
   # Status codes =========================================================
 
   app$all(
@@ -65,13 +69,31 @@ httpbin_app <- function(log = TRUE) {
 
   # Request inspection ===================================================
 
+  # TODO: /headers * /ip * /user-agent
+
   # Response inspection ==================================================
+
+  # TODO: /cache * /cache/{value} * /etag * /response-headers (2x)
 
   # Response formats =====================================================
 
+  # TODO: /brotli * /deflate * /deny * /encoding/utf8 * /gzip * /html *
+  # /json * /robots.txt * /xml
+
   # Dynamic data =========================================================
 
+  # TODO: /base64/{value} * /bytes/{n} * /delay/{delay} * /drip *
+  # /links/{n}{offset} * /range/{numbytes} * /stream-bytes/{n} *
+  # /stream/{n} * /uuid
+
   # Cookies ==============================================================
+
+  # TODO: /cookies * /cookies/delete * /cookies/set *
+  # /cookies/set/{name}/{value}
+
+  # Images ===============================================================
+
+  # TODO: /image * /image/jpeg * /image/png * /image/svg * /image/webp
 
   # Redirects ============================================================
 
@@ -79,7 +101,12 @@ httpbin_app <- function(log = TRUE) {
     res$redirect(req$query$url, req$query$status_code %||% 302)
   })
 
+  # TODO: /absolute-redirect/{n} * /redirect/{n} *
+  # relative-redirect/{n}
+
   # Anything =============================================================
+
+  # TODO: /anything * /anything/{anything}
 
   app
 }
