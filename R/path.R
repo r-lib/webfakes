@@ -19,6 +19,9 @@ pattern_match <- function(path, patterns) {
   }
 
   for (p in patterns) {
+    if (!inherits(p, "pressr_regexp") && grepl(":", p)) {
+      p <- path_to_regexp(p)
+    }
     if (inherits(p, "pressr_regexp")) {
       m <- re_match(path, p)
       if (!anyNA(m)) return(list(params = m))
@@ -28,4 +31,12 @@ pattern_match <- function(path, patterns) {
   }
 
   FALSE
+}
+
+path_to_regexp <- function(path) {
+  tokens <- strsplit(path, "/")[[1]]
+  keys <- grep("^:", tokens)
+  reg <- tokens
+  reg[keys] <- paste0("(?<", substring(tokens[keys], 2), ">[A-Za-z0-9_]+)")
+  new_regexp(paste0("^", paste(reg, collapse = "/"), "$"))
 }
