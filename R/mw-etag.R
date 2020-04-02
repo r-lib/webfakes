@@ -1,7 +1,7 @@
 
 #' @export
 
-mdd_etag <- function(algorithm = "crc32") {
+mw_etag <- function(algorithm = "crc32") {
   algorithm
   function(req, res) {
 

@@ -1,7 +1,7 @@
 
 #' @export
 
-mdd_log <- function(format = "dev", stream = stdout()) {
+mw_log <- function(format = "dev", stream = stdout()) {
 
   format; stream
 

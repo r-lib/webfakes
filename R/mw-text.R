@@ -1,7 +1,7 @@
 
 #' @export
 
-mdd_text <- function(default_charset = "utf-8",
+mw_text <- function(default_charset = "utf-8",
                      inflate = TRUE,
                      limit = 100 * 1000,
                      type = "text/plain") {

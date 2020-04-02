@@ -1,7 +1,7 @@
 
 #' @export
 
-mdd_static <- function(root, set_headers = NULL) {
+mw_static <- function(root, set_headers = NULL) {
 
   root; set_headers
   function(req, res) {

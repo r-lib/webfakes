@@ -1,7 +1,7 @@
 
 #' @export
 
-mdd_json <- function(inflate = TRUE,
+mw_json <- function(inflate = TRUE,
                      limit = 100 * 1000,
                      type = "application/json",
                      simplifyVector = FALSE,

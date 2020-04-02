@@ -2,8 +2,8 @@
 library(presser)
 
 app <- new_app()
-app$use(mdd_log())
-app$use(mdd_etag())
+app$use(mw_log())
+app$use(mw_etag())
 
 app$get("/logo", function(req, res) {
   res$send_file("Rlogo.png")

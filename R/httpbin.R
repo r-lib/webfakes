@@ -5,10 +5,10 @@ httpbin_app <- function(log = TRUE) {
 
   app <- new_app()
 
-  if (log) app$use(mdd_log())
-  app$use(mdd_json())
-  app$use(mdd_text(type = c("text/plain", "application/json")))
-  app$use(mdd_etag())
+  if (log) app$use(mw_log())
+  app$use(mw_json())
+  app$use(mw_text(type = c("text/plain", "application/json")))
+  app$use(mw_etag())
 
   # HTTP methods =========================================================
 

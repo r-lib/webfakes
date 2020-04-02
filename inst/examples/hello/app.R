@@ -3,7 +3,7 @@ library(presser)
 
 app <- new_app()
 app$engine("txt", tmpl_glue())
-app$use(mdd_log())
+app$use(mw_log())
 
 app$get("/hello", function(req, res) {
   res$send("Hello there!")

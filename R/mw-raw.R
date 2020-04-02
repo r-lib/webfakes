@@ -1,7 +1,7 @@
 
 #' @export
 
-mdd_raw <- function(inflate = TRUE,
+mw_raw <- function(inflate = TRUE,
                     limit = 100 * 1000,
                     type = "application/octet-stream") {
   # TODO: implement inflate and limit
