@@ -26,7 +26,12 @@ new_app_process <- function(app) {
       invisible(self)
     },
 
-    get_url = function() paste0("http://127.0.0.1:", self$.port),
+    get_url = function(...) {
+      paste(
+        c(paste0("http://127.0.0.1:", self$.port), ...),
+        collapse = "/"
+      )
+    },
 
     get_port = function() self$.port,
 
