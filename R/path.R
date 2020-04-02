@@ -24,7 +24,7 @@ pattern_match <- function(path, patterns) {
     }
     if (inherits(p, "pressr_regexp")) {
       m <- re_match(path, p)
-      if (!anyNA(m)) return(list(params = m))
+      if (m$match) return(list(params = m$groups))
     } else {
       if (path == p) return(TRUE)
     }

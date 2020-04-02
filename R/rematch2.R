@@ -13,7 +13,7 @@ re_match <- function(text, pattern, perl = TRUE, ...) {
   matchstr <- substring(text, start, end)
   matchstr[ start == -1 ] <- NA_character_
 
-  res <- list()
+  res <- list(match = !is.na(matchstr), groups = list())
 
   if (!is.null(attr(match, "capture.start"))) {
 
@@ -25,8 +25,8 @@ re_match <- function(text, pattern, perl = TRUE, ...) {
     groupstr[ gstart == -1 ] <- NA_character_
     dim(groupstr) <- dim(gstart)
 
-    res <- as.list(groupstr)
-    names(res) <- attr(match, "capture.names")
+    res$groups <- as.list(groupstr)
+    names(res$groups) <- attr(match, "capture.names")
   }
 
   res
