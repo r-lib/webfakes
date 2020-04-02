@@ -4,5 +4,5 @@
 #' Lightweight Web Server for Testing
 #'
 #' @docType package
-#' @name pressr
+#' @name presser
 NULL

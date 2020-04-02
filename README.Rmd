@@ -8,14 +8,14 @@ knitr::opts_chunk$set(
   fig.height = 8)
 ```
 
-# pressr
+# presser
 
 > Lightweight Web Server for Testing
 
-[![Linux Build Status](https://travis-ci.org/gaborcsardi/pressr.svg?branch=master)](https://travis-ci.org/gaborcsardi/pressr)
-[![Windows Build status](https://ci.appveyor.com/api/projects/status/github/gaborcsardi/pressr?svg=true)](https://ci.appveyor.com/project/gaborcsardi/pressr)
-[![](http://www.r-pkg.org/badges/version/pressr)](http://www.r-pkg.org/pkg/pressr)
-[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/pressr)](http://www.r-pkg.org/pkg/pressr)
+[![Linux Build Status](https://travis-ci.org/gaborcsardi/presser.svg?branch=master)](https://travis-ci.org/gaborcsardi/presser)
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/github/gaborcsardi/presser?svg=true)](https://ci.appveyor.com/project/gaborcsardi/presser)
+[![](http://www.r-pkg.org/badges/version/presser)](http://www.r-pkg.org/pkg/presser)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/presser)](http://www.r-pkg.org/pkg/presser)
 
 Lightweight Web Server for Testing
 
@@ -24,13 +24,13 @@ Lightweight Web Server for Testing
 Once on CRAN, install the packaeg as usual:
 
 ```r
-install.packages("pressr")
+install.packages("presser")
 ```
 
 ## Usage
 
 ```{r}
-library(pressr)
+library(presser)
 ```
 
 ## License

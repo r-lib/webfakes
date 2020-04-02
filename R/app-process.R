@@ -4,7 +4,7 @@
 new_app_process <- function(app) {
 
   self <- new_object(
-    "pressr_app_process",
+    "presser_app_process",
 
     new = function(app) {
       self$.app <- app
@@ -12,7 +12,7 @@ new_app_process <- function(app) {
       self$.port <- self$.process$run(
         args = list(app),
         function(app) {
-          library(pressr)
+          library(presser)
           .GlobalEnv$app <- app
           app$listen(port = NULL, block = FALSE)
           app$get_port()
@@ -37,7 +37,7 @@ new_app_process <- function(app) {
 
     stop = function() {
       # The details are important here, for the sake of covr,
-      # so that we can test the pressr package itself.
+      # so that we can test the presser package itself.
       # 1. The subprocess serving the app is in Sys.sleep(), which we
       #    need to interrupt first.
       # 2. Then we need to read out the result of that $call()

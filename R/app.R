@@ -39,7 +39,7 @@ pkg_data <- new.env(parent = emptyenv())
 new_app <- function() {
 
   self <- new_object(
-    "pressr_app",
+    "presser_app",
 
     all = function(path, ...) {
       self$.stack <- c(self$.stack, parse_handlers("all", path, ...))
@@ -93,7 +93,7 @@ new_app <- function() {
       }
       self$.port <- port2
 
-      message("Running pressr web app on port ", self$.port)
+      message("Running presser web app on port ", self$.port)
       if (block) {
         while (TRUE) Sys.sleep(1000)
       }
@@ -196,7 +196,7 @@ parse_handlers <- function(method, path, ...) {
       rec <- list(method = method, path = path, handler = h)
       ans <- c(ans, list(rec))
     } else {
-      stop("Invalid pressr handler")
+      stop("Invalid presser handler")
     }
   }
 

@@ -1,7 +1,7 @@
 
 #' @export
 
-new_regexp <- function(x) structure(x, class = "pressr_regexp")
+new_regexp <- function(x) structure(x, class = "presser_regexp")
 
 path_match <- function(method, path, handler) {
   if (handler$method == "use") return(TRUE)
@@ -12,17 +12,17 @@ path_match <- function(method, path, handler) {
 pattern_match <- function(path, patterns) {
 
   # Make sure patterns is a list
-  if (inherits(patterns, "pressr_regexp")) {
+  if (inherits(patterns, "presser_regexp")) {
     patterns <- list(patterns)
   } else if (is.character(patterns)) {
     patterns <- as.list(patterns)
   }
 
   for (p in patterns) {
-    if (!inherits(p, "pressr_regexp") && grepl(":", p)) {
+    if (!inherits(p, "presser_regexp") && grepl(":", p)) {
       p <- path_to_regexp(p)
     }
-    if (inherits(p, "pressr_regexp")) {
+    if (inherits(p, "presser_regexp")) {
       m <- re_match(path, p)
       if (m$match) return(list(params = m$groups))
     } else {

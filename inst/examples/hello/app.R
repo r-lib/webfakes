@@ -1,5 +1,5 @@
 
-library(pressr)
+library(presser)
 
 app <- new_app()
 app$engine("txt", tmpl_glue())

@@ -1,4 +1,4 @@
 library(testthat)
-library(pressr)
+library(presser)
 
-test_check("pressr")
+test_check("presser")
