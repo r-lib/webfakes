@@ -1,27 +1,36 @@
 
 #' @export
 
-new_app_process <- function(app) {
+new_app_process <- function(app, ...) {
 
+  list(...)
   self <- new_object(
     "presser_app_process",
 
-    new = function(app) {
+    new = function(app, ...) {
       self$.app <- app
-      self$.process <- callr::r_session$new(wait = TRUE)
-      self$.port <- self$.process$run(
+      opts <- callr::r_session_options(...)
+      self$.process <- callr::r_session$new(opts, wait = TRUE)
+      self$.process$call(
         args = list(app),
         function(app) {
           library(presser)
           .GlobalEnv$app <- app
           app$listen(port = NULL, block = FALSE)
-          app$get_port()
+          msg <- structure(
+            list(port = app$get_port()),
+            class = c("callr_message", "condition")
+          )
+          message(msg)
+          while (TRUE) Sys.sleep(1000)
         }
       )
 
-      self$.process$call(
-        function() while(TRUE) Sys.sleep(1000)
-      )
+      if (self$.process$poll_process(5000) != "ready") {
+        stop("app subprocess did not start :(")
+      }
+      msg <- self$.process$read()
+      self$.port <- msg$message$port
 
       invisible(self)
     },
@@ -72,7 +81,7 @@ new_app_process <- function(app) {
     .port = NULL
   )
 
-  self$new(app)
+  self$new(app, ...)
   self$new <- NULL
 
   self
