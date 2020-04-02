@@ -26,17 +26,11 @@ new_app_process <- function(app) {
       invisible(self)
     },
 
-    get_url = function(..., query = NULL) {
+    get_url = function(path, query = NULL) {
       if (!is.null(query)) {
         query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
       }
-      paste0(
-        paste(
-          c(paste0("http://127.0.0.1:", self$.port), ...),
-          collapse = "/"
-        ),
-        query
-      )
+      paste0("http://127.0.0.1:", self$.port, path, query)
     },
 
     get_port = function() self$.port,
