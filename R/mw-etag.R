@@ -6,7 +6,9 @@ mw_etag <- function(algorithm = "crc32") {
   function(req, res) {
 
     do <- function(req, res) {
-      if (length(res$.body) == 0) {
+      if ((is.raw(res$.body) && length(res$.body) == 0) ||
+          (is.character(res$.body) && nchar(res$.body) == 0) ||
+          is.null(res$.body)) {
         etag <- "\"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk\""
       } else {
         is_file <- identical(names(res$.body), "file")
