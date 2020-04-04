@@ -10,5 +10,5 @@ mw_raw <- function(inflate = TRUE,
     if (! ct %in% tolower(type)) return("next")
     req$raw <- req$.body
     "next"
-  }  
+  }
 }

@@ -4,12 +4,12 @@ new_response <- function(app, api) {
     "press_response",
 
     app = app,
-    locals = new.env(parent = app$locals),
+    locals = as.environment(as.list(app$locals)),
 
-    append_header = function(field, value) { stop("TODO") },
-    set_cookie = function(name, value, ...) { stop("TODO") },
-    clear_cookie = function(name) { stop("TODO") },
-    download = function(path, filename = basename(path), ...) { stop("TODO") },
+    # append_header = function(field, value) { stop("TODO") },
+    # set_cookie = function(name, value, ...) { stop("TODO") },
+    # clear_cookie = function(name) { stop("TODO") },
+    # download = function(path, filename = basename(path), ...) { stop("TODO") },
     get_header = function(field) self$.headers[[tolower(field)]],
 
     on_response = function(fun) {
@@ -99,7 +99,7 @@ new_response <- function(app, api) {
     },
 
     set_type = function(type) {
-      if (!grepl("/", type)) {
+      if (grepl("/", type)) {
         self$set_header("content-type", type)
       } else {
         ct <- mime_find(type)
