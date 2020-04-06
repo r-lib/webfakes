@@ -11,6 +11,7 @@ new_request <- function(app, rreq) {
     method = tolower(rreq$method),
     path = rreq$local_uri,
     protocol = "http",
+    query_string = rreq$query_string,
     query = parse_query(rreq$query_string),
 
     get_header = function(field) self$headers[[field]],
@@ -23,14 +24,16 @@ new_request <- function(app, rreq) {
 }
 
 parse_headers <- function(headers) {
-  names(headers) <- tolower(headers)
+  names(headers) <- tolower(names(headers))
   headers
 }
 
 parse_query <- function(query) {
-  if (length(query) == 0) {
-    structure(list(), names = character())
-  } else {
-    as.list(query)
-  }
+  query <- sub("^[?]", "", query)
+  query <- chartr("+", " ", query)
+  argstr <- strsplit(query, "&", fixed = TRUE)[[1]]
+  argstr <- strsplit(argstr, "=", fixed = TRUE)
+  keys <- vapply(argstr, function(x) URLdecode(x[[1]]), character(1))
+  vals <- lapply(argstr, function(x) URLdecode(x[[2]]))
+  structure(vals, names = keys)
 }

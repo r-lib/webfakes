@@ -12,11 +12,13 @@
 SEXP server_start(SEXP options);
 SEXP server_process(SEXP rsrv, SEXP handler, SEXP env);
 SEXP server_stop(SEXP rsrv);
+SEXP server_get_ports(SEXP rsrv);
 
 static const R_CallMethodDef callMethods[]  = {
-  { "server_start",   (DL_FUNC) &server_start,   1 },
-  { "server_process", (DL_FUNC) &server_process, 3 },
-  { "server_stop",    (DL_FUNC) &server_stop,    1 },
+  { "server_start",     (DL_FUNC) &server_start,     1 },
+  { "server_process",   (DL_FUNC) &server_process,   3 },
+  { "server_stop",      (DL_FUNC) &server_stop,      1 },
+  { "server_get_ports", (DL_FUNC) &server_get_ports, 1 },
   { NULL, NULL, 0 }
 };
 
@@ -39,6 +41,17 @@ struct presser_server {
   struct mg_server_port ports[4];
   int num_ports;
 };
+
+void SEXP_to_char_vector(SEXP x, char*** vec) {
+  int i, len = LENGTH(x);
+  SEXP nms = getAttrib(x, R_NamesSymbol);
+  *vec = (char**) R_alloc(2 * len + 1, sizeof(char*));
+  for (i = 0; i < len; i++) {
+    (*vec)[2 * i    ] = (char*) CHAR(STRING_ELT(nms, i));
+    (*vec)[2 * i + 1] = (char*) CHAR(STRING_ELT(x,   i));
+  }
+  (*vec)[2 * len] = NULL;
+}
 
 static int begin_request(struct mg_connection *conn) {
 
@@ -103,19 +116,13 @@ SEXP server_start(SEXP options) {
   CHK(pthread_cond_init(&srv->finish_cond, NULL));
   CHK(pthread_mutex_init(&srv->finish_lock, NULL));
 
-  /* TODO */
-  const char *coptions[] = {
-    "listening_ports",    "3000",
-    "request_timeout_ms", "100000",
-    "num_threads",        "1",
-    0
-  };
-
+  char **coptions;
+  SEXP_to_char_vector(options, &coptions);
   struct mg_callbacks callbacks;
 
   memset(&callbacks, 0, sizeof(callbacks));
   callbacks.begin_request = begin_request;
-  srv->ctx = mg_start(&callbacks, srv, coptions);
+  srv->ctx = mg_start(&callbacks, srv, (const char **) coptions);
 
   if (srv->ctx == NULL) R_THROW_ERROR("Cannot start presser web server");
 
@@ -163,6 +170,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       "content_length",           /* 6 */
       "remote_port",              /* 7 */
       "headers",                  /* 8 */
+      "body",                     /* 9 */
       ""
     };
 
@@ -185,9 +193,19 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     Rf_setAttrib(hdr, R_NamesSymbol, nms);
     SET_VECTOR_ELT(rreq, 8, hdr);
 
+    if (req->content_length != -1) {
+      SET_VECTOR_ELT(rreq, 9, allocVector(RAWSXP, req->content_length));
+      int ret = mg_read(srv->conn, RAW(VECTOR_ELT(rreq, 9)), req->content_length);
+      if (ret < 0) R_THROW_ERROR("Cannot read from presser HTTP client");
+      if (ret != req->content_length) {
+        warning("Partial HTTP request body from client");
+      }
+    }
+
     SEXP call = PROTECT(lang2(handler, rreq));
     SEXP res = PROTECT(eval(call, env));
-    int ret;
+
+    /* The rest is sending the response */
 
     if (TYPEOF(res) == STRSXP && LENGTH(res) > 0) {
       if (LENGTH(res) > 1) {
@@ -208,9 +226,12 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       }
 
     } else if (TYPEOF(res) == VECSXP && LENGTH(res) == 4) {
+      SEXP nms = getAttrib(res, R_NamesSymbol);
       SEXP cnt = VECTOR_ELT(res, 0);
       SEXP sct = VECTOR_ELT(res, 1);
       SEXP hdr = VECTOR_ELT(res, 2);
+      int isfile = TYPEOF(nms) == STRSXP && LENGTH(nms) > 0 &&
+        !strcmp(CHAR(STRING_ELT(nms, 0)), "file");
       int code = INTEGER(VECTOR_ELT(res, 3))[0];
       const char *ct_raw = "application/octet-stream";
       const char *ct_str = "text/plain";
@@ -218,6 +239,8 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       int clen = 0;
       if (!isNull(sct)) {
         ct = CHAR(STRING_ELT(sct, 0));
+      } else if (isfile) {
+        ct = ct_raw;
       } else if (TYPEOF(cnt) == RAWSXP) {
         ct = ct_raw;
       } else if (TYPEOF(cnt) == STRSXP) {
@@ -226,7 +249,13 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
         R_THROW_ERROR("Invalid content type for HTTP response");
       }
 
-      if (TYPEOF(cnt) == RAWSXP) {
+      if (isfile) {
+        FILE *f = fopen(CHAR(STRING_ELT(cnt, 0)), "rb");
+        if (!f) R_THROW_SYSTEM_ERROR("Cannot open file to send via HTTP");
+        fseek(f, 0, SEEK_END);
+        clen = ftell(f);
+        fclose(f);
+      } else if (TYPEOF(cnt) == RAWSXP) {
         clen = LENGTH(cnt);
       } else {
         clen = strlen(CHAR(STRING_ELT(cnt, 0)));
@@ -253,10 +282,12 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       if (mg_write(srv->conn, "\r\n", 2) < 0) {
         R_THROW_ERROR("Could not send HTTP response");
       }
-      if (TYPEOF(cnt) == RAWSXP) {
+
+      if (isfile) {
+        ret = mg_send_file_body(srv->conn, CHAR(STRING_ELT(cnt, 0)));
+      } else if (TYPEOF(cnt) == RAWSXP) {
         ret = mg_write(srv->conn, RAW(cnt), clen);
       } else {
-        /* TODO: send a file */
         ret = mg_write(srv->conn, CHAR(STRING_ELT(cnt, 0)), clen);
       }
       if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
@@ -288,4 +319,32 @@ SEXP server_stop(SEXP rsrv) {
   struct presser_server *srv = R_ExternalPtrAddr(rsrv);
   if (srv != NULL) presser_server_finalizer(rsrv);
   return R_NilValue;
+}
+
+SEXP server_get_ports(SEXP rsrv) {
+  struct presser_server *srv = R_ExternalPtrAddr(rsrv);
+  if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
+
+  int i, num_ports = srv->num_ports;
+  SEXP ipv4 = PROTECT(allocVector(LGLSXP, num_ports));
+  SEXP ipv6 = PROTECT(allocVector(LGLSXP, num_ports));
+  SEXP port = PROTECT(allocVector(INTSXP, num_ports));
+  SEXP ssl  = PROTECT(allocVector(LGLSXP, num_ports));
+
+  const char *res_names[] = { "ipv4", "ipv6", "port", "ssl", "" };
+  SEXP res = PROTECT(Rf_mkNamed(VECSXP, res_names));
+  for (i = 0; i < num_ports; i++) {
+    LOGICAL(ipv4)[i] = (srv->ports[i].protocol) & 1;
+    LOGICAL(ipv6)[i] = (srv->ports[i].protocol) & 2;
+    INTEGER(port)[i] = srv->ports[i].port;
+    LOGICAL(ssl )[i] = srv->ports[i].is_ssl == 1;
+  }
+
+  SET_VECTOR_ELT(res, 0, ipv4);
+  SET_VECTOR_ELT(res, 1, ipv6);
+  SET_VECTOR_ELT(res, 2, port);
+  SET_VECTOR_ELT(res, 3, ssl);
+
+  UNPROTECT(5);
+  return res;
 }

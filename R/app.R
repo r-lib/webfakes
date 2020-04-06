@@ -66,12 +66,12 @@ new_app <- function() {
     },
 
     listen = function(port = NULL)  {
-      port <- 3000L
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
 
-      srv <- server_start()
-      self$.port <- port
+      srv <- server_start(port = port)
+      ports <- server_get_ports(srv)
+      self$.port <- ports$port[1]
       message("Running presser web app on port ", self$.port)
       msg <- structure(
         list(port = self$.port),
@@ -160,7 +160,7 @@ new_app <- function() {
         if (length(res$.headers)) {
           paste0(names(res$.headers), ": ", unlist(res$.headers))
         },
-        res$.status
+        as.integer(res$.status)
       )
 
       if (identical(names(res$.body), "file")) {
