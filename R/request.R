@@ -13,6 +13,8 @@ new_request <- function(app, rreq) {
     protocol = "http",
     query_string = rreq$query_string,
     query = parse_query(rreq$query_string),
+    remote_addr = rreq$remote_addr,
+    url = rreq$request_link,
 
     get_header = function(field) self$headers[[field]],
 
