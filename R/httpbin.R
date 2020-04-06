@@ -8,6 +8,7 @@ httpbin_app <- function(log = TRUE) {
   if (log) app$use(mw_log())
   app$use(mw_json())
   app$use(mw_text(type = c("text/plain", "application/json")))
+  app$use(mw_multipart())
   app$use(mw_etag())
 
   # HTTP methods =========================================================
@@ -24,12 +25,18 @@ httpbin_app <- function(log = TRUE) {
   })
 
   app$post("/post", function(req, res) {
-    ## TODO: parse other body types
+    files <- req$files
+    for (i in seq_along(files)) {
+      files[[i]]$value <- paste0(
+        "data:application/octet-stream;base64,",
+        base64_encode(files[[i]]$value)
+      )
+    }
     ret <- list(
       args = as.list(req$query),
       data = req$text,
-      files = "TODO",
-      form = "TODO",
+      files = files,
+      form = req$form,
       headers = req$headers,
       json = req$json,
       path = req$path,

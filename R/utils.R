@@ -24,3 +24,17 @@ is_na_scalar <- function(x) {
 cat0 <- function(..., sep = "") {
   cat(..., sep = sep)
 }
+
+str_trim <- function(x) {
+  sub("\\s+$", "", sub("^\\s+", "", x))
+}
+
+unquote <- function(str) {
+  len <- nchar(str)
+  if (substr(str, 1, 1) == '"' && substr(str, len, len) == '"') {
+    substr(str, 2, len - 1)
+
+  } else {
+    str
+  }
+}
