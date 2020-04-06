@@ -16,7 +16,9 @@ httpbin_app <- function(log = TRUE) {
     ret <- list(
       args = as.list(req$query),
       headers = req$headers,
-      path = req$path
+      origin = req$remote_addr,
+      path = req$path,
+      url = req$url
     )
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
   })
@@ -25,11 +27,15 @@ httpbin_app <- function(log = TRUE) {
     ## TODO: parse other body types
     ret <- list(
       args = as.list(req$query),
+      data = req$text,
+      files = "TODO",
+      form = "TODO",
       headers = req$headers,
-      path = req$path
+      json = req$json,
+      path = req$path,
+      origin = req$remote_addr,
+      url = req$url
     )
-    if (!is.null(req$text)) ret$data <- req$text
-    if (!is.null(req$json)) ret$json <- req$json
 
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
   })
