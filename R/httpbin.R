@@ -3,6 +3,16 @@
 
 httpbin_app <- function(log = TRUE) {
 
+  encode_files <- function(files) {
+    for (i in seq_along(files)) {
+      files[[i]]$value <- paste0(
+        "data:application/octet-stream;base64,",
+        base64_encode(files[[i]]$value)
+      )
+    }
+    files
+  }
+
   app <- new_app()
 
   if (log) app$use(mw_log())
@@ -24,18 +34,11 @@ httpbin_app <- function(log = TRUE) {
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
-  app$post("/post", function(req, res) {
-    files <- req$files
-    for (i in seq_along(files)) {
-      files[[i]]$value <- paste0(
-        "data:application/octet-stream;base64,",
-        base64_encode(files[[i]]$value)
-      )
-    }
+  http_methods <- function(req, res) {
     ret <- list(
       args = as.list(req$query),
       data = req$text,
-      files = files,
+      files = encode_files(req$files),
       form = req$form,
       headers = req$headers,
       json = req$json,
@@ -43,11 +46,13 @@ httpbin_app <- function(log = TRUE) {
       origin = req$remote_addr,
       url = req$url
     )
-
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
-  })
+  }
 
-  # TODO: other methods, once we have a proper web server
+  app$delete("/delete", http_methods)
+  app$patch("/patch", http_methods)
+  app$post("/post", http_methods)
+  app$put("/put", http_methods)
 
   # Auth =================================================================
 
