@@ -52,6 +52,11 @@ new_app <- function() {
       invisible(self)
     },
 
+    delete = function(path, ...) {
+      self$.stack <- c(self$.stack, parse_handlers("delete", path, ...))
+      invisible(self)
+    },
+
     get = function(path, ...) {
       self$.stack <- c(self$.stack, parse_handlers("get", path, ...))
       invisible(self)
@@ -85,12 +90,22 @@ new_app <- function() {
       invisible(self)
     },
 
+    patch = function(path, ...) {
+      self$.stack <- c(self$.stack, parse_handlers("patch", path, ...))
+      invisible(self)
+    },
+
     path = function() {
       self$.mountpath
     },
 
     post = function(path, ...) {
       self$.stack <- c(self$.stack, parse_handlers("post", path, ...))
+      invisible(self)
+    },
+
+    put = function(path, ...) {
+      self$.stack <- c(self$.stack, parse_handlers("put", path, ...))
       invisible(self)
     },
 
