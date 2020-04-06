@@ -65,38 +65,22 @@ new_app <- function() {
       self$.port
     },
 
-    listen = function(port = NULL, block = TRUE)  {
+    listen = function(port = NULL)  {
+      port <- 3000L
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
 
-      try(tools::startDynamicHelp(FALSE), silent = TRUE)
-      Sys.unsetenv("R_DISABLE_HTTPD")
-
-      # NULL or a real port number
-      options(help.ports = port)
-
-      do.call(paste0("unlock", "Binding"), list("httpd", asNamespace("tools")))
-      pkg_data$tools_httpd <- asNamespace("tools")$httpd
-      if (block) {
-        on.exit({
-          assign("httpd", pkg_data$tools_httpd, envir = asNamespace("tools"))
-          try(tools::startDynamicHelp(FALSE), silent = TRUE)
-          self$.port <- NULL
-        }, add = TRUE)
-      }
-      assign("httpd", self$.run, envir = asNamespace("tools"))
-
-      port2 <- suppressMessages(tools::startDynamicHelp(TRUE))
-
-      if (!is.null(port) && port != port2) {
-        stop("Cannot start server on port ", port)
-      }
-      self$.port <- port2
-
+      srv <- server_start()
+      self$.port <- port
       message("Running presser web app on port ", self$.port)
-      if (block) {
-        while (TRUE) Sys.sleep(1000)
-      }
+      msg <- structure(
+        list(port = self$.port),
+        class = c("callr_message", "condition")
+      )
+      message(msg)
+
+      on.exit(server_stop(srv), add = TRUE)
+      server_process(srv, self$.run)
 
       invisible(self)
     },
@@ -142,9 +126,11 @@ new_app <- function() {
     .process = NULL,
 
     # The request processing function
-    .run = function(path, query, body, headers) {
+    .run = function(rreq) {
 
-      req <- new_request(self, path, query, body, headers)
+      path <- rreq$local_uri
+
+      req <- new_request(self, rreq)
       res <- new_response(self)
 
       for (h in self$.stack) {

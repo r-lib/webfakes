@@ -16,13 +16,7 @@ new_app_process <- function(app, ...) {
         function(app) {
           library(presser)
           .GlobalEnv$app <- app
-          app$listen(port = NULL, block = FALSE)
-          msg <- structure(
-            list(port = app$get_port()),
-            class = c("callr_message", "condition")
-          )
-          message(msg)
-          while (TRUE) Sys.sleep(1000)
+          app$listen(port = NULL)
         }
       )
 
@@ -35,7 +29,7 @@ new_app_process <- function(app, ...) {
       invisible(self)
     },
 
-    get_url = function(path, query = NULL) {
+    get_url = function(path = "/", query = NULL) {
       if (!is.null(query)) {
         query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
       }

@@ -7,6 +7,6 @@ server_process <- function(srv, handler) {
   .Call(c_server_process, srv, handler, environment())
 }
 
-server_handler <- function(rawreq) {
-  message("handling!")
+server_stop <- function(srv) {
+  .Call(c_server_stop, srv)
 }
