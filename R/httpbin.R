@@ -1,7 +1,7 @@
 
 #' @export
 
-httpbin_app <- function(log = TRUE) {
+httpbin_app <- function(log = interactive()) {
 
   encode_files <- function(files) {
     for (i in seq_along(files)) {
