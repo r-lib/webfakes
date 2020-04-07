@@ -2,11 +2,8 @@
 #' @export
 
 mw_text <- function(default_charset = "utf-8",
-                     inflate = TRUE,
-                     limit = 100 * 1000,
                      type = "text/plain") {
-  # TODO: implement inflate, limit
-  default_charset; inflate; limit; type
+  default_charset; type
   function(req, res) {
     ct <- req$get_header("content-type") %||% ""
     if (! ct %in% tolower(type)) return("next")
