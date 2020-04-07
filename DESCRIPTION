@@ -18,5 +18,6 @@ Suggests:
     digest,
     glue,
     jsonlite,
-    testthat
+    testthat,
+    uuid
 Encoding: UTF-8

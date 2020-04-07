@@ -32,7 +32,7 @@ httpbin_app <- function(log = TRUE) {
     "next"
   })
 
-  common_response <- function(req, res) {
+  make_common_response <- function(req, res) {
     ret <- list(
       args = as.list(req$query),
       data = req$text,
@@ -44,6 +44,10 @@ httpbin_app <- function(log = TRUE) {
       origin = req$remote_addr,
       url = req$url
     )
+  }
+
+  common_response <- function(req, res) {
+    ret <- make_common_response(req, res)
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
   }
 
@@ -135,6 +139,41 @@ httpbin_app <- function(log = TRUE) {
 
   # Response formats =====================================================
 
+  app$get("/deny", function(req, res) {
+    path <- system.file(
+      package = "presser", "examples", "httpbin", "data", "deny.txt"
+    )
+    res$
+      set_type("text/plain")$
+      send_file(root = "/", path)
+  })
+
+  app$get("/gzip", function(req, res) {
+    ret <- make_common_response(req, res)
+    json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
+    tmp <- tempfile()
+    on.exit(unlink(tmp), add = TRUE)
+    con <- file(tmp, open = "wb")
+    con2 <- gzcon(con)
+    writeBin(charToRaw(json), con2)
+    flush(con2)
+    close(con2)
+    gzipped <- readBin(tmp, "raw", file.info(tmp)$size)
+    res$
+      set_type("application/json")$
+      set_header("Content-Encoding", "gzip")$
+      send(gzipped)
+  })
+
+  app$get("/encoding/utf8", function(req, res) {
+    path <- system.file(
+      package = "presser", "examples", "httpbin", "data", "utf8.html"
+    )
+    res$
+      set_type("text/html; charset=utf-8")$
+      send_file(root = "/", path)
+  })
+
   app$get("/html", function(req, res) {
     path <- system.file(
       package = "presser", "examples", "httpbin", "data", "example.html"
@@ -149,13 +188,6 @@ httpbin_app <- function(log = TRUE) {
     res$send_file(root = "/", path)
   })
 
-  app$get("/xml", function(req, res) {
-    path <- system.file(
-      package = "presser", "examples", "httpbin", "data", "example.xml"
-    )
-    res$send_file(root = "/", path)
-  })
-
   app$get("/robots.txt", function(req, res) {
     path <- system.file(
       package = "presser", "examples", "httpbin", "data", "robots.txt"
@@ -163,7 +195,14 @@ httpbin_app <- function(log = TRUE) {
     res$send_file(root = "/", path)
   })
 
-  # TODO: /brotli * /deflate * /deny * /encoding/utf8 * /gzip
+  app$get("/xml", function(req, res) {
+    path <- system.file(
+      package = "presser", "examples", "httpbin", "data", "example.xml"
+    )
+    res$send_file(root = "/", path)
+  })
+
+  # TODO: /brotli * /deflate
 
   # Dynamic data =========================================================
 
@@ -201,9 +240,14 @@ httpbin_app <- function(log = TRUE) {
     }
   })
 
+  app$get("/uuid", function(req, res) {
+    ret <- list(uuid = uuid::UUIDgenerate())
+    res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
+  })
+
   # TODO: /drip *
   # /links/{n}{offset} * /range/{numbytes} * /stream-bytes/{n} *
-  # /stream/{n} * /uuid
+  # /stream/{n}
 
   # Cookies ==============================================================
 
