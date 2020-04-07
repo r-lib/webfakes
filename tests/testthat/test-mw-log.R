@@ -28,7 +28,7 @@ test_that("text/plain response", {
   plr <- proc$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")
   log <- proc$.process$read_output_lines()
-  expect_match(log, "get /txt 200 [0-9]+ ms - 7")
+  expect_match(log, "GET http://127\\.0\\.0\\.1:[0-9]*/txt 200 [0-9]+ ms - 7")
 })
 
 test_that("text/html response", {
@@ -37,7 +37,7 @@ test_that("text/html response", {
   plr <- proc$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")
   log <- proc$.process$read_output_lines()
-  expect_match(log, "get /html 200 [0-9]+ ms - 44")
+  expect_match(log, "GET http://127\\.0\\.0\\.1:[0-9]+/html 200 [0-9]+ ms - 44")
 })
 
 test_that("application/octet-stream response", {
@@ -46,5 +46,5 @@ test_that("application/octet-stream response", {
   plr <- proc$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")
   log <- proc$.process$read_output_lines()
-  expect_match(log, "get /raw 200 [0-9]+ ms - 3")
+  expect_match(log, "GET http://127\\.0\\.0\\.1:[0-9]+/raw 200 [0-9]+ ms - 3")
 })
