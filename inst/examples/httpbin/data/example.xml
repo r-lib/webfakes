@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+   <address>
+      <city>New York</city>
+      <postalCode>10021-3100</postalCode>
+      <state>NY</state>
+      <streetAddress>21 2nd Street</streetAddress>
+   </address>
+   <age>27</age>
+   <children />
+   <firstName>John</firstName>
+   <isAlive>true</isAlive>
+   <lastName>Smith</lastName>
+   <phoneNumbers>
+      <element>
+         <number>212 555-1234</number>
+         <type>home</type>
+      </element>
+      <element>
+         <number>646 555-4567</number>
+         <type>office</type>
+      </element>
+   </phoneNumbers>
+   <spouse null="true" />
+</root>
