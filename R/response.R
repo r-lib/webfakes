@@ -6,10 +6,6 @@ new_response <- function(app, api) {
     app = app,
     locals = as.environment(as.list(app$locals)),
 
-    # append_header = function(field, value) { stop("TODO") },
-    # set_cookie = function(name, value, ...) { stop("TODO") },
-    # clear_cookie = function(name) { stop("TODO") },
-    # download = function(path, filename = basename(path), ...) { stop("TODO") },
     get_header = function(field) self$.headers[[tolower(field)]],
 
     on_response = function(fun) {
@@ -61,12 +57,7 @@ new_response <- function(app, api) {
       invisible(self)
     },
 
-    send_file = function(path, max_age = NA, root = ".",
-                         last_modified = TRUE, headers = NULL,
-                         dotfiles = "ignore",
-                         cache_control = TRUE,
-                         immutable = FALSE) {
-      # TODO: implement options
+    send_file = function(path, root = ".") {
       self$.body <- c(file = normalizePath(file.path(root, path)))
 
       # Set content type automatically

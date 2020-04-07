@@ -30,11 +30,3 @@ mw_log <- function(format = "dev", stream = stdout()) {
     "next"
   }
 }
-
-# TODO: implement log formats, probably with glue instad of the : notation?
-
-log_formats <- list(
-  dev = ":method :url :status :response-time ms - :res[content-length]",
-  short = ":remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms",
-  tiny = ":method :url :status :res[content-length] - :response-time ms"
-)
