@@ -22,6 +22,7 @@ httpbin_app <- function(log = TRUE) {
   app$use(mw_json())
   app$use(mw_text(type = c("text/plain", "application/json")))
   app$use(mw_multipart())
+  app$use(mw_urlencoded())
 
   # Add etags by default
   app$use(mw_etag())
