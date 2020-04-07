@@ -207,9 +207,11 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       }
     }
 
-    /* TODO: handle errors here */
+    SEXP try = PROTECT(install("try"));
+    SEXP silent = PROTECT(ScalarLogical(1));
     SEXP call = PROTECT(lang2(handler, rreq));
-    SEXP res = PROTECT(eval(call, env));
+    SEXP trycall = PROTECT(lang3(try, call, silent));
+    SEXP res = PROTECT(eval(trycall, env));
 
     /* The rest is sending the response */
 
