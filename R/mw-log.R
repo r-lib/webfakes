@@ -1,4 +1,22 @@
 
+#' Log requests to the standard output or other connection
+#'
+#' A one line log entry for every request. The output looks like this:
+#' ```
+#' GET http://127.0.0.1:3000/image 200 3 ms - 4742
+#' ```
+#' and contains
+#' * the HTTP method,
+#' * the full request URL,
+#' * the HTTP status code of the response,
+#' * how long it took to process the response, in ms,
+#' * and the size of the response body, in bytes.
+#'
+#' @param format Log format. Not implemented currently.
+#' @param stream R connection to log to. Defaults to `stdout()`, the
+#'   standard output.
+#'
+#' @family middleware
 #' @export
 
 mw_log <- function(format = "dev", stream = stdout()) {

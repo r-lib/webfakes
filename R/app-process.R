@@ -1,5 +1,53 @@
 
+#' Run a presser app in another process
+#'
+#' Runs an app in a subprocess, using [callr::r_session].
+#'
+#' @param app `presser_app` object, the web app to run.
+#' @param ... Options to pass to the [callr::r_session_options()] when
+#'   setting up the subprocess.
+#' @return A `presser_app_process` class.
+#'
+#' ## Methods
+#'
+#' The `presser_app_process` class has the following methods:
+#'
+#' ```r
+#' get_url(path = "/", query = NULL)
+#' get_port()
+#' stop()
+#' get_state()
+#' ```
+#'
+#' * `path`: Path to return the URL for.
+#' * `query`: Additional query parameters, a named list, to add to the URL.
+#'
+#' `get_url()` returns the URL of the web app. You can use the `path`
+#' parameter to return a specific path.
+#'
+#' `get_port()` returns the port the web server is running on.
+#'
+#' `stop()` stops the web server, and also the subprocess.
+#'
+#' `get_state()` returns a string, the state of the web server:
+#' * `"not running"` the server is not running (because it was stopped
+#'   already).
+#' * `"live"` means that the server is running.
+#' * `"dead"` means that the subprocess has quit or crashed.
+#'
 #' @export
+#' @examples
+#' app <- new_app()
+#' app$get("/foo", function(req, res) {
+#'   res$send("Hello world!")
+#' })
+#'
+#' proc <- new_app_process(app)
+#' url <- proc$get_url("/foo")
+#' resp <- curl::curl_fetch_memory(url)
+#' cat(rawToChar(resp$content))
+#'
+#' proc$stop()
 
 new_app_process <- function(app, ...) {
 

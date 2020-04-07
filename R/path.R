@@ -1,5 +1,21 @@
 
+#' Create a new regular expression to use in presser routes
+#'
+#' Note that presser uses PERL regular expressions.
+#'
+#' @details
+#' As R does not have data type or class for regular expressions,
+#' you can use `new_regexp()` to mark a string as a regular expression,
+#' when adding routes.
+#'
+#' @param x String scalar containing a regular expression.
+#' @return String with class `presser_regexp`.
+#'
+#' @seealso The 'Path specification' and 'Path parameters' chapters
+#' of the manual of [new_app()].
 #' @export
+#' @examples
+#' new_regexp("^/api/match/(?<pattern>.*)$")
 
 new_regexp <- function(x) structure(x, class = "presser_regexp")
 

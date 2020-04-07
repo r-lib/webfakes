@@ -1,7 +1,52 @@
 
+#' A presser response object
+#'
+#' presser creates a `presser_response` object for every incoming HTTP
+#' request. This object is passed to every matched route and middleware,
+#' until the HTTP response is sent. It has reference semantics, so handlers
+#' can modify it.
+#'
+#' Fields and methods:
+#'
+#' * `app`: The `presser_app` object itself.
+#' * `locals`: Local variables, the are shared between the handler
+#'   functions. This is for the end user.
+#' * `get_header(field)`: Query the currently set response headers. If
+#'   `field` is not present it return `NULL`.
+#' * `on_response(fun)`: Run the `fun` handler function just before the
+#'   response is sent out. At this point the headers and the body are
+#'   already properly set.
+#' * `redirect(path, status = 302)`: Send a redirect response. It sets
+#'   the `Location` header, and also sends a `text/plain` body.
+#' * `render(view, locals = list())`: Render a template page. Searches
+#'   for the `view` template page, using all registered engine extensions,
+#'   and calls the first matching template engine. Returns the filled
+#'   template.
+#' * `send_json(object = NULL, text = NULL, ...)`: Send a JSON response.
+#'   Either `object` or `text` must be given. `object` will be converted
+#'   to JSON using [jsonlite::toJSON()]. `...` are passed to
+#'   [jsonlite::toJSON()]. It sets the content type appropriately.
+#' * `send(body)`. Send the specified body. `body` can be a raw vector,
+#'   or HTML or other text. For raw vectors it sets the content type to
+#'   `application/octet-stream`.
+#' * `send_file(path, root = ".")`: Send a file. Set `root = "/"` for
+#'   absolute file names. It sets the content type automatically, based
+#'   on the extension of the file, if it is not set already.
+#' * `send_status(status)`: Send the specified HTTP status code, without
+#'   a response body.
+#' * `set_header(field, value)`: Set a response header.
+#' * `set_status(status)`: Set the response status code.
+#' * `set_type(type)`: Set the response content type. If it contains a `/`
+#'   character then it is set as is, otherwise it is assumed to be a file
+#'   extension, and the corresponding MIME type is set.
+#'
+#' @seealso [presser_request] for the presser request object.
+#' @name presser_response
+NULL
+
 new_response <- function(app, api) {
   self <- new_object(
-    "press_response",
+    "presser_response",
 
     app = app,
     locals = as.environment(as.list(app$locals)),

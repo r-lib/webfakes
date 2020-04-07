@@ -1,4 +1,14 @@
 
+#' Parse a multipart HTTP request body
+#'
+#' Adds the parsed form fields in the `form` element of the request and
+#' the parsed files to the `files` element.
+#'
+#' @param type Content type to match before parsing. If it does not
+#'   match, then the request object is not modified.
+#' @return Handler function.
+#'
+#' @family middleware
 #' @export
 
 mw_multipart <- function(type = "multipart/form-data") {
@@ -55,7 +65,7 @@ parse_multipart <- function(body, boundary) {
   }
 
   parts <- list()
-  for (i in seq_along(head(indexes, -1))) {
+  for (i in seq_along(utils::head(indexes, -1))) {
     from <- indexes[i] + boundary_length
     to <- indexes[i + 1] -1
     parts[[i]] <- body[from:to]
@@ -117,7 +127,7 @@ multipart_sub <- function(bodydata) {
   #filedata
   splitval <- grepRaw("\\r\\n\\r\\n|\\n\\n|\\r\\r", bodydata, value=TRUE)
   start <- splitchar + length(splitval)
-  if (identical(tail(bodydata, 2), charToRaw("\r\n"))) {
+  if (identical(utils::tail(bodydata, 2), charToRaw("\r\n"))) {
     end <- length(bodydata) - 2
   } else {
     end <- length(bodydata) - 1

@@ -1,4 +1,13 @@
 
+#' Middleware to read the raw body of a request
+#'
+#' Adds the raw body, as a raw object to the `raw` field of the request.
+#'
+#' @param type Content type to match. If it does not match, then the
+#' request object is not modified.
+#' @return Handler function.
+#'
+#' @family middleware
 #' @export
 
 mw_raw <- function(type = "application/octet-stream") {

@@ -1,5 +1,18 @@
 
+#' Generic web app for testing HTTP clients, like httpbin.org
+#'
+#' @param log Whether to log requests to the standard output.
+#' @return A `presser_app`.
+#'
 #' @export
+#' @examples
+#' app <- httpbin_app()
+#' proc <- new_app_process(app)
+#' url <- proc$get_url("/get")
+#' resp <- curl::curl_fetch_memory(url)
+#' curl::parse_headers_list(resp$headers)
+#' cat(rawToChar(resp$content))
+#' proc$stop()
 
 httpbin_app <- function(log = interactive()) {
 
@@ -223,7 +236,7 @@ httpbin_app <- function(log = interactive()) {
       res$send_status(404L)
     } else {
       n <- min(n, 10000)
-      bytes <- as.raw(as.integer(floor(runif(n, min=0, max=256))))
+      bytes <- as.raw(as.integer(floor(stats::runif(n, min=0, max=256))))
       res$
         set_type("application/octet-stream")$
         send(bytes)
