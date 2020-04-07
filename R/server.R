@@ -1,7 +1,8 @@
 
 server_start <- function(port = NULL) {
+  port <- paste0("127.0.0.1:", as.character(port %||% "0"))
   options <- c(
-    "listening_ports"          = as.character(port %||% "0"),
+    "listening_ports"          = port,
     "request_timeout_ms"       = "100000",
     "num_threads"              = "1",
     "enable_auth_domain_check" = "no"
