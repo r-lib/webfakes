@@ -156,12 +156,12 @@ httpbin_app <- function(log = interactive()) {
   # Response formats =====================================================
 
   app$get("/deny", function(req, res) {
-    path <- system.file(
-      package = "presser", "examples", "httpbin", "data", "deny.txt"
-    )
     res$
       set_type("text/plain")$
-      send_file(root = "/", path)
+      send_file(
+        root = system.file(package = "presser"),
+        file.path("examples", "httpbin", "data", "deny.txt")
+      )
   })
 
   app$get("/gzip", function(req, res) {
@@ -182,40 +182,40 @@ httpbin_app <- function(log = interactive()) {
   })
 
   app$get("/encoding/utf8", function(req, res) {
-    path <- system.file(
-      package = "presser", "examples", "httpbin", "data", "utf8.html"
-    )
     res$
       set_type("text/html; charset=utf-8")$
-      send_file(root = "/", path)
+      send_file(
+        root = system.file(package = "presser"),
+        file.path("examples", "httpbin", "data", "utf8.html")
+      )
   })
 
   app$get("/html", function(req, res) {
-    path <- system.file(
-      package = "presser", "examples", "httpbin", "data", "example.html"
+    res$send_file(
+      root = system.file(package = "presser"),
+      file.path("examples", "httpbin", "data", "example.html")
     )
-    res$send_file(root = "/", path)
   })
 
   app$get("/json", function(req, res) {
-    path <- system.file(
-      package = "presser", "examples", "httpbin", "data", "example.json"
+    res$send_file(
+      root = system.file(package = "presser"),
+      file.path("examples", "httpbin", "data", "example.json")
     )
-    res$send_file(root = "/", path)
   })
 
   app$get("/robots.txt", function(req, res) {
-    path <- system.file(
-      package = "presser", "examples", "httpbin", "data", "robots.txt"
+    res$send_file(
+      root = system.file(package = "presser"),
+      file.path("examples", "httpbin", "data", "robots.txt")
     )
-    res$send_file(root = "/", path)
   })
 
   app$get("/xml", function(req, res) {
-    path <- system.file(
-      package = "presser", "examples", "httpbin", "data", "example.xml"
+    res$send_file(
+      root = system.file(package = "presser"),
+      file.path("examples", "httpbin", "data", "example.xml")
     )
-    res$send_file(root = "/", path)
   })
 
   # TODO: /brotli * /deflate
@@ -298,21 +298,20 @@ httpbin_app <- function(log = interactive()) {
         "image/png" = "Rlogo.png",
         "image/*" = "Rlogo.png"
       )
-      path <- system.file(
-        package = "presser", "examples", "httpbin", "images",
-        fls[act]
+      res$send_file(
+        root = system.file(package = "presser"),
+        file.path("examples", "httpbin", "images", fls[act])
       )
-      res$send_file(root = "/", path)
     }
   })
 
   app$get(new_regexp("/image/(?<format>jpeg|png|svg|webp)"),
           function(req, res) {
-    path <- system.file(
-      package = "presser", "examples", "httpbin", "images",
-      paste0("Rlogo.", req$params$format)
+    filename <- paste0("Rlogo.", req$params$format)
+    res$send_file(
+      root = system.file(package = "presser"),
+      file.path("examples", "httpbin", "images", filename)
     )
-    res$send_file(root = "/", path)
   })
 
   # Redirects ============================================================
