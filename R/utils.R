@@ -48,3 +48,7 @@ str_is_suffix <- function(x, sfx) {
   lsfx <- nchar(sfx)
   substring(x, lx - lsfx + 1, lx) == sfx
 }
+
+read_bin <- function(path) {
+  readBin(path, "raw", file.info(path)$size)
+}

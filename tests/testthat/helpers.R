@@ -4,7 +4,3 @@ read_char <- function(path, encoding = "UTF-8") {
   Encoding(txt) <- encoding
   txt
 }
-
-read_bin <- function(path) {
-  readBin(path, "raw", file.info(path)$size)
-}

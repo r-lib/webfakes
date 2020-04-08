@@ -240,21 +240,16 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       }
 
     } else if (TYPEOF(res) == VECSXP && LENGTH(res) == 4) {
-      SEXP nms = getAttrib(res, R_NamesSymbol);
       SEXP cnt = VECTOR_ELT(res, 0);
       SEXP sct = VECTOR_ELT(res, 1);
       SEXP hdr = VECTOR_ELT(res, 2);
-      int isfile = TYPEOF(nms) == STRSXP && LENGTH(nms) > 0 &&
-        !strcmp(CHAR(STRING_ELT(nms, 0)), "file");
       int code = INTEGER(VECTOR_ELT(res, 3))[0];
       const char *ct_raw = "application/octet-stream";
       const char *ct_str = "text/plain";
-      const char *ct;
+      const char *ct = 0;
       int clen = 0;
       if (!isNull(sct)) {
         ct = CHAR(STRING_ELT(sct, 0));
-      } else if (isfile) {
-        ct = ct_raw;
       } else if (TYPEOF(cnt) == RAWSXP) {
         ct = ct_raw;
       } else if (TYPEOF(cnt) == STRSXP) {
@@ -263,13 +258,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
         R_THROW_ERROR("Invalid content type for HTTP response");
       }
 
-      if (isfile) {
-        FILE *f = fopen(CHAR(STRING_ELT(cnt, 0)), "rb");
-        if (!f) R_THROW_SYSTEM_ERROR("Cannot open file to send via HTTP");
-        fseek(f, 0, SEEK_END);
-        clen = ftell(f);
-        fclose(f);
-      } else if (TYPEOF(cnt) == RAWSXP) {
+      if (TYPEOF(cnt) == RAWSXP) {
         clen = LENGTH(cnt);
       } else {
         clen = strlen(CHAR(STRING_ELT(cnt, 0)));
@@ -297,9 +286,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
         R_THROW_ERROR("Could not send HTTP response");
       }
 
-      if (isfile) {
-        ret = mg_send_file_body(srv->conn, CHAR(STRING_ELT(cnt, 0)));
-      } else if (TYPEOF(cnt) == RAWSXP) {
+      if (TYPEOF(cnt) == RAWSXP) {
         ret = mg_write(srv->conn, RAW(cnt), clen);
       } else {
         ret = mg_write(srv->conn, CHAR(STRING_ELT(cnt, 0)), clen);
