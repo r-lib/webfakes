@@ -8,7 +8,7 @@ mw_etag(algorithm = "crc32")
 }
 \arguments{
 \item{algorithm}{Checksum algorithm to use. See the \code{also} argument of
-\code{\link[digest:digest]{digest::digest()}} for the possbile values.}
+\code{\link[digest:digest]{digest::digest()}} for the possible values.}
 }
 \value{
 Handler function.

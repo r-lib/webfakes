@@ -6,13 +6,13 @@ pkg_data <- new.env(parent = emptyenv())
 #' @details
 #' The typical workflow of creating a web application is:
 #'
-#' 1. Craete a `presser_app` object with `new_app()`.
-#' 1. Add middreware and/or routes to it.
+#' 1. Create a `presser_app` object with `new_app()`.
+#' 1. Add middleware and/or routes to it.
 #' 1. Start is with the `preser_app$listen()` method, or start it in
 #'    another process with [new_app_process()].
-#' 1. Make queries againts the web app.
-#' 1. Stop it via CTRL+C, or, if it is running in another process, with
-#'    [new_app_process()].
+#' 1. Make queries to the web app.
+#' 1. Stop it via `CTRL+C` / `ESC`, or, if it is running in another
+#'    process, with the `$stop()` method of [new_app_process()].
 #'
 #' A web application can be
 #' * restarted,
@@ -21,7 +21,8 @@ pkg_data <- new.env(parent = emptyenv())
 #' * embedded into a package,
 #' * extended by simply adding new routes and/or middleware.
 #'
-#' The presser API is very much influenced by the express.js project.
+#' The presser API is very much influenced by the
+#' [express.js](http://expressjs.com/) project.
 #'
 #' ## Create web app objects
 #'
@@ -185,7 +186,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' a named list.
 #'
 #' If the path of the handler is a list of parameterized strings or
-#' regular expressions, the parameters are set accoding to the first
+#' regular expressions, the parameters are set according to the first
 #' matching one.
 #'
 #' ## Templates
@@ -246,7 +247,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' * `port`: port to listen on. When `NULL`, the operating system will
 #'   automatically select a free port.
 #'
-#' This method does not return, and can be interrupted with CTRL+C / ESC
+#' This method does not return, and can be interrupted with `CTRL+C` / `ESC`
 #' or a SIGINT signal. See [new_app_process()] for interrupting an app that
 #' is running in another process.
 #'
@@ -297,7 +298,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' * `key`: configuration key.
 #' * `value`: configuration value.
 #'
-#' Currently used configration values:
+#' Currently used configuration values:
 #'
 #' * `views`: path where presser searches for templates.
 #'

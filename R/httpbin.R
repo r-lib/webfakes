@@ -1,5 +1,7 @@
 
-#' Generic web app for testing HTTP clients, like httpbin.org
+#' Generic web app for testing HTTP clients
+#'
+#' A web app similar to <https://httpbin.org>.
 #'
 #' @param log Whether to log requests to the standard output.
 #' @return A `presser_app`.

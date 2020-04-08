@@ -4,7 +4,7 @@
 #' It needs the digest package to calculate the value of the header.
 #'
 #' @param algorithm Checksum algorithm to use. See the `also` argument of
-#' [digest::digest()] for the possbile values.
+#' [digest::digest()] for the possible values.
 #' @return Handler function.
 #'
 #' @family middleware

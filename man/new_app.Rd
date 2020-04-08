@@ -12,13 +12,13 @@ Create a new web application
 \details{
 The typical workflow of creating a web application is:
 \enumerate{
-\item Craete a \code{presser_app} object with \code{new_app()}.
-\item Add middreware and/or routes to it.
+\item Create a \code{presser_app} object with \code{new_app()}.
+\item Add middleware and/or routes to it.
 \item Start is with the \code{preser_app$listen()} method, or start it in
 another process with \code{\link[=new_app_process]{new_app_process()}}.
-\item Make queries againts the web app.
-\item Stop it via CTRL+C, or, if it is running in another process, with
-\code{\link[=new_app_process]{new_app_process()}}.
+\item Make queries to the web app.
+\item Stop it via \code{CTRL+C} / \code{ESC}, or, if it is running in another
+process, with the \verb{$stop()} method of \code{\link[=new_app_process]{new_app_process()}}.
 }
 
 A web application can be
@@ -30,7 +30,8 @@ A web application can be
 \item extended by simply adding new routes and/or middleware.
 }
 
-The presser API is very much influenced by the express.js project.
+The presser API is very much influenced by the
+\href{http://expressjs.com/}{express.js} project.
 \subsection{Create web app objects}{\if{html}{\out{<div class="r">}}\preformatted{new_app()
 }\if{html}{\out{</div>}}
 
@@ -194,7 +195,7 @@ It is best to use named capture groups, so that the parameters are in
 a named list.
 
 If the path of the handler is a list of parameterized strings or
-regular expressions, the parameters are set accoding to the first
+regular expressions, the parameters are set according to the first
 matching one.
 }
 
@@ -247,7 +248,7 @@ available.
 automatically select a free port.
 }
 
-This method does not return, and can be interrupted with CTRL+C / ESC
+This method does not return, and can be interrupted with \code{CTRL+C} / \code{ESC}
 or a SIGINT signal. See \code{\link[=new_app_process]{new_app_process()}} for interrupting an app that
 is running in another process.
 
@@ -289,7 +290,7 @@ app$set_config(key, value)
 \item \code{value}: configuration value.
 }
 
-Currently used configration values:
+Currently used configuration values:
 \itemize{
 \item \code{views}: path where presser searches for templates.
 }

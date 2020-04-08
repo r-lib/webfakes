@@ -2,7 +2,7 @@
 % Please edit documentation in R/httpbin.R
 \name{httpbin_app}
 \alias{httpbin_app}
-\title{Generic web app for testing HTTP clients, like httpbin.org}
+\title{Generic web app for testing HTTP clients}
 \usage{
 httpbin_app(log = interactive())
 }
@@ -13,7 +13,7 @@ httpbin_app(log = interactive())
 A \code{presser_app}.
 }
 \description{
-Generic web app for testing HTTP clients, like httpbin.org
+A web app similar to \url{https://httpbin.org}.
 }
 \examples{
 app <- httpbin_app()
