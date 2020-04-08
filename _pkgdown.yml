@@ -1,0 +1,38 @@
+
+development:
+  mode: auto
+
+authors:
+  "Gábor Csárdi":
+    href: https://github.com/gaborcsardi
+
+reference:
+- title: Create and run web apps
+  contents:
+  - new_app
+  - presser_request
+  - presser_response
+  - new_regexp
+  - new_app_process
+
+- title: Middleware to parse requests
+  contents:
+  - mw_raw
+  - mw_text
+  - mw_json
+  - mw_multipart
+  - mw_urlencoded
+
+- title: Other middleware
+  contents:
+  - mw_etag
+  - mw_log
+  - mw_static
+
+- title: Templates
+  contents:
+  - tmpl_glue
+
+- title: The httpbin app
+  contents:
+  - httpbin_app

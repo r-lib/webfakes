@@ -10,3 +10,6 @@
 ^src/.*\.dll$
 ^\.covrignore$
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
