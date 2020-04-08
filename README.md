@@ -5,13 +5,14 @@
 
 > Lightweight Web Server for Testing
 
-[![Linux Build
-Status](https://travis-ci.org/gaborcsardi/presser.svg?branch=master)](https://travis-ci.org/gaborcsardi/presser)
-[![Windows Build
-status](https://ci.appveyor.com/api/projects/status/github/gaborcsardi/presser?svg=true)](https://ci.appveyor.com/project/gaborcsardi/presser)
+<!-- badges: start -->
+
+[![R build
+status](https://github.com/gaborcsardi/pressr/workflows/R-CMD-check/badge.svg)](https://github.com/gaborcsardi/pressr/actions)
 [![](http://www.r-pkg.org/badges/version/presser)](http://www.r-pkg.org/pkg/presser)
 [![CRAN RStudio mirror
 downloads](http://cranlogs.r-pkg.org/badges/presser)](http://www.r-pkg.org/pkg/presser)
+<!-- badges: end -->
 
 Lightweight Web Server for Testing.
 
