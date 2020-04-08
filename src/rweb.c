@@ -152,10 +152,13 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
   int ret, i;
 
   while (1) {
+    struct timespec limit;
     while (srv->conn == NULL) {
+      clock_gettime(CLOCK_REALTIME, &limit);
+      limit.tv_sec += 1;
       R_CheckUserInterrupt();
       /* TODO: wake up handler callback to avoid a locked server */
-      ret = pthread_cond_wait(&srv->process_cond, &srv->process_lock);
+      ret = pthread_cond_timedwait(&srv->process_cond, &srv->process_lock, &limit);
     }
 
     /* Actual request processing */
