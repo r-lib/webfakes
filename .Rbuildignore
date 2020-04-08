@@ -7,5 +7,6 @@
 ^appveyor.yml$
 ^src/.*\.so$
 ^src/.*\.o$
+^src/.*\.dll$
 ^\.covrignore$
 ^\.github$
