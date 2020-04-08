@@ -94,7 +94,6 @@ static void presser_server_finalizer(SEXP rsrv) {
   ret += pthread_cond_destroy(&srv->process_cond);
   ret += pthread_mutex_destroy(&srv->finish_lock);
   ret += pthread_cond_destroy(&srv->finish_cond);
-  if (ret) warning("Error while cleaning up presser web server");
 }
 
 #define CHK(expr) if ((ret = expr))                                     \
