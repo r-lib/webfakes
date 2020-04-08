@@ -3,7 +3,7 @@ mime_find <- function(ext) {
   stopifnot(is_string(ext))
   m <- mime_types[ext]
   if (is.na(m)) {
-    ew <- endsWith(ext, names(mime_types_sfx))
+    ew <- str_is_suffix(ext, names(mime_types_sfx))
     m <- mime_types_sfx[ew]
   }
   c(m, NA_character_)[1]

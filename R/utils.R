@@ -38,3 +38,13 @@ unquote <- function(str) {
     str
   }
 }
+
+isFALSE <- function(x) {
+  identical(x, FALSE)
+}
+
+str_is_suffix <- function(x, sfx) {
+  lx <- nchar(x)
+  lsfx <- nchar(sfx)
+  substring(x, lx - lsfx + 1, lx) == sfx
+}
