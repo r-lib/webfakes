@@ -155,7 +155,11 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     struct timespec limit;
     while (srv->conn == NULL) {
       clock_gettime(CLOCK_REALTIME, &limit);
-      limit.tv_sec += 1;
+      limit.tv_nsec += 50 * 1000 * 1000;
+      if (limit.tv_nsec >= 1000 * 1000 * 1000) {
+        limit.tv_sec += 1;
+        limit.tv_nsec %= 1000 * 1000 * 1000;
+      }
       R_CheckUserInterrupt();
       /* TODO: wake up handler callback to avoid a locked server */
       ret = pthread_cond_timedwait(&srv->process_cond, &srv->process_lock, &limit);
