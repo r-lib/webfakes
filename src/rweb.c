@@ -260,6 +260,8 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
 
       if (TYPEOF(cnt) == RAWSXP) {
         clen = LENGTH(cnt);
+      } else if (isNull(cnt)) {
+        clen = 0;
       } else {
         clen = strlen(CHAR(STRING_ELT(cnt, 0)));
       }
@@ -275,7 +277,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       );
       if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
 
-      for (i = 0; i < LENGTH(hdr); i++) {
+      for (i = 0; !isNull(hdr) && i < LENGTH(hdr); i++) {
         const char *hs = CHAR(STRING_ELT(hdr, i));
         ret = mg_write(srv->conn, hs, strlen(hs));
         ret |= mg_write(srv->conn, "\r\n", 2);
@@ -288,7 +290,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
 
       if (TYPEOF(cnt) == RAWSXP) {
         ret = mg_write(srv->conn, RAW(cnt), clen);
-      } else {
+      } else if (TYPEOF(cnt) == STRSXP) {
         ret = mg_write(srv->conn, CHAR(STRING_ELT(cnt, 0)), clen);
       }
       if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
