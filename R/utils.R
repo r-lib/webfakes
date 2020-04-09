@@ -56,3 +56,7 @@ str_is_suffix <- function(x, sfx) {
 read_bin <- function(path) {
   readBin(path, "raw", file.info(path)$size)
 }
+
+try_silently <- function(expr) {
+  try(expr, silent = TRUE)
+}

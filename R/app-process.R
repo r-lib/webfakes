@@ -104,6 +104,8 @@ new_app_process <- function(app, ..., .port = NULL,
     get_port = function() self$.port,
 
     stop = function() {
+      if (is.null(self$.process)) return(invisible(self))
+
       # The details are important here, for the sake of covr,
       # so that we can test the presser package itself.
       # 1. The subprocess serving the app is in Sys.sleep(), which we
@@ -119,8 +121,8 @@ new_app_process <- function(app, ..., .port = NULL,
 
       self$.process$interrupt()
       self$.process$poll_process(1000)
-      self$.process$read()
-      self$.process$close()
+      try_silently(self$.process$read())
+      try_silently(self$.process$close())
       self$.process <- NULL
       invisible(self)
     },
