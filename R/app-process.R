@@ -74,9 +74,21 @@ new_app_process <- function(app, ..., .port = NULL,
       )
 
       if (self$.process$poll_process(.process_timeout) != "ready") {
+        self$.process$kill()
         stop("presser app subprocess did not start :(")
       }
       msg <- self$.process$read()
+      if (msg$code == 200 && !is.null(msg$error)) {
+        msg$error$message <- paste0(
+          "failed to start presser app process: ",
+          msg$error$message
+        )
+        stop(msg$error)
+      }
+      if (msg$code != 301) {
+        stop("Unexpected message from presser app subprocess. ",
+             "Report a bug please.")
+      }
       self$.port <- msg$message$port
 
       invisible(self)
