@@ -6,6 +6,9 @@
 #' @param app `presser_app` object, the web app to run.
 #' @param ... Options to pass to the [callr::r_session_options()] when
 #'   setting up the subprocess.
+#' @param .port Port to use. By default the OS assigns a port.
+#' @param .process_timeout How long to wait for the subprocess to start, in
+#'   milliseconds.
 #' @return A `presser_app_process` class.
 #'
 #' ## Methods
@@ -50,27 +53,28 @@
 #'
 #' proc$stop()
 
-new_app_process <- function(app, ...) {
+new_app_process <- function(app, ..., .port = NULL,
+                            .process_timeout = 5000) {
 
-  list(...)
+  app; list(...); .port; .process_timeout
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, ...) {
+    new = function(app, ..., .port = NULL) {
       self$.app <- app
       opts <- callr::r_session_options(...)
       self$.process <- callr::r_session$new(opts, wait = TRUE)
       self$.process$call(
-        args = list(app),
-        function(app) {
+        args = list(app, .port),
+        function(app, .port) {
           library(presser)
           .GlobalEnv$app <- app
-          app$listen(port = NULL)
+          app$listen(port = .port)
         }
       )
 
-      if (self$.process$poll_process(5000) != "ready") {
-        stop("app subprocess did not start :(")
+      if (self$.process$poll_process(.process_timeout) != "ready") {
+        stop("presser app subprocess did not start :(")
       }
       msg <- self$.process$read()
       self$.port <- msg$message$port
@@ -124,7 +128,7 @@ new_app_process <- function(app, ...) {
     .port = NULL
   )
 
-  self$new(app, ...)
+  self$new(app, ..., .port = .port)
   self$new <- NULL
 
   self
