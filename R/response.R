@@ -103,7 +103,7 @@ new_response <- function(app, api) {
     },
 
     send_file = function(path, root = ".") {
-      self$.body <- c(file = normalizePath(file.path(root, path)))
+      self$.body <- read_bin(normalizePath(file.path(root, path)))
 
       # Set content type automatically
       if (is.null(self$get_header("content-type"))) {
