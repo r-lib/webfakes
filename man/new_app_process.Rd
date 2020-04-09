@@ -5,13 +5,18 @@
 \alias{presser_app_process}
 \title{Run a presser app in another process}
 \usage{
-new_app_process(app, ...)
+new_app_process(app, ..., .port = NULL, .process_timeout = 5000)
 }
 \arguments{
 \item{app}{\code{presser_app} object, the web app to run.}
 
 \item{...}{Options to pass to the \code{\link[callr:r_session_options]{callr::r_session_options()}} when
 setting up the subprocess.}
+
+\item{.port}{Port to use. By default the OS assigns a port.}
+
+\item{.process_timeout}{How long to wait for the subprocess to start, in
+milliseconds.}
 }
 \value{
 A \code{presser_app_process} class.
