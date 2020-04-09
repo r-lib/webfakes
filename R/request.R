@@ -10,7 +10,7 @@
 #'
 #' * `app`: The `presser_app` object itself.
 #' * `headers`: Named list of HTTP request headers.
-#' * `hostname`: Client host.
+#' * `hostname`: The Host header, the server hostname and maybe port.
 #' * `method`: HTTP method.
 #' * `path`: Server path.
 #' * `protocol`: `"http"` or `"https"`.

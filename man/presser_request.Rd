@@ -14,7 +14,7 @@ Fields and methods:
 \itemize{
 \item \code{app}: The \code{presser_app} object itself.
 \item \code{headers}: Named list of HTTP request headers.
-\item \code{hostname}: Client host.
+\item \code{hostname}: The Host header, the server hostname and maybe port.
 \item \code{method}: HTTP method.
 \item \code{path}: Server path.
 \item \code{protocol}: \code{"http"} or \code{"https"}.

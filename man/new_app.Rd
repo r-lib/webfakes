@@ -2,6 +2,7 @@
 % Please edit documentation in R/app.R
 \name{new_app}
 \alias{new_app}
+\alias{presser_app}
 \title{Create a new web application}
 \usage{
 new_app()

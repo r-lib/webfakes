@@ -11,6 +11,7 @@
 #' @param x String scalar containing a regular expression.
 #' @return String with class `presser_regexp`.
 #'
+#' @aliases presser_regexp
 #' @seealso The 'Path specification' and 'Path parameters' chapters
 #' of the manual of [new_app()].
 #' @export

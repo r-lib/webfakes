@@ -2,6 +2,7 @@
 % Please edit documentation in R/app-process.R
 \name{new_app_process}
 \alias{new_app_process}
+\alias{presser_app_process}
 \title{Run a presser app in another process}
 \usage{
 new_app_process(app, ...)

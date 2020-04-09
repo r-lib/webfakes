@@ -35,6 +35,7 @@
 #' * `"live"` means that the server is running.
 #' * `"dead"` means that the subprocess has quit or crashed.
 #'
+#' @aliases presser_app_process
 #' @export
 #' @examples
 #' app <- new_app()

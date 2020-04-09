@@ -2,6 +2,7 @@
 % Please edit documentation in R/path.R
 \name{new_regexp}
 \alias{new_regexp}
+\alias{presser_regexp}
 \title{Create a new regular expression to use in presser routes}
 \usage{
 new_regexp(x)
