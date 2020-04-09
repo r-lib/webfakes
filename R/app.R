@@ -473,10 +473,6 @@ new_app <- function() {
         as.integer(res$.status)
       )
 
-      if (identical(names(res$.body), "file")) {
-        names(ans) <- "file"
-      }
-
       ans
     }
   )

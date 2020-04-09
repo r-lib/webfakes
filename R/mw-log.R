@@ -28,12 +28,14 @@ mw_log <- function(format = "dev", stream = stdout()) {
     start <- Sys.time()
 
     fmt <- function(req, res) {
-      len <- if (is.raw(res$.body)) {
+      len <- if (is.null(res$.body)) {
+        0L
+      } else if (is.raw(res$.body)) {
         length(res$.body)
-      } else if (identical(names(res$.body), "file")) {
-        file.info(res$.body)$size
-      } else {
+      } else if (is_string(res$.body)) {
         nchar(res$.body, type = "bytes")
+      } else {
+        "??"
       }
       t <- as.integer(round((Sys.time() - start) * 1000))
       msg <- sprintf(
