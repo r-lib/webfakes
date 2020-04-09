@@ -365,9 +365,9 @@ new_app <- function() {
       message(msg)
 
       on.exit(server_stop(srv), add = TRUE)
+      # does not return
       server_process(srv, self$.run)
 
-      invisible(self)
     },
 
     mkcol = function(path, ...) {
