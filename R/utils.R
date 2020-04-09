@@ -9,8 +9,12 @@ is_string <- function(x) {
   is.character(x) && length(x) == 1 && !is.na(x)
 }
 
+is_integerish <- function(x) {
+  is.integer(x) || (is.numeric(x) && all(round(x) == x))
+}
+
 is_count <- function(x) {
-  is.integer(x) && length(x) == 1 && !is.na(x)
+  is_integerish(x) && length(x) == 1 && !is.na(x)
 }
 
 is_port <- function(x) {
