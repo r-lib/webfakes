@@ -120,7 +120,7 @@
     <p>Runs an app in a subprocess, using <a href='https://rdrr.io/pkg/callr/man/r_session.html'>callr::r_session</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_app_process</span>(<span class='no'>app</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>new_app_process</span>(<span class='no'>app</span>, <span class='no'>...</span>, <span class='kw'>.port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.process_timeout</span> <span class='kw'>=</span> <span class='fl'>5000</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,6 +133,15 @@
       <th>...</th>
       <td><p>Options to pass to the <code><a href='https://rdrr.io/pkg/callr/man/r_session_options.html'>callr::r_session_options()</a></code> when
 setting up the subprocess.</p></td>
+    </tr>
+    <tr>
+      <th>.port</th>
+      <td><p>Port to use. By default the OS assigns a port.</p></td>
+    </tr>
+    <tr>
+      <th>.process_timeout</th>
+      <td><p>How long to wait for the subprocess to start, in
+milliseconds.</p></td>
     </tr>
     </table>
 
