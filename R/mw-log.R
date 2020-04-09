@@ -29,13 +29,13 @@ mw_log <- function(format = "dev", stream = stdout()) {
 
     fmt <- function(req, res) {
       len <- if (is.null(res$.body)) {
-        0L
+        0L                              # nocov
       } else if (is.raw(res$.body)) {
         length(res$.body)
       } else if (is_string(res$.body)) {
         nchar(res$.body, type = "bytes")
       } else {
-        "??"
+        "??"                            # nocov
       }
       t <- as.integer(round((Sys.time() - start) * 1000))
       msg <- sprintf(

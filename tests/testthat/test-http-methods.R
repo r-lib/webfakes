@@ -31,3 +31,28 @@ test_that("post", {
   )
   expect_equal(data$path, "/post")
 })
+
+test_methods <- c("connect", "delete", "head", "mkcol", "options",
+                  "patch", "propfind", "put", "report")
+
+proc2 <- setup({
+  app <- new_app()
+  handler <- function(req, res) res$send_json(list(method = req$method))
+  for (method in test_methods) app[[method]](paste0("/", method), handler)
+  new_app_process(app, .port = NA)
+})
+teardown(proc2$stop())
+
+test_that("the rest", {
+  for (method in test_methods) {
+    url <- proc2$get_url(paste0("/", method))
+    handle <- curl::new_handle()
+    curl::handle_setheaders(handle, "content-type" = "application/json")
+    curl::handle_setopt(handle, customrequest = toupper(method))
+
+    resp <- curl::curl_fetch_memory(url, handle = handle)
+    expect_equal(resp$status, 200)
+    echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+    expect_equal(echo$method, method)
+  }
+})
