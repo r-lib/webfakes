@@ -56,6 +56,7 @@ httpbin_app <- function(log = interactive()) {
       form = req$form,
       headers = req$headers,
       json = req$json,
+      method = req$method,
       path = req$path,
       origin = req$remote_addr,
       url = req$url
