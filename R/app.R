@@ -320,12 +320,6 @@ new_app <- function() {
       invisible(self)
     },
 
-    engine = function(ext, engine) {
-      rec <- list(ext = ext, engine = engine)
-      self$.engines <- c(self$.engines, list(rec))
-      invisible(self)
-    },
-
     connect = function(path, ...) {
       self$.stack <- c(self$.stack, parse_handlers("connect", path, ...))
       invisible(self)
@@ -338,6 +332,12 @@ new_app <- function() {
 
     get = function(path, ...) {
       self$.stack <- c(self$.stack, parse_handlers("get", path, ...))
+      invisible(self)
+    },
+
+    engine = function(ext, engine) {
+      rec <- list(ext = ext, engine = engine)
+      self$.engines <- c(self$.engines, list(rec))
       invisible(self)
     },
 
