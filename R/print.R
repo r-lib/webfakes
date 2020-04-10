@@ -120,10 +120,10 @@ print.presser_regexp <- function(x, ...) {
 format.presser_app_process <- function(x, ...) {
   header <- "<presser_app_process>"
   data <- c(
-    "process id:",
-    paste0("  ", x$.process$get_pid()),
     "state:",
     paste0("  ", x$get_state()),
+    "process id:",
+    paste0("  ", if (is.null(x$.process)) "none" else x$.process$get_pid()),
     "http url:",
     paste0("  ", x$get_url())
   )
