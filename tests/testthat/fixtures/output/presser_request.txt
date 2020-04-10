@@ -13,16 +13,16 @@ headers:
   accept: */*
   accept-encoding: deflate, gzip
 fields and methods:
-  app                    - the presser_app the request belongs to
-  headers                - HTTP request headers
-  hostname               - server hostname, the Host header
-  method                 - HTTP method of request (lowercase)
-  path                   - server path
-  protocol               - http or https
-  query_string           - raw query string with '?'
-  query                  - named list of query parameters
-  remote_addr            - IP address of the client
-  url                    - full URL of the request
-  get_header(field)      - get a request header
-(see ?presser_request for details)
+  app                    # the presser_app the request belongs to
+  headers                # HTTP request headers
+  hostname               # server hostname, the Host header
+  method                 # HTTP method of request (lowercase)
+  path                   # server path
+  protocol               # http or https
+  query_string           # raw query string with '?'
+  query                  # named list of query parameters
+  remote_addr            # IP address of the client
+  url                    # full URL of the request
+  get_header(field)      # get a request header
+ # see ?presser_request for details)
 

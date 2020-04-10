@@ -7,9 +7,9 @@ process id:
 http url:
   http://127.0.0.1:3000/
 fields and methods:
-  get_port()             - query port of the app
-  get_state()            - query web server process state
-  get_url(path, query)   - query url for an api path
-  stop()                 - stop web server process
-(see ?presser_app_process for details)
+  get_port()             # query port of the app
+  get_state()            # query web server process state
+  get_url(path, query)   # query url for an api path
+  stop()                 # stop web server process
+# see ?presser_app_process for details)
 
