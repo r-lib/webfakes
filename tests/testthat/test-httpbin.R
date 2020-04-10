@@ -53,13 +53,13 @@ test_that("/post", {
 test_that("/post and multipart data", {
   on.exit(rm(tmp), add = TRUE)
   tmp <- tempfile()
-  cat("foobar\n", file = tmp)
+  writeBin(charToRaw("foobar\n"), con = tmp)
   url <- web$get_url("/post")
   handle <- curl::new_handle()
   curl::handle_setopt(handle, customrequest = "POST")
   curl::handle_setform(
     handle, a = "1", b = "2",
-    c = curl::form_file(tmp, type = "text/plain")
+    c = curl::form_file(tmp, type = "application/octet-stream")
   )
 
   resp <- curl::curl_fetch_memory(url, handle = handle)
@@ -233,7 +233,8 @@ test_that("/encoding/utf8", {
     0xe1, 0x8c, 0x8c, 0xe1, 0x8c, 0xa5, 0x20, 0xe1, 0x8b,
     0xab, 0xe1, 0x88, 0x88, 0xe1, 0x89, 0xa4, 0xe1, 0x89, 0xb1
   ))
-  expect_equal(grepRaw(ptrn, resp$content, fixed = TRUE), 9085)
+  # On windows end of line is converted to \r\n
+  expect_true(grepRaw(ptrn, resp$content, fixed = TRUE) %in% c(9085, 9233))
 })
 
 test_that("/html", {
@@ -311,7 +312,7 @@ test_that("/delay", {
 
   url <- web$get_url("/delay/1")
   st <- system.time(resp <- curl::curl_fetch_memory(url))
-  expect_true(st[["elapsed"]] > 1.0)
+  expect_true(st[["elapsed"]] >= 1.0)
   expect_equal(resp$status_code, 200L)
   expect_equal(resp$type, "application/json")
   echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)

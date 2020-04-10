@@ -14,7 +14,7 @@ teardown(proc$stop())
 test_that("mw_multipart", {
   on.exit(rm(tmp), add = TRUE)
   tmp <- tempfile()
-  cat("foobar\n", file = tmp)
+  writeBin(charToRaw("foobar\n"), con = tmp)
   url <- proc$get_url("/form")
   handle <- curl::new_handle()
   curl::handle_setopt(handle, customrequest = "PUT")
