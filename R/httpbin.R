@@ -223,9 +223,9 @@ httpbin_app <- function(log = interactive()) {
 
   # Dynamic data =========================================================
 
-  app$get(new_regexp("/base64/(?<value>[\\+/=a-zA-Z0-9]*)"),
+  app$get(list("/base64", new_regexp("/base64/(?<value>[\\+/=a-zA-Z0-9]*)")),
           function(req, res) {
-    value <- req$params$value
+    value <- req$params$value %||% ""
     if (value == "") value <- "RXZlcnl0aGluZyBpcyBSc29tZQ=="
     plain <- charToRaw(base64_decode(value))
     res$
@@ -236,7 +236,7 @@ httpbin_app <- function(log = interactive()) {
   app$get("/bytes/:n", function(req, res) {
     n <- suppressWarnings(as.integer(req$params$n))
     if (is.na(n)) {
-      res$send_status(404L)
+      return("next")
     } else {
       n <- min(n, 10000)
       bytes <- as.raw(as.integer(floor(stats::runif(n, min=0, max=256))))
@@ -249,7 +249,7 @@ httpbin_app <- function(log = interactive()) {
   app$all("/delay/:delay", function(req, res) {
     delay <- suppressWarnings(as.integer(req$params$delay))
     if (is.na(delay)) {
-      res$send_status(404L)
+      return("next")
     } else {
       delay <- min(delay, 10)
       Sys.sleep(delay)
@@ -320,7 +320,7 @@ httpbin_app <- function(log = interactive()) {
   app$get("/absolute-redirect/:n", function(req, res) {
     n <- suppressWarnings(as.integer(req$params$n))
     if (is.na(n)) {
-      res$send_status(404L)
+      return("next")
     } else {
       if (n == 1) {
         url <- sub("/absolute-redirect/[0-9]+$", "/get", req$url)
@@ -335,11 +335,11 @@ httpbin_app <- function(log = interactive()) {
   app$get(c("/redirect/:n", "/relative-redirect/:n"), function(req, res) {
     n <- suppressWarnings(as.integer(req$params$n))
     if (is.na(n)) {
-      res$send_status(404L)
+      return("next")
     } else {
       if (n == 1) {
         url <- sub("/redirect/[0-9]+$", "/get", req$path)
-        url <- sub("/relative-redirect/[0-9]+$", "/get", req$path)
+        url <- sub("/relative-redirect/[0-9]+$", "/get", url)
       } else {
         n <- min(n, 5)
         url <- paste0(sub("/[0-9]+$", "/", req$path), n - 1)
