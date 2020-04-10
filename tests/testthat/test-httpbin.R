@@ -1,11 +1,11 @@
 
-proc <- setup(new_app_process(httpbin_app()))
-teardown(proc$stop())
+web <- setup(new_app_process(httpbin_app()))
+teardown(web$stop())
 
 # HTTP methods =========================================================
 
 test_that("/get", {
-  url <- proc$get_url("/get", query = c(q1 = "one", q2 = "two"))
+  url <- web$get_url("/get", query = c(q1 = "one", q2 = "two"))
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "foo" = "bar")
   resp <- curl::curl_fetch_memory(url, handle = handle)
@@ -18,7 +18,7 @@ test_that("/get", {
 })
 
 test_that("/post", {
-  url <- proc$get_url("/post", query = c(q1 = "one", q2 = "two"))
+  url <- web$get_url("/post", query = c(q1 = "one", q2 = "two"))
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
   curl::handle_setheaders(
@@ -50,11 +50,39 @@ test_that("/post", {
   )
 })
 
+test_that("/post and multipart data", {
+  on.exit(rm(tmp), add = TRUE)
+  tmp <- tempfile()
+  cat("foobar\n", file = tmp)
+  url <- web$get_url("/post")
+  handle <- curl::new_handle()
+  curl::handle_setopt(handle, customrequest = "POST")
+  curl::handle_setform(
+    handle, a = "1", b = "2",
+    c = curl::form_file(tmp, type = "text/plain")
+  )
+
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(echo$form, list(a = "1", b = "2"))
+  expect_equal(
+    echo$files$c,
+    list(
+      filename = basename(tmp),
+      value = paste0(
+        "data:application/octet-stream;base64,",
+        base64_encode("foobar\n")
+      )
+    )
+  )
+})
+
 # Auth =================================================================
 
 test_that("/basic-auth", {
   # no auth supplied
-  url <- proc$get_url("/basic-auth/Aladdin/OpenSesame")
+  url <- web$get_url("/basic-auth/Aladdin/OpenSesame")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 401L)
   expect_equal(resp$type, "text/plain")
@@ -88,6 +116,31 @@ test_that("/basic-auth", {
   expect_equal(headers$`www-authenticate`, "Basic realm=\"Fake Realm\"")
 })
 
+test_that("/bearer", {
+  # no auth
+  url <- web$get_url("/bearer")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 401L)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers$`www-authenticate`, "bearer")
+
+  # bad auth format
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "authorization", "foobar")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 401L)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers$`www-authenticate`, "bearer")
+
+  # correct format
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, authorization = "Bearer secret")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(echo, list(authenticated = TRUE, token = "secret"))
+})
+
 # Status codes =========================================================
 
 test_that("/status", {
@@ -95,7 +148,7 @@ test_that("/status", {
 
   # get
   for (code in codes) {
-    url <- proc$get_url(paste0("/status/", code))
+    url <- web$get_url(paste0("/status/", code))
     resp <- curl::curl_fetch_memory(url)
     expect_equal(resp$status_code, code)
   }
@@ -111,7 +164,7 @@ test_that("/status", {
     postfields = data
   )
   for (code in codes) {
-    url <- proc$get_url(paste0("/status/", code))
+    url <- web$get_url(paste0("/status/", code))
     resp <- curl::curl_fetch_memory(url, handle = handle)
     expect_equal(resp$status_code, code)
   }
@@ -119,23 +172,245 @@ test_that("/status", {
 
 # Request inspection ===================================================
 
+test_that("/headers", {
+  url <- web$get_url("/headers")
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "header1" = "this", "header2" = "that")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(echo$headers$header1, "this")
+  expect_equal(echo$headers$header2, "that")
+})
+
+test_that("/ip", {
+  url <- web$get_url("/ip")
+  resp <- curl::curl_fetch_memory(url)
+  echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(echo, list(origin = "127.0.0.1"))
+})
+
+test_that("/user-agent", {
+  url <- web$get_url("/user-agent")
+  ua <- "i am libcurl, that is my name"
+  withr::local_options(list(HTTPUserAgent = ua))
+  resp <- curl::curl_fetch_memory(url)
+  echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(echo, list("user-agent" = ua))
+})
+
 # Response inspection ==================================================
 
 # Response formats =====================================================
 
+test_that("/deny", {
+  url <- web$get_url("/deny")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 200L)
+  path <- system.file(
+    package = "presser",
+    "examples", "httpbin", "data", "deny.txt"
+  )
+  expect_equal(resp$content, read_bin(path))
+})
+
+test_that("/gzip", {
+  # curl seems to ungzip automatically, so we use url()
+  url <- web$get_url("/gzip")
+  con <- url(url, open = "rb")
+  on.exit(close(con), add = TRUE)
+  echo <- readBin(con, "raw", 10000)
+  expect_equal(echo[1:2], charToRaw("\x1f\x8b"))
+  json <- readChar(gzcon(rawConnection(echo)), 10000, useBytes = TRUE)
+  obj <- jsonlite::fromJSON(json, simplifyVector = FALSE)
+  expect_equal(obj$path, "/gzip")
+})
+
+test_that("/encoding/utf8", {
+  url <- web$get_url("/encoding/utf8")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$type, "text/html; charset=utf-8")
+  ptrn <- as.raw(c(
+    0xe1, 0x8c, 0x8c, 0xe1, 0x8c, 0xa5, 0x20, 0xe1, 0x8b,
+    0xab, 0xe1, 0x88, 0x88, 0xe1, 0x89, 0xa4, 0xe1, 0x89, 0xb1
+  ))
+  expect_equal(grepRaw(ptrn, resp$content, fixed = TRUE), 9085)
+})
+
+test_that("/html", {
+  url <- web$get_url("/html")
+  resp <- curl::curl_fetch_memory(url)
+  expect_match(resp$type, "^text/html")
+  expect_match(rawToChar(resp$content), "<html>", fixed = TRUE)
+})
+
+test_that("/json", {
+  url <- web$get_url("/json")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$type, "application/json")
+  path <- system.file(
+    package = "presser",
+    "examples", "httpbin", "data", "example.json"
+  )
+  expect_equal(resp$content, read_bin(path))
+})
+
+test_that("/robots.txt", {
+  url <- web$get_url("/robots.txt")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$type, "text/plain")
+  path <- system.file(
+    package = "presser",
+    "examples", "httpbin", "data", "robots.txt"
+  )
+  expect_equal(resp$content, read_bin(path))
+})
+
+test_that("/xml", {
+  url <- web$get_url("/xml")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$type, "application/xml")
+  path <- system.file(
+    package = "presser",
+    "examples", "httpbin", "data", "example.xml"
+  )
+  expect_equal(resp$content, read_bin(path))
+})
+
 # Dynamic data =========================================================
+
+test_that("/base64/", {
+  url <- web$get_url("/base64")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(rawToChar(resp$content), "Everything is Rsome")
+
+  value <- base64_encode("hello there!")
+  url <- web$get_url(paste0("/base64/", value))
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$type, "application/octet-stream")
+  expect_equal(rawToChar(resp$content), "hello there!")
+})
+
+test_that("/bytes", {
+  url <- web$get_url("/bytes/foo")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 404L)
+
+  url <- web$get_url("/bytes/1000")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$type, "application/octet-stream")
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers[["content-length"]], "1000")
+  expect_equal(length(resp$content), 1000)
+})
+
+test_that("/delay", {
+  url <- web$get_url("/delay/foo")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 404L)
+
+  url <- web$get_url("/delay/1")
+  st <- system.time(resp <- curl::curl_fetch_memory(url))
+  expect_true(st[["elapsed"]] > 1.0)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(resp$type, "application/json")
+  echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(echo$path, "/delay/1")
+})
+
+test_that("/uuid", {
+  url <- web$get_url("/uuid")
+  resp <- curl::curl_fetch_memory(url)
+  echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_match(echo$uuid, "^[-0-9a-z]+$")
+  expect_equal(nchar(echo$uuid), 36)
+})
 
 # Cookies ==============================================================
 
 # Images ===============================================================
 
+test_that("/image", {
+  url <- web$get_url("/image")
+  types <- c("image/webp", "image/svg+xml", "image/jpeg", "image/png")
+  for (type in types) {
+    handle <- curl::new_handle()
+    curl::handle_setheaders(handle, accept = type)
+    resp <- curl::curl_fetch_memory(url, handle = handle)
+    expect_equal(resp$status_code, 200L)
+    expect_equal(resp$type, type)
+  }
+
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, accept = "image/*")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(resp$type, "image/png")
+
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, accept = "application/json")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 406L)
+
+  exts <- c("jpeg", "png", "svg", "webp")
+  for (ext in exts) {
+    handle <- curl::new_handle()
+    url <- web$get_url(paste0("/image/", ext))
+    resp <- curl::curl_fetch_memory(url, handle = handle)
+    expect_equal(resp$status_code, 200L)
+    expect_equal(resp$type, unname(mime_find(ext)))
+  }
+})
+
 # Redirects ============================================================
+
+test_that("absolute-redirect", {
+  url <- web$get_url("/absolute-redirect/4")
+  handle <- curl::new_handle()
+  curl::handle_setopt(handle, followlocation = FALSE)
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 302L)
+  expect_equal(headers$location, web$get_url("/absolute-redirect/3"))
+
+  url <- web$get_url("/absolute-redirect/2")
+  handle <- curl::new_handle()
+  curl::handle_setopt(handle, followlocation = TRUE)
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(resp$url, web$get_url("/get"))
+
+  url <- web$get_url("/absolute-redirect/foo")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 404L)
+})
+
+test_that("redirect", {
+  url <- web$get_url("/redirect/4")
+  handle <- curl::new_handle()
+  curl::handle_setopt(handle, followlocation = FALSE)
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 302L)
+  expect_equal(headers$location, "/redirect/3")
+
+  url <- web$get_url("/redirect/2")
+  handle <- curl::new_handle()
+  curl::handle_setopt(handle, followlocation = TRUE)
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(resp$url, web$get_url("/get"))
+
+  url <- web$get_url("/redirect/foo")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 404L)
+})
 
 test_that("/redirect-to", {
   # default status is 302
   handle <- curl::new_handle()
   curl::handle_setopt(handle, followlocation = FALSE)
-  url <- proc$get_url("/redirect-to", query = list(url = "/get"))
+  url <- web$get_url("/redirect-to", query = list(url = "/get"))
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 302L)
   expect_equal(resp$type, "text/plain")
@@ -145,7 +420,7 @@ test_that("/redirect-to", {
   # can specify status
   handle <- curl::new_handle()
   curl::handle_setopt(handle, followlocation = FALSE)
-  url <- proc$get_url(
+  url <- web$get_url(
     "/redirect-to",
     query = list(url = "/status/200", status_code = 301)
   )

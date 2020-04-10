@@ -22,5 +22,6 @@ Suggests:
     glue,
     jsonlite,
     testthat,
-    uuid
+    uuid,
+    withr
 Encoding: UTF-8
