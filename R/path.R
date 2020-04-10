@@ -41,7 +41,7 @@ pattern_match <- function(path, patterns) {
     }
     if (inherits(p, "presser_regexp")) {
       m <- re_match(path, p)
-      if (m$match) return(list(params = m$groups))
+      if (m$match) return(list(params = as.list(m$groups)))
     } else {
       if (path == p) return(TRUE)
     }

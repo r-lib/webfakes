@@ -13,7 +13,8 @@ re_match <- function(text, pattern, perl = TRUE, ...) {
   matchstr <- substring(text, start, end)
   matchstr[ start == -1 ] <- NA_character_
 
-  res <- list(match = !is.na(matchstr), groups = list())
+  empty <- data.frame(stringsAsFactors = FALSE, .text = text)[, numeric()]
+  res <- list(match = !is.na(matchstr), groups = empty)
 
   if (!is.null(attr(match, "capture.start"))) {
 
@@ -25,7 +26,7 @@ re_match <- function(text, pattern, perl = TRUE, ...) {
     groupstr[ gstart == -1 ] <- NA_character_
     dim(groupstr) <- dim(gstart)
 
-    res$groups <- as.list(groupstr)
+    res$groups <- cbind(groupstr, res$groups, stringsAsFactors = FALSE)
     names(res$groups) <- attr(match, "capture.names")
   }
 
