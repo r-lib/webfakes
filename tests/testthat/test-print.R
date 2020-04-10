@@ -9,6 +9,7 @@ tmp <- setup({
       send(normalizePath(tmp))
   })
   proc <- new_app_process(app)
+  withr::local_options(list(HTTPUserAgent = "It is me, libcurl"))
   resp <- curl::curl_fetch_memory(proc$get_url())
   tmp <- rawToChar(resp$content)
   list(tmp = tmp, proc = proc)

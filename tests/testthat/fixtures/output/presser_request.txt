@@ -9,7 +9,7 @@ client:
 query:
 headers:
   host: 127.0.0.1:3000
-  user-agent: R (3.6.2 x86_64-apple-darwin15.6.0 x86_64 darwin15.6.0)
+  user-agent: It is me, libcurl
   accept: */*
   accept-encoding: deflate, gzip
 fields and methods:
