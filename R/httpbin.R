@@ -70,7 +70,7 @@ httpbin_app <- function(log = interactive()) {
 
   # HTTP methods =========================================================
 
-  app$get("/get", function(req, res) {
+  common_get <- function(req, res) {
     ret <- list(
       args = as.list(req$query),
       headers = req$headers,
@@ -79,7 +79,9 @@ httpbin_app <- function(log = interactive()) {
       url = req$url
     )
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
-  })
+  }
+
+  app$get("/get", common_get)
 
   app$delete("/delete", common_response)
   app$patch("/patch", common_response)
@@ -151,6 +153,40 @@ httpbin_app <- function(log = interactive()) {
   })
 
   # Response inspection ==================================================
+
+  app$get("/etag/:etag", function(req, res) {
+    etag <- req$params$etag
+
+    # The mw_etag() middleware is active, so we need to do this after that
+    res_etag <- NULL
+    res$on_response(function(req, res) {
+      if (!is.null(res_etag)) res$set_header("etag", res_etag)
+    })
+
+    parse <- function(x) {
+      x <- strsplit(x, ",", fixed = TRUE)[[1]]
+      re_match(x, '\\s*(W/)?"?([^"]*)"?\\s*')$groups[,2]
+    }
+
+    if_none_match <- parse(req$get_header("if-none-match") %||% "")
+    if_match <- parse(req$get_header("if-match") %||% "")
+
+    if (length(if_none_match) > 0) {
+      if (etag %in% if_none_match || "*" %in% if_none_match) {
+        res$set_status(304)
+        res_etag <- "etag"
+        return()
+      }
+    } else if (length(if_match) > 0) {
+      if ((! etag %in% if_match) && (!"*" %in% if_match)) {
+        res$set_status(412)
+        return()
+      }
+    }
+
+    res_etag <- etag
+    common_get(req, res)
+  })
 
   # TODO: /cache * /cache/{value} * /etag * /response-headers (2x)
 

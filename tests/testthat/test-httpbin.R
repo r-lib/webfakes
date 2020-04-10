@@ -200,6 +200,41 @@ test_that("/user-agent", {
 
 # Response inspection ==================================================
 
+test_that("/etag", {
+  url <- web$get_url("/etag/foobar")
+  resp <- curl::curl_fetch_memory(url)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200)
+  expect_equal(headers$etag, "foobar")
+
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "If-None-Match" = "\"foobar\"")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 304)
+  expect_true(length(resp$content) == 0)
+
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "If-None-Match" = "\"not-foobar\"")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200)
+  expect_true(length(resp$content) > 0)
+
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "If-Match" = "\"foobar\"")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200)
+  expect_true(length(resp$content) > 0)
+
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "If-Match" = "\"not-foobar\"")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 412)
+})
+
 # Response formats =====================================================
 
 test_that("/deny", {
