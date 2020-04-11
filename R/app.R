@@ -483,9 +483,15 @@ new_app <- function() {
 parse_handlers <- function(method, path, ...) {
   handlers <- list(...)
   ans <- list()
-  for (h in handlers) {
-    if (is.function(h)) {
-      rec <- list(method = method, path = path, handler = h)
+  for (h in seq_along(handlers)) {
+    handler <- handlers[[h]]
+    if (is.function(handler)) {
+      rec <- list(
+        method = method,
+        path = path,
+        handler = handler,
+        name = names(handlers)[h]
+      )
       ans <- c(ans, list(rec))
     } else {
       stop("Invalid presser handler")

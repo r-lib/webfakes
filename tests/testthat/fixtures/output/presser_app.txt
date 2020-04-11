@@ -1,5 +1,8 @@
-> new_app()
+> app
 <presser_app>
+routes:
+  use * # add etag
+  get /api
 fields and methods:
   all(path, ...)         # add route for *all* HTTP methods
   delete(path, ...)      # add route for DELETE

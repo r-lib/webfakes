@@ -31,19 +31,19 @@ httpbin_app <- function(log = interactive()) {
   app <- new_app()
 
   # Log requests by default
-  if (log) app$use(mw_log())
+  if (log) app$use("logger" = mw_log())
 
   # Parse all kinds of bodies
-  app$use(mw_json())
-  app$use(mw_text(type = c("text/plain", "application/json")))
-  app$use(mw_multipart())
-  app$use(mw_urlencoded())
+  app$use("json body parser" = mw_json())
+  app$use("text body parser" = mw_text(type = c("text/plain", "application/json")))
+  app$use("multipart body parser" = mw_multipart())
+  app$use("URL encoded body parser" = mw_urlencoded())
 
   # Add etags by default
-  app$use(mw_etag())
+  app$use("add etag" = mw_etag())
 
   # Add date by default
-  app$use(function(req, res) {
+  app$use("add date" = function(req, res) {
     res$set_header("date", as.character(Sys.time()))
     "next"
   })

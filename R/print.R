@@ -5,10 +5,24 @@ format_named_list <- function(name, data) {
   )
 }
 
+format_path <- function(patterns) {
+  # Make sure patterns is a list
+  if (inherits(patterns, "presser_regexp")) {
+    patterns <- list(patterns)
+  } else if (is.character(patterns)) {
+    patterns <- as.list(patterns)
+  }
+  paste(collapse = ", ", vapply(patterns, format, character(1)))
+}
+
 #' @export
 
 format.presser_app <- function(x, ...) {
   header <- "<presser_app>"
+  data <- vapply(x$.stack, FUN.VALUE = character(1), function(x) {
+    name <- if (nchar(x$name %||% "")) paste0(" # ", x$name)
+    paste0("  ", x$method, " ", format_path(x$path), name)
+  })
   methods <- c(
     "  all(path, ...)         # add route for *all* HTTP methods",
     "  delete(path, ...)      # add route for DELETE",
@@ -22,7 +36,7 @@ format.presser_app <- function(x, ...) {
     "  locals                 # app-wide shared data"
   )
   help <- "# see ?presser_app for all methods"
-  c(header, "fields and methods:", methods, help)
+  c(header, "routes:", data, "fields and methods:", methods, help)
 }
 
 #' @export

@@ -17,9 +17,12 @@ tmp <- setup({
 teardown({ tmp$proc$stop(); unlink(tmp$tmp) })
 
 test_that("presser_app", {
+  app <- new_app()
+  app$use("add etag" = mw_etag())
+  app$get("/api", function(req, res) res$send("foobar"))
   verify_output(
     test_path("fixtures", "output", "presser_app.txt"),
-    new_app()
+    app
   )
 })
 
