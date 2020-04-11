@@ -151,6 +151,7 @@ milliseconds.</p></td>
 
 
 <p>The <code>presser_app_process</code> class has the following methods:<div class="r"></p><pre><span class='fu'>get_url</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"/"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>get_app</span>()
 <span class='fu'>get_port</span>()
 <span class='fu'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span>()
 <span class='fu'>get_state</span>()</pre><p></div></p><ul>
@@ -158,6 +159,7 @@ milliseconds.</p></td>
 <li><p><code>query</code>: Additional query parameters, a named list, to add to the URL.</p></li>
 </ul>
 
+<p><code>get_app()</code> returns the app object.</p>
 <p><code>get_url()</code> returns the URL of the web app. You can use the <code>path</code>
 parameter to return a specific path.</p>
 <p><code>get_port()</code> returns the port the web server is running on.</p>
