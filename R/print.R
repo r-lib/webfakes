@@ -142,6 +142,7 @@ format.presser_app_process <- function(x, ...) {
     paste0("  ", x$get_url())
   )
   methods <- c(
+    "  get_app()              # get the app object",
     "  get_port()             # query port of the app",
     "  get_state()            # query web server process state",
     "  get_url(path, query)   # query url for an api path",

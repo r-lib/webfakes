@@ -23,6 +23,7 @@ A \code{presser_app_process} class.
 \subsection{Methods}{
 
 The \code{presser_app_process} class has the following methods:\if{html}{\out{<div class="r">}}\preformatted{get_url(path = "/", query = NULL)
+get_app()
 get_port()
 stop()
 get_state()
@@ -31,6 +32,8 @@ get_state()
 \item \code{path}: Path to return the URL for.
 \item \code{query}: Additional query parameters, a named list, to add to the URL.
 }
+
+\code{get_app()} returns the app object.
 
 \code{get_url()} returns the URL of the web app. You can use the \code{path}
 parameter to return a specific path.

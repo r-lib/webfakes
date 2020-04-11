@@ -17,6 +17,7 @@
 #'
 #' ```r
 #' get_url(path = "/", query = NULL)
+#' get_app()
 #' get_port()
 #' stop()
 #' get_state()
@@ -24,6 +25,8 @@
 #'
 #' * `path`: Path to return the URL for.
 #' * `query`: Additional query parameters, a named list, to add to the URL.
+#'
+#' `get_app()` returns the app object.
 #'
 #' `get_url()` returns the URL of the web app. You can use the `path`
 #' parameter to return a specific path.
@@ -93,6 +96,8 @@ new_app_process <- function(app, ..., .port = NULL,
 
       invisible(self)
     },
+
+    get_app = function() self$.app,
 
     get_url = function(path = "/", query = NULL) {
       if (!is.null(query)) {
