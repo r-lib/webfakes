@@ -34,12 +34,15 @@ struct presser_server {
   struct mg_context *ctx;
   pthread_cond_t process_cond;  /* can process? */
   pthread_mutex_t process_lock;
-  pthread_cond_t finish_cond;   /* can finish callback? */
-  pthread_mutex_t finish_lock;
-  struct mg_connection *conn ;
-  int response_ok;
+  struct mg_connection *conn ;  /* the currenty active connection or NULL */
   struct mg_server_port ports[4];
   int num_ports;
+};
+
+struct presser_connection {
+  pthread_cond_t finish_cond;   /* can finish callback? */
+  pthread_mutex_t finish_lock;
+  int may_continue;             /* the request thread may continue */
 };
 
 void SEXP_to_char_vector(SEXP x, char*** vec) {
@@ -57,9 +60,17 @@ static int begin_request(struct mg_connection *conn) {
 
   struct mg_context *ctx = mg_get_context(conn);
   struct presser_server *srv = mg_get_user_data(ctx);
+  int ret = 0;
 
-  /* TODO: log errors into the web error log. */
-  /* TODO: what happens to the locks on error, we should release them? */
+  mg_set_user_connection_data(conn, NULL);
+  struct presser_connection *conn_data =
+    malloc(sizeof(struct presser_connection));
+  if (conn_data == NULL) return 1;
+  mg_set_user_connection_data(conn, conn_data);
+  memset(conn_data, 0, sizeof(struct presser_connection));
+  ret += pthread_cond_init(&conn_data->finish_cond, NULL);
+  ret += pthread_mutex_init(&conn_data->finish_lock, NULL);
+  if (ret) return 1;
 
   if (pthread_mutex_lock(&srv->process_lock)) return 1;
   srv->conn = conn;
@@ -67,16 +78,40 @@ static int begin_request(struct mg_connection *conn) {
   if (pthread_mutex_unlock(&srv->process_lock)) return 1;
 
   /* Need to wait for the response... */
-  if (pthread_mutex_lock(&srv->finish_lock)) return 1;
-  while (srv->response_ok == 0) {
-    if (pthread_cond_wait(&srv->finish_cond, &srv->finish_lock)) return 1;
+  if (pthread_mutex_lock(&conn_data->finish_lock)) return 1;
+  while (conn_data->may_continue == 0) {
+    if (pthread_cond_wait(&conn_data->finish_cond,
+                          &conn_data->finish_lock)) {
+      return 1;
+    }
   }
 
-  srv->response_ok = 0;
+  conn_data->may_continue = 0;
 
   /* we can return now, whatever the return value here */
-  pthread_mutex_unlock(&srv->finish_lock);
+  pthread_mutex_unlock(&conn_data->finish_lock);
   return 1;
+}
+
+static int init_connection(const struct mg_connection *conn,
+                           void **conn_data) {
+  *conn_data = NULL;
+  return 0;
+}
+
+static void connection_close(const struct mg_connection *conn) {
+  struct presser_connection *conn_data = mg_get_user_connection_data(conn);
+  if (conn_data == NULL) return;
+  pthread_cond_destroy(&conn_data->finish_cond);
+  pthread_mutex_destroy(&conn_data->finish_lock);
+  free(conn_data);
+  mg_set_user_connection_data((struct mg_connection*) conn, NULL);
+}
+
+static void end_request(const struct mg_connection *conn, int reply_status_code) {
+  /* Right now, these two are the same, they are probably redundant,
+     but it does not hurt */
+  connection_close(conn);
 }
 
 static void presser_server_finalizer(SEXP rsrv) {
@@ -85,15 +120,10 @@ static void presser_server_finalizer(SEXP rsrv) {
   if (srv == NULL) return;
   int ret = 0;
   R_ClearExternalPtr(rsrv);
-  srv->response_ok = 1;
   ret += pthread_mutex_unlock(&srv->process_lock);
-  ret += pthread_mutex_unlock(&srv->finish_lock);
-  ret += pthread_cond_signal(&srv->finish_cond);
   mg_stop(srv->ctx);
   ret += pthread_mutex_destroy(&srv->process_lock);
   ret += pthread_cond_destroy(&srv->process_cond);
-  ret += pthread_mutex_destroy(&srv->finish_lock);
-  ret += pthread_cond_destroy(&srv->finish_cond);
 }
 
 #define CHK(expr) if ((ret = expr))                                     \
@@ -112,8 +142,6 @@ SEXP server_start(SEXP options) {
 
   CHK(pthread_cond_init(&srv->process_cond, NULL));
   CHK(pthread_mutex_init(&srv->process_lock, NULL));
-  CHK(pthread_cond_init(&srv->finish_cond, NULL));
-  CHK(pthread_mutex_init(&srv->finish_lock, NULL));
 
   char **coptions;
   SEXP_to_char_vector(options, &coptions);
@@ -121,6 +149,9 @@ SEXP server_start(SEXP options) {
 
   memset(&callbacks, 0, sizeof(callbacks));
   callbacks.begin_request = begin_request;
+  callbacks.end_request = end_request;
+  callbacks.init_connection = init_connection;
+  callbacks.connection_close = connection_close;
   srv->ctx = mg_start(&callbacks, srv, (const char **) coptions);
 
   if (srv->ctx == NULL) R_THROW_ERROR("Cannot start presser web server");
@@ -164,6 +195,9 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       /* TODO: wake up handler callback to avoid a locked server */
       ret = pthread_cond_timedwait(&srv->process_cond, &srv->process_lock, &limit);
     }
+
+    struct presser_connection *conn_data =
+      mg_get_user_connection_data(srv->conn);
 
     /* Actual request processing */
 
@@ -309,10 +343,10 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     srv->conn = 0;
     CHK(pthread_mutex_unlock(&srv->process_lock));
 
-    CHK(pthread_mutex_lock(&srv->finish_lock));
-    srv->response_ok = 1;
-    CHK(pthread_cond_signal(&srv->finish_cond));
-    CHK(pthread_mutex_unlock(&srv->finish_lock));
+    CHK(pthread_mutex_lock(&conn_data->finish_lock));
+    conn_data->may_continue = 1;
+    CHK(pthread_cond_signal(&conn_data->finish_cond));
+    CHK(pthread_mutex_unlock(&conn_data->finish_lock));
   }
 
   return R_NilValue;
