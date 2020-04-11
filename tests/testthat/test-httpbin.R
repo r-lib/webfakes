@@ -345,13 +345,13 @@ test_that("/delay", {
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 404L)
 
-  url <- web$get_url("/delay/1")
+  url <- web$get_url("/delay/0.1")
   st <- system.time(resp <- curl::curl_fetch_memory(url))
-  expect_true(st[["elapsed"]] >= 1.0)
+  expect_true(st[["elapsed"]] >= 0.1)
   expect_equal(resp$status_code, 200L)
   expect_equal(resp$type, "application/json")
   echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
-  expect_equal(echo$path, "/delay/1")
+  expect_equal(echo$path, "/delay/0.1")
 })
 
 test_that("/uuid", {

@@ -282,8 +282,8 @@ httpbin_app <- function(log = interactive()) {
     }
   })
 
-  app$all("/delay/:delay", function(req, res) {
-    delay <- suppressWarnings(as.integer(req$params$delay))
+  app$all(new_regexp("/delay/(?<delay>[0-9\\.]+)$"), function(req, res) {
+    delay <- suppressWarnings(as.numeric(req$params$delay))
     if (is.na(delay)) {
       return("next")
     } else {
