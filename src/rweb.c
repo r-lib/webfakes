@@ -30,12 +30,18 @@ void R_init_presser(DllInfo *dll) {
   mg_init_library(0);
 }
 
+#define PRESSER_REQ   1         /* request just came it */
+#define PRESSER_ALARM 2         /* timer is up */
+#define PRESSER_DONE  3         /* request is done */
+#define PRESSER_WAIT  4         /* wait a bit */
+
 struct presser_server {
   struct mg_context *ctx;
   pthread_cond_t process_more;  /* there is something to process */
   pthread_cond_t process_less;  /* we can process something */
   pthread_mutex_t process_lock;
-  struct mg_connection *conn ;  /* the currenty active connection or NULL */
+  struct mg_connection *conn;   /* the currenty active connection or NULL */
+  int todo;
   struct mg_server_port ports[4];
   int num_ports;
 };
@@ -43,7 +49,8 @@ struct presser_server {
 struct presser_connection {
   pthread_cond_t finish_cond;   /* can finish callback? */
   pthread_mutex_t finish_lock;
-  int may_continue;             /* the request thread may continue */
+  int todo;                     /* done? or should we wait? */
+  double secs;                  /* how much should we wait? */
 };
 
 void SEXP_to_char_vector(SEXP x, char*** vec) {
@@ -72,12 +79,15 @@ static int begin_request(struct mg_connection *conn) {
   while (srv->conn != NULL) {
     pthread_cond_wait(&srv->process_less, &srv->process_lock);
   }
+
   srv->conn = conn;
+  srv->todo = PRESSER_REQ;
+
   if (pthread_cond_signal(&srv->process_more)) goto exit;
   if (pthread_mutex_unlock(&srv->process_lock)) goto exit;
 
   /* Need to wait for the response... */
-  while (conn_data.may_continue == 0) {
+  while (conn_data.todo == 0) {
     if (pthread_cond_wait(&conn_data.finish_cond,
                           &conn_data.finish_lock)) {
       goto exit;
@@ -343,7 +353,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
 
     /* Notify the worker thread */
     CHK(pthread_mutex_lock(&conn_data->finish_lock));
-    conn_data->may_continue = 1;
+    conn_data->todo = PRESSER_DONE;
     CHK(pthread_cond_signal(&conn_data->finish_cond));
     CHK(pthread_mutex_unlock(&conn_data->finish_lock));
 
