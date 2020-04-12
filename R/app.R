@@ -440,14 +440,16 @@ new_app <- function() {
 
       path <- rreq$local_uri
 
-      req <- new_request(self, rreq)
-      res <- new_response(self, req)
+      req <- rreq$request %||% new_request(self, rreq)
+      res <- rreq$response %||% new_response(self, req)
 
-      for (h in self$.stack) {
-        m <- path_match(req$method, path, h)
+      for (i in sseq(res$.stackptr, length(self$.stack))) {
+        handler <- self$.stack[[i]]
+        m <- path_match(req$method, path, handler)
         if (!isFALSE(m)) {
           if (is.list(m)) req$params <- m$params
-          out <- h$handler(req, res)
+          out <- handler$handler(req, res)
+          if (identical(out, "callme")) res$.stackptr <- i
           if (!identical(out, "next")) break
         }
       }

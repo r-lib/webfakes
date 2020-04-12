@@ -174,7 +174,8 @@ new_response <- function(app, req) {
     .status = NULL,
     .headers = list(),
     .on_response = NULL,
-    .sent = FALSE
+    .sent = FALSE,
+    .stackptr = 1L
   )
 
   self

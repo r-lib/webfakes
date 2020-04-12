@@ -60,3 +60,7 @@ read_bin <- function(path) {
 try_silently <- function(expr) {
   try(expr, silent = TRUE)
 }
+
+sseq <- function(from, to) {
+  if (from > to) integer() else seq(from, to)
+}
