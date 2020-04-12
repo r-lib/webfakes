@@ -3,12 +3,16 @@
 #include <R_ext/Rdynload.h>
 #include <Rinternals.h>
 
-#include <pthread.h>
-#include <time.h>
-#include <unistd.h>
-
 #include "civetweb.h"
 #include "errors.h"
+
+#include <pthread.h>
+#include <time.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 SEXP server_start(SEXP options);
 SEXP server_process(SEXP rsrv, SEXP handler, SEXP env);
@@ -98,7 +102,11 @@ static int begin_request(struct mg_connection *conn) {
     }
     if (conn_data.req_todo == PRESSER_DONE) break;
     if (conn_data.req_todo == PRESSER_WAIT) {
+#ifdef _WIN32
+      Sleep(conn_data.secs * 1000);
+#else
       usleep(conn_data.secs * 1000 * 1000);
+#endif
     }
     conn_data.main_todo = PRESSER_WAIT;
     conn_data.req_todo = PRESSER_NOTHING;
@@ -256,7 +264,7 @@ SEXP presser_create_request(SEXP rsrv) {
   return rreq;
 }
 
-SEXP presser_send_response(SEXP res, SEXP rsrv) {
+void presser_send_response(SEXP res, SEXP rsrv) {
   struct presser_server *srv = R_ExternalPtrAddr(rsrv);
   if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
   int ret, i;
@@ -345,8 +353,6 @@ SEXP presser_send_response(SEXP res, SEXP rsrv) {
   } else {
     R_THROW_ERROR("Invalid presser response");
   }
-
-  return R_NilValue;
 }
 
 SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
@@ -375,9 +381,12 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     switch(conn_data->main_todo) {
     case PRESSER_REQ:
       req = PROTECT(presser_create_request(rsrv));
+      conn_data->req = req;
+      R_PreserveObject(req);
+      UNPROTECT(1);
       break;
     case PRESSER_WAIT:
-      /* TODO */
+      req = conn_data->req;
       break;
     default:
       break;
@@ -389,10 +398,18 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     SEXP trycall = PROTECT(lang3(try, call, silent));
     SEXP res = PROTECT(eval(trycall, env));
 
+    CHK(pthread_mutex_lock(&conn_data->finish_lock));
+
+    /* TODO: need to catch errors here, because they do not
+       wake up the request thread, and the server freezes. */
     if (TYPEOF(res) != VECSXP || INTEGER(VECTOR_ELT(res, 0))[0] == 0) {
       presser_send_response(res, rsrv);
+      conn_data->req_todo = PRESSER_DONE;
+      R_ReleaseObject(conn_data->req);
+      conn_data->req = R_NilValue;
     } else if (INTEGER(VECTOR_ELT(res, 0))[0] == 1) {
-      /* TODO */
+      conn_data->secs = REAL(VECTOR_ELT(res, 1))[0];
+      conn_data->req_todo = PRESSER_WAIT;
     } else {
       R_THROW_ERROR("Invalid presser response, internal error");
     }
@@ -401,8 +418,6 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     srv->conn = NULL;
 
     /* Notify the worker thread */
-    CHK(pthread_mutex_lock(&conn_data->finish_lock));
-    conn_data->req_todo = PRESSER_DONE;
     CHK(pthread_cond_signal(&conn_data->finish_cond));
     CHK(pthread_mutex_unlock(&conn_data->finish_lock));
 
@@ -410,6 +425,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     pthread_cond_signal(&srv->process_less);
   }
 
+  /* Never returns... */
   return R_NilValue;
 }
 

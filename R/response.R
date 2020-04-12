@@ -52,6 +52,11 @@ new_response <- function(app, req) {
     req = req,
     locals = as.environment(as.list(app$locals)),
 
+    delay = function(secs) {
+      self$.delay <- secs
+      invisible(self)
+    },
+
     get_header = function(field) self$.headers[[tolower(field)]],
 
     on_response = function(fun) {

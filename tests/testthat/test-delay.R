@@ -1,0 +1,42 @@
+
+web <- setup({
+  app <- new_app()
+  app$get("/delay", function(req, res) {
+    if (is.null(res$locals$seen)) {
+      res$locals$seen <- TRUE
+      res$delay(.2)
+    } else {
+      res$send_json(
+        list(message = "Sorry, running late..."),
+        auto_unbox = TRUE
+      )
+    }
+  })
+  app$get("/nodelay", function(req, res) {
+    res$send_json(
+      list(message = "I am fast, aren't I?"),
+      auto_unbox = TRUE
+    )
+  })
+  
+ new_app_process(app)
+})
+
+teardown(web$stop())
+
+test_that("delay", {
+  p <- curl::new_pool(multiplex = FALSE)
+  h1 <- curl::new_handle(url = web$get_url("/delay"))
+  h2 <- curl::new_handle(url = web$get_url("/nodelay"))
+  resp1 <- resp2 <- NULL
+  curl::multi_add(h1, done = function(x) resp1 <<- x, fail = stop, pool = p)
+  curl::multi_add(h2, done = function(x) resp2 <<- x, fail = stop, pool = p)
+  curl::multi_run(timeout = 2, pool = p)
+  curl::multi_cancel(h1)
+  curl::multi_cancel(h2)
+
+  expect_false(is.null(resp1))
+  expect_false(is.null(resp2))
+  expect_true(sum(resp1$times) > 0.2)
+  expect_true(sum(resp2$times) < 0.2)
+})

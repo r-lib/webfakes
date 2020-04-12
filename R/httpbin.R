@@ -295,9 +295,13 @@ httpbin_app <- function(log = interactive()) {
     delay <- suppressWarnings(as.numeric(req$params$delay))
     if (is.na(delay)) {
       return("next")
-    } else {
+    } else if (is.null(res$locals$seen)) {
+      res$locals$seen <- TRUE
       delay <- min(delay, 10)
-      Sys.sleep(delay)
+      res$delay(delay)
+    } else if (req$method == "head") {
+      res$send_status(200L)
+    } else {
       common_response(req, res)
     }
   })

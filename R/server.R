@@ -1,5 +1,5 @@
 
-server_start <- function(port = NULL, num_threads = 1) {
+server_start <- function(port = NULL, num_threads = 10) {
   port <- paste0("127.0.0.1:", as.character(port %||% "0"))
   options <- c(
     "listening_ports"          = port,

@@ -440,21 +440,22 @@ new_app <- function() {
 
       req <- new_request(self, req)
       res <- req$res
+      res$.delay <- NULL
 
       out <- NULL
       for (i in sseq(res$.stackptr, length(self$.stack))) {
         handler <- self$.stack[[i]]
         m <- path_match(req$method, req$path, handler)
         if (!isFALSE(m)) {
+          res$.i <- i
           if (is.list(m)) req$params <- m$params
           out <- handler$handler(req, res)
-          if (inherits(out, "presser_callme")) res$.stackptr <- i
           if (!identical(out, "next")) break
         }
       }
 
-      if (inherits(out, "presser_callme")) {
-        list(1L, out$delay)
+      if (!is.null(res$.delay)) {
+        list(1L, as.double(res$.delay))
 
       } else {
 
