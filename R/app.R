@@ -441,7 +441,7 @@ new_app <- function() {
       path <- rreq$local_uri
 
       req <- new_request(self, rreq)
-      res <- new_response(self)
+      res <- new_response(self, req)
 
       for (h in self$.stack) {
         m <- path_match(req$method, path, h)
@@ -455,14 +455,8 @@ new_app <- function() {
       content_type <- res$.headers[["content-type"]] %||% "text/plain"
       res$.headers <- res$.headers[names(res$.headers) != "content-type"]
 
-      if (is.null(res$.status)) {
-        res$.status <- if (is.null(res$.body)) 404L else 200L
-      }
-      if (is.null(res$.body)) {
-        res$.body <- "Not found"
-      }
-
-      for (fn in res$.on_response) try(fn(req, res))
+      # We need to do this here, in case there was no $send() at all
+      res$.set_defaults()
 
       ans <- list(
         res$.body,

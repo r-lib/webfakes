@@ -44,11 +44,12 @@
 #' @name presser_response
 NULL
 
-new_response <- function(app, api) {
+new_response <- function(app, req) {
   self <- new_object(
     "presser_response",
 
     app = app,
+    req = req,
     locals = as.environment(as.list(app$locals)),
 
     get_header = function(field) self$.headers[[tolower(field)]],
@@ -59,6 +60,7 @@ new_response <- function(app, api) {
     },
 
     redirect = function(path, status = 302) {
+      if (self$.check_sent()) return(invisible(self))
       self$
         set_status(status)$
         set_header("location", path)$
@@ -93,18 +95,20 @@ new_response <- function(app, api) {
       self$
         set_header("content-type", "application/json")$
         send(text)
-
-      invisible(self)
     },
 
     send = function(body) {
+      if (self$.check_sent()) return(invisible(self))
       self$.body <- body
+      # We need to do this here, because the on_response middleware
+      # might depend on it
+      self$.set_defaults()
+      for (fn in self$.on_response) fn(self$req, self)
+      self$.sent <- TRUE
       invisible(self)
     },
 
     send_file = function(path, root = ".") {
-      self$.body <- read_bin(normalizePath(file.path(root, path)))
-
       # Set content type automatically
       if (is.null(self$get_header("content-type"))) {
         ext <- tools::file_ext(basename(path))
@@ -114,27 +118,29 @@ new_response <- function(app, api) {
         }
       }
 
-      invisible(self)
+      self$send(read_bin(normalizePath(file.path(root, path))))
     },
 
     send_status = function(status) {
       self$
         set_status(status)$
         send("")
-      invisible(self)
     },
 
     set_header = function(field, value) {
+      if (self$.check_sent()) return(invisible(self))
       self$.headers[[tolower(field)]] <- value
       invisible(self)
     },
 
     set_status = function(status) {
+      if (self$.check_sent()) return(invisible(self))
       self$.status <- status
       invisible(self)
     },
 
     set_type = function(type) {
+      if (self$.check_sent()) return(invisible(self))
       if (grepl("/", type)) {
         self$set_header("content-type", type)
       } else {
@@ -146,10 +152,29 @@ new_response <- function(app, api) {
       invisible(self)
     },
 
+    .check_sent = function() {
+      if (isTRUE(self$.sent)) {
+        warning("Response is sent already")
+      }
+      self$.sent
+    },
+
+    .set_defaults = function() {
+      if (is.null(self$.status)) {
+        if (is.null(self$.body)) {
+          self$.status <- 404L
+          self$.body <- "Not found"
+        } else {
+          self$.status <- 200L
+        }
+      }
+    },
+
     .body = NULL,
     .status = NULL,
     .headers = list(),
-    .on_response = NULL
+    .on_response = NULL,
+    .sent = FALSE
   )
 
   self
