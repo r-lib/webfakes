@@ -180,6 +180,17 @@ SEXP server_start(SEXP options) {
   return rsrv;
 }
 
+static R_INLINE SEXP new_env() {
+  SEXP env;
+  PROTECT(env = allocSExp(ENVSXP));
+  SET_FRAME(env, R_NilValue);
+  SET_ENCLOS(env, R_EmptyEnv);
+  SET_HASHTAB(env, R_NilValue);
+  SET_ATTRIB(env, R_NilValue);
+  UNPROTECT(1);
+  return env;
+}
+
 #undef CHK
 #define CHK(expr) if ((ret = expr))                                     \
     R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot process presser web server requests")
@@ -193,32 +204,21 @@ SEXP presser_create_request(SEXP rsrv, SEXP handler, SEXP env) {
   /* Actual request processing */
 
   const struct mg_request_info *req = mg_get_request_info(srv->conn);
-  const char *rreq_names[] = {
-    "method",                   /* 0 */
-    "request_link",             /* 1 */
-    "request_uri",              /* 2 */
-    "local_uri",                /* 3 */
-    "http_version",             /* 4 */
-    "query_string",             /* 5 */
-    "remote_addr",              /* 6 */
-    "content_length",           /* 7 */
-    "remote_port",              /* 8 */
-    "headers",                  /* 9 */
-    "body",                     /* 10 */
-    ""
-  };
-
-  SEXP rreq = PROTECT(Rf_mkNamed(VECSXP, rreq_names));
-  SET_VECTOR_ELT(rreq, 0, mkString(req->request_method));
+  SEXP rreq = PROTECT(new_env());
+  defineVar(install("method"), mkString(req->request_method), rreq);
   mg_get_request_link(srv->conn, request_link, sizeof(request_link));
-  SET_VECTOR_ELT(rreq, 1, mkString(request_link));
-  SET_VECTOR_ELT(rreq, 2, mkString(req->request_uri));
-  SET_VECTOR_ELT(rreq, 3, mkString(req->local_uri));
-  SET_VECTOR_ELT(rreq, 4, mkString(req->http_version));
-  SET_VECTOR_ELT(rreq, 5, req->query_string ? mkString(req->query_string) : mkString(""));
-  SET_VECTOR_ELT(rreq, 6, mkString(req->remote_addr));
-  SET_VECTOR_ELT(rreq, 7, ScalarReal(req->content_length));
-  SET_VECTOR_ELT(rreq, 8, ScalarInteger(req->remote_port));
+  defineVar(install("request_link"), mkString(request_link), rreq);
+  defineVar(install("request_uri"), mkString(req->request_uri), rreq);
+  defineVar(install("local_uri"), mkString(req->local_uri), rreq);
+  defineVar(install("http_version"), mkString(req->http_version), rreq);
+  defineVar(
+    install("query_string"),
+    req->query_string ? mkString(req->query_string) : mkString(""),
+    rreq
+  );
+  defineVar(install("remote_addr"), mkString(req->remote_addr), rreq);
+  defineVar(install("content_length"), ScalarReal(req->content_length), rreq);
+  defineVar(install("remote_port"), ScalarInteger(req->remote_port), rreq);
 
   SEXP hdr = PROTECT(allocVector(VECSXP, req->num_headers));
   SEXP nms = PROTECT(allocVector(STRSXP, req->num_headers));
@@ -227,15 +227,19 @@ SEXP presser_create_request(SEXP rsrv, SEXP handler, SEXP env) {
       SET_STRING_ELT(nms, i, mkChar(req->http_headers[i].name));
   }
   Rf_setAttrib(hdr, R_NamesSymbol, nms);
-  SET_VECTOR_ELT(rreq, 9, hdr);
+  defineVar(install("headers"), hdr, rreq);
 
   if (req->content_length != -1) {
-    SET_VECTOR_ELT(rreq, 10, allocVector(RAWSXP, req->content_length));
-    int ret = mg_read(srv->conn, RAW(VECTOR_ELT(rreq, 10)), req->content_length);
+    SEXP body = PROTECT(allocVector(RAWSXP, req->content_length));
+    int ret = mg_read(srv->conn, RAW(body), req->content_length);
     if (ret < 0) R_THROW_ERROR("Cannot read from presser HTTP client");
     if (ret != req->content_length) {
       warning("Partial HTTP request body from client");
     }
+    defineVar(install("body"), body, rreq);
+    UNPROTECT(1);
+  } else {
+    defineVar(install("body"), R_NilValue, rreq);
   }
 
   SEXP try = PROTECT(install("try"));
