@@ -5,6 +5,7 @@
 
 #include <pthread.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "civetweb.h"
 #include "errors.h"
@@ -30,10 +31,10 @@ void R_init_presser(DllInfo *dll) {
   mg_init_library(0);
 }
 
-#define PRESSER_REQ   1         /* request just came it */
-#define PRESSER_ALARM 2         /* timer is up */
-#define PRESSER_DONE  3         /* request is done */
-#define PRESSER_WAIT  4         /* wait a bit */
+#define PRESSER_NOTHING 0
+#define PRESSER_REQ     1         /* request just came it */
+#define PRESSER_WAIT    2         /* waited a bit / wait a bit */
+#define PRESSER_DONE    3         /* request is done */
 
 struct presser_server {
   struct mg_context *ctx;
@@ -41,7 +42,6 @@ struct presser_server {
   pthread_cond_t process_less;  /* we can process something */
   pthread_mutex_t process_lock;
   struct mg_connection *conn;   /* the currenty active connection or NULL */
-  int todo;
   struct mg_server_port ports[4];
   int num_ports;
 };
@@ -49,8 +49,10 @@ struct presser_server {
 struct presser_connection {
   pthread_cond_t finish_cond;   /* can finish callback? */
   pthread_mutex_t finish_lock;
-  int todo;                     /* done? or should we wait? */
+  int main_todo;                /* what should the main thread do? */
+  int req_todo;                 /* what shoudl the request thread do? */
   double secs;                  /* how much should we wait? */
+  SEXP req;
 };
 
 void SEXP_to_char_vector(SEXP x, char*** vec) {
@@ -69,29 +71,37 @@ static int begin_request(struct mg_connection *conn) {
   struct mg_context *ctx = mg_get_context(conn);
   struct presser_server *srv = mg_get_user_data(ctx);
   struct presser_connection conn_data = {
-    PTHREAD_COND_INITIALIZER, PTHREAD_MUTEX_INITIALIZER, 0
+    PTHREAD_COND_INITIALIZER, PTHREAD_MUTEX_INITIALIZER,
+    PRESSER_REQ, PRESSER_NOTHING, 0.0, R_NilValue
   };
 
-  mg_set_user_connection_data(conn, &conn_data);
   if (pthread_mutex_lock(&conn_data.finish_lock)) goto exit;
 
-  if (pthread_mutex_lock(&srv->process_lock)) goto exit;
-  while (srv->conn != NULL) {
-    pthread_cond_wait(&srv->process_less, &srv->process_lock);
-  }
-
-  srv->conn = conn;
-  srv->todo = PRESSER_REQ;
-
-  if (pthread_cond_signal(&srv->process_more)) goto exit;
-  if (pthread_mutex_unlock(&srv->process_lock)) goto exit;
-
-  /* Need to wait for the response... */
-  while (conn_data.todo == 0) {
-    if (pthread_cond_wait(&conn_data.finish_cond,
-                          &conn_data.finish_lock)) {
-      goto exit;
+  while (1) {
+    if (pthread_mutex_lock(&srv->process_lock)) goto exit;
+    mg_set_user_connection_data(conn, &conn_data);
+    while (srv->conn != NULL) {
+      pthread_cond_wait(&srv->process_less, &srv->process_lock);
     }
+
+    srv->conn = conn;
+
+    if (pthread_cond_signal(&srv->process_more)) goto exit;
+    if (pthread_mutex_unlock(&srv->process_lock)) goto exit;
+
+    /* Need to wait for the response... */
+    while (conn_data.req_todo == PRESSER_NOTHING) {
+      if (pthread_cond_wait(&conn_data.finish_cond,
+                            &conn_data.finish_lock)) {
+        goto exit;
+      }
+    }
+    if (conn_data.req_todo == PRESSER_DONE) break;
+    if (conn_data.req_todo == PRESSER_WAIT) {
+      usleep(conn_data.secs * 1000 * 1000);
+    }
+    conn_data.main_todo = PRESSER_WAIT;
+    conn_data.req_todo = PRESSER_NOTHING;
   }
 
  exit:
@@ -272,13 +282,16 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     }
 
     const struct mg_request_info *req = mg_get_request_info(srv->conn);
+    struct presser_connection *conn_data =
+      mg_get_user_connection_data(srv->conn);
 
     SEXP res = R_NilValue;
-    switch(srv->todo) {
+    switch(conn_data->main_todo) {
     case PRESSER_REQ:
       res = PROTECT(presser_create_request(rsrv, handler, env));
+      if (TYPEOF(res) == VECSXP) res = VECTOR_ELT(res, 1);
       break;
-    case PRESSER_ALARM:
+    case PRESSER_WAIT:
       /* TODO */
       break;
     default:
@@ -371,13 +384,11 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     UNPROTECT(1);
 
     /* OK, we are done */
-    struct presser_connection *conn_data =
-      mg_get_user_connection_data(srv->conn);
     srv->conn = NULL;
 
     /* Notify the worker thread */
     CHK(pthread_mutex_lock(&conn_data->finish_lock));
-    conn_data->todo = PRESSER_DONE;
+    conn_data->req_todo = PRESSER_DONE;
     CHK(pthread_cond_signal(&conn_data->finish_cond));
     CHK(pthread_mutex_unlock(&conn_data->finish_lock));
 

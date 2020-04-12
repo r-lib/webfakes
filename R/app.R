@@ -441,33 +441,40 @@ new_app <- function() {
       req <- new_request(self, req)
       res <- req$res
 
+      out <- NULL
       for (i in sseq(res$.stackptr, length(self$.stack))) {
         handler <- self$.stack[[i]]
         m <- path_match(req$method, req$path, handler)
         if (!isFALSE(m)) {
           if (is.list(m)) req$params <- m$params
           out <- handler$handler(req, res)
-          if (identical(out, "callme")) res$.stackptr <- i
+          if (inherits(out, "presser_callme")) res$.stackptr <- i
           if (!identical(out, "next")) break
         }
       }
 
-      content_type <- res$.headers[["content-type"]] %||% "text/plain"
-      res$.headers <- res$.headers[names(res$.headers) != "content-type"]
+      if (inherits(out, "presser_callme")) {
+        list(1L, out$delay)
 
-      # We need to do this here, in case there was no $send() at all
-      res$.set_defaults()
+      } else {
 
-      ans <- list(
-        res$.body,
-        content_type,
-        if (length(res$.headers)) {
-          paste0(names(res$.headers), ": ", unlist(res$.headers))
-        },
-        as.integer(res$.status)
-      )
+        content_type <- res$.headers[["content-type"]] %||% "text/plain"
+        res$.headers <- res$.headers[names(res$.headers) != "content-type"]
 
-      ans
+        # We need to do this here, in case there was no $send() at all
+        res$.set_defaults()
+
+        ans <- list(
+          res$.body,
+          content_type,
+          if (length(res$.headers)) {
+            paste0(names(res$.headers), ": ", unlist(res$.headers))
+          },
+          as.integer(res$.status)
+        )
+
+        list(0L, ans)
+      }
     }
   )
 
