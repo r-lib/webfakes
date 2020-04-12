@@ -14,7 +14,7 @@ test_that("post", {
   url <- web$url("/post")
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
-  curl::handle_setheaders(handle, "content-type" = "application/json")
+  curl::handle_setheaders(handle, "Content-Type" = "application/json")
   curl::handle_setopt(
     handle,
     customrequest = "POST",

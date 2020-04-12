@@ -57,7 +57,12 @@ new_response <- function(app, req) {
       invisible(self)
     },
 
-    get_header = function(field) self$.headers[[tolower(field)]],
+    get_header = function(field) {
+      # this is case insensitive
+      h <- self$.headers
+      names(h) <- tolower(names(h))
+      h[[tolower(field)]]
+    },
 
     on_response = function(fun) {
       self$.on_response <- c(self$.on_response, list(fun))
@@ -68,7 +73,7 @@ new_response <- function(app, req) {
       if (self$.check_sent()) return(invisible(self))
       self$
         set_status(status)$
-        set_header("location", path)$
+        set_header("Location", path)$
         set_type("text/plain")$
         send(paste0(
           status, " ", http_statuses[as.character(status)],
@@ -98,7 +103,7 @@ new_response <- function(app, req) {
       }
 
       self$
-        set_header("content-type", "application/json")$
+        set_header("Content-Type", "application/json")$
         send(text)
     },
 
@@ -115,11 +120,11 @@ new_response <- function(app, req) {
 
     send_file = function(path, root = ".") {
       # Set content type automatically
-      if (is.null(self$get_header("content-type"))) {
+      if (is.null(self$get_header("Content-Type"))) {
         ext <- tools::file_ext(basename(path))
         ct <- mime_find(ext)
         if (!is.na(ct)) {
-          self$set_header("content-type", ct)
+          self$set_header("Content-Type", ct)
         }
       }
 
@@ -134,7 +139,7 @@ new_response <- function(app, req) {
 
     set_header = function(field, value) {
       if (self$.check_sent()) return(invisible(self))
-      self$.headers[[tolower(field)]] <- value
+      self$.headers[[field]] <- value
       invisible(self)
     },
 
@@ -147,11 +152,11 @@ new_response <- function(app, req) {
     set_type = function(type) {
       if (self$.check_sent()) return(invisible(self))
       if (grepl("/", type)) {
-        self$set_header("content-type", type)
+        self$set_header("Content-Type", type)
       } else {
         ct <- mime_find(type)
         if (!is.na(ct)) {
-          self$set_header("content-type", ct)
+          self$set_header("Content-Type", ct)
         }
       }
       invisible(self)
@@ -165,17 +170,44 @@ new_response <- function(app, req) {
     },
 
     .set_defaults = function() {
+
       if (is.null(self$.status)) {
         if (is.null(self$.body)) {
+          # No status, no body, that's 404
           self$.status <- 404L
           self$.body <- "Not found"
         } else {
+          # No status, but body, set status
           self$.status <- 200L
         }
       }
+
+      # Set Content-Type if not set
+      if (is.null(self$get_header("Content-Type"))) {
+        if (is.raw(self$body)) {
+          ct <- "application/octet-stream"
+        } else {
+          ct <- "text/plain"
+        }
+        self$set_header("Content-Type", ct)
+      }
+
+      # Set Content-Length if not set
+      if (is.null(self$get_header("Content-Length"))) {
+        if (is.raw(self$.body)) {
+          cl <- length(self$.body)
+        } else if (is.character(self$.body)) {
+          cl <- nchar(self$.body, type = "bytes")
+        } else if (is.null(self$.body)) {
+          cl <- 0L
+        }
+        self$set_header("Content-Length", cl)
+      }
+
+      # Make sure response to HEAD has empty body
       if (self$req$method == "head") {
         self$.body <- raw(0)
-        self$.headers[["content-length"]] <- "0"
+        self$set_header("Content-Length", "0")
       }
     },
 

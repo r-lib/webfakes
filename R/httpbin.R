@@ -44,7 +44,7 @@ httpbin_app <- function(log = interactive()) {
 
   # Add date by default
   app$use("add date" = function(req, res) {
-    res$set_header("date", as.character(Sys.time()))
+    res$set_header("Date", as.character(Sys.time()))
     "next"
   })
 
@@ -104,7 +104,7 @@ httpbin_app <- function(log = interactive()) {
       "Basic",
       base64_encode(paste0(req$params$user, ":", req$params$passwd))
     )
-    hdr <- req$get_header("authorization") %||% ""
+    hdr <- req$get_header("Authorization") %||% ""
     if (exp == hdr) {
       res$send_json(list(
         authenticated = jsonlite::unbox(TRUE),
@@ -118,10 +118,10 @@ httpbin_app <- function(log = interactive()) {
   })
 
   app$get("/bearer", function(req, res) {
-    auth <- req$get_header("authorization") %||% ""
+    auth <- req$get_header("Authorization") %||% ""
     if (! grepl("^Bearer ", auth)) {
       res$
-        set_header("www-authenticate", "bearer")$
+        set_header("WWW-Authenticate", "bearer")$
         send_status(401L)
     } else {
       token <- sub("^Bearer ", "", auth)
@@ -157,7 +157,7 @@ httpbin_app <- function(log = interactive()) {
   })
 
   app$get("/user-agent", function(req, res) {
-    ret <- list("user-agent" = req$get_header("user-agent"))
+    ret <- list("user-agent" = req$get_header("User-Agent"))
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
@@ -169,7 +169,7 @@ httpbin_app <- function(log = interactive()) {
     # The mw_etag() middleware is active, so we need to do this after that
     res_etag <- NULL
     res$on_response(function(req, res) {
-      if (!is.null(res_etag)) res$set_header("etag", res_etag)
+      if (!is.null(res_etag)) res$set_header("Etag", res_etag)
     })
 
     parse <- function(x) {
@@ -177,8 +177,8 @@ httpbin_app <- function(log = interactive()) {
       re_match(x, '\\s*(W/)?"?([^"]*)"?\\s*')$groups[,2]
     }
 
-    if_none_match <- parse(req$get_header("if-none-match") %||% "")
-    if_match <- parse(req$get_header("if-match") %||% "")
+    if_none_match <- parse(req$get_header("If-None-Match") %||% "")
+    if_match <- parse(req$get_header("If-Match") %||% "")
 
     if (length(if_none_match) > 0) {
       if (etag %in% if_none_match || "*" %in% if_none_match) {
@@ -323,7 +323,7 @@ httpbin_app <- function(log = interactive()) {
   # Images ===============================================================
 
   app$get("/image", function(req, res) {
-    act <- req$get_header("accept")
+    act <- req$get_header("Accept")
     ok <- c(
       "image/webp",
       "image/svg+xml",

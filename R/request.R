@@ -40,7 +40,11 @@ new_request <- function(app, self) {
   self$method <- tolower(self$method)
   self$protocol <- "http"
   self$query = parse_query(self$query_string)
-  self$get_header <- function(field) self$headers[[field]]
+  self$get_header <- function(field) {
+    h <- self$headers
+    names(h) <- tolower(names(h))
+    h[[tolower(field)]]
+  }
   rm(parsed_headers)
 
   self$res <- new_response(app, self)
@@ -50,7 +54,7 @@ new_request <- function(app, self) {
 }
 
 parse_headers <- function(headers) {
-  names(headers) <- tolower(names(headers))
+  # nothing to do now...
   headers
 }
 

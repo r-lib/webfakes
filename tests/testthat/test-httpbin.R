@@ -210,28 +210,24 @@ test_that("/etag", {
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "If-None-Match" = "\"foobar\"")
   resp <- curl::curl_fetch_memory(url, handle = handle)
-  headers <- curl::parse_headers_list(resp$headers)
   expect_equal(resp$status_code, 304)
   expect_true(length(resp$content) == 0)
 
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "If-None-Match" = "\"not-foobar\"")
   resp <- curl::curl_fetch_memory(url, handle = handle)
-  headers <- curl::parse_headers_list(resp$headers)
   expect_equal(resp$status_code, 200)
   expect_true(length(resp$content) > 0)
 
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "If-Match" = "\"foobar\"")
   resp <- curl::curl_fetch_memory(url, handle = handle)
-  headers <- curl::parse_headers_list(resp$headers)
   expect_equal(resp$status_code, 200)
   expect_true(length(resp$content) > 0)
 
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "If-Match" = "\"not-foobar\"")
   resp <- curl::curl_fetch_memory(url, handle = handle)
-  headers <- curl::parse_headers_list(resp$headers)
   expect_equal(resp$status_code, 412)
 })
 

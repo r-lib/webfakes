@@ -27,7 +27,7 @@ mw_static <- function(root, set_headers = NULL) {
     ext <- tools::file_ext(basename(path))
     ct <- mime_find(ext)
     if (!is.na(ct)) {
-      res$set_header("content-type", ct)
+      res$set_header("Content-Type", ct)
     }
     if (!is.null(set_headers)) set_headers(req, res)
   }

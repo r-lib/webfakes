@@ -291,41 +291,16 @@ void presser_send_response(SEXP res, SEXP rsrv) {
       R_THROW_ERROR("Failed to write HTTP response body");
     }
 
-  } else if (TYPEOF(res) == VECSXP && LENGTH(res) == 4) {
+  } else if (TYPEOF(res) == VECSXP && LENGTH(res) == 3) {
     SEXP cnt = VECTOR_ELT(res, 0);
-    SEXP sct = VECTOR_ELT(res, 1);
-    SEXP hdr = VECTOR_ELT(res, 2);
-    int code = INTEGER(VECTOR_ELT(res, 3))[0];
-    const char *ct_raw = "application/octet-stream";
-    const char *ct_str = "text/plain";
-    const char *ct = 0;
-    int clen = 0;
-    if (!isNull(sct)) {
-      ct = CHAR(STRING_ELT(sct, 0));
-    } else if (TYPEOF(cnt) == RAWSXP) {
-      ct = ct_raw;
-    } else if (TYPEOF(cnt) == STRSXP) {
-      ct = ct_str;
-    } else {
-      R_THROW_ERROR("Invalid content type for HTTP response");
-    }
-
-    if (TYPEOF(cnt) == RAWSXP) {
-      clen = LENGTH(cnt);
-    } else if (isNull(cnt)) {
-      clen = 0;
-    } else {
-      clen = strlen(CHAR(STRING_ELT(cnt, 0)));
-    }
+    SEXP hdr = VECTOR_ELT(res, 1);
+    int code = INTEGER(VECTOR_ELT(res, 2))[0];
 
     ret = mg_printf(
       srv->conn,
-      "HTTP/%s %d %s\r\n"
-      "Content-Type: %s\r\n"
-      "Content-Length: %d\r\n",
+      "HTTP/%s %d %s\r\n",
       rreq->http_version,
-      code, mg_get_response_code_text(srv->conn, code),
-      ct, clen
+      code, mg_get_response_code_text(srv->conn, code)
     );
     if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
 
@@ -341,9 +316,10 @@ void presser_send_response(SEXP res, SEXP rsrv) {
     }
 
     if (TYPEOF(cnt) == RAWSXP) {
-      ret = mg_write(srv->conn, RAW(cnt), clen);
+      ret = mg_write(srv->conn, RAW(cnt), LENGTH(cnt));
     } else if (TYPEOF(cnt) == STRSXP) {
-      ret = mg_write(srv->conn, CHAR(STRING_ELT(cnt, 0)), clen);
+      const char *ccnt = CHAR(STRING_ELT(cnt, 0));
+      ret = mg_write(srv->conn, ccnt, strlen(ccnt));
     }
     if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
 

@@ -14,7 +14,7 @@
 mw_multipart <- function(type = "multipart/form-data") {
   type
   function(req, res) {
-    ct <- req$get_header("content-type") %||% ""
+    ct <- req$get_header("Content-Type") %||% ""
     if (!any(vapply(
            paste0("^", type),
            function(x) grepl(x, ct),

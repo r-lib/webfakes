@@ -8,10 +8,10 @@ client:
   127.0.0.1
 query:
 headers:
-  host: 127.0.0.1:3000
-  user-agent: It is me, libcurl
-  accept: */*
-  accept-encoding: deflate, gzip
+  Host: 127.0.0.1:3000
+  User-Agent: It is me, libcurl
+  Accept: */*
+  Accept-Encoding: deflate, gzip
 fields and methods:
   app                    # the presser_app the request belongs to
   headers                # HTTP request headers

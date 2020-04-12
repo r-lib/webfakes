@@ -96,14 +96,14 @@ format.presser_response <- function(x, ...) {
     "  redirect(path, status) # send redirect response",
     "  render(view, locals)   # render template",
     "  send(body)             # send text or raw data",
-    "  send_file(path, root)  # send a file (automatic content-type)",
+    "  send_file(path, root)  # send a file (automatic Content-Type)",
     "  send_json(object, text, ...)",
     "                         # send JSON data",
     "  send_status(status)    # send HTTP status and empty body",
     "  set_header(field, value)
                               # set a response header",
     "  set_status(status)     # set response status code",
-    "  set_type(type)         # set content-type"
+    "  set_type(type)         # set Content-Type"
   )
   help <- " # see ?presser_response for details)"
   c(header, "fields and methods:", methods, help)

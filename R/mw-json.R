@@ -19,7 +19,7 @@ mw_json <- function(type = "application/json",
                      ...) {
   type; simplifyVector; list(...)
   function(req, res) {
-    ct <- req$get_header("content-type") %||% ""
+    ct <- req$get_header("Content-Type") %||% ""
     if (! ct %in% tolower(type)) return("next")
     req$json <- jsonlite::fromJSON(
       rawToChar(req$.body),

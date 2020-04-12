@@ -116,7 +116,7 @@ pkg_data <- new.env(parent = emptyenv())
 #'   ...
 #'   res$
 #'     set_status(200L)$
-#'     set_header("X-custom-header", "foobar")$
+#'     set_header("X-Custom-Header", "foobar")$
 #'     send_json(response, auto_unbox = TRUE)
 #' })
 #' ```
@@ -464,15 +464,11 @@ new_app <- function() {
 
       } else {
 
-        content_type <- res$.headers[["content-type"]] %||% "text/plain"
-        res$.headers <- res$.headers[names(res$.headers) != "content-type"]
-
         # We need to do this here, in case there was no $send() at all
         res$.set_defaults()
 
         ans <- list(
           res$.body,
-          content_type,
           if (length(res$.headers)) {
             paste0(names(res$.headers), ": ", unlist(res$.headers))
           },
