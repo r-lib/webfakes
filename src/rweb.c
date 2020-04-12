@@ -184,12 +184,73 @@ SEXP server_start(SEXP options) {
 #define CHK(expr) if ((ret = expr))                                     \
     R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot process presser web server requests")
 
+SEXP presser_create_request(SEXP rsrv, SEXP handler, SEXP env) {
+  struct presser_server *srv = R_ExternalPtrAddr(rsrv);
+  if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
+  static char request_link[8192];
+  int i;
+
+  /* Actual request processing */
+
+  const struct mg_request_info *req = mg_get_request_info(srv->conn);
+  const char *rreq_names[] = {
+    "method",                   /* 0 */
+    "request_link",             /* 1 */
+    "request_uri",              /* 2 */
+    "local_uri",                /* 3 */
+    "http_version",             /* 4 */
+    "query_string",             /* 5 */
+    "remote_addr",              /* 6 */
+    "content_length",           /* 7 */
+    "remote_port",              /* 8 */
+    "headers",                  /* 9 */
+    "body",                     /* 10 */
+    ""
+  };
+
+  SEXP rreq = PROTECT(Rf_mkNamed(VECSXP, rreq_names));
+  SET_VECTOR_ELT(rreq, 0, mkString(req->request_method));
+  mg_get_request_link(srv->conn, request_link, sizeof(request_link));
+  SET_VECTOR_ELT(rreq, 1, mkString(request_link));
+  SET_VECTOR_ELT(rreq, 2, mkString(req->request_uri));
+  SET_VECTOR_ELT(rreq, 3, mkString(req->local_uri));
+  SET_VECTOR_ELT(rreq, 4, mkString(req->http_version));
+  SET_VECTOR_ELT(rreq, 5, req->query_string ? mkString(req->query_string) : mkString(""));
+  SET_VECTOR_ELT(rreq, 6, mkString(req->remote_addr));
+  SET_VECTOR_ELT(rreq, 7, ScalarReal(req->content_length));
+  SET_VECTOR_ELT(rreq, 8, ScalarInteger(req->remote_port));
+
+  SEXP hdr = PROTECT(allocVector(VECSXP, req->num_headers));
+  SEXP nms = PROTECT(allocVector(STRSXP, req->num_headers));
+  for (i = 0; i < req->num_headers; i++) {
+      SET_VECTOR_ELT(hdr, i, mkString(req->http_headers[i].value));
+      SET_STRING_ELT(nms, i, mkChar(req->http_headers[i].name));
+  }
+  Rf_setAttrib(hdr, R_NamesSymbol, nms);
+  SET_VECTOR_ELT(rreq, 9, hdr);
+
+  if (req->content_length != -1) {
+    SET_VECTOR_ELT(rreq, 10, allocVector(RAWSXP, req->content_length));
+    int ret = mg_read(srv->conn, RAW(VECTOR_ELT(rreq, 10)), req->content_length);
+    if (ret < 0) R_THROW_ERROR("Cannot read from presser HTTP client");
+    if (ret != req->content_length) {
+      warning("Partial HTTP request body from client");
+    }
+  }
+
+  SEXP try = PROTECT(install("try"));
+  SEXP silent = PROTECT(ScalarLogical(1));
+  SEXP call = PROTECT(lang2(handler, rreq));
+  SEXP trycall = PROTECT(lang3(try, call, silent));
+  SEXP res = PROTECT(eval(trycall, env));
+
+  UNPROTECT(8);
+  return res;
+}
+
 SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
   struct presser_server *srv = R_ExternalPtrAddr(rsrv);
   if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
-
-  static char request_link[8192];
-
   int ret, i;
 
   while (1) {
@@ -206,62 +267,19 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       ret = pthread_cond_timedwait(&srv->process_more, &srv->process_lock, &limit);
     }
 
-    struct presser_connection *conn_data =
-      mg_get_user_connection_data(srv->conn);
-
-    /* Actual request processing */
-
     const struct mg_request_info *req = mg_get_request_info(srv->conn);
-    const char *rreq_names[] = {
-      "method",                   /* 0 */
-      "request_link",             /* 1 */
-      "request_uri",              /* 2 */
-      "local_uri",                /* 3 */
-      "http_version",             /* 4 */
-      "query_string",             /* 5 */
-      "remote_addr",              /* 6 */
-      "content_length",           /* 7 */
-      "remote_port",              /* 8 */
-      "headers",                  /* 9 */
-      "body",                     /* 10 */
-      ""
-    };
 
-    SEXP rreq = PROTECT(Rf_mkNamed(VECSXP, rreq_names));
-    SET_VECTOR_ELT(rreq, 0, mkString(req->request_method));
-    mg_get_request_link(srv->conn, request_link, sizeof(request_link));
-    SET_VECTOR_ELT(rreq, 1, mkString(request_link));
-    SET_VECTOR_ELT(rreq, 2, mkString(req->request_uri));
-    SET_VECTOR_ELT(rreq, 3, mkString(req->local_uri));
-    SET_VECTOR_ELT(rreq, 4, mkString(req->http_version));
-    SET_VECTOR_ELT(rreq, 5, req->query_string ? mkString(req->query_string) : mkString(""));
-    SET_VECTOR_ELT(rreq, 6, mkString(req->remote_addr));
-    SET_VECTOR_ELT(rreq, 7, ScalarReal(req->content_length));
-    SET_VECTOR_ELT(rreq, 8, ScalarInteger(req->remote_port));
-
-    SEXP hdr = PROTECT(allocVector(VECSXP, req->num_headers));
-    SEXP nms = PROTECT(allocVector(STRSXP, req->num_headers));
-    for (i = 0; i < req->num_headers; i++) {
-      SET_VECTOR_ELT(hdr, i, mkString(req->http_headers[i].value));
-      SET_STRING_ELT(nms, i, mkChar(req->http_headers[i].name));
+    SEXP res = R_NilValue;
+    switch(srv->todo) {
+    case PRESSER_REQ:
+      res = PROTECT(presser_create_request(rsrv, handler, env));
+      break;
+    case PRESSER_ALARM:
+      /* TODO */
+      break;
+    default:
+      break;
     }
-    Rf_setAttrib(hdr, R_NamesSymbol, nms);
-    SET_VECTOR_ELT(rreq, 9, hdr);
-
-    if (req->content_length != -1) {
-      SET_VECTOR_ELT(rreq, 10, allocVector(RAWSXP, req->content_length));
-      int ret = mg_read(srv->conn, RAW(VECTOR_ELT(rreq, 10)), req->content_length);
-      if (ret < 0) R_THROW_ERROR("Cannot read from presser HTTP client");
-      if (ret != req->content_length) {
-        warning("Partial HTTP request body from client");
-      }
-    }
-
-    SEXP try = PROTECT(install("try"));
-    SEXP silent = PROTECT(ScalarLogical(1));
-    SEXP call = PROTECT(lang2(handler, rreq));
-    SEXP trycall = PROTECT(lang3(try, call, silent));
-    SEXP res = PROTECT(eval(trycall, env));
 
     /* The rest is sending the response */
 
@@ -346,9 +364,11 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       R_THROW_ERROR("Invalid presser response");
     }
 
-    UNPROTECT(6);
+    UNPROTECT(1);
 
     /* OK, we are done */
+    struct presser_connection *conn_data =
+      mg_get_user_connection_data(srv->conn);
     srv->conn = NULL;
 
     /* Notify the worker thread */
