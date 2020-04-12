@@ -205,7 +205,7 @@ static R_INLINE SEXP new_env() {
 #define CHK(expr) if ((ret = expr))                                     \
     R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot process presser web server requests")
 
-SEXP presser_create_request(SEXP rsrv, SEXP handler, SEXP env) {
+SEXP presser_create_request(SEXP rsrv) {
   struct presser_server *srv = R_ExternalPtrAddr(rsrv);
   if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
   static char request_link[8192];
@@ -252,14 +252,8 @@ SEXP presser_create_request(SEXP rsrv, SEXP handler, SEXP env) {
     defineVar(install(".body"), R_NilValue, rreq);
   }
 
-  SEXP try = PROTECT(install("try"));
-  SEXP silent = PROTECT(ScalarLogical(1));
-  SEXP call = PROTECT(lang2(handler, rreq));
-  SEXP trycall = PROTECT(lang3(try, call, silent));
-  SEXP res = PROTECT(eval(trycall, env));
-
-  UNPROTECT(8);
-  return res;
+  UNPROTECT(3);
+  return rreq;
 }
 
 SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
@@ -281,15 +275,14 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       ret = pthread_cond_timedwait(&srv->process_more, &srv->process_lock, &limit);
     }
 
-    const struct mg_request_info *req = mg_get_request_info(srv->conn);
+    const struct mg_request_info *rreq = mg_get_request_info(srv->conn);
     struct presser_connection *conn_data =
       mg_get_user_connection_data(srv->conn);
 
-    SEXP res = R_NilValue;
+    SEXP req = R_NilValue;
     switch(conn_data->main_todo) {
     case PRESSER_REQ:
-      res = PROTECT(presser_create_request(rsrv, handler, env));
-      if (TYPEOF(res) == VECSXP) res = VECTOR_ELT(res, 1);
+      req = PROTECT(presser_create_request(rsrv));
       break;
     case PRESSER_WAIT:
       /* TODO */
@@ -297,6 +290,14 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     default:
       break;
     }
+
+    SEXP try = PROTECT(install("try"));
+    SEXP silent = PROTECT(ScalarLogical(1));
+    SEXP call = PROTECT(lang2(handler, req));
+    SEXP trycall = PROTECT(lang3(try, call, silent));
+    SEXP res = PROTECT(eval(trycall, env));
+
+    if (TYPEOF(res) == VECSXP) res = VECTOR_ELT(res, 1);
 
     /* The rest is sending the response */
 
@@ -311,7 +312,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
         "HTTP/%s 500 Internal Server Error\r\n"
         "Content-Length: %d\r\n"
         "Content-Type: text/plain\r\n\r\n",
-        req->http_version, len
+        rreq->http_version, len
       );
       if (ret < 0) R_THROW_ERROR("Could not send HTTP error response");
       if (mg_write(srv->conn, s, len) < 0) {
@@ -350,7 +351,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
         "HTTP/%s %d %s\r\n"
         "Content-Type: %s\r\n"
         "Content-Length: %d\r\n",
-        req->http_version,
+        rreq->http_version,
         code, mg_get_response_code_text(srv->conn, code),
         ct, clen
       );
