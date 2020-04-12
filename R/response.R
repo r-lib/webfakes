@@ -168,6 +168,10 @@ new_response <- function(app, req) {
           self$.status <- 200L
         }
       }
+      if (self$req$method == "head") {
+        self$.body <- raw(0)
+        self$.headers[["content-length"]] <- "0"
+      }
     },
 
     .body = NULL,

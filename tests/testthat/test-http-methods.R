@@ -52,7 +52,11 @@ test_that("the rest", {
 
     resp <- curl::curl_fetch_memory(url, handle = handle)
     expect_equal(resp$status, 200)
-    echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
-    expect_equal(echo$method, method)
+    if (method == "head") {
+      expect_equal(length(resp$content), 0)
+    } else {
+      echo <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+      expect_equal(echo$method, method)
+    }
   }
 })
