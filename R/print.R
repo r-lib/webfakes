@@ -139,13 +139,13 @@ format.presser_app_process <- function(x, ...) {
     "process id:",
     paste0("  ", if (is.null(x$.process)) "none" else x$.process$get_pid()),
     "http url:",
-    paste0("  ", x$get_url())
+    paste0("  ", x$url())
   )
   methods <- c(
     "  get_app()              # get the app object",
     "  get_port()             # query port of the app",
     "  get_state()            # query web server process state",
-    "  get_url(path, query)   # query url for an api path",
+    "  url(path, query)       # query url for an api path",
     "  stop()                 # stop web server process"
   )
   help <- "# see ?presser_app_process for details)"

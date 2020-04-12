@@ -14,7 +14,7 @@ web <- setup({
 teardown(web$stop())
 
 test_that("mw-urlencoded", {
-  url <- web$get_url("/form")
+  url <- web$url("/form")
   handle <- curl::new_handle()
   data <- charToRaw("foo=bar&foobar=100")
   curl::handle_setheaders(

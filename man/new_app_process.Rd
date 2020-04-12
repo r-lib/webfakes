@@ -22,11 +22,11 @@ milliseconds.}
 A \code{presser_app_process} class.
 \subsection{Methods}{
 
-The \code{presser_app_process} class has the following methods:\if{html}{\out{<div class="r">}}\preformatted{get_url(path = "/", query = NULL)
-get_app()
+The \code{presser_app_process} class has the following methods:\if{html}{\out{<div class="r">}}\preformatted{get_app()
 get_port()
 stop()
 get_state()
+url(path = "/", query = NULL)
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{path}: Path to return the URL for.
@@ -34,9 +34,6 @@ get_state()
 }
 
 \code{get_app()} returns the app object.
-
-\code{get_url()} returns the URL of the web app. You can use the \code{path}
-parameter to return a specific path.
 
 \code{get_port()} returns the port the web server is running on.
 
@@ -49,6 +46,9 @@ already).
 \item \code{"live"} means that the server is running.
 \item \code{"dead"} means that the subprocess has quit or crashed.
 }
+
+\code{url()} returns the URL of the web app. You can use the \code{path}
+parameter to return a specific path.
 }
 }
 \description{
@@ -61,7 +61,7 @@ app$get("/foo", function(req, res) {
 })
 
 proc <- new_app_process(app)
-url <- proc$get_url("/foo")
+url <- proc$url("/foo")
 resp <- curl::curl_fetch_memory(url)
 cat(rawToChar(resp$content))
 

@@ -23,7 +23,7 @@ web <- setup({
 teardown(web$stop())
 
 test_that("text/plain response", {
-  url <- web$get_url("/txt")
+  url <- web$url("/txt")
   resp <- curl::curl_fetch_memory(url)
   plr <- web$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")
@@ -32,7 +32,7 @@ test_that("text/plain response", {
 })
 
 test_that("text/html response", {
-  url <- web$get_url("/html")
+  url <- web$url("/html")
   resp <- curl::curl_fetch_memory(url)
   plr <- web$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")
@@ -41,7 +41,7 @@ test_that("text/html response", {
 })
 
 test_that("application/octet-stream response", {
-  url <- web$get_url("/raw")
+  url <- web$url("/raw")
   resp <- curl::curl_fetch_memory(url)
   plr <- web$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")

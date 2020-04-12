@@ -3,7 +3,7 @@ web <- setup(new_app_process(httpbin_app()))
 teardown(web$stop())
 
 test_that("get", {
-  url <- web$get_url("/get")
+  url <- web$url("/get")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
   data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
@@ -11,7 +11,7 @@ test_that("get", {
 })
 
 test_that("post", {
-  url <- web$get_url("/post")
+  url <- web$url("/post")
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "content-type" = "application/json")
@@ -45,7 +45,7 @@ teardown(web2$stop())
 
 test_that("the rest", {
   for (method in test_methods) {
-    url <- web2$get_url(paste0("/", method))
+    url <- web2$url(paste0("/", method))
     handle <- curl::new_handle()
     curl::handle_setheaders(handle, "content-type" = "application/json")
     curl::handle_setopt(handle, customrequest = toupper(method))

@@ -28,7 +28,7 @@ web <- setup({
 teardown(web$stop())
 
 test_that("text/plain response", {
-  url <- web$get_url("/txt")
+  url <- web$url("/txt")
   resp <- curl::curl_fetch_memory(url)
   headers <- curl::parse_headers_list(resp$headers)
   expect_true("etag" %in% names(headers))
@@ -36,16 +36,16 @@ test_that("text/plain response", {
 })
 
 test_that("raw response", {
-  txt <- curl::curl_fetch_memory(web$get_url("/txt"))
-  raw <- curl::curl_fetch_memory(web$get_url("/raw"))
+  txt <- curl::curl_fetch_memory(web$url("/txt"))
+  raw <- curl::curl_fetch_memory(web$url("/raw"))
   htxt <- curl::parse_headers_list(txt$headers)
   hraw <- curl::parse_headers_list(raw$headers)
   expect_equal(htxt$etag, hraw$etag)
 })
 
 test_that("etag for empty response", {
-  txt <- curl::curl_fetch_memory(web$get_url("/txt-empty"))
-  raw <- curl::curl_fetch_memory(web$get_url("/raw-empty"))
+  txt <- curl::curl_fetch_memory(web$url("/txt-empty"))
+  raw <- curl::curl_fetch_memory(web$url("/raw-empty"))
   htxt <- curl::parse_headers_list(txt$headers)
   hraw <- curl::parse_headers_list(raw$headers)
   expect_equal(htxt$etag, "\"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk\"")

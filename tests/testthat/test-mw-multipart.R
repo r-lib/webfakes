@@ -15,7 +15,7 @@ test_that("mw_multipart", {
   on.exit(rm(tmp), add = TRUE)
   tmp <- tempfile()
   writeBin(charToRaw("foobar\n"), con = tmp)
-  url <- web$get_url("/form")
+  url <- web$url("/form")
   handle <- curl::new_handle()
   curl::handle_setopt(handle, customrequest = "PUT")
   curl::handle_setform(

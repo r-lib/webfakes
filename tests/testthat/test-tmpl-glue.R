@@ -16,7 +16,7 @@ web <- setup({
 teardown(web$stop())
 
 test_that("glue templating", {
-  url <- web$get_url("/hello/gabor")
+  url <- web$url("/hello/gabor")
   resp <- curl::curl_fetch_memory(url)
   expect_match(rawToChar(resp$content), "hello gabor")
 })

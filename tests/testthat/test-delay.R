@@ -26,8 +26,8 @@ teardown(web$stop())
 
 test_that("delay", {
   p <- curl::new_pool(multiplex = FALSE)
-  h1 <- curl::new_handle(url = web$get_url("/delay"))
-  h2 <- curl::new_handle(url = web$get_url("/nodelay"))
+  h1 <- curl::new_handle(url = web$url("/delay"))
+  h2 <- curl::new_handle(url = web$url("/nodelay"))
   resp1 <- resp2 <- NULL
   curl::multi_add(h1, done = function(x) resp1 <<- x, fail = stop, pool = p)
   curl::multi_add(h2, done = function(x) resp2 <<- x, fail = stop, pool = p)

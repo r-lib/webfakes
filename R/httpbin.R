@@ -10,7 +10,7 @@
 #' @examples
 #' app <- httpbin_app()
 #' proc <- new_app_process(app)
-#' url <- proc$get_url("/get")
+#' url <- proc$url("/get")
 #' resp <- curl::curl_fetch_memory(url)
 #' curl::parse_headers_list(resp$headers)
 #' cat(rawToChar(resp$content))

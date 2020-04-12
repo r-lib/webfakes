@@ -16,20 +16,17 @@
 #' The `presser_app_process` class has the following methods:
 #'
 #' ```r
-#' get_url(path = "/", query = NULL)
 #' get_app()
 #' get_port()
 #' stop()
 #' get_state()
+#' url(path = "/", query = NULL)
 #' ```
 #'
 #' * `path`: Path to return the URL for.
 #' * `query`: Additional query parameters, a named list, to add to the URL.
 #'
 #' `get_app()` returns the app object.
-#'
-#' `get_url()` returns the URL of the web app. You can use the `path`
-#' parameter to return a specific path.
 #'
 #' `get_port()` returns the port the web server is running on.
 #'
@@ -41,6 +38,9 @@
 #' * `"live"` means that the server is running.
 #' * `"dead"` means that the subprocess has quit or crashed.
 #'
+#' `url()` returns the URL of the web app. You can use the `path`
+#' parameter to return a specific path.
+#'
 #' @aliases presser_app_process
 #' @export
 #' @examples
@@ -50,7 +50,7 @@
 #' })
 #'
 #' proc <- new_app_process(app)
-#' url <- proc$get_url("/foo")
+#' url <- proc$url("/foo")
 #' resp <- curl::curl_fetch_memory(url)
 #' cat(rawToChar(resp$content))
 #'
@@ -99,13 +99,6 @@ new_app_process <- function(app, ..., .port = NULL,
 
     get_app = function() self$.app,
 
-    get_url = function(path = "/", query = NULL) {
-      if (!is.null(query)) {
-        query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
-      }
-      paste0("http://127.0.0.1:", self$.port, path, query)
-    },
-
     get_port = function() self$.port,
 
     stop = function() {
@@ -140,6 +133,13 @@ new_app_process <- function(app, ..., .port = NULL,
       } else {
         "dead"
       }
+    },
+
+    url = function(path = "/", query = NULL) {
+      if (!is.null(query)) {
+        query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
+      }
+      paste0("http://127.0.0.1:", self$.port, path, query)
     },
 
     .process = NULL,

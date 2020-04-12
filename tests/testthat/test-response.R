@@ -34,7 +34,7 @@ web <- setup({
 teardown(web$stop())
 
 test_that("response locals", {
-  url <- web$get_url("/local")
+  url <- web$url("/local")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(rawToChar(resp$content), "foo bar")
 })
@@ -43,7 +43,7 @@ test_that("response locals", {
 
 test_that("render", {
   # if the template or engine does not exist
-  url <- web$get_url("/badengine")
+  url <- web$url("/badengine")
   resp <- curl::curl_fetch_memory(url)
   expect_match(
     rawToChar(resp$content),
@@ -52,7 +52,7 @@ test_that("render", {
 })
 
 test_that("send_json", {
-  url <- web$get_url("/badjson")
+  url <- web$url("/badjson")
   resp <- curl::curl_fetch_memory(url)
   expect_match(
     rawToChar(resp$content),
@@ -61,7 +61,7 @@ test_that("send_json", {
 })
 
 test_that("send_file", {
-  url <- web$get_url("/file")
+  url <- web$url("/file")
   resp <- curl::curl_fetch_memory(url)
   path <- system.file(
     package = "presser",
@@ -71,7 +71,7 @@ test_that("send_file", {
 })
 
 test_that("set_type", {
-  url <- web$get_url("/type")
+  url <- web$url("/type")
   resp <- curl::curl_fetch_memory(url)
   headers <- curl::parse_headers_list(resp$headers)
   expect_equal(headers$`content-type`, "application/json")

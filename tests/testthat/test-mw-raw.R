@@ -13,7 +13,7 @@ web <- setup({
 teardown(web$stop())
 
 test_that("raw body parser", {
-  url <- web$get_url("/raw")
+  url <- web$url("/raw")
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "content-type" = "application/octet-stream")
@@ -30,7 +30,7 @@ test_that("raw body parser", {
 })
 
 test_that("non-matching content-type", {
-  url <- web$get_url("/raw")
+  url <- web$url("/raw")
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "content-type" = "application/json")
