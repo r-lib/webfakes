@@ -256,10 +256,103 @@ SEXP presser_create_request(SEXP rsrv) {
   return rreq;
 }
 
-SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
+SEXP presser_send_response(SEXP res, SEXP rsrv) {
   struct presser_server *srv = R_ExternalPtrAddr(rsrv);
   if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
   int ret, i;
+
+  const struct mg_request_info *rreq = mg_get_request_info(srv->conn);
+
+  if (TYPEOF(res) != STRSXP) res = VECTOR_ELT(res, 1);
+
+  if (TYPEOF(res) == STRSXP && LENGTH(res) > 0) {
+    if (LENGTH(res) > 1) {
+      warning("Only first element of character vector is used for HTTP body");
+    }
+    const char *s = CHAR(STRING_ELT(res, 0));
+    int len = strlen(s);
+    ret = mg_printf(
+      srv->conn,
+      "HTTP/%s 500 Internal Server Error\r\n"
+      "Content-Length: %d\r\n"
+      "Content-Type: text/plain\r\n\r\n",
+      rreq->http_version, len
+    );
+    if (ret < 0) R_THROW_ERROR("Could not send HTTP error response");
+    if (mg_write(srv->conn, s, len) < 0) {
+      R_THROW_ERROR("Failed to write HTTP response body");
+    }
+
+  } else if (TYPEOF(res) == VECSXP && LENGTH(res) == 4) {
+    SEXP cnt = VECTOR_ELT(res, 0);
+    SEXP sct = VECTOR_ELT(res, 1);
+    SEXP hdr = VECTOR_ELT(res, 2);
+    int code = INTEGER(VECTOR_ELT(res, 3))[0];
+    const char *ct_raw = "application/octet-stream";
+    const char *ct_str = "text/plain";
+    const char *ct = 0;
+    int clen = 0;
+    if (!isNull(sct)) {
+      ct = CHAR(STRING_ELT(sct, 0));
+    } else if (TYPEOF(cnt) == RAWSXP) {
+      ct = ct_raw;
+    } else if (TYPEOF(cnt) == STRSXP) {
+      ct = ct_str;
+    } else {
+      R_THROW_ERROR("Invalid content type for HTTP response");
+    }
+
+    if (TYPEOF(cnt) == RAWSXP) {
+      clen = LENGTH(cnt);
+    } else if (isNull(cnt)) {
+      clen = 0;
+    } else {
+      clen = strlen(CHAR(STRING_ELT(cnt, 0)));
+    }
+
+    ret = mg_printf(
+      srv->conn,
+      "HTTP/%s %d %s\r\n"
+      "Content-Type: %s\r\n"
+      "Content-Length: %d\r\n",
+      rreq->http_version,
+      code, mg_get_response_code_text(srv->conn, code),
+      ct, clen
+    );
+    if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+
+    for (i = 0; !isNull(hdr) && i < LENGTH(hdr); i++) {
+      const char *hs = CHAR(STRING_ELT(hdr, i));
+      ret = mg_write(srv->conn, hs, strlen(hs));
+      ret |= mg_write(srv->conn, "\r\n", 2);
+      if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+    }
+
+    if (mg_write(srv->conn, "\r\n", 2) < 0) {
+      R_THROW_ERROR("Could not send HTTP response");
+    }
+
+    if (TYPEOF(cnt) == RAWSXP) {
+      ret = mg_write(srv->conn, RAW(cnt), clen);
+    } else if (TYPEOF(cnt) == STRSXP) {
+      ret = mg_write(srv->conn, CHAR(STRING_ELT(cnt, 0)), clen);
+    }
+    if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+
+  } else if (isNull(res)) {
+    /* Do nothing. Response is sent or empty response */
+
+  } else {
+    R_THROW_ERROR("Invalid presser response");
+  }
+
+  return R_NilValue;
+}
+
+SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
+  struct presser_server *srv = R_ExternalPtrAddr(rsrv);
+  if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
+  int ret;
 
   while (1) {
     struct timespec limit;
@@ -275,7 +368,6 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       ret = pthread_cond_timedwait(&srv->process_more, &srv->process_lock, &limit);
     }
 
-    const struct mg_request_info *rreq = mg_get_request_info(srv->conn);
     struct presser_connection *conn_data =
       mg_get_user_connection_data(srv->conn);
 
@@ -297,92 +389,13 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
     SEXP trycall = PROTECT(lang3(try, call, silent));
     SEXP res = PROTECT(eval(trycall, env));
 
-    if (TYPEOF(res) == VECSXP) res = VECTOR_ELT(res, 1);
-
-    /* The rest is sending the response */
-
-    if (TYPEOF(res) == STRSXP && LENGTH(res) > 0) {
-      if (LENGTH(res) > 1) {
-        warning("Only first element of character vector is used for HTTP body");
-      }
-      const char *s = CHAR(STRING_ELT(res, 0));
-      int len = strlen(s);
-      ret = mg_printf(
-        srv->conn,
-        "HTTP/%s 500 Internal Server Error\r\n"
-        "Content-Length: %d\r\n"
-        "Content-Type: text/plain\r\n\r\n",
-        rreq->http_version, len
-      );
-      if (ret < 0) R_THROW_ERROR("Could not send HTTP error response");
-      if (mg_write(srv->conn, s, len) < 0) {
-        R_THROW_ERROR("Failed to write HTTP response body");
-      }
-
-    } else if (TYPEOF(res) == VECSXP && LENGTH(res) == 4) {
-      SEXP cnt = VECTOR_ELT(res, 0);
-      SEXP sct = VECTOR_ELT(res, 1);
-      SEXP hdr = VECTOR_ELT(res, 2);
-      int code = INTEGER(VECTOR_ELT(res, 3))[0];
-      const char *ct_raw = "application/octet-stream";
-      const char *ct_str = "text/plain";
-      const char *ct = 0;
-      int clen = 0;
-      if (!isNull(sct)) {
-        ct = CHAR(STRING_ELT(sct, 0));
-      } else if (TYPEOF(cnt) == RAWSXP) {
-        ct = ct_raw;
-      } else if (TYPEOF(cnt) == STRSXP) {
-        ct = ct_str;
-      } else {
-        R_THROW_ERROR("Invalid content type for HTTP response");
-      }
-
-      if (TYPEOF(cnt) == RAWSXP) {
-        clen = LENGTH(cnt);
-      } else if (isNull(cnt)) {
-        clen = 0;
-      } else {
-        clen = strlen(CHAR(STRING_ELT(cnt, 0)));
-      }
-
-      ret = mg_printf(
-        srv->conn,
-        "HTTP/%s %d %s\r\n"
-        "Content-Type: %s\r\n"
-        "Content-Length: %d\r\n",
-        rreq->http_version,
-        code, mg_get_response_code_text(srv->conn, code),
-        ct, clen
-      );
-      if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
-
-      for (i = 0; !isNull(hdr) && i < LENGTH(hdr); i++) {
-        const char *hs = CHAR(STRING_ELT(hdr, i));
-        ret = mg_write(srv->conn, hs, strlen(hs));
-        ret |= mg_write(srv->conn, "\r\n", 2);
-        if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
-      }
-
-      if (mg_write(srv->conn, "\r\n", 2) < 0) {
-        R_THROW_ERROR("Could not send HTTP response");
-      }
-
-      if (TYPEOF(cnt) == RAWSXP) {
-        ret = mg_write(srv->conn, RAW(cnt), clen);
-      } else if (TYPEOF(cnt) == STRSXP) {
-        ret = mg_write(srv->conn, CHAR(STRING_ELT(cnt, 0)), clen);
-      }
-      if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
-
-    } else if (isNull(res)) {
-      /* Do nothing. Response is sent or empty response */
-
+    if (TYPEOF(res) != VECSXP || INTEGER(VECTOR_ELT(res, 0))[0] == 0) {
+      presser_send_response(res, rsrv);
+    } else if (INTEGER(VECTOR_ELT(res, 0))[0] == 1) {
+      /* TODO */
     } else {
-      R_THROW_ERROR("Invalid presser response");
+      R_THROW_ERROR("Invalid presser response, internal error");
     }
-
-    UNPROTECT(1);
 
     /* OK, we are done */
     srv->conn = NULL;
