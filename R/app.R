@@ -436,16 +436,14 @@ new_app <- function() {
     .process = NULL,
 
     # The request processing function
-    .run = function(rreq) {
+    .run = function(req) {
 
-      path <- rreq$local_uri
-
-      req <- rreq$request %||% new_request(self, rreq)
-      res <- rreq$response %||% new_response(self, req)
+      req <- new_request(self, req)
+      res <- req$res
 
       for (i in sseq(res$.stackptr, length(self$.stack))) {
         handler <- self$.stack[[i]]
-        m <- path_match(req$method, path, handler)
+        m <- path_match(req$method, req$path, handler)
         if (!isFALSE(m)) {
           if (is.list(m)) req$params <- m$params
           out <- handler$handler(req, res)

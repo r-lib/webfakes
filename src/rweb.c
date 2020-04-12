@@ -207,9 +207,9 @@ SEXP presser_create_request(SEXP rsrv, SEXP handler, SEXP env) {
   SEXP rreq = PROTECT(new_env());
   defineVar(install("method"), mkString(req->request_method), rreq);
   mg_get_request_link(srv->conn, request_link, sizeof(request_link));
-  defineVar(install("request_link"), mkString(request_link), rreq);
+  defineVar(install("url"), mkString(request_link), rreq);
   defineVar(install("request_uri"), mkString(req->request_uri), rreq);
-  defineVar(install("local_uri"), mkString(req->local_uri), rreq);
+  defineVar(install("path"), mkString(req->local_uri), rreq);
   defineVar(install("http_version"), mkString(req->http_version), rreq);
   defineVar(
     install("query_string"),
@@ -236,10 +236,10 @@ SEXP presser_create_request(SEXP rsrv, SEXP handler, SEXP env) {
     if (ret != req->content_length) {
       warning("Partial HTTP request body from client");
     }
-    defineVar(install("body"), body, rreq);
+    defineVar(install(".body"), body, rreq);
     UNPROTECT(1);
   } else {
-    defineVar(install("body"), R_NilValue, rreq);
+    defineVar(install(".body"), R_NilValue, rreq);
   }
 
   SEXP try = PROTECT(install("try"));
