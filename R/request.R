@@ -33,6 +33,7 @@ NULL
 new_request <- function(app, self) {
   if (isTRUE(self$.has_methods)) return(self)
   parsed_headers <- parse_headers(self$headers)
+  self$.has_methods <- TRUE
   self$app <- app
   self$headers <- parsed_headers
   self$hostname <- parsed_headers$host
