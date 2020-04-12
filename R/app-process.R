@@ -7,6 +7,10 @@
 #' @param ... Options to pass to the [callr::r_session_options()] when
 #'   setting up the subprocess.
 #' @param .port Port to use. By default the OS assigns a port.
+#' @param .num_threads the number of threads that will handle HTTP
+#'   requests. If you use asynchronous or parallel HTTP requests, then
+#'   you probably want to increase this, to let the server handle
+#'   multiple requests at the same time.
 #' @param .process_timeout How long to wait for the subprocess to start, in
 #'   milliseconds.
 #' @return A `presser_app_process` class.
@@ -56,23 +60,23 @@
 #'
 #' proc$stop()
 
-new_app_process <- function(app, ..., .port = NULL,
+new_app_process <- function(app, ..., .port = NULL, .num_threads = 1,
                             .process_timeout = 5000) {
 
-  app; list(...); .port; .process_timeout
+  app; list(...); .port; .num_threads; .process_timeout
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, ..., .port = NULL) {
+    new = function(app, ..., .port = NULL, .num_threads = 1) {
       self$.app <- app
       opts <- callr::r_session_options(...)
       self$.process <- callr::r_session$new(opts, wait = TRUE)
       self$.process$call(
-        args = list(app, .port),
-        function(app, .port) {
+        args = list(app, .port, .num_threads),
+        function(app, .port, .num_threads) {
           library(presser)
           .GlobalEnv$app <- app
-          app$listen(port = .port)
+          app$listen(port = .port, num_threads = .num_threads)
         }
       )
 
@@ -147,7 +151,7 @@ new_app_process <- function(app, ..., .port = NULL,
     .port = NULL
   )
 
-  self$new(app, ..., .port = .port)
+  self$new(app, ..., .port = .port, .num_threads = .num_threads)
   self$new <- NULL
 
   self

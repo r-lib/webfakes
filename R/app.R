@@ -241,11 +241,16 @@ pkg_data <- new.env(parent = emptyenv())
 #' ## Starting and stopping
 #'
 #' ```r
-#' app$listen(port = NULL)
+#' app$listen(port = NULL, num_threads = 1)
 #' ```
 #'
 #' * `port`: port to listen on. When `NULL`, the operating system will
 #'   automatically select a free port.
+#'
+#' * `num_threads`: the number of threads that will handle HTTP
+#'   requests. If you use asynchronous or parallel HTTP requests, then
+#'   you probably want to increase this, to let the server handle
+#'   multiple requests at the same time.
 #'
 #' This method does not return, and can be interrupted with `CTRL+C` / `ESC`
 #' or a SIGINT signal. See [new_app_process()] for interrupting an app that
@@ -350,11 +355,11 @@ new_app <- function() {
       invisible(self)
     },
 
-    listen = function(port = NULL)  {
+    listen = function(port = NULL, num_threads = 1)  {
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
 
-      srv <- server_start(port = port)
+      srv <- server_start(port = port, num_threads = num_threads)
       ports <- server_get_ports(srv)
       self$.port <- ports$port[1]
       message("Running presser web app on port ", self$.port)

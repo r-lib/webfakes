@@ -4,7 +4,7 @@ web <- setup({
   app$get("/delay", function(req, res) {
     if (is.null(res$locals$seen)) {
       res$locals$seen <- TRUE
-      res$delay(.2)
+      res$delay(.5)
     } else {
       res$send_json(
         list(message = "Sorry, running late..."),
@@ -19,7 +19,7 @@ web <- setup({
     )
   })
   
- new_app_process(app)
+  new_app_process(app, .num_threads = 2)
 })
 
 teardown(web$stop())
@@ -37,6 +37,6 @@ test_that("delay", {
 
   expect_false(is.null(resp1))
   expect_false(is.null(resp2))
-  expect_true(sum(resp1$times) > 0.2)
-  expect_true(sum(resp2$times) < 0.2)
+  expect_true(resp1$times[["total"]] > 0.5)
+  expect_true(resp2$times[["total"]] < resp1$times[["total"]])
 })

@@ -5,7 +5,13 @@
 \alias{presser_app_process}
 \title{Run a presser app in another process}
 \usage{
-new_app_process(app, ..., .port = NULL, .process_timeout = 5000)
+new_app_process(
+  app,
+  ...,
+  .port = NULL,
+  .num_threads = 1,
+  .process_timeout = 5000
+)
 }
 \arguments{
 \item{app}{\code{presser_app} object, the web app to run.}
@@ -14,6 +20,11 @@ new_app_process(app, ..., .port = NULL, .process_timeout = 5000)
 setting up the subprocess.}
 
 \item{.port}{Port to use. By default the OS assigns a port.}
+
+\item{.num_threads}{the number of threads that will handle HTTP
+requests. If you use asynchronous or parallel HTTP requests, then
+you probably want to increase this, to let the server handle
+multiple requests at the same time.}
 
 \item{.process_timeout}{How long to wait for the subprocess to start, in
 milliseconds.}
