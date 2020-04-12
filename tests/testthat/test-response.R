@@ -1,5 +1,5 @@
 
-proc <- setup({
+web <- setup({
   app <- new_app()
   app$locals$applocal <- "foo"
   app$engine("txt", tmpl_glue())
@@ -31,10 +31,10 @@ proc <- setup({
   new_app_process(app)
 })
 
-teardown(proc$stop())
+teardown(web$stop())
 
 test_that("response locals", {
-  url <- proc$get_url("/local")
+  url <- web$get_url("/local")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(rawToChar(resp$content), "foo bar")
 })
@@ -43,7 +43,7 @@ test_that("response locals", {
 
 test_that("render", {
   # if the template or engine does not exist
-  url <- proc$get_url("/badengine")
+  url <- web$get_url("/badengine")
   resp <- curl::curl_fetch_memory(url)
   expect_match(
     rawToChar(resp$content),
@@ -52,7 +52,7 @@ test_that("render", {
 })
 
 test_that("send_json", {
-  url <- proc$get_url("/badjson")
+  url <- web$get_url("/badjson")
   resp <- curl::curl_fetch_memory(url)
   expect_match(
     rawToChar(resp$content),
@@ -61,7 +61,7 @@ test_that("send_json", {
 })
 
 test_that("send_file", {
-  url <- proc$get_url("/file")
+  url <- web$get_url("/file")
   resp <- curl::curl_fetch_memory(url)
   path <- system.file(
     package = "presser",
@@ -71,7 +71,7 @@ test_that("send_file", {
 })
 
 test_that("set_type", {
-  url <- proc$get_url("/type")
+  url <- web$get_url("/type")
   resp <- curl::curl_fetch_memory(url)
   headers <- curl::parse_headers_list(resp$headers)
   expect_equal(headers$`content-type`, "application/json")

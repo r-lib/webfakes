@@ -1,9 +1,9 @@
 
-proc <- setup(new_app_process(httpbin_app()))
-teardown(proc$stop())
+web <- setup(new_app_process(httpbin_app()))
+teardown(web$stop())
 
 test_that("get", {
-  url <- proc$get_url("/get")
+  url <- web$get_url("/get")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
   data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
@@ -11,7 +11,7 @@ test_that("get", {
 })
 
 test_that("post", {
-  url <- proc$get_url("/post")
+  url <- web$get_url("/post")
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "content-type" = "application/json")
@@ -35,17 +35,17 @@ test_that("post", {
 test_methods <- c("connect", "delete", "head", "mkcol", "options",
                   "patch", "propfind", "put", "report")
 
-proc2 <- setup({
+web2 <- setup({
   app <- new_app()
   handler <- function(req, res) res$send_json(list(method = req$method))
   for (method in test_methods) app[[method]](paste0("/", method), handler)
   new_app_process(app, .port = NA)
 })
-teardown(proc2$stop())
+teardown(web2$stop())
 
 test_that("the rest", {
   for (method in test_methods) {
-    url <- proc2$get_url(paste0("/", method))
+    url <- web2$get_url(paste0("/", method))
     handle <- curl::new_handle()
     curl::handle_setheaders(handle, "content-type" = "application/json")
     curl::handle_setopt(handle, customrequest = toupper(method))

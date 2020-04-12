@@ -1,5 +1,5 @@
 
-proc <- setup({
+web <- setup({
   app <- new_app()
   app$engine("html", tmpl_glue())
   app$set_config("views", test_path("fixtures", "views"))
@@ -13,10 +13,10 @@ proc <- setup({
   new_app_process(app)
 })
 
-teardown(proc$stop())
+teardown(web$stop())
 
 test_that("glue templating", {
-  url <- proc$get_url("/hello/gabor")
+  url <- web$get_url("/hello/gabor")
   resp <- curl::curl_fetch_memory(url)
   expect_match(rawToChar(resp$content), "hello gabor")
 })
