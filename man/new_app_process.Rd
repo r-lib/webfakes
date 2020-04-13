@@ -10,8 +10,7 @@ new_app_process(
   ...,
   .port = NULL,
   .num_threads = 1,
-  .process_timeout = 5000,
-  .local_env = NULL
+  .process_timeout = 5000
 )
 }
 \arguments{
@@ -29,10 +28,6 @@ multiple requests at the same time.}
 
 \item{.process_timeout}{How long to wait for the subprocess to start, in
 milliseconds.}
-
-\item{.local_env}{Named list of environment variables that are set or
-updated for while the app process is running, and they are restored
-when the \verb{$stop()} method is called.}
 }
 \value{
 A \code{presser_app_process} class.
@@ -42,9 +37,11 @@ The \code{presser_app_process} class has the following methods:\if{html}{\out{<d
 get_port()
 stop()
 get_state()
+local_env(envvars)
 url(path = "/", query = NULL)
 }\if{html}{\out{</div>}}
 \itemize{
+\item \code{envvars}: Named list of environment variables.
 \item \code{path}: Path to return the URL for.
 \item \code{query}: Additional query parameters, a named list, to add to the URL.
 }
@@ -62,6 +59,9 @@ already).
 \item \code{"live"} means that the server is running.
 \item \code{"dead"} means that the subprocess has quit or crashed.
 }
+
+\code{local_env()} sets the given environment variables for the duration of
+the app process. It resets them in \verb{$stop()}.
 
 \code{url()} returns the URL of the web app. You can use the \code{path}
 parameter to return a specific path.

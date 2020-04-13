@@ -145,6 +145,7 @@ format.presser_app_process <- function(x, ...) {
     "  get_app()              # get the app object",
     "  get_port()             # query port of the app",
     "  get_state()            # query web server process state",
+    "  local_env(envvars)     # set temporary environment variables",
     "  url(path, query)       # query url for an api path",
     "  stop()                 # stop web server process"
   )

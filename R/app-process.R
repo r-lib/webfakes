@@ -13,9 +13,6 @@
 #'   multiple requests at the same time.
 #' @param .process_timeout How long to wait for the subprocess to start, in
 #'   milliseconds.
-#' @param .local_env Named list of environment variables that are set or
-#'   updated for while the app process is running, and they are restored
-#'   when the `$stop()` method is called.
 #' @return A `presser_app_process` class.
 #'
 #' ## Methods
@@ -27,9 +24,11 @@
 #' get_port()
 #' stop()
 #' get_state()
+#' local_env(envvars)
 #' url(path = "/", query = NULL)
 #' ```
 #'
+#' * `envvars`: Named list of environment variables.
 #' * `path`: Path to return the URL for.
 #' * `query`: Additional query parameters, a named list, to add to the URL.
 #'
@@ -44,6 +43,9 @@
 #'   already).
 #' * `"live"` means that the server is running.
 #' * `"dead"` means that the subprocess has quit or crashed.
+#'
+#' `local_env()` sets the given environment variables for the duration of
+#' the app process. It resets them in `$stop()`.
 #'
 #' `url()` returns the URL of the web app. You can use the `path`
 #' parameter to return a specific path.
@@ -64,20 +66,15 @@
 #' proc$stop()
 
 new_app_process <- function(app, ..., .port = NULL, .num_threads = 1,
-                            .process_timeout = 5000, .local_env = NULL) {
+                            .process_timeout = 5000) {
 
-  app; list(...); .port; .num_threads; .process_timeout; .local_env
+  app; list(...); .port; .num_threads; .process_timeout
 
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, ..., .port = NULL, .num_threads = 1, .local_env = NULL) {
+    new = function(app, ..., .port = NULL, .num_threads = 1) {
       self$.app <- app
-      if (!is.null(.local_env)) {
-        self$.old_env <- old_env <- set_envvar(.local_env)
-        # If anything goes wrong here, restore the env
-        on.exit(set_envvar(old_env), add = TRUE)
-      }
       opts <- callr::r_session_options(...)
       self$.process <- callr::r_session$new(opts, wait = TRUE)
       self$.process$call(
@@ -107,8 +104,6 @@ new_app_process <- function(app, ..., .port = NULL, .num_threads = 1,
       }
       self$.port <- msg$message$port
 
-      # Everything is fine, no need to restore env
-      old_env <- NULL
       invisible(self)
     },
 
@@ -151,6 +146,11 @@ new_app_process <- function(app, ..., .port = NULL, .num_threads = 1,
       }
     },
 
+    local_env = function(envvars) {
+      self$.old_env <- c(self$.old_env, set_envvar(envvars))
+      invisible(self)
+    },
+
     url = function(path = "/", query = NULL) {
       if (!is.null(query)) {
         query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
@@ -164,8 +164,7 @@ new_app_process <- function(app, ..., .port = NULL, .num_threads = 1,
     .old_env = NULL
   )
 
-  self$new(app, ..., .port = .port, .num_threads = .num_threads,
-           .local_env = .local_env)
+  self$new(app, ..., .port = .port, .num_threads = .num_threads)
   self$new <- NULL
 
   self
