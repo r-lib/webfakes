@@ -25,7 +25,7 @@ Lightweight web apps for testing. Built using the
     engine.
   - Middleware to parse JSON, multipart and URL encoded request bodies.
   - A web app is just an R object. It can be saved to disk, copied to
-    another R process, put in an R package, etc.
+    another R process, etc.
   - A web app is extensible, by adding new routes and middleware to it.
   - Helper functions for sending JSON, files from disk, etc.
   - Comes with an app similar to the <https://httpbin.org> API, so for
