@@ -122,7 +122,7 @@ A typical route:\if{html}{\out{<div class="r">}}\preformatted{app$get("/user/:id
   ...
   res$
     set_status(200L)$
-    set_header("X-custom-header", "foobar")$
+    set_header("X-Custom-Header", "foobar")$
     send_json(response, auto_unbox = TRUE)
 \})
 }\if{html}{\out{</div>}}

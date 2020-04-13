@@ -64,3 +64,23 @@ try_silently <- function(expr) {
 sseq <- function(from, to) {
   if (from > to) integer() else seq(from, to)
 }
+
+is.named <- function(x) {
+  length(names(x)) == length(x) && all(names(x) != "")
+}
+
+set_envvar <- function(envs) {
+  if (length(envs) == 0) return()
+
+  stopifnot(is.named(envs))
+
+  old <- Sys.getenv(names(envs), names = TRUE, unset = NA)
+  set <- !is.na(envs)
+
+  both_set <- set & !is.na(old)
+
+  if (any(set))  do.call("Sys.setenv", as.list(envs[set]))
+  if (any(!set)) Sys.unsetenv(names(envs)[!set])
+
+  invisible(old)
+}

@@ -10,7 +10,8 @@ new_app_process(
   ...,
   .port = NULL,
   .num_threads = 1,
-  .process_timeout = 5000
+  .process_timeout = 5000,
+  .local_env = NULL
 )
 }
 \arguments{
@@ -28,6 +29,10 @@ multiple requests at the same time.}
 
 \item{.process_timeout}{How long to wait for the subprocess to start, in
 milliseconds.}
+
+\item{.local_env}{Named list of environment variables that are set or
+updated for while the app process is running, and they are restored
+when the \verb{$stop()} method is called.}
 }
 \value{
 A \code{presser_app_process} class.

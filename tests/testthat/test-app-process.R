@@ -36,3 +36,13 @@ test_that("get_state", {
   proc$stop()
   expect_equal(proc$get_state(), "not running")
 })
+
+test_that("env vars", {
+  app <- new_app()
+  on.exit(proc$stop(), add = TRUE)
+  withr::local_envvar(list(FOO = "foo"))
+  proc <- new_app_process(app, .local_env = list(FOO = "bar"))
+  expect_equal(Sys.getenv("FOO", ""), "bar")
+  proc$stop()
+  expect_equal(Sys.getenv("FOO", ""), "foo")
+})
