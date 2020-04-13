@@ -125,7 +125,8 @@
   <span class='no'>...</span>,
   <span class='kw'>.port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>.num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>.process_timeout</span> <span class='kw'>=</span> <span class='fl'>5000</span>
+  <span class='kw'>.process_timeout</span> <span class='kw'>=</span> <span class='fl'>5000</span>,
+  <span class='kw'>.local_env</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -155,6 +156,12 @@ multiple requests at the same time.</p></td>
       <th>.process_timeout</th>
       <td><p>How long to wait for the subprocess to start, in
 milliseconds.</p></td>
+    </tr>
+    <tr>
+      <th>.local_env</th>
+      <td><p>Named list of environment variables that are set or
+updated for while the app process is running, and they are restored
+when the <code>$stop()</code> method is called.</p></td>
     </tr>
     </table>
 
