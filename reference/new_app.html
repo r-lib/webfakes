@@ -331,9 +331,13 @@ response local variables (see <code>locals</code> in <a href='presser_response.h
 available.</p>
 
 <h3>Starting and stopping</h3>
-<p><div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>listen</span>(<span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre><p></div></p><ul>
+<p><div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>listen</span>(<span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre><p></div></p><ul>
 <li><p><code>port</code>: port to listen on. When <code>NULL</code>, the operating system will
 automatically select a free port.</p></li>
+<li><p><code>num_threads</code>: the number of threads that will handle HTTP
+requests. If you use asynchronous or parallel HTTP requests, then
+you probably want to increase this, to let the server handle
+multiple requests at the same time.</p></li>
 </ul>
 
 <p>This method does not return, and can be interrupted with <code>CTRL+C</code> / <code>ESC</code>

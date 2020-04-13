@@ -120,7 +120,13 @@
     <p>Runs an app in a subprocess, using <a href='https://rdrr.io/pkg/callr/man/r_session.html'>callr::r_session</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_app_process</span>(<span class='no'>app</span>, <span class='no'>...</span>, <span class='kw'>.port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.process_timeout</span> <span class='kw'>=</span> <span class='fl'>5000</span>)</pre>
+    <pre class="usage"><span class='fu'>new_app_process</span>(
+  <span class='no'>app</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>.port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>.num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>.process_timeout</span> <span class='kw'>=</span> <span class='fl'>5000</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,6 +145,13 @@ setting up the subprocess.</p></td>
       <td><p>Port to use. By default the OS assigns a port.</p></td>
     </tr>
     <tr>
+      <th>.num_threads</th>
+      <td><p>the number of threads that will handle HTTP
+requests. If you use asynchronous or parallel HTTP requests, then
+you probably want to increase this, to let the server handle
+multiple requests at the same time.</p></td>
+    </tr>
+    <tr>
       <th>.process_timeout</th>
       <td><p>How long to wait for the subprocess to start, in
 milliseconds.</p></td>
@@ -150,18 +163,16 @@ milliseconds.</p></td>
     <p>A <code>presser_app_process</code> class.</p><h3>Methods</h3>
 
 
-<p>The <code>presser_app_process</code> class has the following methods:<div class="r"></p><pre><span class='fu'>get_url</span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"/"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-<span class='fu'>get_app</span>()
+<p>The <code>presser_app_process</code> class has the following methods:<div class="r"></p><pre><span class='fu'>get_app</span>()
 <span class='fu'>get_port</span>()
 <span class='fu'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span>()
-<span class='fu'>get_state</span>()</pre><p></div></p><ul>
+<span class='fu'>get_state</span>()
+<span class='fu'><a href='https://rdrr.io/r/base/connections.html'>url</a></span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"/"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre><p></div></p><ul>
 <li><p><code>path</code>: Path to return the URL for.</p></li>
 <li><p><code>query</code>: Additional query parameters, a named list, to add to the URL.</p></li>
 </ul>
 
 <p><code>get_app()</code> returns the app object.</p>
-<p><code>get_url()</code> returns the URL of the web app. You can use the <code>path</code>
-parameter to return a specific path.</p>
 <p><code>get_port()</code> returns the port the web server is running on.</p>
 <p><code><a href='https://rdrr.io/r/base/stop.html'>stop()</a></code> stops the web server, and also the subprocess.</p>
 <p><code>get_state()</code> returns a string, the state of the web server:</p><ul>
@@ -171,6 +182,8 @@ already).</p></li>
 <li><p><code>"dead"</code> means that the subprocess has quit or crashed.</p></li>
 </ul>
 
+<p><code><a href='https://rdrr.io/r/base/connections.html'>url()</a></code> returns the URL of the web app. You can use the <code>path</code>
+parameter to return a specific path.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -180,7 +193,7 @@ already).</p></li>
 })
 
 <span class='no'>proc</span> <span class='kw'>&lt;-</span> <span class='fu'>new_app_process</span>(<span class='no'>app</span>)
-<span class='no'>url</span> <span class='kw'>&lt;-</span> <span class='no'>proc</span>$<span class='fu'>get_url</span>(<span class='st'>"/foo"</span>)
+<span class='no'>url</span> <span class='kw'>&lt;-</span> <span class='no'>proc</span>$<span class='fu'><a href='https://rdrr.io/r/base/connections.html'>url</a></span>(<span class='st'>"/foo"</span>)
 <span class='no'>resp</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>curl</span><span class='kw ns'>::</span><span class='fu'><a href='https://jeroen.cran.dev/curl/reference/curl_fetch.html'>curl_fetch_memory</a></span>(<span class='no'>url</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span>(<span class='no'>resp</span>$<span class='no'>content</span>))</div><div class='output co'>#&gt; Hello world!</div><div class='input'>
 <span class='no'>proc</span>$<span class='fu'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span>()</div></pre>

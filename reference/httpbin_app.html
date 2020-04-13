@@ -138,30 +138,30 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>app</span> <span class='kw'>&lt;-</span> <span class='fu'>httpbin_app</span>()
 <span class='no'>proc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='new_app_process.html'>new_app_process</a></span>(<span class='no'>app</span>)
-<span class='no'>url</span> <span class='kw'>&lt;-</span> <span class='no'>proc</span>$<span class='fu'>get_url</span>(<span class='st'>"/get"</span>)
+<span class='no'>url</span> <span class='kw'>&lt;-</span> <span class='no'>proc</span>$<span class='fu'><a href='https://rdrr.io/r/base/connections.html'>url</a></span>(<span class='st'>"/get"</span>)
 <span class='no'>resp</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>curl</span><span class='kw ns'>::</span><span class='fu'><a href='https://jeroen.cran.dev/curl/reference/curl_fetch.html'>curl_fetch_memory</a></span>(<span class='no'>url</span>)
-<span class='kw pkg'>curl</span><span class='kw ns'>::</span><span class='fu'><a href='https://jeroen.cran.dev/curl/reference/parse_headers.html'>parse_headers_list</a></span>(<span class='no'>resp</span>$<span class='no'>headers</span>)</div><div class='output co'>#&gt; $`content-type`
+<span class='kw pkg'>curl</span><span class='kw ns'>::</span><span class='fu'><a href='https://jeroen.cran.dev/curl/reference/parse_headers.html'>parse_headers_list</a></span>(<span class='no'>resp</span>$<span class='no'>headers</span>)</div><div class='output co'>#&gt; $date
+#&gt; [1] "2020-04-13 07:58:26"
+#&gt; 
+#&gt; $`content-type`
 #&gt; [1] "application/json"
 #&gt; 
 #&gt; $`content-length`
 #&gt; [1] "286"
 #&gt; 
-#&gt; $date
-#&gt; [1] "2020-04-11 09:22:10"
-#&gt; 
 #&gt; $etag
-#&gt; [1] "\"00896e65\""
+#&gt; [1] "\"74ca7baf\""
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span>(<span class='no'>resp</span>$<span class='no'>content</span>))</div><div class='output co'>#&gt; {
 #&gt;   "args": {},
 #&gt;   "headers": {
-#&gt;     "host": "127.0.0.1:49540",
-#&gt;     "user-agent": "R (3.6.3 x86_64-apple-darwin15.6.0 x86_64 darwin15.6.0)",
-#&gt;     "accept": "*/*",
-#&gt;     "accept-encoding": "deflate, gzip"
+#&gt;     "Host": "127.0.0.1:49326",
+#&gt;     "User-Agent": "R (3.6.3 x86_64-apple-darwin15.6.0 x86_64 darwin15.6.0)",
+#&gt;     "Accept": "*/*",
+#&gt;     "Accept-Encoding": "deflate, gzip"
 #&gt;   },
 #&gt;   "origin": "127.0.0.1",
 #&gt;   "path": "/get",
-#&gt;   "url": "http://127.0.0.1:49540/get"
+#&gt;   "url": "http://127.0.0.1:49326/get"
 #&gt; }</div><div class='input'><span class='no'>proc</span>$<span class='fu'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span>()</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
