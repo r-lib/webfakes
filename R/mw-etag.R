@@ -28,7 +28,7 @@ mw_etag <- function(algorithm = "crc32") {
           "\""
         )
       }
-      res$set_header("etag", etag)
+      res$set_header("Etag", etag)
     }
     res$on_response(do)
 

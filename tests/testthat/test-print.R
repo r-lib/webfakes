@@ -10,7 +10,7 @@ tmp <- setup({
   })
   proc <- new_app_process(app)
   withr::local_options(list(HTTPUserAgent = "It is me, libcurl"))
-  resp <- curl::curl_fetch_memory(proc$get_url())
+  resp <- curl::curl_fetch_memory(proc$url())
   tmp <- rawToChar(resp$content)
   list(tmp = tmp, proc = proc)
 })
@@ -29,7 +29,7 @@ test_that("presser_app", {
 test_that("presser_request", {
   req <- readRDS(tmp$tmp)$req
   req$url <- "http://127.0.0.1:3000/"
-  req$headers$host <- "127.0.0.1:3000"
+  req$headers$Host <- "127.0.0.1:3000"
   verify_output(
     test_path("fixtures", "output", "presser_request.txt"),
     req

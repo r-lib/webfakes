@@ -1,10 +1,10 @@
 
-server_start <- function(port = NULL) {
+server_start <- function(port = NULL, num_threads = 1) {
   port <- paste0("127.0.0.1:", as.character(port %||% "0"))
   options <- c(
     "listening_ports"          = port,
     "request_timeout_ms"       = "100000",
-    "num_threads"              = "1",
+    "num_threads"              = as.character(num_threads),
     "enable_auth_domain_check" = "no"
   )
   .Call(c_server_start, options)

@@ -10,7 +10,7 @@
 #' @examples
 #' app <- httpbin_app()
 #' proc <- new_app_process(app)
-#' url <- proc$get_url("/get")
+#' url <- proc$url("/get")
 #' resp <- curl::curl_fetch_memory(url)
 #' curl::parse_headers_list(resp$headers)
 #' cat(rawToChar(resp$content))
@@ -44,7 +44,7 @@ httpbin_app <- function(log = interactive()) {
 
   # Add date by default
   app$use("add date" = function(req, res) {
-    res$set_header("date", as.character(Sys.time()))
+    res$set_header("Date", as.character(Sys.time()))
     "next"
   })
 
@@ -67,6 +67,15 @@ httpbin_app <- function(log = interactive()) {
     ret <- make_common_response(req, res)
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
   }
+
+  # Main page, this will be the documentation of the API, eventually
+
+  app$get("/", function(req, res) {
+    res$send_file(
+      root = system.file(package = "presser", "examples", "httpbin", "data"),
+      "index.html"
+    )
+  })
 
   # HTTP methods =========================================================
 
@@ -95,7 +104,7 @@ httpbin_app <- function(log = interactive()) {
       "Basic",
       base64_encode(paste0(req$params$user, ":", req$params$passwd))
     )
-    hdr <- req$get_header("authorization") %||% ""
+    hdr <- req$get_header("Authorization") %||% ""
     if (exp == hdr) {
       res$send_json(list(
         authenticated = jsonlite::unbox(TRUE),
@@ -109,10 +118,10 @@ httpbin_app <- function(log = interactive()) {
   })
 
   app$get("/bearer", function(req, res) {
-    auth <- req$get_header("authorization") %||% ""
+    auth <- req$get_header("Authorization") %||% ""
     if (! grepl("^Bearer ", auth)) {
       res$
-        set_header("www-authenticate", "bearer")$
+        set_header("WWW-Authenticate", "bearer")$
         send_status(401L)
     } else {
       token <- sub("^Bearer ", "", auth)
@@ -131,7 +140,26 @@ httpbin_app <- function(log = interactive()) {
   app$all(
     new_regexp("^/status/(?<status>[0-9][0-9][0-9])$"),
     function(req, res) {
-      res$send_status(req$params$status)
+      status <- req$params$status
+      res$set_status(status)
+      if (status == "418") {
+        res$send(paste(
+          sep = "\n",
+          "",
+          "    -=[ teapot ]=-",
+          "",
+          "       _...._",
+          "     .'  _ _ `.",
+          "    | .\"` ^ `\". _,",
+          "    \\_;`\"---\"`|//",
+          "      |       ;/",
+          "      \\_     _/",
+          "        `\"\"\"`",
+          ""
+        ))
+      } else {
+        res$send("")
+      }
     }
   )
 
@@ -148,7 +176,7 @@ httpbin_app <- function(log = interactive()) {
   })
 
   app$get("/user-agent", function(req, res) {
-    ret <- list("user-agent" = req$get_header("user-agent"))
+    ret <- list("user-agent" = req$get_header("User-Agent"))
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
@@ -160,7 +188,7 @@ httpbin_app <- function(log = interactive()) {
     # The mw_etag() middleware is active, so we need to do this after that
     res_etag <- NULL
     res$on_response(function(req, res) {
-      if (!is.null(res_etag)) res$set_header("etag", res_etag)
+      if (!is.null(res_etag)) res$set_header("Etag", res_etag)
     })
 
     parse <- function(x) {
@@ -168,8 +196,8 @@ httpbin_app <- function(log = interactive()) {
       re_match(x, '\\s*(W/)?"?([^"]*)"?\\s*')$groups[,2]
     }
 
-    if_none_match <- parse(req$get_header("if-none-match") %||% "")
-    if_match <- parse(req$get_header("if-match") %||% "")
+    if_none_match <- parse(req$get_header("If-None-Match") %||% "")
+    if_match <- parse(req$get_header("If-Match") %||% "")
 
     if (length(if_none_match) > 0) {
       if (etag %in% if_none_match || "*" %in% if_none_match) {
@@ -286,9 +314,13 @@ httpbin_app <- function(log = interactive()) {
     delay <- suppressWarnings(as.numeric(req$params$delay))
     if (is.na(delay)) {
       return("next")
-    } else {
+    } else if (is.null(res$locals$seen)) {
+      res$locals$seen <- TRUE
       delay <- min(delay, 10)
-      Sys.sleep(delay)
+      res$delay(delay)
+    } else if (req$method == "head") {
+      res$send_status(200L)
+    } else {
       common_response(req, res)
     }
   })
@@ -310,7 +342,7 @@ httpbin_app <- function(log = interactive()) {
   # Images ===============================================================
 
   app$get("/image", function(req, res) {
-    act <- req$get_header("accept")
+    act <- req$get_header("Accept")
     ok <- c(
       "image/webp",
       "image/svg+xml",

@@ -1,5 +1,5 @@
 
-proc <- setup({
+web <- setup({
   app <- new_app()
   app$use(mw_multipart())
   app$put("/form", function(req, res) {
@@ -9,13 +9,13 @@ proc <- setup({
   new_app_process(app)
 })
 
-teardown(proc$stop())
+teardown(web$stop())
 
 test_that("mw_multipart", {
   on.exit(rm(tmp), add = TRUE)
   tmp <- tempfile()
   writeBin(charToRaw("foobar\n"), con = tmp)
-  url <- proc$get_url("/form")
+  url <- web$url("/form")
   handle <- curl::new_handle()
   curl::handle_setopt(handle, customrequest = "PUT")
   curl::handle_setform(

@@ -1,5 +1,5 @@
 
-proc <- setup({
+web <- setup({
   app <- new_app()$
     use(mw_log())$
     get("/txt", function(req, res) {
@@ -20,31 +20,31 @@ proc <- setup({
   new_app_process(app, stdout = "|")
 })
 
-teardown(proc$stop())
+teardown(web$stop())
 
 test_that("text/plain response", {
-  url <- proc$get_url("/txt")
+  url <- web$url("/txt")
   resp <- curl::curl_fetch_memory(url)
-  plr <- proc$.process$poll_io(1000)
+  plr <- web$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")
-  log <- proc$.process$read_output_lines()
+  log <- web$.process$read_output_lines()
   expect_match(log, "GET http://127\\.0\\.0\\.1:[0-9]*/txt 200 [0-9]+ ms - 7")
 })
 
 test_that("text/html response", {
-  url <- proc$get_url("/html")
+  url <- web$url("/html")
   resp <- curl::curl_fetch_memory(url)
-  plr <- proc$.process$poll_io(1000)
+  plr <- web$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")
-  log <- proc$.process$read_output_lines()
+  log <- web$.process$read_output_lines()
   expect_match(log, "GET http://127\\.0\\.0\\.1:[0-9]+/html 200 [0-9]+ ms - 44")
 })
 
 test_that("application/octet-stream response", {
-  url <- proc$get_url("/raw")
+  url <- web$url("/raw")
   resp <- curl::curl_fetch_memory(url)
-  plr <- proc$.process$poll_io(1000)
+  plr <- web$.process$poll_io(1000)
   expect_equal(plr[["output"]], "ready")
-  log <- proc$.process$read_output_lines()
+  log <- web$.process$read_output_lines()
   expect_match(log, "GET http://127\\.0\\.0\\.1:[0-9]+/raw 200 [0-9]+ ms - 3")
 })

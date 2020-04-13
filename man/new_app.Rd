@@ -242,11 +242,15 @@ response local variables (see \code{locals} in \link{presser_response}), are
 available.
 }
 
-\subsection{Starting and stopping}{\if{html}{\out{<div class="r">}}\preformatted{app$listen(port = NULL)
+\subsection{Starting and stopping}{\if{html}{\out{<div class="r">}}\preformatted{app$listen(port = NULL, num_threads = 1)
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{port}: port to listen on. When \code{NULL}, the operating system will
 automatically select a free port.
+\item \code{num_threads}: the number of threads that will handle HTTP
+requests. If you use asynchronous or parallel HTTP requests, then
+you probably want to increase this, to let the server handle
+multiple requests at the same time.
 }
 
 This method does not return, and can be interrupted with \code{CTRL+C} / \code{ESC}

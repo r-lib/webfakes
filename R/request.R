@@ -30,33 +30,31 @@
 #' @name presser_request
 NULL
 
-new_request <- function(app, rreq) {
-  parsed_headers <- parse_headers(rreq$headers)
-  self <- new_object(
-    "presser_request",
-
-    app = app,
-    headers = parsed_headers,
-    hostname = parsed_headers$host,
-    method = tolower(rreq$method),
-    path = rreq$local_uri,
-    protocol = "http",
-    query_string = rreq$query_string,
-    query = parse_query(rreq$query_string),
-    remote_addr = rreq$remote_addr,
-    url = rreq$request_link,
-
-    get_header = function(field) self$headers[[field]],
-
-    .body = rreq$body
-  )
-
+new_request <- function(app, self) {
+  if (isTRUE(self$.has_methods)) return(self)
+  parsed_headers <- parse_headers(self$headers)
+  self$.has_methods <- TRUE
+  self$app <- app
+  self$headers <- parsed_headers
+  self$hostname <- parsed_headers$host
+  self$method <- tolower(self$method)
+  self$protocol <- "http"
+  self$query = parse_query(self$query_string)
+  self$get_header <- function(field) {
+    h <- self$headers
+    names(h) <- tolower(names(h))
+    h[[tolower(field)]]
+  }
   rm(parsed_headers)
+
+  self$res <- new_response(app, self)
+
+  class(self) <- c("presser_request", class(self))
   self
 }
 
 parse_headers <- function(headers) {
-  names(headers) <- tolower(names(headers))
+  # nothing to do now...
   headers
 }
 

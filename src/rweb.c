@@ -3,11 +3,16 @@
 #include <R_ext/Rdynload.h>
 #include <Rinternals.h>
 
-#include <pthread.h>
-#include <time.h>
-
 #include "civetweb.h"
 #include "errors.h"
+
+#include <pthread.h>
+#include <time.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 SEXP server_start(SEXP options);
 SEXP server_process(SEXP rsrv, SEXP handler, SEXP env);
@@ -30,16 +35,28 @@ void R_init_presser(DllInfo *dll) {
   mg_init_library(0);
 }
 
+#define PRESSER_NOTHING 0
+#define PRESSER_REQ     1         /* request just came it */
+#define PRESSER_WAIT    2         /* waited a bit / wait a bit */
+#define PRESSER_DONE    3         /* request is done */
+
 struct presser_server {
   struct mg_context *ctx;
-  pthread_cond_t process_cond;  /* can process? */
+  pthread_cond_t process_more;  /* there is something to process */
+  pthread_cond_t process_less;  /* we can process something */
   pthread_mutex_t process_lock;
-  pthread_cond_t finish_cond;   /* can finish callback? */
-  pthread_mutex_t finish_lock;
-  struct mg_connection *conn ;
-  int response_ok;
+  struct mg_connection *conn;   /* the currenty active connection or NULL */
   struct mg_server_port ports[4];
   int num_ports;
+};
+
+struct presser_connection {
+  pthread_cond_t finish_cond;   /* can finish callback? */
+  pthread_mutex_t finish_lock;
+  int main_todo;                /* what should the main thread do? */
+  int req_todo;                 /* what shoudl the request thread do? */
+  double secs;                  /* how much should we wait? */
+  SEXP req;
 };
 
 void SEXP_to_char_vector(SEXP x, char*** vec) {
@@ -57,26 +74,70 @@ static int begin_request(struct mg_connection *conn) {
 
   struct mg_context *ctx = mg_get_context(conn);
   struct presser_server *srv = mg_get_user_data(ctx);
+  struct presser_connection conn_data = {
+    PTHREAD_COND_INITIALIZER, PTHREAD_MUTEX_INITIALIZER,
+    PRESSER_REQ, PRESSER_NOTHING, 0.0, R_NilValue
+  };
 
-  /* TODO: log errors into the web error log. */
-  /* TODO: what happens to the locks on error, we should release them? */
+  if (pthread_mutex_lock(&conn_data.finish_lock)) goto exit;
 
-  if (pthread_mutex_lock(&srv->process_lock)) return 1;
-  srv->conn = conn;
-  if (pthread_cond_signal(&srv->process_cond)) return 1;
-  if (pthread_mutex_unlock(&srv->process_lock)) return 1;
+  while (1) {
+    if (pthread_mutex_lock(&srv->process_lock)) goto exit;
+    mg_set_user_connection_data(conn, &conn_data);
+    while (srv->conn != NULL) {
+      pthread_cond_wait(&srv->process_less, &srv->process_lock);
+    }
 
-  /* Need to wait for the response... */
-  if (pthread_mutex_lock(&srv->finish_lock)) return 1;
-  while (srv->response_ok == 0) {
-    if (pthread_cond_wait(&srv->finish_cond, &srv->finish_lock)) return 1;
+    srv->conn = conn;
+
+    if (pthread_cond_signal(&srv->process_more)) goto exit;
+    if (pthread_mutex_unlock(&srv->process_lock)) goto exit;
+
+    /* Need to wait for the response... */
+    while (conn_data.req_todo == PRESSER_NOTHING) {
+      if (pthread_cond_wait(&conn_data.finish_cond,
+                            &conn_data.finish_lock)) {
+        goto exit;
+      }
+    }
+    if (conn_data.req_todo == PRESSER_DONE) break;
+    if (conn_data.req_todo == PRESSER_WAIT) {
+#ifdef _WIN32
+      Sleep(conn_data.secs * 1000);
+#else
+      usleep(conn_data.secs * 1000 * 1000);
+#endif
+    }
+    conn_data.main_todo = PRESSER_WAIT;
+    conn_data.req_todo = PRESSER_NOTHING;
   }
 
-  srv->response_ok = 0;
+ exit:
+  pthread_mutex_unlock(&conn_data.finish_lock);
+  mg_set_user_connection_data(conn, NULL);
 
-  /* we can return now, whatever the return value here */
-  pthread_mutex_unlock(&srv->finish_lock);
   return 1;
+}
+
+static int init_connection(const struct mg_connection *conn,
+                           void **conn_data) {
+  *conn_data = NULL;
+  return 0;
+}
+
+static void connection_close(const struct mg_connection *conn) {
+  struct presser_connection *conn_data = mg_get_user_connection_data(conn);
+  if (conn_data == NULL) return;
+  pthread_cond_destroy(&conn_data->finish_cond);
+  pthread_mutex_unlock(&conn_data->finish_lock);
+  pthread_mutex_destroy(&conn_data->finish_lock);
+  mg_set_user_connection_data((struct mg_connection*) conn, NULL);
+}
+
+static void end_request(const struct mg_connection *conn, int reply_status_code) {
+  /* Right now, these two are the same, they are probably redundant,
+     but it does not hurt */
+  connection_close(conn);
 }
 
 static void presser_server_finalizer(SEXP rsrv) {
@@ -85,15 +146,11 @@ static void presser_server_finalizer(SEXP rsrv) {
   if (srv == NULL) return;
   int ret = 0;
   R_ClearExternalPtr(rsrv);
-  srv->response_ok = 1;
-  ret += pthread_mutex_unlock(&srv->process_lock);
-  ret += pthread_mutex_unlock(&srv->finish_lock);
-  ret += pthread_cond_signal(&srv->finish_cond);
   mg_stop(srv->ctx);
+  ret += pthread_mutex_unlock(&srv->process_lock);
   ret += pthread_mutex_destroy(&srv->process_lock);
-  ret += pthread_cond_destroy(&srv->process_cond);
-  ret += pthread_mutex_destroy(&srv->finish_lock);
-  ret += pthread_cond_destroy(&srv->finish_cond);
+  ret += pthread_cond_destroy(&srv->process_more);
+  ret += pthread_cond_destroy(&srv->process_less);
 }
 
 #define CHK(expr) if ((ret = expr))                                     \
@@ -110,10 +167,9 @@ SEXP server_start(SEXP options) {
   PROTECT(rsrv = R_MakeExternalPtr(srv, R_NilValue, R_NilValue));
   R_RegisterCFinalizer(rsrv, presser_server_finalizer);
 
-  CHK(pthread_cond_init(&srv->process_cond, NULL));
+  CHK(pthread_cond_init(&srv->process_more, NULL));
+  CHK(pthread_cond_init(&srv->process_less, NULL));
   CHK(pthread_mutex_init(&srv->process_lock, NULL));
-  CHK(pthread_cond_init(&srv->finish_cond, NULL));
-  CHK(pthread_mutex_init(&srv->finish_lock, NULL));
 
   char **coptions;
   SEXP_to_char_vector(options, &coptions);
@@ -121,6 +177,11 @@ SEXP server_start(SEXP options) {
 
   memset(&callbacks, 0, sizeof(callbacks));
   callbacks.begin_request = begin_request;
+  callbacks.end_request = end_request;
+  callbacks.init_connection = init_connection;
+  callbacks.connection_close = connection_close;
+
+  CHK(pthread_mutex_lock(&srv->process_lock));
   srv->ctx = mg_start(&callbacks, srv, (const char **) coptions);
 
   if (srv->ctx == NULL) R_THROW_ERROR("Cannot start presser web server");
@@ -133,23 +194,147 @@ SEXP server_start(SEXP options) {
   );
   if (srv->num_ports < 0) R_THROW_ERROR("Cannot get presser web server ports");
 
-  CHK(pthread_mutex_lock(&srv->process_lock));
-
   UNPROTECT(1);
   return rsrv;
+}
+
+static R_INLINE SEXP new_env() {
+  SEXP env;
+  PROTECT(env = allocSExp(ENVSXP));
+  SET_FRAME(env, R_NilValue);
+  SET_ENCLOS(env, R_EmptyEnv);
+  SET_HASHTAB(env, R_NilValue);
+  SET_ATTRIB(env, R_NilValue);
+  UNPROTECT(1);
+  return env;
 }
 
 #undef CHK
 #define CHK(expr) if ((ret = expr))                                     \
     R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot process presser web server requests")
 
+SEXP presser_create_request(SEXP rsrv) {
+  struct presser_server *srv = R_ExternalPtrAddr(rsrv);
+  if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
+  static char request_link[8192];
+  int i;
+
+  /* Actual request processing */
+
+  const struct mg_request_info *req = mg_get_request_info(srv->conn);
+  SEXP rreq = PROTECT(new_env());
+  defineVar(install("method"), mkString(req->request_method), rreq);
+  mg_get_request_link(srv->conn, request_link, sizeof(request_link));
+  defineVar(install("url"), mkString(request_link), rreq);
+  defineVar(install("request_uri"), mkString(req->request_uri), rreq);
+  defineVar(install("path"), mkString(req->local_uri), rreq);
+  defineVar(install("http_version"), mkString(req->http_version), rreq);
+  defineVar(
+    install("query_string"),
+    req->query_string ? mkString(req->query_string) : mkString(""),
+    rreq
+  );
+  defineVar(install("remote_addr"), mkString(req->remote_addr), rreq);
+  defineVar(install("content_length"), ScalarReal(req->content_length), rreq);
+  defineVar(install("remote_port"), ScalarInteger(req->remote_port), rreq);
+
+  SEXP hdr = PROTECT(allocVector(VECSXP, req->num_headers));
+  SEXP nms = PROTECT(allocVector(STRSXP, req->num_headers));
+  for (i = 0; i < req->num_headers; i++) {
+      SET_VECTOR_ELT(hdr, i, mkString(req->http_headers[i].value));
+      SET_STRING_ELT(nms, i, mkChar(req->http_headers[i].name));
+  }
+  Rf_setAttrib(hdr, R_NamesSymbol, nms);
+  defineVar(install("headers"), hdr, rreq);
+
+  if (req->content_length != -1) {
+    SEXP body = PROTECT(allocVector(RAWSXP, req->content_length));
+    int ret = mg_read(srv->conn, RAW(body), req->content_length);
+    if (ret < 0) R_THROW_ERROR("Cannot read from presser HTTP client");
+    if (ret != req->content_length) {
+      warning("Partial HTTP request body from client");
+    }
+    defineVar(install(".body"), body, rreq);
+    UNPROTECT(1);
+  } else {
+    defineVar(install(".body"), R_NilValue, rreq);
+  }
+
+  UNPROTECT(3);
+  return rreq;
+}
+
+void presser_send_response(SEXP res, SEXP rsrv) {
+  struct presser_server *srv = R_ExternalPtrAddr(rsrv);
+  if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
+  int ret, i;
+
+  const struct mg_request_info *rreq = mg_get_request_info(srv->conn);
+
+  if (TYPEOF(res) != STRSXP) res = VECTOR_ELT(res, 1);
+
+  if (TYPEOF(res) == STRSXP && LENGTH(res) > 0) {
+    if (LENGTH(res) > 1) {
+      warning("Only first element of character vector is used for HTTP body");
+    }
+    const char *s = CHAR(STRING_ELT(res, 0));
+    int len = strlen(s);
+    ret = mg_printf(
+      srv->conn,
+      "HTTP/%s 500 Internal Server Error\r\n"
+      "Content-Length: %d\r\n"
+      "Content-Type: text/plain\r\n\r\n",
+      rreq->http_version, len
+    );
+    if (ret < 0) R_THROW_ERROR("Could not send HTTP error response");
+    if (mg_write(srv->conn, s, len) < 0) {
+      R_THROW_ERROR("Failed to write HTTP response body");
+    }
+
+  } else if (TYPEOF(res) == VECSXP && LENGTH(res) == 3) {
+    SEXP cnt = VECTOR_ELT(res, 0);
+    SEXP hdr = VECTOR_ELT(res, 1);
+    int code = INTEGER(VECTOR_ELT(res, 2))[0];
+
+    ret = mg_printf(
+      srv->conn,
+      "HTTP/%s %d %s\r\n",
+      rreq->http_version,
+      code, mg_get_response_code_text(srv->conn, code)
+    );
+    if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+
+    for (i = 0; !isNull(hdr) && i < LENGTH(hdr); i++) {
+      const char *hs = CHAR(STRING_ELT(hdr, i));
+      ret = mg_write(srv->conn, hs, strlen(hs));
+      ret |= mg_write(srv->conn, "\r\n", 2);
+      if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+    }
+
+    if (mg_write(srv->conn, "\r\n", 2) < 0) {
+      R_THROW_ERROR("Could not send HTTP response");
+    }
+
+    if (TYPEOF(cnt) == RAWSXP) {
+      ret = mg_write(srv->conn, RAW(cnt), LENGTH(cnt));
+    } else if (TYPEOF(cnt) == STRSXP) {
+      const char *ccnt = CHAR(STRING_ELT(cnt, 0));
+      ret = mg_write(srv->conn, ccnt, strlen(ccnt));
+    }
+    if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+
+  } else if (isNull(res)) {
+    /* Do nothing. Response is sent or empty response */
+
+  } else {
+    R_THROW_ERROR("Invalid presser response");
+  }
+}
+
 SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
   struct presser_server *srv = R_ExternalPtrAddr(rsrv);
   if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
-
-  static char request_link[8192];
-
-  int ret, i;
+  int ret;
 
   while (1) {
     struct timespec limit;
@@ -162,159 +347,62 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       }
       R_CheckUserInterrupt();
       /* TODO: wake up handler callback to avoid a locked server */
-      ret = pthread_cond_timedwait(&srv->process_cond, &srv->process_lock, &limit);
+      ret = pthread_cond_timedwait(&srv->process_more, &srv->process_lock, &limit);
     }
 
-    /* Actual request processing */
+    struct presser_connection *conn_data =
+      mg_get_user_connection_data(srv->conn);
 
-    const struct mg_request_info *req = mg_get_request_info(srv->conn);
-    const char *rreq_names[] = {
-      "method",                   /* 0 */
-      "request_link",             /* 1 */
-      "request_uri",              /* 2 */
-      "local_uri",                /* 3 */
-      "http_version",             /* 4 */
-      "query_string",             /* 5 */
-      "remote_addr",              /* 6 */
-      "content_length",           /* 7 */
-      "remote_port",              /* 8 */
-      "headers",                  /* 9 */
-      "body",                     /* 10 */
-      ""
-    };
-
-    SEXP rreq = PROTECT(Rf_mkNamed(VECSXP, rreq_names));
-    SET_VECTOR_ELT(rreq, 0, mkString(req->request_method));
-    mg_get_request_link(srv->conn, request_link, sizeof(request_link));
-    SET_VECTOR_ELT(rreq, 1, mkString(request_link));
-    SET_VECTOR_ELT(rreq, 2, mkString(req->request_uri));
-    SET_VECTOR_ELT(rreq, 3, mkString(req->local_uri));
-    SET_VECTOR_ELT(rreq, 4, mkString(req->http_version));
-    SET_VECTOR_ELT(rreq, 5, req->query_string ? mkString(req->query_string) : mkString(""));
-    SET_VECTOR_ELT(rreq, 6, mkString(req->remote_addr));
-    SET_VECTOR_ELT(rreq, 7, ScalarReal(req->content_length));
-    SET_VECTOR_ELT(rreq, 8, ScalarInteger(req->remote_port));
-
-    SEXP hdr = PROTECT(allocVector(VECSXP, req->num_headers));
-    SEXP nms = PROTECT(allocVector(STRSXP, req->num_headers));
-    for (i = 0; i < req->num_headers; i++) {
-      SET_VECTOR_ELT(hdr, i, mkString(req->http_headers[i].value));
-      SET_STRING_ELT(nms, i, mkChar(req->http_headers[i].name));
-    }
-    Rf_setAttrib(hdr, R_NamesSymbol, nms);
-    SET_VECTOR_ELT(rreq, 9, hdr);
-
-    if (req->content_length != -1) {
-      SET_VECTOR_ELT(rreq, 10, allocVector(RAWSXP, req->content_length));
-      int ret = mg_read(srv->conn, RAW(VECTOR_ELT(rreq, 10)), req->content_length);
-      if (ret < 0) R_THROW_ERROR("Cannot read from presser HTTP client");
-      if (ret != req->content_length) {
-        warning("Partial HTTP request body from client");
-      }
+    SEXP req = R_NilValue;
+    switch(conn_data->main_todo) {
+    case PRESSER_REQ:
+      req = PROTECT(presser_create_request(rsrv));
+      conn_data->req = req;
+      R_PreserveObject(req);
+      UNPROTECT(1);
+      break;
+    case PRESSER_WAIT:
+      req = conn_data->req;
+      break;
+    default:
+      break;
     }
 
     SEXP try = PROTECT(install("try"));
     SEXP silent = PROTECT(ScalarLogical(1));
-    SEXP call = PROTECT(lang2(handler, rreq));
+    SEXP call = PROTECT(lang2(handler, req));
     SEXP trycall = PROTECT(lang3(try, call, silent));
     SEXP res = PROTECT(eval(trycall, env));
 
-    /* The rest is sending the response */
+    CHK(pthread_mutex_lock(&conn_data->finish_lock));
 
-    if (TYPEOF(res) == STRSXP && LENGTH(res) > 0) {
-      if (LENGTH(res) > 1) {
-        warning("Only first element of character vector is used for HTTP body");
-      }
-      const char *s = CHAR(STRING_ELT(res, 0));
-      int len = strlen(s);
-      ret = mg_printf(
-        srv->conn,
-        "HTTP/%s 500 Internal Server Error\r\n"
-        "Content-Length: %d\r\n"
-        "Content-Type: text/plain\r\n\r\n",
-        req->http_version, len
-      );
-      if (ret < 0) R_THROW_ERROR("Could not send HTTP error response");
-      if (mg_write(srv->conn, s, len) < 0) {
-        R_THROW_ERROR("Failed to write HTTP response body");
-      }
-
-    } else if (TYPEOF(res) == VECSXP && LENGTH(res) == 4) {
-      SEXP cnt = VECTOR_ELT(res, 0);
-      SEXP sct = VECTOR_ELT(res, 1);
-      SEXP hdr = VECTOR_ELT(res, 2);
-      int code = INTEGER(VECTOR_ELT(res, 3))[0];
-      const char *ct_raw = "application/octet-stream";
-      const char *ct_str = "text/plain";
-      const char *ct = 0;
-      int clen = 0;
-      if (!isNull(sct)) {
-        ct = CHAR(STRING_ELT(sct, 0));
-      } else if (TYPEOF(cnt) == RAWSXP) {
-        ct = ct_raw;
-      } else if (TYPEOF(cnt) == STRSXP) {
-        ct = ct_str;
-      } else {
-        R_THROW_ERROR("Invalid content type for HTTP response");
-      }
-
-      if (TYPEOF(cnt) == RAWSXP) {
-        clen = LENGTH(cnt);
-      } else if (isNull(cnt)) {
-        clen = 0;
-      } else {
-        clen = strlen(CHAR(STRING_ELT(cnt, 0)));
-      }
-
-      ret = mg_printf(
-        srv->conn,
-        "HTTP/%s %d %s\r\n"
-        "Content-Type: %s\r\n"
-        "Content-Length: %d\r\n",
-        req->http_version,
-        code, mg_get_response_code_text(srv->conn, code),
-        ct, clen
-      );
-      if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
-
-      for (i = 0; !isNull(hdr) && i < LENGTH(hdr); i++) {
-        const char *hs = CHAR(STRING_ELT(hdr, i));
-        ret = mg_write(srv->conn, hs, strlen(hs));
-        ret |= mg_write(srv->conn, "\r\n", 2);
-        if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
-      }
-
-      if (mg_write(srv->conn, "\r\n", 2) < 0) {
-        R_THROW_ERROR("Could not send HTTP response");
-      }
-
-      if (TYPEOF(cnt) == RAWSXP) {
-        ret = mg_write(srv->conn, RAW(cnt), clen);
-      } else if (TYPEOF(cnt) == STRSXP) {
-        ret = mg_write(srv->conn, CHAR(STRING_ELT(cnt, 0)), clen);
-      }
-      if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
-
-    } else if (isNull(res)) {
-      /* Do nothing. Response is sent or empty response */
-
+    /* TODO: need to catch errors here, because they do not
+       wake up the request thread, and the server freezes. */
+    if (TYPEOF(res) != VECSXP || INTEGER(VECTOR_ELT(res, 0))[0] == 0) {
+      presser_send_response(res, rsrv);
+      conn_data->req_todo = PRESSER_DONE;
+      R_ReleaseObject(conn_data->req);
+      conn_data->req = R_NilValue;
+    } else if (INTEGER(VECTOR_ELT(res, 0))[0] == 1) {
+      conn_data->secs = REAL(VECTOR_ELT(res, 1))[0];
+      conn_data->req_todo = PRESSER_WAIT;
     } else {
-      R_THROW_ERROR("Invalid presser response");
+      R_THROW_ERROR("Invalid presser response, internal error");
     }
 
-    UNPROTECT(6);
-
     /* OK, we are done */
+    srv->conn = NULL;
 
-    srv->conn = 0;
-    CHK(pthread_mutex_unlock(&srv->process_lock));
+    /* Notify the worker thread */
+    CHK(pthread_cond_signal(&conn_data->finish_cond));
+    CHK(pthread_mutex_unlock(&conn_data->finish_lock));
 
-    CHK(pthread_mutex_lock(&srv->finish_lock));
-    srv->response_ok = 1;
-    CHK(pthread_cond_signal(&srv->finish_cond));
-    CHK(pthread_mutex_unlock(&srv->finish_lock));
+    /* Notify other workers */
+    pthread_cond_signal(&srv->process_less);
   }
 
+  /* Never returns... */
+  UNPROTECT(5);
   return R_NilValue;
 }
 

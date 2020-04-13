@@ -1,5 +1,5 @@
 
-proc <- setup({
+web <- setup({
   app <- new_app()
   app$use(mw_urlencoded())
   app$post("/form", function(req, res) {
@@ -11,10 +11,10 @@ proc <- setup({
   new_app_process(app)
 })
 
-teardown(proc$stop())
+teardown(web$stop())
 
 test_that("mw-urlencoded", {
-  url <- proc$get_url("/form")
+  url <- web$url("/form")
   handle <- curl::new_handle()
   data <- charToRaw("foo=bar&foobar=100")
   curl::handle_setheaders(

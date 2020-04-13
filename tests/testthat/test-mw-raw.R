@@ -1,5 +1,5 @@
 
-proc <- setup({
+web <- setup({
   app <- new_app()
   app$use(mw_raw())
   app$post("/raw", function(req, res) {
@@ -10,10 +10,10 @@ proc <- setup({
   new_app_process(app)
 })
 
-teardown(proc$stop())
+teardown(web$stop())
 
 test_that("raw body parser", {
-  url <- proc$get_url("/raw")
+  url <- web$url("/raw")
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "content-type" = "application/octet-stream")
@@ -30,7 +30,7 @@ test_that("raw body parser", {
 })
 
 test_that("non-matching content-type", {
-  url <- proc$get_url("/raw")
+  url <- web$url("/raw")
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "content-type" = "application/json")

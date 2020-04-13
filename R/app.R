@@ -116,7 +116,7 @@ pkg_data <- new.env(parent = emptyenv())
 #'   ...
 #'   res$
 #'     set_status(200L)$
-#'     set_header("X-custom-header", "foobar")$
+#'     set_header("X-Custom-Header", "foobar")$
 #'     send_json(response, auto_unbox = TRUE)
 #' })
 #' ```
@@ -241,11 +241,16 @@ pkg_data <- new.env(parent = emptyenv())
 #' ## Starting and stopping
 #'
 #' ```r
-#' app$listen(port = NULL)
+#' app$listen(port = NULL, num_threads = 1)
 #' ```
 #'
 #' * `port`: port to listen on. When `NULL`, the operating system will
 #'   automatically select a free port.
+#'
+#' * `num_threads`: the number of threads that will handle HTTP
+#'   requests. If you use asynchronous or parallel HTTP requests, then
+#'   you probably want to increase this, to let the server handle
+#'   multiple requests at the same time.
 #'
 #' This method does not return, and can be interrupted with `CTRL+C` / `ESC`
 #' or a SIGINT signal. See [new_app_process()] for interrupting an app that
@@ -350,11 +355,11 @@ new_app <- function() {
       invisible(self)
     },
 
-    listen = function(port = NULL)  {
+    listen = function(port = NULL, num_threads = 1)  {
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
 
-      srv <- server_start(port = port)
+      srv <- server_start(port = port, num_threads = num_threads)
       ports <- server_get_ports(srv)
       self$.port <- ports$port[1]
       message("Running presser web app on port ", self$.port)
@@ -436,44 +441,42 @@ new_app <- function() {
     .process = NULL,
 
     # The request processing function
-    .run = function(rreq) {
+    .run = function(req) {
 
-      path <- rreq$local_uri
+      req <- new_request(self, req)
+      res <- req$res
+      res$.delay <- NULL
 
-      req <- new_request(self, rreq)
-      res <- new_response(self)
-
-      for (h in self$.stack) {
-        m <- path_match(req$method, path, h)
+      out <- NULL
+      for (i in sseq(res$.stackptr, length(self$.stack))) {
+        handler <- self$.stack[[i]]
+        m <- path_match(req$method, req$path, handler)
         if (!isFALSE(m)) {
+          res$.i <- i
           if (is.list(m)) req$params <- m$params
-          out <- h$handler(req, res)
+          out <- handler$handler(req, res)
           if (!identical(out, "next")) break
         }
       }
 
-      content_type <- res$.headers[["content-type"]] %||% "text/plain"
-      res$.headers <- res$.headers[names(res$.headers) != "content-type"]
+      if (!is.null(res$.delay)) {
+        list(1L, as.double(res$.delay))
 
-      if (is.null(res$.status)) {
-        res$.status <- if (is.null(res$.body)) 404L else 200L
+      } else {
+
+        # We need to do this here, in case there was no $send() at all
+        res$.set_defaults()
+
+        ans <- list(
+          res$.body,
+          if (length(res$.headers)) {
+            paste0(names(res$.headers), ": ", unlist(res$.headers))
+          },
+          as.integer(res$.status)
+        )
+
+        list(0L, ans)
       }
-      if (is.null(res$.body)) {
-        res$.body <- "Not found"
-      }
-
-      for (fn in res$.on_response) try(fn(req, res))
-
-      ans <- list(
-        res$.body,
-        content_type,
-        if (length(res$.headers)) {
-          paste0(names(res$.headers), ": ", unlist(res$.headers))
-        },
-        as.integer(res$.status)
-      )
-
-      ans
     }
   )
 

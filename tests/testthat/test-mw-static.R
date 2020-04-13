@@ -1,5 +1,5 @@
 
-proc <- setup({
+web <- setup({
   app <- new_app()
   app$use(mw_static(root = test_path("fixtures", "static")))
   set_headers <- function(req, res) {
@@ -16,10 +16,10 @@ proc <- setup({
   new_app_process(app)
 })
 
-teardown(proc$stop())
+teardown(web$stop())
 
 test_that("static file", {
-  url <- proc$get_url("/static.html")
+  url <- web$url("/static.html")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
   # type is set from the file extension
@@ -31,7 +31,7 @@ test_that("static file", {
 })
 
 test_that("static file in subdirectory", {
-  url <- proc$get_url("/subdir/static.json")
+  url <- web$url("/subdir/static.json")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
   # type is set from the file extension
@@ -43,13 +43,13 @@ test_that("static file in subdirectory", {
 })
 
 test_that("file not found", {
-  url <- proc$get_url("/notfound")
+  url <- web$url("/notfound")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 404L)
 })
 
 test_that("file not found falls back", {
-  url <- proc$get_url("/fallback")
+  url <- web$url("/fallback")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
   expect_equal(resp$type, "text/plain")
@@ -60,13 +60,13 @@ test_that("file not found falls back", {
 })
 
 test_that("directory is 404", {
-  url <- proc$get_url("/subdir")
+  url <- web$url("/subdir")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 404L)
 })
 
 test_that("set_headers callback", {
-  url <- proc$get_url("/static.tar.gz")
+  url <- web$url("/static.tar.gz")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
   expect_equal(resp$type, "application/gzip")

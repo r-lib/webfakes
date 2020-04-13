@@ -22,7 +22,8 @@ new_regexp <- function(x) structure(x, class = "presser_regexp")
 
 path_match <- function(method, path, handler) {
   if (handler$method == "use") return(TRUE)
-  if (! handler$method %in% c("all", method)) return(FALSE)
+  if ((! handler$method %in% c("all", method)) &&
+      !(handler$method == "get" && method == "head")) return(FALSE)
   pattern_match(path, handler$path)
 }
 

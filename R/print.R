@@ -96,14 +96,14 @@ format.presser_response <- function(x, ...) {
     "  redirect(path, status) # send redirect response",
     "  render(view, locals)   # render template",
     "  send(body)             # send text or raw data",
-    "  send_file(path, root)  # send a file (automatic content-type)",
+    "  send_file(path, root)  # send a file (automatic Content-Type)",
     "  send_json(object, text, ...)",
     "                         # send JSON data",
     "  send_status(status)    # send HTTP status and empty body",
     "  set_header(field, value)
                               # set a response header",
     "  set_status(status)     # set response status code",
-    "  set_type(type)         # set content-type"
+    "  set_type(type)         # set Content-Type"
   )
   help <- " # see ?presser_response for details)"
   c(header, "fields and methods:", methods, help)
@@ -139,13 +139,13 @@ format.presser_app_process <- function(x, ...) {
     "process id:",
     paste0("  ", if (is.null(x$.process)) "none" else x$.process$get_pid()),
     "http url:",
-    paste0("  ", x$get_url())
+    paste0("  ", x$url())
   )
   methods <- c(
     "  get_app()              # get the app object",
     "  get_port()             # query port of the app",
     "  get_state()            # query web server process state",
-    "  get_url(path, query)   # query url for an api path",
+    "  url(path, query)       # query url for an api path",
     "  stop()                 # stop web server process"
   )
   help <- "# see ?presser_app_process for details)"
