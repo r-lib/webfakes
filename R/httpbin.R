@@ -140,7 +140,26 @@ httpbin_app <- function(log = interactive()) {
   app$all(
     new_regexp("^/status/(?<status>[0-9][0-9][0-9])$"),
     function(req, res) {
-      res$send_status(req$params$status)
+      status <- req$params$status
+      res$set_status(status)
+      if (status == "418") {
+        res$send(paste(
+          sep = "\n",
+          "",
+          "    -=[ teapot ]=-",
+          "",
+          "       _...._",
+          "     .'  _ _ `.",
+          "    | .\"` ^ `\". _,",
+          "    \\_;`\"---\"`|//",
+          "      |       ;/",
+          "      \\_     _/",
+          "        `\"\"\"`",
+          ""
+        ))
+      } else {
+        res$send("")
+      }
     }
   )
 
