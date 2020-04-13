@@ -6,6 +6,16 @@ authors:
   "Gábor Csárdi":
     href: https://github.com/gaborcsardi
 
+navbar:
+  type: default
+  left:
+  - text: How-to
+    href: articles/how-to.html
+  - text: Reference
+    href: reference/index.html
+  - text: News
+    href: news/index.html
+
 reference:
 - title: Create and run web apps
   contents:

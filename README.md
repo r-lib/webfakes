@@ -3,7 +3,7 @@
 
 # presser
 
-> Lightweight Web Server for Testing
+> Your own web server for happy HTTP testing
 
 <!-- badges: start -->
 
@@ -14,7 +14,8 @@ status](https://github.com/gaborcsardi/pressr/workflows/R-CMD-check/badge.svg)](
 downloads](http://cranlogs.r-pkg.org/badges/presser)](http://www.r-pkg.org/pkg/presser)
 <!-- badges: end -->
 
-Lightweight Web Server for Testing.
+Lightweight web apps for testing. Built using the
+[https://github.com/civetweb/civetweb](civetweb) embedded web server.
 
 ## Features
 
@@ -67,7 +68,7 @@ web <- setup({
 teardown(web$stop())
 
 test_that("can use hello API", {
-  url <- web$get_url("/hello/Gabor")
+  url <- web$url("/hello/Gabor")
   expect_equal(get_hello(url), "Hello Gabor!")
 })
 ```
@@ -80,7 +81,7 @@ httpbin <- setup(presser::new_app_process(presser::httpbin_app()))
 teardown(httpbin$stop())
 
 test_that("HTTP errors are caught", {
-  url <- httpbin$get_url("/status/404")
+  url <- httpbin$url("/status/404")
   resp <- httr::GET(url)
   expect_error(httr::stop_for_status(resp), class = "http_404")
 })
