@@ -39,16 +39,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
+  <a href="articles/how-to.html">How-to</a>
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li>
-  <a href="news/index.html">Changelog</a>
+  <a href="news/index.html">News</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -74,11 +71,11 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#presser" class="anchor"></a>presser</h1></div>
 <blockquote>
-<p>Lightweight Web Server for Testing</p>
+<p>Your own web server for happy HTTP testing</p>
 </blockquote>
 <!-- badges: start -->
 <p><a href="https://github.com/gaborcsardi/pressr/actions"><img src="https://github.com/gaborcsardi/pressr/workflows/R-CMD-check/badge.svg" alt="R build status"></a> <a href="http://www.r-pkg.org/pkg/presser"><img src="http://www.r-pkg.org/badges/version/presser"></a> <a href="http://www.r-pkg.org/pkg/presser"><img src="http://cranlogs.r-pkg.org/badges/presser" alt="CRAN RStudio mirror downloads"></a> <!-- badges: end --></p>
-<p>Lightweight Web Server for Testing.</p>
+<p>Lightweight web apps for testing. Built using the <a href="civetweb">https://github.com/civetweb/civetweb</a> embedded web server.</p>
 <div id="features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#features" class="anchor"></a>Features</h2>
@@ -87,7 +84,7 @@
 <li>Flexible path matching, with parameters and regular expressions.</li>
 <li>Built in templating system using glue or bring your own template engine.</li>
 <li>Middleware to parse JSON, multipart and URL encoded request bodies.</li>
-<li>A web app is just an R object. It can be saved to disk, copied to another R process, put in an R package, etc.</li>
+<li>A web app is just an R object. It can be saved to disk, copied to another R process, etc.</li>
 <li>A web app is extensible, by adding new routes and middleware to it.</li>
 <li>Helper functions for sending JSON, files from disk, etc.</li>
 <li>Comes with an app similar to the <a href="https://httpbin.org" class="uri">https://httpbin.org</a> API, so for simple tests you don’t need to write your own web app.</li>
@@ -125,7 +122,7 @@
 <span class="fu">teardown</span>(<span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>())
 
 <span class="fu">test_that</span>(<span class="st">"can use hello API"</span>, {
-  <span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu">get_url</span>(<span class="st">"/hello/Gabor"</span>)
+  <span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/hello/Gabor"</span>)
   <span class="fu">expect_equal</span>(<span class="fu">get_hello</span>(<span class="no">url</span>), <span class="st">"Hello Gabor!"</span>)
 })</pre></div>
 <p>When testing HTTP clients you can often use the built in <code><a href="reference/httpbin_app.html">httpbin_app()</a></code>:</p>
@@ -133,7 +130,7 @@
 <span class="fu">teardown</span>(<span class="no">httpbin</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>())
 
 <span class="fu">test_that</span>(<span class="st">"HTTP errors are caught"</span>, {
-  <span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">httpbin</span>$<span class="fu">get_url</span>(<span class="st">"/status/404"</span>)
+  <span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">httpbin</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/status/404"</span>)
   <span class="no">resp</span> <span class="kw">&lt;-</span> <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>)
   <span class="fu">expect_error</span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html">stop_for_status</a></span>(<span class="no">resp</span>), <span class="kw">class</span> <span class="kw">=</span> <span class="st">"http_404"</span>)
 })</pre></div>
