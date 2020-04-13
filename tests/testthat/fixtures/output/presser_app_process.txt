@@ -13,5 +13,5 @@ fields and methods:
   local_env(envvars)     # set temporary environment variables
   url(path, query)       # query url for an api path
   stop()                 # stop web server process
-# see ?presser_app_process for details)
+# see ?presser_app_process for details
 

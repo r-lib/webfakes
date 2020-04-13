@@ -19,10 +19,10 @@ fields and methods:
   method                 # HTTP method of request (lowercase)
   path                   # server path
   protocol               # http or https
-  query_string           # raw query string with '?'
+  query_string           # raw query string without '?'
   query                  # named list of query parameters
   remote_addr            # IP address of the client
   url                    # full URL of the request
   get_header(field)      # get a request header
- # see ?presser_request for details)
+ # see ?presser_request for details
 

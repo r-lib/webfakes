@@ -67,13 +67,13 @@ format.presser_request <- function(x, ...) {
     "  method                 # HTTP method of request (lowercase)",
     "  path                   # server path",
     "  protocol               # http or https",
-    "  query_string           # raw query string with '?'",
+    "  query_string           # raw query string without '?'",
     "  query                  # named list of query parameters",
     "  remote_addr            # IP address of the client",
     "  url                    # full URL of the request",
     "  get_header(field)      # get a request header"
   )
-  help <- " # see ?presser_request for details)"
+  help <- " # see ?presser_request for details"
   c(header, data, "fields and methods:", methods, help)
 }
 
@@ -105,7 +105,7 @@ format.presser_response <- function(x, ...) {
     "  set_status(status)     # set response status code",
     "  set_type(type)         # set Content-Type"
   )
-  help <- " # see ?presser_response for details)"
+  help <- " # see ?presser_response for details"
   c(header, "fields and methods:", methods, help)
 }
 
@@ -149,7 +149,7 @@ format.presser_app_process <- function(x, ...) {
     "  url(path, query)       # query url for an api path",
     "  stop()                 # stop web server process"
   )
-  help <- "# see ?presser_app_process for details)"
+  help <- "# see ?presser_app_process for details"
   c(header, data, "fields and methods:", methods, help)
 }
 

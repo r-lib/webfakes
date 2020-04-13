@@ -16,5 +16,5 @@ fields and methods:
                               # set a response header
   set_status(status)     # set response status code
   set_type(type)         # set Content-Type
- # see ?presser_response for details)
+ # see ?presser_response for details
 

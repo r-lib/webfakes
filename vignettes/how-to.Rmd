@@ -1,0 +1,308 @@
+---
+title: "How to use presser in your tests"
+output: rmarkdown::html_vignette
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## How do I use presser in my package?
+
+First, you need to add presser to the `DESCRIPTION` file of your package.
+Use the `Suggests` field, as presser is only needed for testing:
+```
+...
+Suggests:
+  presser,
+  testthat
+...
+```
+
+Then you need to decide if you want a single web app for all your test cases.
+The alternative is to use different apps for some or all test files.
+Occasionally you may want to use a special app for a single test case.
+Each app runs in a new subprocess, and it takes typically about 100-400ms to start.
+
+See the sections below on writing tests with a single app or multiple apps.
+
+## How do I use `httpbin_app()` (or another app) with testthat?
+
+You can use testthat's setup and teardown functions.
+You start the app in a setup file and stop it in a teardown file.
+See `?testthat::source_file`.
+Your `tests/testthat/setup-http.R` may look like this:
+
+```{r}
+http <- presser::new_app_process(presser::httpbin_app())
+```
+
+Your `tests/testthat/teardown-http.R` will be
+
+```{r, eval = FALSE}
+http$stop()
+```
+
+In the test cases you can query the `http` app process to get the URLs you need to connect to:
+
+```{r include = FALSE}
+library(testthat)
+```
+
+```{r}
+test_that("fails on 404", {
+  url <- http$url("/status/404")
+  response <- httr::GET(url)
+  expect_error(
+    httr::stop_for_status(response),
+    class = "http_404"
+  )
+})
+```
+
+```{r, include = FALSE}
+http$stop()
+```
+
+When writing your tests interactively, you may create a `http` app process in the global environment, for convenience.
+You can `source()` your `setup-http.R` file for this.
+
+## How do I make my app connect to presser when the tests are running?
+
+In the typical scenario, you want your package to connect to the test app only when running the tests.
+One way to achieve this is to allow specifying the web server URL(s) via environment variables.
+E.g. when writing a GitHub API client, your package can check use `GITHUB_URL` environment variable.
+When this is not set, the package connects to the proper GitHub API.
+When testing, you can point it to your test app.
+
+`new_app_process()` helps you setting up temporary environment variables.
+These are active while the process is running, and they are removed or reset in `$stop()`. For example:
+
+```{r, include = FALSE}
+# Make sure this is not set in the vignette
+Sys.unsetenv("GITHUB_API")
+```
+
+```{r}
+http <- presser::new_app_process(presser::httpbin_app())
+http$local_env(list(GITHUB_API = http$url()))
+Sys.getenv("GITHUB_API")
+http$stop()
+Sys.getenv("GITHUB_API")
+```
+
+## How can I write my own app?
+
+You create a new app with `new_app()`.
+This returns an object with methods to add middleware and API endpoints to it.
+For example, a simple app that returns the current time in JSON would look like this:
+
+```{r}
+time <- presser::new_app()
+time$get("/time", function(req, res) {
+  res$send_json(list(time = format(Sys.time())), auto_unbox = TRUE)
+})
+```
+
+Now you can start this app on a random port using `web$listen()`.
+Alternatively, you can start it in a subprocess with `new_app_process()`.
+
+```{r}
+web <- presser::new_app_process(time)
+web$url()
+```
+
+Use `web$url()` to query the URL of the app. For example:
+
+```{r}
+url <- web$url("/time")
+httr::content(httr::GET(url))
+```
+
+`web$stop()` stops the app and the subprocess as well:
+
+```{r}
+web$stop()
+web$get_state()
+```
+
+You can create your app at the beginning of your test file.
+Or, if you want to use the same app in multiple test files, use a testthat helper file.
+Sometimes it useful if your users can create and use your test app, for example to create reproducible examples.
+You can include a (possibly internal) function in your package, that creates the app.
+
+See `?new_app()` and `?new_app_process()` for more details.
+
+## Can I have an app for a single testthat test file?
+
+To run a web app for a single test file, start it in `testthat::setup()` and stop it in `testthat::teardown()`.
+You can do this at the beginning of the file:
+
+```{r}
+web <- setup({
+  app <- presser::new_app()
+  app$get("/hello/:user", function(req, res) {
+    res$send(paste0("Hello ", req$params$user, "!"))
+  })
+  presser::new_app_process(app)
+})
+teardown(web$stop())
+```
+
+Then in the test cases, use `web$url()` to get the URL to connect to.
+
+```{r}
+test_that("can use hello API", {
+  url <- web$url("/hello/Gabor")
+  expect_equal(httr::content(httr::GET(url)), "Hello Gabor!")
+})
+```
+
+## Can I use an app for a single testthat test?
+
+Sure.
+For this you need to create the app process within the `testthat::test_that()` test case and use `on.exit()` to stop it.
+It goes like this:
+
+```{r}
+test_that("query works", {
+  app <- presser::new_app()
+  app$get("/hello", function(req, res) res$send("hello there"))
+  on.exit(try(web$stop()))
+  web <- presser::new_app_process(app)
+
+  echo <- httr::content(httr::GET(web$url("/hello")))
+  expect_equal(echo, "hello there")
+})
+```
+
+## How can I to debug an app?
+
+To debug an app, it is best to run it in the main R process, i.e. _not_ via `new_app_process()`.
+You can add breakpoints, or `browser()` calls to your handler functions, and then invoke your app from another process.
+You might find the `curl` command line tool to send HTTP requests to the app, or you can just use another R process.
+Here is an example.
+We will simply print the incoming request object to the screen now.
+For a real debugging session you probably want to place a `browser()` command there.
+
+```{r}
+app <- presser::new_app()
+app$get("/debug", function(req, res) {
+  print(req)
+  res$send("Got your back")
+})
+```
+
+Now start the app on port 3000:
+
+```r
+app$listen(port = 3000)
+```
+```{r echo = FALSE}
+message("Running presser web app on port 3000")
+```
+
+Connect to the app from another R or `curl` process:
+```sh
+curl -v http://127.0.0.1:3000/debug
+```
+
+```{r echo = FALSE}
+cat('*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to 127.0.0.1 (127.0.0.1) port 3000 (#0)
+> GET /debug HTTP/1.1
+> Host: 127.0.0.1:3000
+> User-Agent: curl/7.54.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: text/plain
+< Content-Length: 13
+<
+* Connection #0 to host 127.0.0.1 left intact
+Got your back
+')
+```
+
+Your main R session will print the incoming request:
+```{r echo = FALSE}
+cat('<presser_request>
+method:
+  get
+url:
+  http://127.0.0.1:3000/debug
+client:
+  127.0.0.1
+query:
+headers:
+  Host: 127.0.0.1:3000
+  User-Agent: curl/7.54.0
+  Accept: */*
+fields and methods:
+  app                    # the presser_app the request belongs to
+  headers                # HTTP request headers
+  hostname               # server hostname, the Host header
+  method                 # HTTP method of request (lowercase)
+  path                   # server path
+  protocol               # http or https
+  query_string           # raw query string without \'?\'
+  query                  # named list of query parameters
+  remote_addr            # IP address of the client
+  url                    # full URL of the request
+  get_header(field)      # get a request header
+ # see ?presser_request for details
+')
+```
+
+Press `CTRL+C` or `ESC` to interrupt the app in the main session.
+
+## Can I test asynchronous or parallel HTTP requests?
+
+R is single threaded and a presser app runs an R interpreter, so it cannot process multiple requests at the same time.
+The web server itself runs in a separate thread, and it can also process each request in a separate thread, but at any time only one request can use the R interpreter.
+
+This is important, because sometimes test requests may take longer to process.
+For example the `/delay/:secs` end point of `httpbin_app()` wait for the specified number of seconds before responding, to simulate a slow web server.
+If this wait is implemented via the standard `Sys.sleep()` R function, then no other requests can be processed until the sleep is over.
+To avoid this, presser can put the waiting request on hold, return from the R interpreter, and respond to other incoming requests.
+Indeed, the `/delay/` end point is implemented using this feature.
+
+However, the request thread of the web server is still busy while on hold, so to take advantage of this, you need to allow multiple threads.
+The `num_threads` argument of the `$listen()` method of `presser_app` lets you specify the number of request threads the web server will use.
+Similarly, the `.num_threads` (note the leading dot) argument of `new_app_process()` lets you modify the number of threads.
+
+When testing asynchronous or parallel code, that might invoke multiple, possibly delayed requests, it is best to increase the number of threads.
+The code below calls the same API request concurrently, three times.
+Each request takes 1 second to answer, but if the web server has more than three threads, together they'll still take about 1 second.
+
+```{r}
+web <- setup(
+  presser::new_app_process(
+    presser::httpbin_app(),
+    .num_threads = 3
+  )
+)
+teardown(web$stop())
+
+test_that("", {
+  url <- web$url("/delay/1")
+  p <- curl::new_pool()
+  handles <- replicate(3, curl::new_handle(url = url))
+  resps <- list()
+  for (handle in handles) {
+    curl::multi_add(
+      handle,
+      done = function(x) message("one is done"),
+      fail = stop,
+      pool = p
+    )
+  }
+  st <- system.time(curl::multi_run(timeout = 5, pool = p))
+  print(st)
+  expect_true(st[["elapsed"]] < 3.0)
+})
+```

@@ -3,7 +3,7 @@
 
 # presser
 
-> Lightweight Web Server for Testing
+> Your own web server for happy HTTP testing
 
 <!-- badges: start -->
 
@@ -14,7 +14,8 @@ status](https://github.com/gaborcsardi/pressr/workflows/R-CMD-check/badge.svg)](
 downloads](http://cranlogs.r-pkg.org/badges/presser)](http://www.r-pkg.org/pkg/presser)
 <!-- badges: end -->
 
-Lightweight Web Server for Testing.
+Lightweight web apps for testing. Built using the
+[https://github.com/civetweb/civetweb](civetweb) embedded web server.
 
 ## Features
 
@@ -24,7 +25,7 @@ Lightweight Web Server for Testing.
     engine.
   - Middleware to parse JSON, multipart and URL encoded request bodies.
   - A web app is just an R object. It can be saved to disk, copied to
-    another R process, put in an R package, etc.
+    another R process, etc.
   - A web app is extensible, by adding new routes and middleware to it.
   - Helper functions for sending JSON, files from disk, etc.
   - Comes with an app similar to the <https://httpbin.org> API, so for
@@ -67,7 +68,7 @@ web <- setup({
 teardown(web$stop())
 
 test_that("can use hello API", {
-  url <- web$get_url("/hello/Gabor")
+  url <- web$url("/hello/Gabor")
   expect_equal(get_hello(url), "Hello Gabor!")
 })
 ```
@@ -80,7 +81,7 @@ httpbin <- setup(presser::new_app_process(presser::httpbin_app()))
 teardown(httpbin$stop())
 
 test_that("HTTP errors are caught", {
-  url <- httpbin$get_url("/status/404")
+  url <- httpbin$url("/status/404")
   resp <- httr::GET(url)
   expect_error(httr::stop_for_status(resp), class = "http_404")
 })
