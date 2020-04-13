@@ -402,6 +402,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
   }
 
   /* Never returns... */
+  UNPROTECT(5);
   return R_NilValue;
 }
 
