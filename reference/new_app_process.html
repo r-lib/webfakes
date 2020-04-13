@@ -125,8 +125,7 @@
   <span class='no'>...</span>,
   <span class='kw'>.port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>.num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>.process_timeout</span> <span class='kw'>=</span> <span class='fl'>5000</span>,
-  <span class='kw'>.local_env</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>.process_timeout</span> <span class='kw'>=</span> <span class='fl'>5000</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -157,12 +156,6 @@ multiple requests at the same time.</p></td>
       <td><p>How long to wait for the subprocess to start, in
 milliseconds.</p></td>
     </tr>
-    <tr>
-      <th>.local_env</th>
-      <td><p>Named list of environment variables that are set or
-updated for while the app process is running, and they are restored
-when the <code>$stop()</code> method is called.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -174,7 +167,9 @@ when the <code>$stop()</code> method is called.</p></td>
 <span class='fu'>get_port</span>()
 <span class='fu'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span>()
 <span class='fu'>get_state</span>()
+<span class='fu'>local_env</span>(<span class='no'>envvars</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/connections.html'>url</a></span>(<span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"/"</span>, <span class='kw'>query</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre><p></div></p><ul>
+<li><p><code>envvars</code>: Named list of environment variables.</p></li>
 <li><p><code>path</code>: Path to return the URL for.</p></li>
 <li><p><code>query</code>: Additional query parameters, a named list, to add to the URL.</p></li>
 </ul>
@@ -189,6 +184,8 @@ already).</p></li>
 <li><p><code>"dead"</code> means that the subprocess has quit or crashed.</p></li>
 </ul>
 
+<p><code>local_env()</code> sets the given environment variables for the duration of
+the app process. It resets them in <code>$stop()</code>.</p>
 <p><code><a href='https://rdrr.io/r/base/connections.html'>url()</a></code> returns the URL of the web app. You can use the <code>path</code>
 parameter to return a specific path.</p>
 
