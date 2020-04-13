@@ -54,6 +54,7 @@ new_response <- function(app, req) {
 
     delay = function(secs) {
       self$.delay <- secs
+      self$.stackptr <- self$.i
       invisible(self)
     },
 
