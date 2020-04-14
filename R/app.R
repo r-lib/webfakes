@@ -261,7 +261,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' before the listen method blocks, it advertises the selected port in a
 #' `presser_port` condition, so one can catch it:
 #'
-#' presser always binds only to the loopback interface at 127.0.0.1, so
+#' presser by default binds only to the loopback interface at 127.0.0.1, so
 #' the presser web app is never reachable from the network.
 #'
 #' ```r

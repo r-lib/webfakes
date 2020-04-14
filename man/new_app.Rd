@@ -262,7 +262,7 @@ app will listen. To be able to get the port number programmatically,
 before the listen method blocks, it advertises the selected port in a
 \code{presser_port} condition, so one can catch it:
 
-presser always binds only to the loopback interface at 127.0.0.1, so
+presser by default binds only to the loopback interface at 127.0.0.1, so
 the presser web app is never reachable from the network.\if{html}{\out{<div class="r">}}\preformatted{withCallingHandlers(
   app$listen(),
   "presser_port" = function(msg) print(msg$port)

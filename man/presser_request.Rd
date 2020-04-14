@@ -21,7 +21,7 @@ Fields and methods:
 \item \code{query_string}: The raw query string, without the starting \verb{?}.
 \item \code{query}: Parsed query parameters in a named list.
 \item \code{remote_addr}: String, the domain name or IP address of the client.
-Since presser always runs on the localhost, this is \verb{127.0.0.1}.
+presser runs on the localhost, so this is \verb{127.0.0.1}.
 \item \code{url}: The full URL of the request.
 \item \code{get_header(field)}: Function to query a request header. Returns
 \code{NULL} if the header is not present.

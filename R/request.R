@@ -17,7 +17,7 @@
 #' * `query_string`: The raw query string, without the starting `?`.
 #' * `query`: Parsed query parameters in a named list.
 #' * `remote_addr`: String, the domain name or IP address of the client.
-#'   Since presser always runs on the localhost, this is `127.0.0.1`.
+#'    presser runs on the localhost, so this is `127.0.0.1`.
 #' * `url`: The full URL of the request.
 #' * `get_header(field)`: Function to query a request header. Returns
 #'   `NULL` if the header is not present.

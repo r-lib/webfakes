@@ -4,7 +4,7 @@
 \alias{server_opts}
 \title{Presser web server options}
 \usage{
-server_opts(port = NULL, num_threads = 1)
+server_opts(port = NULL, num_threads = 1, interfaces = "127.0.0.1")
 }
 \arguments{
 \item{port}{Port to start the web server on. Defaults to a randomly
@@ -13,6 +13,11 @@ chosen port.}
 \item{num_threads}{Number of request handler threads to use. Typically
 you don't need more than one thread, unless you run test cases in
 parallel or you make concurrent HTTP requests.}
+
+\item{interfaces}{The network interfaces to listen on. Being a test
+web server, it defaults to the localhost. Only bind to a public
+interface if you know what you are doing. presser was not designed
+to serve public web pages.}
 }
 \description{
 Presser web server options

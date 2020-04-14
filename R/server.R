@@ -1,7 +1,8 @@
 
 server_start <- function(opts = server_opts()) {
+  ports <- paste0(opts$interfaces, ":", opts$port %||% "0", collapse = ",")
   options <- c(
-    "listening_ports"          = paste0("127.0.0.1:", opts$port %||% "0"),
+    "listening_ports"          = ports,
     "num_threads"              = opts$num_threads,
     "request_timeout_ms"       = "100000",
     "enable_auth_domain_check" = "no"
@@ -16,12 +17,18 @@ server_start <- function(opts = server_opts()) {
 #' @param num_threads Number of request handler threads to use. Typically
 #'   you don't need more than one thread, unless you run test cases in
 #'   parallel or you make concurrent HTTP requests.
+#' @param interfaces The network interfaces to listen on. Being a test
+#'   web server, it defaults to the localhost. Only bind to a public
+#'   interface if you know what you are doing. presser was not designed
+#'   to serve public web pages.
 #' @export
 
-server_opts <- function(port = NULL, num_threads = 1) {
+server_opts <- function(port = NULL, num_threads = 1,
+                        interfaces = "127.0.0.1") {
   list(
     port = port,
-    num_threads = num_threads
+    num_threads = num_threads,
+    interfaces = interfaces
   )
 }
 
