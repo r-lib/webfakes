@@ -117,7 +117,12 @@
     <p>Presser web server options</p>
     </div>
 
-    <pre class="usage"><span class='fu'>server_opts</span>(<span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>interfaces</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>)</pre>
+    <pre class="usage"><span class='fu'>server_opts</span>(
+  <span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>interfaces</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>,
+  <span class='kw'>enable_keep_alive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,6 +144,10 @@ parallel or you make concurrent HTTP requests.</p></td>
 web server, it defaults to the localhost. Only bind to a public
 interface if you know what you are doing. presser was not designed
 to serve public web pages.</p></td>
+    </tr>
+    <tr>
+      <th>enable_keep_alive</th>
+      <td><p>Whether the server keeps connections alive.</p></td>
     </tr>
     </table>
 
