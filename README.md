@@ -40,8 +40,6 @@ Lightweight web apps for testing. Built using the
   - The callr package is needed for `new_app_process()` to work.
   - The digest and jsonlite packages are needed for the `httpbin_app()`
     app.
-  - The uuid package is needed if you use the `/uuid` path of the the
-    `httpbin_app()` app.
 
 ## Installation
 

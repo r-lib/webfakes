@@ -326,7 +326,7 @@ httpbin_app <- function(log = interactive()) {
   })
 
   app$get("/uuid", function(req, res) {
-    ret <- list(uuid = uuid::UUIDgenerate())
+    ret <- list(uuid = uuid_random())
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
