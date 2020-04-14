@@ -4,7 +4,7 @@ uuid_random <- function() {
   # xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx (8-4-4-4-12)
   # The 4 bits of digit M are the UUID version,
   # and the 1 to 3 most significant bits of digit N code the UUID variant.
-  digits <- floor(runif(32, 0, 16))
+  digits <- floor(stats::runif(32, 0, 16))
   digits[13] <- 0x4
   digits[17] <- bitwOr(bitwAnd(digits[17], 0x3), 0x8)
 
