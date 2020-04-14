@@ -344,7 +344,7 @@ is running in another process.</p>
 app will listen. To be able to get the port number programmatically,
 before the listen method blocks, it advertises the selected port in a
 <code>presser_port</code> condition, so one can catch it:</p>
-<p>presser always binds only to the loopback interface at 127.0.0.1, so
+<p>presser by default binds only to the loopback interface at 127.0.0.1, so
 the presser web app is never reachable from the network.<div class="r"></p><pre><span class='fu'><a href='https://rdrr.io/r/base/conditions.html'>withCallingHandlers</a></span>(
   <span class='no'>app</span>$<span class='fu'>listen</span>(),
   <span class='st'>"presser_port"</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>msg</span>) <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>msg</span>$<span class='no'>port</span>)

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A presser request object — presser_request • presser</title>
+<title>Presser web server options — server_opts • presser</title>
 
 
 <!-- jquery -->
@@ -39,11 +39,8 @@
 
 
 
-<meta property="og:title" content="A presser request object — presser_request" />
-<meta property="og:description" content="presser creates a presser_request object for every incoming HTTP
-request. This object is passed to every matched route and middleware,
-until the response is sent. It has reference semantics, so handlers
-can modify it." />
+<meta property="og:title" content="Presser web server options — server_opts" />
+<meta property="og:description" content="Presser web server options" />
 
 
 
@@ -111,44 +108,40 @@ can modify it." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A presser request object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/gaborcsardi/presser/blob/master/R/request.R'><code>R/request.R</code></a></small>
-    <div class="hidden name"><code>presser_request.Rd</code></div>
+    <h1>Presser web server options</h1>
+    <small class="dont-index">Source: <a href='https://github.com/gaborcsardi/presser/blob/master/R/server.R'><code>R/server.R</code></a></small>
+    <div class="hidden name"><code>server_opts.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>presser creates a <code>presser_request</code> object for every incoming HTTP
-request. This object is passed to every matched route and middleware,
-until the response is sent. It has reference semantics, so handlers
-can modify it.</p>
+    <p>Presser web server options</p>
     </div>
 
+    <pre class="usage"><span class='fu'>server_opts</span>(<span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>interfaces</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>port</th>
+      <td><p>Port to start the web server on. Defaults to a randomly
+chosen port.</p></td>
+    </tr>
+    <tr>
+      <th>num_threads</th>
+      <td><p>Number of request handler threads to use. Typically
+you don't need more than one thread, unless you run test cases in
+parallel or you make concurrent HTTP requests.</p></td>
+    </tr>
+    <tr>
+      <th>interfaces</th>
+      <td><p>The network interfaces to listen on. Being a test
+web server, it defaults to the localhost. Only bind to a public
+interface if you know what you are doing. presser was not designed
+to serve public web pages.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Fields and methods:</p><ul>
-<li><p><code>app</code>: The <code>presser_app</code> object itself.</p></li>
-<li><p><code>headers</code>: Named list of HTTP request headers.</p></li>
-<li><p><code>hostname</code>: The Host header, the server hostname and maybe port.</p></li>
-<li><p><code>method</code>: HTTP method.</p></li>
-<li><p><code>path</code>: Server path.</p></li>
-<li><p><code>protocol</code>: <code>"http"</code> or <code>"https"</code>.</p></li>
-<li><p><code>query_string</code>: The raw query string, without the starting <code>?</code>.</p></li>
-<li><p><code>query</code>: Parsed query parameters in a named list.</p></li>
-<li><p><code>remote_addr</code>: String, the domain name or IP address of the client.
-presser runs on the localhost, so this is <code>127.0.0.1</code>.</p></li>
-<li><p><code>url</code>: The full URL of the request.</p></li>
-<li><p><code>get_header(field)</code>: Function to query a request header. Returns
-<code>NULL</code> if the header is not present.</p></li>
-</ul>
-
-<p>Body parsing middleware adds additional fields to the request object.
-See <code><a href='mw_raw.html'>mw_raw()</a></code>, <code><a href='mw_text.html'>mw_text()</a></code>, <code><a href='mw_json.html'>mw_json()</a></code>, <code><a href='mw_multipart.html'>mw_multipart()</a></code> and
-<code><a href='mw_urlencoded.html'>mw_urlencoded()</a></code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><a href='presser_response.html'>presser_response</a> for the presser response object.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
