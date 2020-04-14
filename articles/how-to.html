@@ -136,7 +136,7 @@ Suggests:
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-04-14 17:46:05"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-04-14 17:55:19"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
@@ -265,7 +265,7 @@ Suggests:
   <span class="fu">expect_true</span>(<span class="no">st</span><span class="kw">[[</span><span class="st">"elapsed"</span>]] <span class="kw">&lt;</span> <span class="fl">3.0</span>)
 })
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.001   1.111</span></pre></body></html></div>
+<span class="co">#&gt;   0.001   0.001   1.116</span></pre></body></html></div>
 </div>
   </div>
 
