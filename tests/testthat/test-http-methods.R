@@ -39,7 +39,7 @@ web2 <- setup({
   app <- new_app()
   handler <- function(req, res) res$send_json(list(method = req$method))
   for (method in test_methods) app[[method]](paste0("/", method), handler)
-  new_app_process(app, .port = NA)
+  new_app_process(app, port = NA)
 })
 teardown(web2$stop())
 

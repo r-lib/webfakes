@@ -4,15 +4,15 @@
 #' Runs an app in a subprocess, using [callr::r_session].
 #'
 #' @param app `presser_app` object, the web app to run.
-#' @param ... Options to pass to the [callr::r_session_options()] when
-#'   setting up the subprocess.
-#' @param .port Port to use. By default the OS assigns a port.
-#' @param .num_threads the number of threads that will handle HTTP
+#' @param port Port to use. By default the OS assigns a port.
+#' @param num_threads the number of threads that will handle HTTP
 #'   requests. If you use asynchronous or parallel HTTP requests, then
 #'   you probably want to increase this, to let the server handle
 #'   multiple requests at the same time.
-#' @param .process_timeout How long to wait for the subprocess to start, in
+#' @param process_timeout How long to wait for the subprocess to start, in
 #'   milliseconds.
+#' @param callr_options Options to pass to the
+#'   [callr::r_session_options()] when setting up the subprocess.
 #' @return A `presser_app_process` class.
 #'
 #' ## Methods
@@ -65,28 +65,28 @@
 #'
 #' proc$stop()
 
-new_app_process <- function(app, ..., .port = NULL, .num_threads = 1,
-                            .process_timeout = 5000) {
+new_app_process <- function(app, port = NULL, num_threads = 1,
+                            process_timeout = 5000, callr_options = NULL) {
 
-  app; list(...); .port; .num_threads; .process_timeout
+  app; port; num_threads; process_timeout; callr_options
 
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, ..., .port = NULL, .num_threads = 1) {
+    new = function(app, port = NULL, num_threads = 1, callr_options = NULL) {
       self$.app <- app
-      opts <- callr::r_session_options(...)
+      opts <- do.call(callr::r_session_options, as.list(callr_options))
       self$.process <- callr::r_session$new(opts, wait = TRUE)
       self$.process$call(
-        args = list(app, .port, .num_threads),
-        function(app, .port, .num_threads) {
+        args = list(app, port, num_threads),
+        function(app, port, num_threads) {
           library(presser)
           .GlobalEnv$app <- app
-          app$listen(port = .port, num_threads = .num_threads)
+          app$listen(port = port, num_threads = num_threads)
         }
       )
 
-      if (self$.process$poll_process(.process_timeout) != "ready") {
+      if (self$.process$poll_process(process_timeout) != "ready") {
         self$.process$kill()
         stop("presser app subprocess did not start :(")
       }
@@ -164,7 +164,11 @@ new_app_process <- function(app, ..., .port = NULL, .num_threads = 1,
     .old_env = NULL
   )
 
-  self$new(app, ..., .port = .port, .num_threads = .num_threads)
+  self$new(
+    app, port = port,
+    num_threads = num_threads,
+    callr_options = callr_options
+  )
   self$new <- NULL
 
   self

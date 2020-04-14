@@ -19,7 +19,7 @@ web <- setup({
     )
   })
   
-  new_app_process(app, .num_threads = 2)
+  new_app_process(app, num_threads = 2)
 })
 
 teardown(web$stop())

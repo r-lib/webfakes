@@ -4,7 +4,7 @@ test_that("error if cannot start", {
   app <- new_app()
   app$listen <- function(...) Sys.sleep(1)
   expect_error(
-    new_app_process(app, .process_timeout = 100),
+    new_app_process(app, process_timeout = 100),
     "presser app subprocess did not start"
   )
 
