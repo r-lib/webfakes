@@ -355,11 +355,12 @@ new_app <- function() {
       invisible(self)
     },
 
-    listen = function(port = NULL, num_threads = 1)  {
+    listen = function(port = NULL, opts = server_opts()) {
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
+      opts$port <- port
 
-      srv <- server_start(port = port, num_threads = num_threads)
+      srv <- server_start(opts)
       ports <- server_get_ports(srv)
       self$.port <- ports$port[1]
       message("Running presser web app on port ", self$.port)

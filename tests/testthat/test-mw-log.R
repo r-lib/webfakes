@@ -17,7 +17,7 @@ web <- setup({
         set_type("applicartion/octet-stream")$
         send(charToRaw("raw"))
     })
-  new_app_process(app, callr_options = list(stdout = "|"))
+  new_app_process(app, callr_opts = list(stdout = "|"))
 })
 
 teardown(web$stop())

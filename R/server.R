@@ -1,13 +1,28 @@
 
-server_start <- function(port = NULL, num_threads = 1) {
-  port <- paste0("127.0.0.1:", as.character(port %||% "0"))
+server_start <- function(opts = server_opts()) {
   options <- c(
-    "listening_ports"          = port,
+    "listening_ports"          = paste0("127.0.0.1:", opts$port %||% "0"),
+    "num_threads"              = opts$num_threads,
     "request_timeout_ms"       = "100000",
-    "num_threads"              = as.character(num_threads),
     "enable_auth_domain_check" = "no"
   )
   .Call(c_server_start, options)
+}
+
+#' Presser web server options
+#'
+#' @param port Port to start the web server on. Defaults to a randomly
+#'   chosen port.
+#' @param num_threads Number of request handler threads to use. Typically
+#'   you don't need more than one thread, unless you run test cases in
+#'   parallel or you make concurrent HTTP requests.
+#' @export
+
+server_opts <- function(port = NULL, num_threads = 1) {
+  list(
+    port = port,
+    num_threads = num_threads
+  )
 }
 
 server_get_ports <- function(srv) {

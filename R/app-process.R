@@ -5,14 +5,11 @@
 #'
 #' @param app `presser_app` object, the web app to run.
 #' @param port Port to use. By default the OS assigns a port.
-#' @param num_threads the number of threads that will handle HTTP
-#'   requests. If you use asynchronous or parallel HTTP requests, then
-#'   you probably want to increase this, to let the server handle
-#'   multiple requests at the same time.
+#' @param opts Server options. See [server_opts()] for the defaults.
 #' @param process_timeout How long to wait for the subprocess to start, in
 #'   milliseconds.
-#' @param callr_options Options to pass to the
-#'   [callr::r_session_options()] when setting up the subprocess.
+#' @param callr_opts Options to pass to [callr::r_session_options()]
+#'   when setting up the subprocess.
 #' @return A `presser_app_process` class.
 #'
 #' ## Methods
@@ -65,24 +62,24 @@
 #'
 #' proc$stop()
 
-new_app_process <- function(app, port = NULL, num_threads = 1,
-                            process_timeout = 5000, callr_options = NULL) {
+new_app_process <- function(app, port = NULL, opts = server_opts(),
+                            process_timeout = 5000, callr_opts = NULL) {
 
-  app; port; num_threads; process_timeout; callr_options
+  app; port; opts; process_timeout; callr_opts
 
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, port = NULL, num_threads = 1, callr_options = NULL) {
+    new = function(app, port = NULL, opts, callr_opts = NULL) {
       self$.app <- app
-      opts <- do.call(callr::r_session_options, as.list(callr_options))
+      opts <- do.call(callr::r_session_options, as.list(callr_opts))
       self$.process <- callr::r_session$new(opts, wait = TRUE)
       self$.process$call(
-        args = list(app, port, num_threads),
-        function(app, port, num_threads) {
+        args = list(app, port, opts),
+        function(app, port, opts) {
           library(presser)
           .GlobalEnv$app <- app
-          app$listen(port = port, num_threads = num_threads)
+          app$listen(port = port, opts = opts)
         }
       )
 
@@ -165,9 +162,10 @@ new_app_process <- function(app, port = NULL, num_threads = 1,
   )
 
   self$new(
-    app, port = port,
-    num_threads = num_threads,
-    callr_options = callr_options
+    app,
+    port = port,
+    opts = opts,
+    callr_opts = callr_opts
   )
   self$new <- NULL
 
