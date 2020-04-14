@@ -33,13 +33,11 @@ Lightweight web apps for testing. Built using the
 
 ## Optional dependencies
 
-  - The jsonlite package is needed for the `mw_json()` middleware an the
+  - The jsonlite package is needed for the `mw_json()` middleware and the
     `response$send_json()` method.
   - The glue package is needed for the `tmpl_glue()` template engine.
-  - The digest package is needed for the `mw_etag()` middleware.
   - The callr package is needed for `new_app_process()` to work.
-  - The digest and jsonlite packages are needed for the `httpbin_app()`
-    app.
+  - The jsonlite package is needed for the `httpbin_app()` app.
 
 ## Installation
 

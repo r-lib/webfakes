@@ -48,6 +48,6 @@ test_that("etag for empty response", {
   raw <- curl::curl_fetch_memory(web$url("/raw-empty"))
   htxt <- curl::parse_headers_list(txt$headers)
   hraw <- curl::parse_headers_list(raw$headers)
-  expect_equal(htxt$etag, "\"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk\"")
+  expect_equal(htxt$etag, "\"00000000\"")
   expect_equal(htxt$etag, hraw$etag)
 })

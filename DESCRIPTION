@@ -18,7 +18,6 @@ Imports:
 Suggests:
     callr,
     curl,
-    digest,
     glue,
     jsonlite,
     testthat,
