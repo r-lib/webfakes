@@ -273,7 +273,7 @@ Indeed, the `/delay/` end point is implemented using this feature.
 
 However, the request thread of the web server is still busy while on hold, so to take advantage of this, you need to allow multiple threads.
 The `num_threads` argument of the `$listen()` method of `presser_app` lets you specify the number of request threads the web server will use.
-Similarly, the `.num_threads` (note the leading dot) argument of `new_app_process()` lets you modify the number of threads.
+Similarly, the `num_threads` argument of `new_app_process()` lets you modify the number of threads.
 
 When testing asynchronous or parallel code, that might invoke multiple, possibly delayed requests, it is best to increase the number of threads.
 The code below calls the same API request concurrently, three times.
@@ -283,7 +283,7 @@ Each request takes 1 second to answer, but if the web server has more than three
 web <- setup(
   presser::new_app_process(
     presser::httpbin_app(),
-    num_threads = 3
+    opts = server_opts(num_threads = 3)
   )
 )
 teardown(web$stop())

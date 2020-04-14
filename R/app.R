@@ -359,6 +359,7 @@ new_app <- function() {
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
       opts$port <- port
+      self$.enable_keep_alive <- opts$enable_keep_alive
 
       srv <- server_start(opts)
       ports <- server_get_ports(srv)
@@ -426,6 +427,7 @@ new_app <- function() {
 
     # Private data
     .port = NULL,
+    .enable_keep_alive = NULL,
 
     # middleware stack
     .stack = list(),

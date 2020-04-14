@@ -214,7 +214,7 @@ new_response <- function(app, req) {
 
     .body = NULL,
     .status = NULL,
-    .headers = list(),
+    .headers = if (!app$.enable_keep_alive) list("Connection" = "close") else list(),
     .on_response = NULL,
     .sent = FALSE,
     .stackptr = 1L

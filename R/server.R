@@ -4,6 +4,7 @@ server_start <- function(opts = server_opts()) {
   options <- c(
     "listening_ports"          = ports,
     "num_threads"              = opts$num_threads,
+    "enable_keep_alive"        = c("no", "yes")[[opts$enable_keep_alive + 1]],
     "request_timeout_ms"       = "100000",
     "enable_auth_domain_check" = "no"
   )
@@ -21,15 +22,13 @@ server_start <- function(opts = server_opts()) {
 #'   web server, it defaults to the localhost. Only bind to a public
 #'   interface if you know what you are doing. presser was not designed
 #'   to serve public web pages.
+#' @param enable_keep_alive Whether the server keeps connections alive.
 #' @export
 
 server_opts <- function(port = NULL, num_threads = 1,
-                        interfaces = "127.0.0.1") {
-  list(
-    port = port,
-    num_threads = num_threads,
-    interfaces = interfaces
-  )
+                        interfaces = "127.0.0.1",
+                        enable_keep_alive = TRUE) {
+  as.list(environment())
 }
 
 server_get_ports <- function(srv) {

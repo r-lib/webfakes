@@ -4,7 +4,12 @@
 \alias{server_opts}
 \title{Presser web server options}
 \usage{
-server_opts(port = NULL, num_threads = 1, interfaces = "127.0.0.1")
+server_opts(
+  port = NULL,
+  num_threads = 1,
+  interfaces = "127.0.0.1",
+  enable_keep_alive = TRUE
+)
 }
 \arguments{
 \item{port}{Port to start the web server on. Defaults to a randomly
@@ -18,6 +23,8 @@ parallel or you make concurrent HTTP requests.}
 web server, it defaults to the localhost. Only bind to a public
 interface if you know what you are doing. presser was not designed
 to serve public web pages.}
+
+\item{enable_keep_alive}{Whether the server keeps connections alive.}
 }
 \description{
 Presser web server options
