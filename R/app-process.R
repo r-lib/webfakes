@@ -70,7 +70,7 @@ new_app_process <- function(app, port = NULL, opts = server_opts(),
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, port = NULL, opts = sesrver_opts(), callr_opts = NULL) {
+    new = function(app, port = NULL, opts = server_opts(), callr_opts = NULL) {
       self$.app <- app
       callr_opts <- do.call(callr::r_session_options, as.list(callr_opts))
       self$.process <- callr::r_session$new(callr_opts, wait = TRUE)
