@@ -283,7 +283,7 @@ Each request takes 1 second to answer, but if the web server has more than three
 web <- setup(
   presser::new_app_process(
     presser::httpbin_app(),
-    opts = server_opts(num_threads = 3)
+    opts = presser::server_opts(num_threads = 3)
   )
 )
 teardown(web$stop())
