@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Middleware that add an <code>Etag</code> header to the response — mw_etag" />
-<meta property="og:description" content="It needs the digest package to calculate the value of the header." />
+<meta property="og:description" content="Middleware that add an Etag header to the response" />
 
 
 
@@ -114,7 +114,7 @@
     </div>
 
     <div class="ref-description">
-    <p>It needs the digest package to calculate the value of the header.</p>
+    <p>Middleware that add an <code>Etag</code> header to the response</p>
     </div>
 
     <pre class="usage"><span class='fu'>mw_etag</span>(<span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='st'>"crc32"</span>)</pre>
@@ -124,8 +124,8 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>algorithm</th>
-      <td><p>Checksum algorithm to use. See the <code>also</code> argument of
-<code><a href='https://rdrr.io/pkg/digest/man/digest.html'>digest::digest()</a></code> for the possible values.</p></td>
+      <td><p>Checksum algorithm to use. Only <code>"crc32"</code> is
+implemented currently.</p></td>
     </tr>
     </table>
 
