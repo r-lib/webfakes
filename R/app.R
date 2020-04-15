@@ -241,16 +241,14 @@ pkg_data <- new.env(parent = emptyenv())
 #' ## Starting and stopping
 #'
 #' ```r
-#' app$listen(port = NULL, num_threads = 1)
+#' app$listen(port = NULL, opts = server_opts())
 #' ```
 #'
 #' * `port`: port to listen on. When `NULL`, the operating system will
 #'   automatically select a free port.
 #'
-#' * `num_threads`: the number of threads that will handle HTTP
-#'   requests. If you use asynchronous or parallel HTTP requests, then
-#'   you probably want to increase this, to let the server handle
-#'   multiple requests at the same time.
+#' * `opts`: options to the web server. See [server_opts()] for the
+#'   list of options and their default values.
 #'
 #' This method does not return, and can be interrupted with `CTRL+C` / `ESC`
 #' or a SIGINT signal. See [new_app_process()] for interrupting an app that
@@ -270,6 +268,27 @@ pkg_data <- new.env(parent = emptyenv())
 #'   "presser_port" = function(msg) print(msg$port)
 #' )
 #' ```
+#'
+#' ## Logging
+#'
+#' presser can write an access log that contains an entry for all incoming
+#' requests, and also an error log for the errors that happen while
+#' the server is running. This is the default behavior for local app
+#' (the ones started by `app$listen()` and for remote apps (the ones
+#' started via `new_app_process()`:
+#'
+#' * Local apps do not write an access log by default.
+#' * Remote apps write an access log into the
+#'   `<tmpdir>/presser/<pid>/access.log` file, where `<tmpdir>` is the
+#'   session temporary directory of the _main process_, and `<pid>` is
+#'   the process id of the _subprocess_.
+#' * Local apps write an error log to `<tmpdir>/presser/error.log`, where
+#'   `<tmpdir>` is the session temporary directory of the current process.
+#' * Remote app write an error log to the `<tmpdir>/presser/<pid>/error.log`,
+#'   where `<tmpdir>` is the session temporary directory of the
+#'   _main process_ and `<pid>` is the process id of the _subprocess_`.
+#'
+#' See [server_opts()] for changing the default logging behavior.
 #'
 #' ## Shared app data
 #'
@@ -360,13 +379,29 @@ new_app <- function() {
       if (is_na_scalar(port)) port <- NULL
       opts$port <- port
       self$.enable_keep_alive <- opts$enable_keep_alive
+      opts$access_log_file <- sub("%p", Sys.getpid(), opts$access_log_file)
+      opts$error_log_file <- sub("%p", Sys.getpid(), opts$error_log_file)
+      self$.opts <- opts
 
-      srv <- server_start(opts)
+      tryCatch(srv <- server_start(opts), error = function(err) {
+        err$message <- paste(sep = "\n", err$message, self$.get_error_log())
+        stop(err)
+      })
       ports <- server_get_ports(srv)
       self$.port <- ports$port[1]
       message("Running presser web app on port ", self$.port)
+      if (!is.na(opts$access_log_file)) {
+        message("Access log file: ", opts$access_log_file)
+      }
+      if (!is.na(opts$error_log_file)) {
+        message("Error log file: ", opts$error_log_file)
+      }
       msg <- structure(
-        list(port = self$.port),
+        list(
+          port = self$.port,
+          access_log = attr(srv, "options")$access_log_file,
+          error_log = attr(srv, "options")$error_log_file
+        ),
         class = c("presser_port", "callr_message", "condition")
       )
       message(msg)
@@ -428,6 +463,7 @@ new_app <- function() {
     # Private data
     .port = NULL,
     .enable_keep_alive = NULL,
+    .opts = NULL,
 
     # middleware stack
     .stack = list(),
@@ -480,7 +516,14 @@ new_app <- function() {
 
         list(0L, ans)
       }
+    },
+
+    .get_error_log = function() {
+      if (!is.na(self$.opts$error_log_file)) {
+        paste0("Error log:\n", read_char(self$.opts$error_log_file))
+      }
     }
+
   )
 
   self
