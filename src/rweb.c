@@ -224,8 +224,11 @@ static R_INLINE SEXP new_env() {
   return env;
 }
 
-#define CHK(expr) if ((ret = expr))                                     \
-    R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot process presser web server requests")
+#define CHK(expr) if ((ret = expr)) {                                   \
+  mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);  \
+  R_THROW_SYSTEM_ERROR_CODE(                                            \
+    ret, "Cannot process presser web server requests");                 \
+}
 
 SEXP presser_create_request(SEXP rsrv) {
   struct presser_server *srv = R_ExternalPtrAddr(rsrv);
@@ -264,7 +267,10 @@ SEXP presser_create_request(SEXP rsrv) {
   if (req->content_length != -1) {
     SEXP body = PROTECT(allocVector(RAWSXP, req->content_length));
     int ret = mg_read(srv->conn, RAW(body), req->content_length);
-    if (ret < 0) R_THROW_ERROR("Cannot read from presser HTTP client");
+    if (ret < 0) {
+      mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
+      R_THROW_ERROR("Cannot read from presser HTTP client");
+    }
     if (ret != req->content_length) {
       warning("Partial HTTP request body from client");
     }
@@ -300,8 +306,12 @@ void presser_send_response(SEXP res, SEXP rsrv) {
       "Content-Type: text/plain\r\n\r\n",
       rreq->http_version, len
     );
-    if (ret < 0) R_THROW_ERROR("Could not send HTTP error response");
+    if (ret < 0) {
+      mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
+      R_THROW_ERROR("Could not send HTTP error response");
+    }
     if (mg_write(srv->conn, s, len) < 0) {
+      mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
       R_THROW_ERROR("Failed to write HTTP response body");
     }
 
@@ -316,16 +326,23 @@ void presser_send_response(SEXP res, SEXP rsrv) {
       rreq->http_version,
       code, mg_get_response_code_text(srv->conn, code)
     );
-    if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+    if (ret < 0) {
+      mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
+      R_THROW_ERROR("Could not send HTTP response");
+    }
 
     for (i = 0; !isNull(hdr) && i < LENGTH(hdr); i++) {
       const char *hs = CHAR(STRING_ELT(hdr, i));
       ret = mg_write(srv->conn, hs, strlen(hs));
       ret |= mg_write(srv->conn, "\r\n", 2);
-      if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+      if (ret < 0) {
+        mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
+        R_THROW_ERROR("Could not send HTTP response");
+      }
     }
 
     if (mg_write(srv->conn, "\r\n", 2) < 0) {
+      mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
       R_THROW_ERROR("Could not send HTTP response");
     }
 
@@ -335,22 +352,26 @@ void presser_send_response(SEXP res, SEXP rsrv) {
       const char *ccnt = CHAR(STRING_ELT(cnt, 0));
       ret = mg_write(srv->conn, ccnt, strlen(ccnt));
     }
-    if (ret < 0) R_THROW_ERROR("Could not send HTTP response");
+    if (ret < 0) {
+      mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
+      R_THROW_ERROR("Could not send HTTP response");
+    }
 
   } else if (isNull(res)) {
     /* Do nothing. Response is sent or empty response */
 
   } else {
+    mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
     R_THROW_ERROR("Invalid presser response");
   }
 }
 
 static void server_process_cleanup(void *ptr) {
-  REprintf("Cleaning up\n");
   struct presser_server *srv = (struct presser_server*) ptr;
   struct presser_connection *conn_data =
     mg_get_user_connection_data(srv->conn);
   if (conn_data) {
+    mg_cry(srv->conn, "Cleaning up broken connection at %s:%d", __FILE__, __LINE__);
     srv->conn = NULL;
     conn_data->req_todo = PRESSER_DONE;
     R_ReleaseObject(conn_data->req);
@@ -419,6 +440,7 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
       conn_data->secs = REAL(VECTOR_ELT(res, 1))[0];
       conn_data->req_todo = PRESSER_WAIT;
     } else {
+      mg_cry(srv->conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
       R_THROW_ERROR("Invalid presser response, internal error");
     }
 
