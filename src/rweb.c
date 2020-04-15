@@ -156,9 +156,6 @@ static void presser_server_finalizer(SEXP rsrv) {
   ret += pthread_cond_destroy(&srv->process_less);
 }
 
-#define CHK(expr) if ((ret = expr))                                     \
-    R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot start presser web server")
-
 SEXP server_start(SEXP options) {
 
   SEXP rsrv = R_NilValue;
@@ -170,9 +167,9 @@ SEXP server_start(SEXP options) {
   PROTECT(rsrv = R_MakeExternalPtr(srv, R_NilValue, R_NilValue));
   R_RegisterCFinalizer(rsrv, presser_server_finalizer);
 
-  CHK(pthread_cond_init(&srv->process_more, NULL));
-  CHK(pthread_cond_init(&srv->process_less, NULL));
-  CHK(pthread_mutex_init(&srv->process_lock, NULL));
+  if ((ret = pthread_cond_init(&srv->process_more, NULL))) goto cleanup;
+  if ((ret = pthread_cond_init(&srv->process_less, NULL))) goto cleanup;
+  if ((ret = pthread_mutex_init(&srv->process_lock, NULL))) goto cleanup;
 
   char **coptions;
   SEXP_to_char_vector(options, &coptions);
@@ -184,10 +181,9 @@ SEXP server_start(SEXP options) {
   callbacks.init_connection = init_connection;
   callbacks.connection_close = connection_close;
 
-  CHK(pthread_mutex_lock(&srv->process_lock));
+  if ((ret = pthread_mutex_lock(&srv->process_lock))) goto cleanup;
   srv->ctx = mg_start(&callbacks, srv, (const char **) coptions);
-
-  if (srv->ctx == NULL) R_THROW_ERROR("Cannot start presser web server");
+  if (srv->ctx == NULL) goto cleanup;
 
   memset(srv->ports, 0, sizeof(srv->ports));
   srv->num_ports = mg_get_server_ports(
@@ -195,10 +191,23 @@ SEXP server_start(SEXP options) {
     sizeof(srv->ports) / sizeof(struct mg_server_port),
     srv->ports
   );
-  if (srv->num_ports < 0) R_THROW_ERROR("Cannot get presser web server ports");
+  if (srv->num_ports < 0) goto cleanup;
 
   UNPROTECT(1);
   return rsrv;
+
+ cleanup:
+  /* This is unlocked in the finalizer, but that might be much later... */
+  if (srv->ctx) mg_stop(srv->ctx);
+  pthread_mutex_unlock(&srv->process_lock);
+  if (ret) {
+    R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot start presser web server");
+  } else {
+    R_THROW_ERROR("Cannot start presser web server");
+  }
+
+  /* Never reached */
+  return R_NilValue;
 }
 
 static R_INLINE SEXP new_env() {
@@ -212,7 +221,6 @@ static R_INLINE SEXP new_env() {
   return env;
 }
 
-#undef CHK
 #define CHK(expr) if ((ret = expr))                                     \
     R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot process presser web server requests")
 
