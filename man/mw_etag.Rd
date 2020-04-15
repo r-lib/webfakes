@@ -7,14 +7,14 @@
 mw_etag(algorithm = "crc32")
 }
 \arguments{
-\item{algorithm}{Checksum algorithm to use. See the \code{also} argument of
-\code{\link[digest:digest]{digest::digest()}} for the possible values.}
+\item{algorithm}{Checksum algorithm to use. Only \code{"crc32"} is
+implemented currently.}
 }
 \value{
 Handler function.
 }
 \description{
-It needs the digest package to calculate the value of the header.
+Middleware that add an \code{Etag} header to the response
 }
 \seealso{
 Other middleware: 

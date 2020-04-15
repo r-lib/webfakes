@@ -19,11 +19,14 @@ SEXP server_process(SEXP rsrv, SEXP handler, SEXP env);
 SEXP server_stop(SEXP rsrv);
 SEXP server_get_ports(SEXP rsrv);
 
+SEXP presser_crc32(SEXP v);
+
 static const R_CallMethodDef callMethods[]  = {
   { "server_start",     (DL_FUNC) &server_start,     1 },
   { "server_process",   (DL_FUNC) &server_process,   3 },
   { "server_stop",      (DL_FUNC) &server_stop,      1 },
   { "server_get_ports", (DL_FUNC) &server_get_ports, 1 },
+  { "presser_crc32",   (DL_FUNC) &presser_crc32,    1 },
   { NULL, NULL, 0 }
 };
 
