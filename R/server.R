@@ -99,7 +99,16 @@ server_get_ports <- function(srv) {
 }
 
 server_process <- function(srv, handler) {
-  invisible(.Call(c_server_process, srv, handler, environment()))
+  done <- FALSE
+  while (!done) {
+    tryCatch(
+      call_with_cleanup(c_server_process, srv, handler, environment()),
+      error = function(err) NULL,
+      interrupt = function(err) done <<- TRUE
+    )
+  }
+
+  invisible(srv)
 }
 
 server_stop <- function(srv) {

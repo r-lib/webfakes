@@ -5,6 +5,7 @@
 
 #include "civetweb.h"
 #include "errors.h"
+#include "cleancall.h"
 
 #include <pthread.h>
 #include <time.h>
@@ -22,6 +23,7 @@ SEXP server_get_ports(SEXP rsrv);
 SEXP presser_crc32(SEXP v);
 
 static const R_CallMethodDef callMethods[]  = {
+  CLEANCALL_METHOD_RECORD,
   { "server_start",     (DL_FUNC) &server_start,     1 },
   { "server_process",   (DL_FUNC) &server_process,   3 },
   { "server_stop",      (DL_FUNC) &server_stop,      1 },
@@ -34,6 +36,7 @@ void R_init_presser(DllInfo *dll) {
   R_registerRoutines(dll, NULL, callMethods, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
+  cleancall_fns_dot_call = Rf_findVar(Rf_install(".Call"), R_BaseEnv);
   /* Once we require some features we need to check the return value. */
   mg_init_library(0);
 }
@@ -342,10 +345,28 @@ void presser_send_response(SEXP res, SEXP rsrv) {
   }
 }
 
+static void server_process_cleanup(void *ptr) {
+  REprintf("Cleaning up\n");
+  struct presser_server *srv = (struct presser_server*) ptr;
+  struct presser_connection *conn_data =
+    mg_get_user_connection_data(srv->conn);
+  if (conn_data) {
+    srv->conn = NULL;
+    conn_data->req_todo = PRESSER_DONE;
+    R_ReleaseObject(conn_data->req);
+    conn_data->req = R_NilValue;
+    pthread_cond_signal(&conn_data->finish_cond);
+    pthread_mutex_unlock(&conn_data->finish_lock);
+  }
+  pthread_cond_signal(&srv->process_less);
+}
+
 SEXP server_process(SEXP rsrv, SEXP handler, SEXP env) {
   struct presser_server *srv = R_ExternalPtrAddr(rsrv);
   if (srv == NULL) R_THROW_ERROR("presser server has stopped already");
   int ret;
+
+  r_call_on_early_exit(server_process_cleanup, srv);
 
   while (1) {
     struct timespec limit;
