@@ -328,13 +328,11 @@ response local variables (see <code>locals</code> in <a href='presser_response.h
 available.</p>
 
 <h3>Starting and stopping</h3>
-<p><div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>listen</span>(<span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre><p></div></p><ul>
+<p><div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>listen</span>(<span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>opts</span> <span class='kw'>=</span> <span class='fu'><a href='server_opts.html'>server_opts</a></span>())</pre><p></div></p><ul>
 <li><p><code>port</code>: port to listen on. When <code>NULL</code>, the operating system will
 automatically select a free port.</p></li>
-<li><p><code>num_threads</code>: the number of threads that will handle HTTP
-requests. If you use asynchronous or parallel HTTP requests, then
-you probably want to increase this, to let the server handle
-multiple requests at the same time.</p></li>
+<li><p><code>opts</code>: options to the web server. See <code><a href='server_opts.html'>server_opts()</a></code> for the
+list of options and their default values.</p></li>
 </ul>
 
 <p>This method does not return, and can be interrupted with <code>CTRL+C</code> / <code>ESC</code>
@@ -349,6 +347,28 @@ the presser web app is never reachable from the network.<div class="r"></p><pre>
   <span class='no'>app</span>$<span class='fu'>listen</span>(),
   <span class='st'>"presser_port"</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>msg</span>) <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>msg</span>$<span class='no'>port</span>)
 )</pre><p></div></p>
+
+<h3>Logging</h3>
+
+
+<p>presser can write an access log that contains an entry for all incoming
+requests, and also an error log for the errors that happen while
+the server is running. This is the default behavior for local app
+(the ones started by <code>app$listen()</code> and for remote apps (the ones
+started via <code><a href='new_app_process.html'>new_app_process()</a></code>:</p><ul>
+<li><p>Local apps do not write an access log by default.</p></li>
+<li><p>Remote apps write an access log into the
+<code>&lt;tmpdir&gt;/presser/&lt;pid&gt;/access.log</code> file, where <code>&lt;tmpdir&gt;</code> is the
+session temporary directory of the <em>main process</em>, and <code>&lt;pid&gt;</code> is
+the process id of the <em>subprocess</em>.</p></li>
+<li><p>Local apps write an error log to <code>&lt;tmpdir&gt;/presser/error.log</code>, where
+<code>&lt;tmpdir&gt;</code> is the session temporary directory of the current process.</p></li>
+<li><p>Remote app write an error log to the <code>&lt;tmpdir&gt;/presser/&lt;pid&gt;/error.log</code>,
+where <code>&lt;tmpdir&gt;</code> is the session temporary directory of the
+<em>main process</em> and <code>&lt;pid&gt;</code> is the process id of the <em>subprocess</em>`.</p></li>
+</ul>
+
+<p>See <code><a href='server_opts.html'>server_opts()</a></code> for changing the default logging behavior.</p>
 
 <h3>Shared app data</h3>
 <p><div class="r"></p><pre><span class='no'>app</span>$<span class='no'>locals</span></pre><p></div></p>
@@ -383,7 +403,7 @@ response objects.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># see example web apps in the `/examples` directory in</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"presser"</span>, <span class='st'>"examples"</span>)</div><div class='output co'>#&gt; [1] "/Users/runner/runners/2.168.0/work/_temp/Library/presser/examples"</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"presser"</span>, <span class='st'>"examples"</span>)</div><div class='output co'>#&gt; [1] "/Users/runner/runners/2.169.0/work/_temp/Library/presser/examples"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

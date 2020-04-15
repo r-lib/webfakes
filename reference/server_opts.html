@@ -118,15 +118,24 @@
     </div>
 
     <pre class="usage"><span class='fu'>server_opts</span>(
+  <span class='kw'>remote</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>interfaces</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>,
-  <span class='kw'>enable_keep_alive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>enable_keep_alive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>access_log_file</span> <span class='kw'>=</span> <span class='no'>remote</span>,
+  <span class='kw'>error_log_file</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>remote</th>
+      <td><p>Meta-option. If set to <code>TRUE</code>, presser uses slightly
+different defaults, that are more appropriate for a background
+server process.</p></td>
+    </tr>
     <tr>
       <th>port</th>
       <td><p>Port to start the web server on. Defaults to a randomly
@@ -149,8 +158,33 @@ to serve public web pages.</p></td>
       <th>enable_keep_alive</th>
       <td><p>Whether the server keeps connections alive.</p></td>
     </tr>
+    <tr>
+      <th>access_log_file</th>
+      <td><p><code>TRUE</code>, <code>FALSE</code>, or a path. See 'Logging'
+below.</p></td>
+    </tr>
+    <tr>
+      <th>error_log_file</th>
+      <td><p><code>TRUE</code>, <code>FALSE</code>, or a path. See 'Logging'
+below.</p></td>
+    </tr>
     </table>
 
+    <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
+
+    
+
+<ul>
+<li><p>For <code>access_log_file</code>, <code>TRUE</code> means <code>&lt;log-dir&gt;/access.log</code>.</p></li>
+<li><p>For <code>error_log_file</code>, <code>TRUE</code> means <code>&lt;log-dir&gt;/error.log</code>.</p></li>
+</ul>
+
+<p><code>&lt;log-dir&gt;</code> is set to the contents of the <code>PRESSER_LOG_DIR</code>
+environment variable, if it is set. Otherwise it is set to
+<code>&lt;tmpdir&gt;/presser</code> for local apps and <code>&lt;tmpdir&gt;/&lt;pid&gt;/presser</code> for
+remote apps (started with <code>new_app_procss()</code>).</p>
+<p><code>&lt;tmpdir&gt;</code> is the session temporary directory of the <em>main process</em>.</p>
+<p><code>&lt;pid&gt;</code> is the process id of the subprocess.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

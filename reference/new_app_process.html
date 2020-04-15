@@ -120,7 +120,7 @@
     <pre class="usage"><span class='fu'>new_app_process</span>(
   <span class='no'>app</span>,
   <span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>opts</span> <span class='kw'>=</span> <span class='fu'><a href='server_opts.html'>server_opts</a></span>(),
+  <span class='kw'>opts</span> <span class='kw'>=</span> <span class='fu'><a href='server_opts.html'>server_opts</a></span>(<span class='kw'>remote</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
   <span class='kw'>process_timeout</span> <span class='kw'>=</span> <span class='fl'>5000</span>,
   <span class='kw'>callr_opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )</pre>
@@ -170,7 +170,8 @@ when setting up the subprocess.</p></td>
 
 <p><code>get_app()</code> returns the app object.</p>
 <p><code>get_port()</code> returns the port the web server is running on.</p>
-<p><code><a href='https://rdrr.io/r/base/stop.html'>stop()</a></code> stops the web server, and also the subprocess.</p>
+<p><code><a href='https://rdrr.io/r/base/stop.html'>stop()</a></code> stops the web server, and also the subprocess. If the error
+log file is not empty, then it dumps its contents to the screen.</p>
 <p><code>get_state()</code> returns a string, the state of the web server:</p><ul>
 <li><p><code>"not running"</code> the server is not running (because it was stopped
 already).</p></li>
