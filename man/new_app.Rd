@@ -242,15 +242,13 @@ response local variables (see \code{locals} in \link{presser_response}), are
 available.
 }
 
-\subsection{Starting and stopping}{\if{html}{\out{<div class="r">}}\preformatted{app$listen(port = NULL, num_threads = 1)
+\subsection{Starting and stopping}{\if{html}{\out{<div class="r">}}\preformatted{app$listen(port = NULL, opts = server_opts())
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{port}: port to listen on. When \code{NULL}, the operating system will
 automatically select a free port.
-\item \code{num_threads}: the number of threads that will handle HTTP
-requests. If you use asynchronous or parallel HTTP requests, then
-you probably want to increase this, to let the server handle
-multiple requests at the same time.
+\item \code{opts}: options to the web server. See \code{\link[=server_opts]{server_opts()}} for the
+list of options and their default values.
 }
 
 This method does not return, and can be interrupted with \code{CTRL+C} / \code{ESC}
@@ -268,6 +266,29 @@ the presser web app is never reachable from the network.\if{html}{\out{<div clas
   "presser_port" = function(msg) print(msg$port)
 )
 }\if{html}{\out{</div>}}
+}
+
+\subsection{Logging}{
+
+presser can write an access log that contains an entry for all incoming
+requests, and also an error log for the errors that happen while
+the server is running. This is the default behavior for local app
+(the ones started by \code{app$listen()} and for remote apps (the ones
+started via \code{new_app_process()}:
+\itemize{
+\item Local apps do not write an access log by default.
+\item Remote apps write an access log into the
+\verb{<tmpdir>/presser/<pid>/access.log} file, where \verb{<tmpdir>} is the
+session temporary directory of the \emph{main process}, and \verb{<pid>} is
+the process id of the \emph{subprocess}.
+\item Local apps write an error log to \verb{<tmpdir>/presser/error.log}, where
+\verb{<tmpdir>} is the session temporary directory of the current process.
+\item Remote app write an error log to the \verb{<tmpdir>/presser/<pid>/error.log},
+where \verb{<tmpdir>} is the session temporary directory of the
+\emph{main process} and \verb{<pid>} is the process id of the \emph{subprocess}`.
+}
+
+See \code{\link[=server_opts]{server_opts()}} for changing the default logging behavior.
 }
 
 \subsection{Shared app data}{\if{html}{\out{<div class="r">}}\preformatted{app$locals

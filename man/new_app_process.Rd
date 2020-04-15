@@ -8,7 +8,7 @@
 new_app_process(
   app,
   port = NULL,
-  opts = server_opts(),
+  opts = server_opts(remote = TRUE),
   process_timeout = 5000,
   callr_opts = NULL
 )
@@ -47,7 +47,8 @@ url(path = "/", query = NULL)
 
 \code{get_port()} returns the port the web server is running on.
 
-\code{stop()} stops the web server, and also the subprocess.
+\code{stop()} stops the web server, and also the subprocess. If the error
+log file is not empty, then it dumps its contents to the screen.
 
 \code{get_state()} returns a string, the state of the web server:
 \itemize{

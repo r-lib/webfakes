@@ -33,7 +33,8 @@
 #'
 #' `get_port()` returns the port the web server is running on.
 #'
-#' `stop()` stops the web server, and also the subprocess.
+#' `stop()` stops the web server, and also the subprocess. If the error
+#' log file is not empty, then it dumps its contents to the screen.
 #'
 #' `get_state()` returns a string, the state of the web server:
 #' * `"not running"` the server is not running (because it was stopped
@@ -62,7 +63,8 @@
 #'
 #' proc$stop()
 
-new_app_process <- function(app, port = NULL, opts = server_opts(),
+new_app_process <- function(app, port = NULL,
+                            opts = server_opts(remote = TRUE),
                             process_timeout = 5000, callr_opts = NULL) {
 
   app; port; opts; process_timeout; callr_opts
@@ -70,7 +72,7 @@ new_app_process <- function(app, port = NULL, opts = server_opts(),
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, port = NULL, opts = server_opts(), callr_opts = NULL) {
+    new = function(app, port, opts, callr_opts) {
       self$.app <- app
       callr_opts <- do.call(callr::r_session_options, as.list(callr_opts))
       self$.process <- callr::r_session$new(callr_opts, wait = TRUE)
@@ -100,6 +102,8 @@ new_app_process <- function(app, port = NULL, opts = server_opts(),
              "Report a bug please.")
       }
       self$.port <- msg$message$port
+      self$.access_log <- msg$message$access_log
+      self$.error_log <- msg$message$error_log
 
       invisible(self)
     },
@@ -129,6 +133,7 @@ new_app_process <- function(app, port = NULL, opts = server_opts(),
       self$.process$poll_process(1000)
       try_silently(self$.process$read())
       try_silently(self$.process$close())
+      self$.print_errors()
       self$.process <- NULL
       invisible(self)
     },
@@ -158,7 +163,18 @@ new_app_process <- function(app, port = NULL, opts = server_opts(),
     .process = NULL,
     .app = NULL,
     .port = NULL,
-    .old_env = NULL
+    .old_env = NULL,
+    .access_log = NA_character_,
+    .error_log = NA_character_,
+
+    .print_errors = function() {
+      if (!is.na(self$.error_log) && file.exists(self$.error_log) &&
+          file.info(self$.error_log)$size > 0) {
+        err <- readLines(self$.error_log, warn = FALSE)
+        cat("presser web server errors:\n")
+        cat(err, sep = "\n")
+      }
+    }
   )
 
   self$new(

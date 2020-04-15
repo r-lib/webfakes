@@ -1,6 +1,8 @@
 
 `%||%` <- function(l, r) if (is.null(l)) r else l
 
+`%|NA|%` <- function(l, r) if (is_na_scalar(l)) r else l
+
 new_object <- function(class_name, ...) {
   structure(as.environment(list(...)), class = class_name)
 }
@@ -53,6 +55,12 @@ str_is_suffix <- function(x, sfx) {
   substring(x, lx - lsfx + 1, lx) == sfx
 }
 
+read_char <- function(path, encoding = "UTF-8") {
+  txt <- rawToChar(readBin(path, "raw", file.info(path)$size))
+  Encoding(txt) <- encoding
+  txt
+}
+
 read_bin <- function(path) {
   readBin(path, "raw", file.info(path)$size)
 }
@@ -83,4 +91,8 @@ set_envvar <- function(envs) {
   if (any(!set)) Sys.unsetenv(names(envs)[!set])
 
   invisible(old)
+}
+
+mkdirp <- function(path, ...) {
+  dir.create(path, showWarnings = FALSE, recursive = TRUE, ...)
 }

@@ -5,13 +5,20 @@
 \title{Presser web server options}
 \usage{
 server_opts(
+  remote = FALSE,
   port = NULL,
   num_threads = 1,
   interfaces = "127.0.0.1",
-  enable_keep_alive = TRUE
+  enable_keep_alive = FALSE,
+  access_log_file = remote,
+  error_log_file = TRUE
 )
 }
 \arguments{
+\item{remote}{Meta-option. If set to \code{TRUE}, presser uses slightly
+different defaults, that are more appropriate for a background
+server process.}
+
 \item{port}{Port to start the web server on. Defaults to a randomly
 chosen port.}
 
@@ -25,7 +32,30 @@ interface if you know what you are doing. presser was not designed
 to serve public web pages.}
 
 \item{enable_keep_alive}{Whether the server keeps connections alive.}
+
+\item{access_log_file}{\code{TRUE}, \code{FALSE}, or a path. See 'Logging'
+below.}
+
+\item{error_log_file}{\code{TRUE}, \code{FALSE}, or a path. See 'Logging'
+below.}
 }
 \description{
 Presser web server options
 }
+\section{Logging}{
+
+\itemize{
+\item For \code{access_log_file}, \code{TRUE} means \verb{<log-dir>/access.log}.
+\item For \code{error_log_file}, \code{TRUE} means \verb{<log-dir>/error.log}.
+}
+
+\verb{<log-dir>} is set to the contents of the \code{PRESSER_LOG_DIR}
+environment variable, if it is set. Otherwise it is set to
+\verb{<tmpdir>/presser} for local apps and \verb{<tmpdir>/<pid>/presser} for
+remote apps (started with \code{new_app_procss()}).
+
+\verb{<tmpdir>} is the session temporary directory of the \emph{main process}.
+
+\verb{<pid>} is the process id of the subprocess.
+}
+
