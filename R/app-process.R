@@ -116,6 +116,16 @@ new_app_process <- function(app, port = NULL,
       if (is.null(self$.process)) return(invisible(self))
       if (!is.null(self$.old_env)) set_envvar(self$.old_env)
 
+      if (!self$.process$is_alive()) {
+        status <- self$.process$get_exit_status()
+        out <- err <- NULL
+        try_silently(out <- self$.process$read_output())
+        try_silently(err <- self$.process$read_error())
+        cat0("presser process dead, exit code: ", status, "\n")
+        if (!is.null(out)) cat0("stdout:", out, "\n")
+        if (!is.null(err)) cat0("stderr:", err, "\n")
+      }
+
       # The details are important here, for the sake of covr,
       # so that we can test the presser package itself.
       # 1. The subprocess serving the app is in Sys.sleep(), which we

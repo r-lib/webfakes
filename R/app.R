@@ -407,9 +407,9 @@ new_app <- function() {
       message(msg)
 
       on.exit(server_stop(srv), add = TRUE)
-      # does not return
-      server_process(srv, self$.run)
 
+      # does not return until interrupted, not even on errors
+      server_process(srv, self$.run)
     },
 
     mkcol = function(path, ...) {
