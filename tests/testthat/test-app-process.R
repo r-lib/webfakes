@@ -33,7 +33,7 @@ test_that("get_state", {
   expect_equal(proc$get_state(), "live")
   proc$.process$kill()
   expect_equal(proc$get_state(), "dead")
-  proc$stop()
+  expect_output(proc$stop(), "presser process dead")
   expect_equal(proc$get_state(), "not running")
 })
 

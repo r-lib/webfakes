@@ -118,9 +118,12 @@ new_app_process <- function(app, port = NULL,
 
       if (!self$.process$is_alive()) {
         status <- self$.process$get_exit_status()
+        out <- err <- NULL
+        try_silently(out <- self$.process$read_output())
+        try_silently(err <- self$.process$read_error())
         cat0("presser process dead, exit code: ", status, "\n")
-        cat0("stdout:", self$.process$read_output(), "\n")
-        cat0("stderr:", self$.process$read_error(), "\n")
+        if (!is.null(out)) cat0("stdout:", out, "\n")
+        if (!is.null(err)) cat0("stderr:", err, "\n")
       }
 
       # The details are important here, for the sake of covr,
