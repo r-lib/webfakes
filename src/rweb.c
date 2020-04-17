@@ -192,34 +192,10 @@ static int begin_request(struct mg_connection *conn) {
 #endif
   mg_set_user_connection_data(conn, NULL);
   pthread_mutex_unlock(&conn_data.finish_lock);
+  pthread_mutex_destroy(&conn_data.finish_lock);
+  pthread_cond_destroy(&conn_data.finish_cond);
 
   return 1;
-}
-
-static int init_connection(const struct mg_connection *conn,
-                           void **conn_data) {
-  *conn_data = NULL;
-  return 0;
-}
-
-/* TODO: this is not good, it references conn_data, which might
-   not be on the stack any more... */
-
-static void connection_close(const struct mg_connection *conn) {
-  struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
-  if (conn_data == NULL) return;
-#ifndef NDEBUG
-  fprintf(stderr, "conn %p: cleaning up conn data\n", conn);
-#endif
-  pthread_cond_destroy(&conn_data->finish_cond);
-  pthread_mutex_unlock(&conn_data->finish_lock);
-  pthread_mutex_destroy(&conn_data->finish_lock);
-}
-
-static void end_request(const struct mg_connection *conn, int reply_status_code) {
-  /* Right now, these two are the same, they are probably redundant,
-     but it does not hurt */
-  connection_close(conn);
 }
 
 /* --------------------------------------------------------------------- */
@@ -268,9 +244,6 @@ SEXP server_start(SEXP options) {
 
   memset(&callbacks, 0, sizeof(callbacks));
   callbacks.begin_request = begin_request;
-  callbacks.end_request = end_request;
-  callbacks.init_connection = init_connection;
-  callbacks.connection_close = connection_close;
 
   if ((ret = pthread_mutex_lock(&srv_data->process_lock))) goto cleanup;
   ctx = mg_start(&callbacks, srv_data, (const char **) coptions);
