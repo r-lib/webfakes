@@ -23,7 +23,7 @@ server_start <- function(opts = server_opts()) {
     "enable_auth_domain_check" = "no"
   )
 
-  srv <- .Call(c_server_start, options)
+  srv <- call_with_cleanup(c_server_start, options)
   attr(srv, "options") <- opts
   srv
 }
@@ -95,22 +95,13 @@ server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
 }
 
 server_get_ports <- function(srv) {
-  as.data.frame(.Call(c_server_get_ports, srv))
+  as.data.frame(call_with_cleanup(c_server_get_ports, srv))
 }
 
-server_process <- function(srv, handler) {
-  done <- FALSE
-  while (!done) {
-    tryCatch(
-      call_with_cleanup(c_server_process, srv, handler, environment()),
-      error = function(err) NULL,
-      interrupt = function(err) done <<- TRUE
-    )
-  }
-
-  invisible(srv)
+server_poll <- function(srv) {
+  call_with_cleanup(c_server_poll, srv)
 }
 
 server_stop <- function(srv) {
-  invisible(.Call(c_server_stop, srv))
+  invisible(call_with_cleanup(c_server_stop, srv))
 }

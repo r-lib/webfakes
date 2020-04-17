@@ -201,13 +201,13 @@ httpbin_app <- function(log = interactive()) {
 
     if (length(if_none_match) > 0) {
       if (etag %in% if_none_match || "*" %in% if_none_match) {
-        res$set_status(304)
+        res$send_status(304)
         res_etag <- "etag"
         return()
       }
     } else if (length(if_match) > 0) {
       if ((! etag %in% if_match) && (!"*" %in% if_match)) {
-        res$set_status(412)
+        res$send_status(412)
         return()
       }
     }

@@ -51,10 +51,12 @@ new_response <- function(app, req) {
     app = app,
     req = req,
     locals = as.environment(as.list(app$locals)),
+    headers_sent = FALSE,
 
     delay = function(secs) {
-      self$.delay <- secs
       self$.stackptr <- self$.i
+      self$.delay <- secs
+      call_with_cleanup(c_response_delay, self$req, secs)
       invisible(self)
     },
 
@@ -91,7 +93,22 @@ new_response <- function(app, req) {
         f <- file.path(root, paste0(view, ".", eng$ext))
         if (file.exists(f)) return(eng$engine(f, locals))
       }
+      message("erroring out")
       stop("Cannot find template engine for view '", view, "'")
+    },
+
+    send = function(body) {
+      if (self$.check_sent()) return(invisible(self))
+      # We need to do these here, on_response middleware might depend on it
+      self$.body <- body
+      self$.set_defaults()
+      for (fn in self$.on_response) fn(self$req, self)
+
+      call_with_cleanup(c_response_send, self$req)
+
+      self$headers_sent <- TRUE
+      self$.sent <- TRUE
+      invisible(self)
     },
 
     send_json = function(object = NULL, text = NULL, ...) {
@@ -106,17 +123,6 @@ new_response <- function(app, req) {
       self$
         set_header("Content-Type", "application/json")$
         send(text)
-    },
-
-    send = function(body) {
-      if (self$.check_sent()) return(invisible(self))
-      self$.body <- body
-      # We need to do this here, because the on_response middleware
-      # might depend on it
-      self$.set_defaults()
-      for (fn in self$.on_response) fn(self$req, self)
-      self$.sent <- TRUE
-      invisible(self)
     },
 
     send_file = function(path, root = ".") {
@@ -140,13 +146,13 @@ new_response <- function(app, req) {
 
     set_header = function(field, value) {
       if (self$.check_sent()) return(invisible(self))
-      self$.headers[[field]] <- value
+      self$.headers[[field]] <- as.character(value)
       invisible(self)
     },
 
     set_status = function(status) {
       if (self$.check_sent()) return(invisible(self))
-      self$.status <- status
+      self$.status <- as.integer(status)
       invisible(self)
     },
 
