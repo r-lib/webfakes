@@ -407,16 +407,15 @@ new_app <- function() {
       message(msg)
 
       on.exit(server_stop(srv), add = TRUE)
-      done <- FALSE
-      while (!done) {
+
+      while (TRUE) {
         req <- server_poll(srv)
         tryCatch(
           self$.process_request(req),
           error = function(err) {
             cat(as.character(err), file = stderr())
-            call_with_cleanup(c_response_send_error, req, as.character(err), 500L)
-          },
-          interrupt = function(int) { done <<- TRUE }
+            response_send_error(req, as.character(err), 500L)
+          }
         )
       }
     },

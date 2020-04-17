@@ -56,7 +56,7 @@ new_response <- function(app, req) {
     delay = function(secs) {
       self$.stackptr <- self$.i
       self$.delay <- secs
-      call_with_cleanup(c_response_delay, self$req, secs)
+      response_delay(self$req, secs)
       invisible(self)
     },
 
@@ -93,7 +93,6 @@ new_response <- function(app, req) {
         f <- file.path(root, paste0(view, ".", eng$ext))
         if (file.exists(f)) return(eng$engine(f, locals))
       }
-      message("erroring out")
       stop("Cannot find template engine for view '", view, "'")
     },
 

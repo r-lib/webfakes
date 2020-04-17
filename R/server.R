@@ -98,10 +98,32 @@ server_get_ports <- function(srv) {
   as.data.frame(call_with_cleanup(c_server_get_ports, srv))
 }
 
-server_poll <- function(srv) {
-  call_with_cleanup(c_server_poll, srv)
-}
-
 server_stop <- function(srv) {
   invisible(call_with_cleanup(c_server_stop, srv))
+}
+
+server_poll <- function(srv) {
+  done <- FALSE
+  while (!done) {
+    tryCatch(
+      return(call_with_cleanup(c_server_poll, srv)),
+      error = function(err) print(err)
+    )
+  }
+}
+
+response_send_error <- function(req, msg, status) {
+  tryCatch(
+    call_with_cleanup(c_response_send_error, req, msg, status),
+    error = function(err) cat(as.character(err), file = stderr())
+  )
+  invisible(NULL)
+}
+
+response_delay <- function(req, secs) {
+  tryCatch(
+    call_with_cleanup(c_response_delay, req, secs),
+    error = function(err) NULL
+  )
+  invisible(NULL)
 }

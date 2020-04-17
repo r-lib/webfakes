@@ -486,7 +486,24 @@ SEXP presser_create_request(struct mg_connection *conn) {
 }
 
 static void response_cleanup(void *ptr) {
-  /* TODO */
+  struct mg_connection *conn = (struct mg_connection*) ptr;
+  struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
+  if (conn_data) {
+#ifndef NDEBUG
+    fprintf(stderr, "conn %p: oh-oh, emergency cleanup\n", ptr);
+#endif
+    mg_set_user_connection_data(conn, NULL);
+    mg_cry(conn, "Cleaning up broken connection %p at %s:%d", conn,
+           __FILE__, __LINE__);
+    conn_data->req_todo = PRESSER_DONE;
+    R_ReleaseObject(conn_data->req);
+    conn_data->req = R_NilValue;
+    pthread_cond_signal(&conn_data->finish_cond);
+    pthread_mutex_unlock(&conn_data->finish_lock);
+  }
+  struct mg_context *ctx = mg_get_context(conn);
+  struct server_user_data *srv_data = mg_get_user_data(ctx);
+  pthread_cond_signal(&srv_data->process_less);
 }
 
 SEXP response_delay(SEXP req, SEXP secs) {
