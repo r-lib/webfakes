@@ -1,36 +1,5 @@
 
-web <- setup({
-  app <- new_app()
-  app$locals$applocal <- "foo"
-  app$engine("txt", tmpl_glue())
-  app$get("/local", function(req, res) {
-    res$locals$reslocal <- "bar"
-    "next"
-  })
-  app$get("/local", function(req, res) {
-    res$send(paste(res$locals$applocal, res$locals$reslocal))
-  })
-  app$get("/badengine", function(req, res) {
-    txt <- res$render("foobar")
-    res$send(txt)
-  })
-  app$get("/badjson", function(req, res) {
-    res$send_json(1:3, text = "foo")
-  })
-  app$get("/file", function(req, res) {
-    res$send_file(
-      root = system.file(package = "presser"),
-      file.path("examples", "static", "public", "foo", "bar.json")
-    )
-  })
-  app$get("/type", function(req, res) {
-    res$set_type("json")
-    res$send("{ \"foo\": 1 }")
-  })
-
-  new_app_process(app)
-})
-
+web <- setup(new_app_process(test_response_app()))
 teardown(web$stop())
 
 test_that("response locals", {
@@ -75,4 +44,26 @@ test_that("set_type", {
   resp <- curl::curl_fetch_memory(url)
   headers <- curl::parse_headers_list(resp$headers)
   expect_equal(headers$`content-type`, "application/json")
+})
+
+test_that("write", {
+  url <- web$url("/write")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 200)
+  expect_equal(rawToChar(resp$content), "hello world!")
+
+  # header can be set
+  url <- web$url("/write-header")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 200)
+  expect_equal(rawToChar(resp$content), "hello world!")
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers$`foo`, "bar")
+})
+
+test_that("write-wait", {
+  url <- web$url("/write-wait")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 200)
+  expect_equal(rawToChar(resp$content), "hello world!")
 })

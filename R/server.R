@@ -17,6 +17,7 @@ server_start <- function(opts = server_opts()) {
     "enable_keep_alive"        = c("no", "yes")[[opts$enable_keep_alive + 1]],
     "access_log_file"          = opts$access_log_file %|NA|% "",
     "error_log_file"           = opts$error_log_file %|NA|% "",
+    "tcp_nodelay"              = c("0", "1")[[opts$tcp_nodelay + 1]],
 
     # These are not configurable currently
     "request_timeout_ms"       = "100000",
@@ -47,6 +48,8 @@ server_start <- function(opts = server_opts()) {
 #'   below.
 #' @param error_log_file `TRUE`, `FALSE`, or a path. See 'Logging'
 #'   below.
+#' @param tcp_nodelay if `TRUE` then packages will be sent as soon as
+#'   possible, instead of waiting for a full buffer or timeout to occur.
 #'
 #' @section Logging:
 #'
@@ -68,7 +71,8 @@ server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
                         interfaces = "127.0.0.1",
                         enable_keep_alive = FALSE,
                         access_log_file = remote,
-                        error_log_file = TRUE) {
+                        error_log_file = TRUE,
+                        tcp_nodelay = FALSE) {
 
   log_dir <- Sys.getenv("PRESSER_LOG_DIR", file.path(tempdir(), "presser"))
   if (isTRUE(access_log_file)) {
@@ -112,6 +116,14 @@ server_poll <- function(srv) {
   }
 }
 
+response_send <- function(req) {
+  tryCatch(
+    call_with_cleanup(c_response_send, req),
+    error = function(err) NULL
+  )
+  invisible(NULL)
+}
+
 response_send_error <- function(req, msg, status) {
   tryCatch(
     call_with_cleanup(c_response_send_error, req, msg, status),
@@ -123,6 +135,14 @@ response_send_error <- function(req, msg, status) {
 response_delay <- function(req, secs) {
   tryCatch(
     call_with_cleanup(c_response_delay, req, secs),
+    error = function(err) NULL
+  )
+  invisible(NULL)
+}
+
+response_write <- function(req, data) {
+  tryCatch(
+    call_with_cleanup(c_response_write, req, data),
     error = function(err) NULL
   )
   invisible(NULL)

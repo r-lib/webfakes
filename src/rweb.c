@@ -626,16 +626,17 @@ SEXP response_send_headers(SEXP req) {
 }
 
 SEXP response_send(SEXP req) {
-  response_send_headers(req);
-
   SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
 #ifndef NDEBUG
   fprintf(stderr, "conn %p: sending response body\n", conn);
 #endif
+  SEXP res = Rf_findVar(Rf_install("res"), req);
+  SEXP headers_sent = Rf_findVar(Rf_install("headers_sent"), res);
+  if (! LOGICAL(headers_sent)[0]) response_send_headers(req);
+
   struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
   r_call_on_early_exit(response_cleanup, conn);
-  SEXP res = Rf_findVar(Rf_install("res"), req);
   SEXP body = Rf_findVar(Rf_install(".body"), res);
   int ret;
 
@@ -676,12 +677,25 @@ SEXP response_send(SEXP req) {
 }
 
 SEXP response_write(SEXP req, SEXP data) {
-  /* TODO */
+  SEXP res = Rf_findVar(Rf_install("res"), req);
+  SEXP headers_sent = Rf_findVar(Rf_install("headers_sent"), res);
+  if (! LOGICAL(headers_sent)[0]) response_send_headers(req);
+
+  SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+  struct mg_connection *conn = R_ExternalPtrAddr(xconn);
+
+  r_call_on_early_exit(response_cleanup, conn);
+
+  int ret = 0;
+  int len = LENGTH(data);
+
+#ifndef NDEBUG
+  fprintf(stderr, "conn %p: writing %d bytes\n", conn, len);
+#endif
+  CHK(mg_write(conn, RAW(data), len));
+
   return R_NilValue;
 }
-
-/* TODO: this is a bit special, because we might have sent the headers
-   and potentially also some data already. */
 
 SEXP response_send_error(SEXP req, SEXP message, SEXP status) {
 #ifndef NDEBUG

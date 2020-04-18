@@ -96,3 +96,7 @@ set_envvar <- function(envs) {
 mkdirp <- function(path, ...) {
   dir.create(path, showWarnings = FALSE, recursive = TRUE, ...)
 }
+
+strrep <- function(x, no) {
+  paste(rep(x, no), collapse = "")
+}

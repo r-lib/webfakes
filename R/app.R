@@ -501,8 +501,13 @@ new_app <- function() {
         }
       }
 
-      # TODO: check if headers were sent
-      if (!res$.sent && is.null(res$.delay)) res$send_status(404)
+      if (!res$.sent && is.null(res$.delay)) {
+        if (!res$headers_sent) {
+          res$send_status(404)
+        } else {
+          res$send("")
+        }
+      }
     },
 
     .get_error_log = function() {
