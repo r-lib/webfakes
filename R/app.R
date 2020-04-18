@@ -408,8 +408,16 @@ new_app <- function() {
 
       on.exit(server_stop(srv), add = TRUE)
 
-      # does not return until interrupted, not even on errors
-      server_process(srv, self$.run)
+      while (TRUE) {
+        req <- server_poll(srv)
+        tryCatch(
+          self$.process_request(req),
+          error = function(err) {
+            cat(as.character(err), file = stderr())
+            response_send_error(req, as.character(err), 500L)
+          }
+        )
+      }
     },
 
     mkcol = function(path, ...) {
@@ -476,17 +484,12 @@ new_app <- function() {
       views = file.path(getwd(), "views")
     )),
 
-    # subprocess
-    .process = NULL,
-
     # The request processing function
-    .run = function(req) {
-
+    .process_request = function(req) {
       req <- new_request(self, req)
       res <- req$res
       res$.delay <- NULL
 
-      out <- NULL
       for (i in sseq(res$.stackptr, length(self$.stack))) {
         handler <- self$.stack[[i]]
         m <- path_match(req$method, req$path, handler)
@@ -498,24 +501,8 @@ new_app <- function() {
         }
       }
 
-      if (!is.null(res$.delay)) {
-        list(1L, as.double(res$.delay))
-
-      } else {
-
-        # We need to do this here, in case there was no $send() at all
-        res$.set_defaults()
-
-        ans <- list(
-          res$.body,
-          if (length(res$.headers)) {
-            paste0(names(res$.headers), ": ", unlist(res$.headers))
-          },
-          as.integer(res$.status)
-        )
-
-        list(0L, ans)
-      }
+      # TODO: check if headers were sent
+      if (!res$.sent && is.null(res$.delay)) res$send_status(404)
     },
 
     .get_error_log = function() {

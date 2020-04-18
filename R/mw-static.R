@@ -23,12 +23,12 @@ mw_static <- function(root, set_headers = NULL) {
     path <- file.path(root, sub("^/", "", req$path))
     if (!file.exists(path)) return("next")
     if (file.info(path)$isdir) return("next")
-    res$.body <- read_bin(path)
     ext <- tools::file_ext(basename(path))
     ct <- mime_find(ext)
     if (!is.na(ct)) {
       res$set_header("Content-Type", ct)
     }
     if (!is.null(set_headers)) set_headers(req, res)
+    res$send(read_bin(path))
   }
 }
