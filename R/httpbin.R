@@ -216,7 +216,7 @@ httpbin_app <- function(log = interactive()) {
     common_get(req, res)
   })
 
-  # TODO: /cache * /cache/{value} * /etag * /response-headers (2x)
+  # TODO: /cache * /cache/{value} * /response-headers (2x)
 
   # Response formats =====================================================
 
@@ -386,8 +386,7 @@ httpbin_app <- function(log = interactive()) {
       send(html)
   })
 
-  # TODO: /links/{n}{offset} * /range/{numbytes} * /stream-bytes/{n} *
-  # /stream/{n}
+  # TODO: /range/{numbytes} * /stream-bytes/{n} * /stream/{n}
 
   # Cookies ==============================================================
 
