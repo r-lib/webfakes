@@ -72,12 +72,14 @@ void R_init_presser(DllInfo *dll) {
 #define PRESSER_DONE    3         /* request is done */
 
 struct server_user_data {
+  SEXP requests;
   pthread_cond_t process_more;  /* there is something to process */
   pthread_cond_t process_less;  /* we can process something */
   pthread_mutex_t process_lock;
   struct mg_connection *nextconn;
   struct mg_server_port ports[4];
   int num_ports;
+  int shutdown;
 };
 
 struct connection_user_data {
@@ -87,6 +89,7 @@ struct connection_user_data {
   int req_todo;                 /* what shoudl the request thread do? */
   double secs;                  /* how much should we wait? */
   SEXP req;
+  int id;
 };
 
 SEXP presser_create_request(struct mg_connection *conn);
@@ -136,9 +139,10 @@ static int begin_request(struct mg_connection *conn) {
 
   struct mg_context *ctx = mg_get_context(conn);
   struct server_user_data *srv_data = mg_get_user_data(ctx);
+  if (srv_data->shutdown) return 1;
   struct connection_user_data conn_data = {
     PTHREAD_COND_INITIALIZER, PTHREAD_MUTEX_INITIALIZER,
-    PRESSER_REQ, PRESSER_NOTHING, 0.0, R_NilValue
+    PRESSER_REQ, PRESSER_NOTHING, 0.0, R_NilValue, 0,
   };
   mg_set_user_connection_data(conn, &conn_data);
 
@@ -156,7 +160,9 @@ static int begin_request(struct mg_connection *conn) {
 #ifndef NDEBUG
     fprintf(stderr, "conn %p: scheduled\n", conn);
 #endif
-    srv_data->nextconn = conn;
+    srv_data->nextconn = conn;  /* only used to pass it to the main thread */
+
+    if (srv_data->shutdown) goto exit;
 
     if (pthread_cond_signal(&srv_data->process_more)) goto exit;
     if (pthread_mutex_unlock(&srv_data->process_lock)) goto exit;
@@ -174,14 +180,21 @@ static int begin_request(struct mg_connection *conn) {
 #ifndef NDEBUG
     fprintf(stderr, "conn %p: got order: %d\n", conn, conn_data.req_todo);
 #endif
-    if (conn_data.req_todo == PRESSER_DONE) break;
+    if (conn_data.req_todo == PRESSER_DONE) goto exit;
     if (conn_data.req_todo == PRESSER_WAIT) {
+#ifndef NDEBUG
+      fprintf(stderr, "conn %p: sleeping\n", conn);
+#endif
 #ifdef _WIN32
       Sleep(conn_data.secs * 1000);
 #else
       usleep(conn_data.secs * 1000 * 1000);
 #endif
+#ifndef NDEBUG
+      fprintf(stderr, "conn %p: sleeping done\n", conn);
+#endif
     }
+    if (srv_data->shutdown) goto exit;
     conn_data.main_todo = PRESSER_WAIT;
     conn_data.req_todo = PRESSER_NOTHING;
   }
@@ -202,8 +215,55 @@ static int begin_request(struct mg_connection *conn) {
 /* server                                                                */
 /* --------------------------------------------------------------------- */
 
+static int register_request(struct server_user_data *srv_data, SEXP req) {
+  SEXP nextid = PROTECT(Rf_install("nextid"));
+  int id = INTEGER(Rf_findVar(nextid, srv_data->requests))[0] + 1;
+  Rf_defineVar(nextid, ScalarInteger(id), srv_data->requests);
+  SEXP rname = PROTECT(Rf_installChar(asChar(ScalarInteger(id))));
+  Rf_defineVar(rname, req, srv_data->requests);
+  UNPROTECT(2);
+  return id;
+}
+
+static void deregister_request(struct server_user_data *srv_data, int id) {
+  SEXP rname = PROTECT(Rf_installChar(asChar(ScalarInteger(id))));
+  Rf_defineVar(rname, R_NilValue, srv_data->requests);
+  UNPROTECT(1);
+}
+
+static void release_all_requests(SEXP requests) {
+  SEXP nms = PROTECT(R_lsInternal3(requests, 1, 0));
+  int i, n = LENGTH(nms);
+  for (i = 0; i < n; i++) {
+    const char *nm = CHAR(STRING_ELT(nms, i));
+    if (!strcmp("nextid", nm)) continue;
+    SEXP sym = PROTECT(Rf_installChar(STRING_ELT(nms, i)));
+    SEXP req = Rf_findVar(sym, requests);
+    if (!isNull(req)) {
+      SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+      struct mg_connection *conn = R_ExternalPtrAddr(xconn);
+      if (conn) {
+#ifndef NDEBUG
+        fprintf(stderr, "conn %p: emergency cleanup\n", conn);
+#endif
+        struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
+        struct mg_context *ctx = mg_get_context(conn);
+        struct server_user_data *srv_data = mg_get_user_data(ctx);
+        pthread_mutex_lock(&conn_data->finish_lock);
+        conn_data->req_todo = PRESSER_DONE;
+        conn_data->req = R_NilValue;
+        pthread_cond_signal(&conn_data->finish_cond);
+        pthread_mutex_unlock(&conn_data->finish_lock);
+        pthread_cond_signal(&srv_data->process_less);
+      }
+    }
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(1);
+}
+
 static void presser_server_finalizer(SEXP server) {
-  /* TODO: what if a thread is waiting on one of these right now? */
   struct mg_context *ctx = R_ExternalPtrAddr(server);
   if (ctx == NULL) return;
 #ifndef NDEBUG
@@ -211,12 +271,21 @@ static void presser_server_finalizer(SEXP server) {
 #endif
   R_ClearExternalPtr(server);
   struct server_user_data* srv_data = mg_get_user_data(ctx);
-  int ret = 0;
+  srv_data->shutdown = 1;
+  release_all_requests(srv_data->requests);
+#ifndef NDEBUG
+  fprintf(stderr, "serv %p: waiting for worker threads\n", ctx);
+  void *ctx_addr = ctx;
+#endif
   mg_stop(ctx);
+  int ret = 0;
   ret += pthread_mutex_unlock(&srv_data->process_lock);
   ret += pthread_mutex_destroy(&srv_data->process_lock);
   ret += pthread_cond_destroy(&srv_data->process_more);
   ret += pthread_cond_destroy(&srv_data->process_less);
+#ifndef NDEBUG
+  fprintf(stderr, "serv %p: that would be all for today\n", ctx_addr);
+#endif
 }
 
 SEXP server_start(SEXP options) {
@@ -234,6 +303,8 @@ SEXP server_start(SEXP options) {
 
   memset(srv_data, 0, sizeof(struct server_user_data));
 
+  srv_data->requests = PROTECT(new_env());
+  Rf_defineVar(Rf_install("nextid"), ScalarInteger(1), srv_data->requests);
   if ((ret = pthread_cond_init(&srv_data->process_more, NULL))) goto cleanup;
   if ((ret = pthread_cond_init(&srv_data->process_less, NULL))) goto cleanup;
   if ((ret = pthread_mutex_init(&srv_data->process_lock, NULL))) goto cleanup;
@@ -248,7 +319,7 @@ SEXP server_start(SEXP options) {
   if ((ret = pthread_mutex_lock(&srv_data->process_lock))) goto cleanup;
   ctx = mg_start(&callbacks, srv_data, (const char **) coptions);
   if (ctx == NULL) goto cleanup;
-  PROTECT(server = R_MakeExternalPtr(ctx, R_NilValue, R_NilValue));
+  PROTECT(server = R_MakeExternalPtr(ctx, srv_data->requests, R_NilValue));
   R_RegisterCFinalizer(server, presser_server_finalizer);
 
 #ifndef NDEBUG
@@ -263,7 +334,7 @@ SEXP server_start(SEXP options) {
   );
   if (srv_data->num_ports < 0) goto cleanup;
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return server;
 
  cleanup:
@@ -287,18 +358,18 @@ static void server_poll_cleanup(void *ptr) {
 #ifndef NDEBUG
   fprintf(stderr, "conn %p: oh-oh, forced cleanup\n", ptr);
 #endif
-  /* TODO */
-  /* struct connection_user_data *conn_data = (struct presser_connection*) ptr; */
-  /* struct mg_context *ctx = mg_get_context(conn_data->conn); */
-  /* struct presser_server *srv = mg_get_user_data(ctx); */
-  /* mg_cry(conn_data->conn, "Cleaning up broken connection at %s:%d", __FILE__, __LINE__); */
-  /* conn_data->req_todo = PRESSER_DONE; */
-  /*   R_ReleaseObject(conn_data->req); */
-  /*   conn_data->req = R_NilValue; */
-  /*   pthread_cond_signal(&conn_data->finish_cond); */
-  /*   pthread_mutex_unlock(&conn_data->finish_lock); */
-  /* } */
-  /* pthread_cond_signal(&srv->process_less); */
+  struct mg_connection *conn = (struct mg_connection*) ptr;
+  struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
+  struct mg_context *ctx = mg_get_context(conn);
+  struct server_user_data *srv_data = mg_get_user_data(ctx);
+  mg_cry(conn, "Cleaning up broken connection at %s:%d", __FILE__, __LINE__);
+  pthread_mutex_lock(&conn_data->finish_lock);
+  conn_data->req_todo = PRESSER_DONE;
+  deregister_request(srv_data, conn_data->id);
+  conn_data->req = R_NilValue;
+  pthread_cond_signal(&conn_data->finish_cond);
+  pthread_mutex_unlock(&conn_data->finish_lock);
+  pthread_cond_signal(&srv_data->process_less);
 }
 
 SEXP server_poll(SEXP server) {
@@ -344,12 +415,6 @@ SEXP server_poll(SEXP server) {
   default:
     break;
   }
-
-#ifndef NDEBUG
-  fprintf(stderr, "serv %p: processed conn %p\n", ctx, conn);
-#endif
-
-  PTHCHK(pthread_mutex_lock(&conn_data->finish_lock));
 
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: returning request from conn %p\n", ctx, conn);
@@ -452,7 +517,9 @@ SEXP presser_create_request(struct mg_connection *conn) {
 
   struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
   conn_data->req = req;
-  R_PreserveObject(req);
+  struct mg_context *ctx = mg_get_context(conn);
+  struct server_user_data *srv_data = mg_get_user_data(ctx);
+  conn_data->id = register_request(srv_data, req);
 
   UNPROTECT(3);
   return req;
@@ -461,6 +528,8 @@ SEXP presser_create_request(struct mg_connection *conn) {
 static void response_cleanup(void *ptr) {
   struct mg_connection *conn = (struct mg_connection*) ptr;
   struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
+  struct mg_context *ctx = mg_get_context(conn);
+  struct server_user_data *srv_data = mg_get_user_data(ctx);
   if (conn_data) {
 #ifndef NDEBUG
     fprintf(stderr, "conn %p: oh-oh, emergency cleanup\n", ptr);
@@ -468,14 +537,13 @@ static void response_cleanup(void *ptr) {
     mg_set_user_connection_data(conn, NULL);
     mg_cry(conn, "Cleaning up broken connection %p at %s:%d", conn,
            __FILE__, __LINE__);
+    pthread_mutex_lock(&conn_data->finish_lock);
     conn_data->req_todo = PRESSER_DONE;
-    R_ReleaseObject(conn_data->req);
+    deregister_request(srv_data, conn_data->id);
     conn_data->req = R_NilValue;
     pthread_cond_signal(&conn_data->finish_cond);
     pthread_mutex_unlock(&conn_data->finish_lock);
   }
-  struct mg_context *ctx = mg_get_context(conn);
-  struct server_user_data *srv_data = mg_get_user_data(ctx);
   pthread_cond_signal(&srv_data->process_less);
 }
 
@@ -490,6 +558,8 @@ SEXP response_delay(SEXP req, SEXP secs) {
   int ret;
 
   r_call_on_early_exit(response_cleanup, conn);
+
+  pthread_mutex_lock(&conn_data->finish_lock);
   conn_data->secs = REAL(secs)[0];
   conn_data->req_todo = PRESSER_WAIT;
 
@@ -561,14 +631,17 @@ SEXP response_send(SEXP req) {
     CHK(mg_write(conn, cbody, strlen(cbody)));
   }
 
-struct mg_context *ctx = mg_get_context(conn);
+  struct mg_context *ctx = mg_get_context(conn);
+  struct server_user_data *srv_data = mg_get_user_data(ctx);
 
 #ifndef NDEBUG
   fprintf(stderr, "conn %p: response body sent\n", conn);
 #endif
 
+  pthread_mutex_lock(&conn_data->finish_lock);
+
   conn_data->req_todo = PRESSER_DONE;
-  R_ReleaseObject(conn_data->req);
+  deregister_request(srv_data, conn_data->id);
   conn_data->req = R_NilValue;
 
 #ifndef NDEBUG
@@ -577,8 +650,6 @@ struct mg_context *ctx = mg_get_context(conn);
 
   PTHCHK(pthread_cond_signal(&conn_data->finish_cond));
   PTHCHK(pthread_mutex_unlock(&conn_data->finish_lock));
-
-  struct server_user_data *srv_data = mg_get_user_data(ctx);
 
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: inviting request threads\n", ctx);
