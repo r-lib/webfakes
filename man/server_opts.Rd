@@ -11,7 +11,8 @@ server_opts(
   interfaces = "127.0.0.1",
   enable_keep_alive = FALSE,
   access_log_file = remote,
-  error_log_file = TRUE
+  error_log_file = TRUE,
+  tcp_nodelay = FALSE
 )
 }
 \arguments{
@@ -38,6 +39,9 @@ below.}
 
 \item{error_log_file}{\code{TRUE}, \code{FALSE}, or a path. See 'Logging'
 below.}
+
+\item{tcp_nodelay}{if \code{TRUE} then packages will be sent as soon as
+possible, instead of waiting for a full buffer or timeout to occur.}
 }
 \description{
 Presser web server options
