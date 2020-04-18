@@ -367,6 +367,25 @@ httpbin_app <- function(log = interactive()) {
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
+  app$get(new_regexp("^/links/(?<n>[0-9]+)/(?<offset>[0-9]+)$"),
+          function(req, res) {
+    n <- suppressWarnings(as.integer(req$params$n))
+    o <- suppressWarnings(as.integer(req$params$offset))
+    if (length(n) == 0 || length(o) == 0 || is.na(n) || is.na(o)) return("next")
+    n <- min(max(1, n), 200)
+    o <- min(max(1, o), n)
+    links <- sprintf("<a href = \"/links/%d/%d\">%d</a>", n, 1:n, 1:n)
+    links[o] <- o
+    html <- paste0(
+      "<html><head><title>Links</title></head><body>",
+      paste(links, collapse = " "),
+      "</body></html>"
+    )
+    res$
+      set_type("html")$
+      send(html)
+  })
+
   # TODO: /links/{n}{offset} * /range/{numbytes} * /stream-bytes/{n} *
   # /stream/{n}
 
