@@ -92,7 +92,7 @@ Suggests:
 <div id="how-do-i-use-httpbin_app-or-another-app-with-testthat" class="section level2">
 <h2 class="hasAnchor">
 <a href="#how-do-i-use-httpbin_app-or-another-app-with-testthat" class="anchor"></a>How do I use <code>httpbin_app()</code> (or another app) with testthat?</h2>
-<p>You can use testthat’s setup and teardown functions. You start the app in a setup file and stop it in a teardown file. See <code><a href="https://rdrr.io/pkg/testthat/man/source_file.html">?testthat::source_file</a></code>. Your <code>tests/testthat/setup-http.R</code> may look like this:</p>
+<p>You can use testthat’s setup and teardown functions. You start the app in a setup file and stop it in a teardown file. See <code><a href="https://testthat.r-lib.org/reference/source_file.html">?testthat::source_file</a></code>. Your <code>tests/testthat/setup-http.R</code> may look like this:</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">http</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span>())</pre></body></html></div>
 <p>Your <code>tests/testthat/teardown-http.R</code> will be</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()</pre></body></html></div>
@@ -115,7 +115,7 @@ Suggests:
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">http</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span>())
 <span class="no">http</span>$<span class="fu">local_env</span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">GITHUB_API</span> <span class="kw">=</span> <span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()))
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
-<span class="co">#&gt; [1] "http://127.0.0.1:49395/"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49391/"</span>
 <span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
 <span class="co">#&gt; [1] ""</span></pre></body></html></div>
@@ -131,12 +131,12 @@ Suggests:
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="no">time</span>)
 <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49397/"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49393/"</span></pre></body></html></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-04-16 08:56:19"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-04-18 10:24:00"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
@@ -147,7 +147,7 @@ Suggests:
 <div id="can-i-have-an-app-for-a-single-testthat-test-file" class="section level2">
 <h2 class="hasAnchor">
 <a href="#can-i-have-an-app-for-a-single-testthat-test-file" class="anchor"></a>Can I have an app for a single testthat test file?</h2>
-<p>To run a web app for a single test file, start it in <code><a href="https://rdrr.io/pkg/testthat/man/teardown.html">testthat::setup()</a></code> and stop it in <code><a href="https://rdrr.io/pkg/testthat/man/teardown.html">testthat::teardown()</a></code>. You can do this at the beginning of the file:</p>
+<p>To run a web app for a single test file, start it in <code><a href="https://testthat.r-lib.org/reference/teardown.html">testthat::setup()</a></code> and stop it in <code><a href="https://testthat.r-lib.org/reference/teardown.html">testthat::teardown()</a></code>. You can do this at the beginning of the file:</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="fu">setup</span>({
   <span class="no">app</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span>()
   <span class="no">app</span>$<span class="fu"><a href="https://rdrr.io/r/base/get.html">get</a></span>(<span class="st">"/hello/:user"</span>, <span class="kw">function</span>(<span class="no">req</span>, <span class="no">res</span>) {
@@ -165,7 +165,7 @@ Suggests:
 <div id="can-i-use-an-app-for-a-single-testthat-test" class="section level2">
 <h2 class="hasAnchor">
 <a href="#can-i-use-an-app-for-a-single-testthat-test" class="anchor"></a>Can I use an app for a single testthat test?</h2>
-<p>Sure. For this you need to create the app process within the <code><a href="https://rdrr.io/pkg/testthat/man/test_that.html">testthat::test_that()</a></code> test case and use <code><a href="https://rdrr.io/r/base/on.exit.html">on.exit()</a></code> to stop it. It goes like this:</p>
+<p>Sure. For this you need to create the app process within the <code><a href="https://testthat.r-lib.org/reference/test_that.html">testthat::test_that()</a></code> test case and use <code><a href="https://rdrr.io/r/base/on.exit.html">on.exit()</a></code> to stop it. It goes like this:</p>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu">test_that</span>(<span class="st">"query works"</span>, {
   <span class="no">app</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span>()
   <span class="no">app</span>$<span class="fu"><a href="https://rdrr.io/r/base/get.html">get</a></span>(<span class="st">"/hello"</span>, <span class="kw">function</span>(<span class="no">req</span>, <span class="no">res</span>) <span class="no">res</span>$<span class="fu">send</span>(<span class="st">"hello there"</span>))
@@ -265,7 +265,7 @@ Suggests:
   <span class="fu">expect_true</span>(<span class="no">st</span><span class="kw">[[</span><span class="st">"elapsed"</span>]] <span class="kw">&lt;</span> <span class="fl">3.0</span>)
 })
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.001   1.048</span></pre></body></html></div>
+<span class="co">#&gt;   0.002   0.001   1.306</span></pre></body></html></div>
 </div>
   </div>
 
