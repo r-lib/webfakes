@@ -129,8 +129,16 @@ can modify it.</p>
 
     <p>Fields and methods:</p><ul>
 <li><p><code>app</code>: The <code>presser_app</code> object itself.</p></li>
+<li><p><code>req</code>: The request object.</p></li>
+<li><p><code>headers_sent</code>: Whether the response headers were already sent out.</p></li>
 <li><p><code>locals</code>: Local variables, the are shared between the handler
-functions. This is for the end user.</p></li>
+functions. This is for the end user, and not for the middlewares.</p></li>
+<li><p><code><a href='https://rdrr.io/r/base/base-defunct.html'>delay(secs)</a></code>: delay the response for a number of seconds. If a
+handler calls <code><a href='https://rdrr.io/r/base/base-defunct.html'>delay()</a></code>, the same handler will be called again,
+after the specified number of seconds have passed. Use the <code>locals</code>
+environment to distinguish between the calls. If you are using
+<code><a href='https://rdrr.io/r/base/base-defunct.html'>delay()</a></code>, and want to serve requests in parallel, then you probably
+need a multi-threaded server, see <code><a href='server_opts.html'>server_opts()</a></code>.</p></li>
 <li><p><code>get_header(field)</code>: Query the currently set response headers. If
 <code>field</code> is not present it return <code>NULL</code>.</p></li>
 <li><p><code>on_response(fun)</code>: Run the <code>fun</code> handler function just before the
@@ -142,25 +150,33 @@ the <code>Location</code> header, and also sends a <code>text/plain</code> body.
 for the <code>view</code> template page, using all registered engine extensions,
 and calls the first matching template engine. Returns the filled
 template.</p></li>
+<li><p><code>send(body)</code>. Send the specified body. <code>body</code> can be a raw vector,
+or HTML or other text. For raw vectors it sets the content type to
+<code>application/octet-stream</code>.</p></li>
 <li><p><code>send_json(object = NULL, text = NULL, ...)</code>: Send a JSON response.
 Either <code>object</code> or <code>text</code> must be given. <code>object</code> will be converted
 to JSON using <code><a href='https://jeroen.cran.dev/jsonlite/reference/fromJSON.html'>jsonlite::toJSON()</a></code>. <code>...</code> are passed to
 <code><a href='https://jeroen.cran.dev/jsonlite/reference/fromJSON.html'>jsonlite::toJSON()</a></code>. It sets the content type appropriately.</p></li>
-<li><p><code>send(body)</code>. Send the specified body. <code>body</code> can be a raw vector,
-or HTML or other text. For raw vectors it sets the content type to
-<code>application/octet-stream</code>.</p></li>
 <li><p><code>send_file(path, root = ".")</code>: Send a file. Set <code>root = "/"</code> for
 absolute file names. It sets the content type automatically, based
 on the extension of the file, if it is not set already.</p></li>
 <li><p><code>send_status(status)</code>: Send the specified HTTP status code, without
 a response body.</p></li>
-<li><p><code>set_header(field, value)</code>: Set a response header.</p></li>
-<li><p><code>set_status(status)</code>: Set the response status code.</p></li>
+<li><p><code>set_header(field, value)</code>: Set a response header. If the headers have
+been sent out already, then it throws a warning, and does nothing.</p></li>
+<li><p><code>set_status(status)</code>: Set the response status code. If the headers
+have been sent out already, then it throws a warning, and does nothing.</p></li>
 <li><p><code>set_type(type)</code>: Set the response content type. If it contains a <code>/</code>
 character then it is set as is, otherwise it is assumed to be a file
-extension, and the corresponding MIME type is set.</p></li>
+extension, and the corresponding MIME type is set. If the headers have
+been sent out already, then it throws a warning, and does nothing.</p></li>
+<li><p><code><a href='https://rdrr.io/r/base/write.html'>write(data)</a></code>: writes (part of) the body of the response. It also
+sends out the response headers, if they haven't been sent out before.</p></li>
 </ul>
 
+<p>Usually you need one of the <code>send()</code> methods, to send out the HTTP
+response in one go, first the headers, then the body.</p>
+<p>Alternatively, you can use <code>$write()</code> to send the response in parts.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='presser_request.html'>presser_request</a> for the presser request object.</p></div>

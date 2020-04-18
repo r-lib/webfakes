@@ -124,7 +124,8 @@
   <span class='kw'>interfaces</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>,
   <span class='kw'>enable_keep_alive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>access_log_file</span> <span class='kw'>=</span> <span class='no'>remote</span>,
-  <span class='kw'>error_log_file</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>error_log_file</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>tcp_nodelay</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -167,6 +168,11 @@ below.</p></td>
       <th>error_log_file</th>
       <td><p><code>TRUE</code>, <code>FALSE</code>, or a path. See 'Logging'
 below.</p></td>
+    </tr>
+    <tr>
+      <th>tcp_nodelay</th>
+      <td><p>if <code>TRUE</code> then packages will be sent as soon as
+possible, instead of waiting for a full buffer or timeout to occur.</p></td>
     </tr>
     </table>
 

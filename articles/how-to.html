@@ -115,7 +115,7 @@ Suggests:
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">http</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span>())
 <span class="no">http</span>$<span class="fu">local_env</span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">GITHUB_API</span> <span class="kw">=</span> <span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()))
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
-<span class="co">#&gt; [1] "http://127.0.0.1:49391/"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49503/"</span>
 <span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
 <span class="co">#&gt; [1] ""</span></pre></body></html></div>
@@ -131,12 +131,12 @@ Suggests:
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="no">time</span>)
 <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49393/"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49504/"</span></pre></body></html></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-04-18 10:24:00"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-04-18 23:34:56"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
@@ -265,7 +265,7 @@ Suggests:
   <span class="fu">expect_true</span>(<span class="no">st</span><span class="kw">[[</span><span class="st">"elapsed"</span>]] <span class="kw">&lt;</span> <span class="fl">3.0</span>)
 })
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.001   1.306</span></pre></body></html></div>
+<span class="co">#&gt;   0.002   0.001   1.573</span></pre></body></html></div>
 </div>
   </div>
 
