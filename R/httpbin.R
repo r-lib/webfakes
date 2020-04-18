@@ -325,13 +325,49 @@ httpbin_app <- function(log = interactive()) {
     }
   })
 
+  app$get("/drip", function(req, res) {
+    # First time?
+    if (is.null(res$locals$drip)) {
+      duration <- as.double(req$query$duration %||% 2)
+      numbytes <- as.integer(req$query$numbytes %||% 10)
+      code <- as.integer(req$query$code %||% 200L)
+      delay <- as.double(req$query$delay %||% 0)
+      # how much to wait between messages, at least 10ms
+      pause <- max(duration / numbytes, 0.01)
+      # how many messages
+      nummsg <- duration / pause + 1
+      # how big is a message, at least a byte
+      msgsize <- max(floor(numbytes / nummsg), 1)
+      res$locals$drip <- list(
+        tosend = numbytes,
+        msgsize = msgsize,
+        pause = pause
+      )
+
+      res$
+        set_header("Content-Length", numbytes)$
+        set_header("Content-Type", "application/octet-stream")$
+        set_status(code)
+
+      if (delay > 0) return(res$delay(delay))
+    }
+
+    len <- min(res$locals$drip$tosend, res$locals$drip$msgsize)
+    res$write(strrep("*", len))
+    res$locals$drip$tosend <- res$locals$drip$tosend - len
+    if (res$locals$drip$tosend == 0) {
+      res$send("")
+    } else {
+      res$delay(res$locals$drip$pause)
+    }
+  })
+
   app$get("/uuid", function(req, res) {
     ret <- list(uuid = uuid_random())
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
-  # TODO: /drip *
-  # /links/{n}{offset} * /range/{numbytes} * /stream-bytes/{n} *
+  # TODO: /links/{n}{offset} * /range/{numbytes} * /stream-bytes/{n} *
   # /stream/{n}
 
   # Cookies ==============================================================
