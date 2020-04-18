@@ -127,6 +127,23 @@ static void SEXP_to_char_vector(SEXP x, char*** vec) {
   (*vec)[2 * len] = NULL;
 }
 
+static int ms_sleep(struct server_user_data* srv_data, int ms) {
+  int tosleep = ms > 100 ? 100 : ms;
+
+  while (tosleep > 0) {
+#ifdef _WIN32
+    Sleep(tosleep);
+#else
+    usleep(tosleep * 1000);
+#endif
+    if (srv_data->shutdown) return 1;
+    ms -= tosleep;
+    tosleep = ms > 100 ? 100 : ms;
+  }
+
+  return 0;
+}
+
 /* --------------------------------------------------------------------- */
 /* civetweb callbacks                                                    */
 /* --------------------------------------------------------------------- */
@@ -185,11 +202,9 @@ static int begin_request(struct mg_connection *conn) {
 #ifndef NDEBUG
       fprintf(stderr, "conn %p: sleeping\n", conn);
 #endif
-#ifdef _WIN32
-      Sleep(conn_data.secs * 1000);
-#else
-      usleep(conn_data.secs * 1000 * 1000);
-#endif
+
+    if (ms_sleep(srv_data, conn_data.secs * 1000)) goto exit;
+
 #ifndef NDEBUG
       fprintf(stderr, "conn %p: sleeping done\n", conn);
 #endif
