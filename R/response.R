@@ -9,8 +9,16 @@
 #' Fields and methods:
 #'
 #' * `app`: The `presser_app` object itself.
+#' * `req`: The request object.
+#' * `headers_sent`: Whether the response headers were already sent out.
 #' * `locals`: Local variables, the are shared between the handler
-#'   functions. This is for the end user.
+#'   functions. This is for the end user, and not for the middlewares.
+#' * `delay(secs)`: delay the response for a number of seconds. If a
+#'   handler calls `delay()`, the same handler will be called again,
+#'   after the specified number of seconds have passed. Use the `locals`
+#'   environment to distinguish between the calls. If you are using
+#'   `delay()`, and want to serve requests in parallel, then you probably
+#'   need a multi-threaded server, see [server_opts()].
 #' * `get_header(field)`: Query the currently set response headers. If
 #'   `field` is not present it return `NULL`.
 #' * `on_response(fun)`: Run the `fun` handler function just before the
@@ -22,23 +30,33 @@
 #'   for the `view` template page, using all registered engine extensions,
 #'   and calls the first matching template engine. Returns the filled
 #'   template.
+#' * `send(body)`. Send the specified body. `body` can be a raw vector,
+#'   or HTML or other text. For raw vectors it sets the content type to
+#'   `application/octet-stream`.
 #' * `send_json(object = NULL, text = NULL, ...)`: Send a JSON response.
 #'   Either `object` or `text` must be given. `object` will be converted
 #'   to JSON using [jsonlite::toJSON()]. `...` are passed to
 #'   [jsonlite::toJSON()]. It sets the content type appropriately.
-#' * `send(body)`. Send the specified body. `body` can be a raw vector,
-#'   or HTML or other text. For raw vectors it sets the content type to
-#'   `application/octet-stream`.
 #' * `send_file(path, root = ".")`: Send a file. Set `root = "/"` for
 #'   absolute file names. It sets the content type automatically, based
 #'   on the extension of the file, if it is not set already.
 #' * `send_status(status)`: Send the specified HTTP status code, without
 #'   a response body.
-#' * `set_header(field, value)`: Set a response header.
-#' * `set_status(status)`: Set the response status code.
+#' * `set_header(field, value)`: Set a response header. If the headers have
+#'   been sent out already, then it throws a warning, and does nothing.
+#' * `set_status(status)`: Set the response status code. If the headers
+#'   have been sent out already, then it throws a warning, and does nothing.
 #' * `set_type(type)`: Set the response content type. If it contains a `/`
 #'   character then it is set as is, otherwise it is assumed to be a file
-#'   extension, and the corresponding MIME type is set.
+#'   extension, and the corresponding MIME type is set. If the headers have
+#'   been sent out already, then it throws a warning, and does nothing.
+#' * `write(data)`: writes (part of) the body of the response. It also
+#'   sends out the response headers, if they haven't been sent out before.
+#'
+#' Usually you need one of the `send()` methods, to send out the HTTP
+#' response in one go, first the headers, then the body.
+#'
+#' Alternatively, you can use `$write()` to send the response in parts.
 #'
 #' @seealso [presser_request] for the presser request object.
 #' @name presser_response
@@ -103,7 +121,7 @@ new_response <- function(app, req) {
       self$.set_defaults()
       for (fn in self$.on_response) fn(self$req, self)
 
-      call_with_cleanup(c_response_send, self$req)
+      response_send(self$req)
 
       self$headers_sent <- TRUE
       self$.sent <- TRUE
@@ -165,6 +183,17 @@ new_response <- function(app, req) {
           self$set_header("Content-Type", ct)
         }
       }
+      invisible(self)
+    },
+
+    write = function(data) {
+      if (is.null(self$get_header("content-length"))) {
+        warning("response$write() without a Content-Length header")
+      }
+      if (is.null(self$.status)) self$set_status(200L)
+      if (is.character(data)) data <- charToRaw(paste(data, collapse = "\n"))
+      response_write(self$req, data)
+      self$headers_sent <- TRUE
       invisible(self)
     },
 

@@ -27,6 +27,17 @@ web <- setup({
     res$set_type("json")
     res$send("{ \"foo\": 1 }")
   })
+  app$get("/write", function(req, res) {
+    res$
+      write("hello ")$
+      write("world!")
+  })
+  app$get("/write-header", function(req, res) {
+    res$
+      set_header("foo", "bar")$
+      write("hello ")$
+      write("world!")
+  })
 
   new_app_process(app)
 })
@@ -75,4 +86,19 @@ test_that("set_type", {
   resp <- curl::curl_fetch_memory(url)
   headers <- curl::parse_headers_list(resp$headers)
   expect_equal(headers$`content-type`, "application/json")
+})
+
+test_that("write", {
+  url <- web$url("/write")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 200)
+  expect_equal(rawToChar(resp$content), "hello world!")
+
+  # header can be set
+  url <- web$url("/write-header")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 200)
+  expect_equal(rawToChar(resp$content), "hello world!")
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers$`foo`, "bar")
 })

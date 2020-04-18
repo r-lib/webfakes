@@ -13,8 +13,16 @@ can modify it.
 Fields and methods:
 \itemize{
 \item \code{app}: The \code{presser_app} object itself.
+\item \code{req}: The request object.
+\item \code{headers_sent}: Whether the response headers were already sent out.
 \item \code{locals}: Local variables, the are shared between the handler
-functions. This is for the end user.
+functions. This is for the end user, and not for the middlewares.
+\item \code{delay(secs)}: delay the response for a number of seconds. If a
+handler calls \code{delay()}, the same handler will be called again,
+after the specified number of seconds have passed. Use the \code{locals}
+environment to distinguish between the calls. If you are using
+\code{delay()}, and want to serve requests in parallel, then you probably
+need a multi-threaded server, see \code{\link[=server_opts]{server_opts()}}.
 \item \code{get_header(field)}: Query the currently set response headers. If
 \code{field} is not present it return \code{NULL}.
 \item \code{on_response(fun)}: Run the \code{fun} handler function just before the
@@ -26,24 +34,34 @@ the \code{Location} header, and also sends a \code{text/plain} body.
 for the \code{view} template page, using all registered engine extensions,
 and calls the first matching template engine. Returns the filled
 template.
+\item \code{send(body)}. Send the specified body. \code{body} can be a raw vector,
+or HTML or other text. For raw vectors it sets the content type to
+\code{application/octet-stream}.
 \item \code{send_json(object = NULL, text = NULL, ...)}: Send a JSON response.
 Either \code{object} or \code{text} must be given. \code{object} will be converted
 to JSON using \code{\link[jsonlite:toJSON]{jsonlite::toJSON()}}. \code{...} are passed to
 \code{\link[jsonlite:toJSON]{jsonlite::toJSON()}}. It sets the content type appropriately.
-\item \code{send(body)}. Send the specified body. \code{body} can be a raw vector,
-or HTML or other text. For raw vectors it sets the content type to
-\code{application/octet-stream}.
 \item \code{send_file(path, root = ".")}: Send a file. Set \code{root = "/"} for
 absolute file names. It sets the content type automatically, based
 on the extension of the file, if it is not set already.
 \item \code{send_status(status)}: Send the specified HTTP status code, without
 a response body.
-\item \code{set_header(field, value)}: Set a response header.
-\item \code{set_status(status)}: Set the response status code.
+\item \code{set_header(field, value)}: Set a response header. If the headers have
+been sent out already, then it throws a warning, and does nothing.
+\item \code{set_status(status)}: Set the response status code. If the headers
+have been sent out already, then it throws a warning, and does nothing.
 \item \code{set_type(type)}: Set the response content type. If it contains a \code{/}
 character then it is set as is, otherwise it is assumed to be a file
-extension, and the corresponding MIME type is set.
+extension, and the corresponding MIME type is set. If the headers have
+been sent out already, then it throws a warning, and does nothing.
+\item \code{write(data)}: writes (part of) the body of the response. It also
+sends out the response headers, if they haven't been sent out before.
 }
+
+Usually you need one of the \code{send()} methods, to send out the HTTP
+response in one go, first the headers, then the body.
+
+Alternatively, you can use \verb{$write()} to send the response in parts.
 }
 \seealso{
 \link{presser_request} for the presser request object.
