@@ -12,7 +12,8 @@ server_opts(
   enable_keep_alive = FALSE,
   access_log_file = remote,
   error_log_file = TRUE,
-  tcp_nodelay = FALSE
+  tcp_nodelay = FALSE,
+  throttle = Inf
 )
 }
 \arguments{
@@ -42,6 +43,10 @@ below.}
 
 \item{tcp_nodelay}{if \code{TRUE} then packages will be sent as soon as
 possible, instead of waiting for a full buffer or timeout to occur.}
+
+\item{throttle}{Limit download speed for clients. If not \code{Inf},
+then it is the maximum number of bytes per second, that is sent to
+as connection.}
 }
 \description{
 Presser web server options

@@ -11,6 +11,11 @@ server_start <- function(opts = server_opts()) {
     file.create(opts$error_log_file)
   }
 
+  throttle <- paste0(
+    "*=",
+    if (opts$throttle == Inf) "0" else opts$throttle
+  )
+
   options <- c(
     "listening_ports"          = ports,
     "num_threads"              = opts$num_threads,
@@ -18,6 +23,7 @@ server_start <- function(opts = server_opts()) {
     "access_log_file"          = opts$access_log_file %|NA|% "",
     "error_log_file"           = opts$error_log_file %|NA|% "",
     "tcp_nodelay"              = c("0", "1")[[opts$tcp_nodelay + 1]],
+    "throttle"                 = throttle,
 
     # These are not configurable currently
     "request_timeout_ms"       = "100000",
@@ -50,6 +56,9 @@ server_start <- function(opts = server_opts()) {
 #'   below.
 #' @param tcp_nodelay if `TRUE` then packages will be sent as soon as
 #'   possible, instead of waiting for a full buffer or timeout to occur.
+#' @param throttle Limit download speed for clients. If not `Inf`,
+#'   then it is the maximum number of bytes per second, that is sent to
+#'   as connection.
 #'
 #' @section Logging:
 #'
@@ -72,7 +81,8 @@ server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
                         enable_keep_alive = FALSE,
                         access_log_file = remote,
                         error_log_file = TRUE,
-                        tcp_nodelay = FALSE) {
+                        tcp_nodelay = FALSE,
+                        throttle = Inf) {
 
   log_dir <- Sys.getenv("PRESSER_LOG_DIR", file.path(tempdir(), "presser"))
   if (isTRUE(access_log_file)) {

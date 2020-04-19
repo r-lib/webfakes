@@ -43,6 +43,7 @@ Lightweight web apps for testing. Built using the
 * Write your own app for your custom test cases.
 * Run one web app per test suite, per test file or per test case.
 * Multi-threaded web server supports concurrent HTTP requests.
+* Limit download speed to simulate low bandwidth.
 
 ## Optional dependencies
 
