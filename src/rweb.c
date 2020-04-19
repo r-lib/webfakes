@@ -118,13 +118,14 @@ static R_INLINE SEXP new_env() {
 
 static void SEXP_to_char_vector(SEXP x, char*** vec) {
   int i, len = LENGTH(x);
-  SEXP nms = getAttrib(x, R_NamesSymbol);
+  SEXP nms = PROTECT(getAttrib(x, R_NamesSymbol));
   *vec = (char**) R_alloc(2 * len + 1, sizeof(char*));
   for (i = 0; i < len; i++) {
     (*vec)[2 * i    ] = (char*) CHAR(STRING_ELT(nms, i));
     (*vec)[2 * i + 1] = (char*) CHAR(STRING_ELT(x,   i));
   }
   (*vec)[2 * len] = NULL;
+  UNPROTECT(1);
 }
 
 static int ms_sleep(struct server_user_data* srv_data, int ms) {
@@ -233,17 +234,21 @@ static int begin_request(struct mg_connection *conn) {
 static int register_request(struct server_user_data *srv_data, SEXP req) {
   SEXP nextid = PROTECT(Rf_install("nextid"));
   int id = INTEGER(Rf_findVar(nextid, srv_data->requests))[0] + 1;
-  Rf_defineVar(nextid, ScalarInteger(id), srv_data->requests);
-  SEXP rname = PROTECT(Rf_installChar(asChar(ScalarInteger(id))));
+  SEXP xid = PROTECT(ScalarInteger(id));
+  Rf_defineVar(nextid, xid, srv_data->requests);
+  SEXP cid = PROTECT(asChar(xid));
+  SEXP rname = PROTECT(Rf_installChar(cid));
   Rf_defineVar(rname, req, srv_data->requests);
-  UNPROTECT(2);
+  UNPROTECT(4);
   return id;
 }
 
 static void deregister_request(struct server_user_data *srv_data, int id) {
-  SEXP rname = PROTECT(Rf_installChar(asChar(ScalarInteger(id))));
+  SEXP xid = PROTECT(ScalarInteger(id));
+  SEXP cid = PROTECT(asChar(xid));
+  SEXP rname = PROTECT(Rf_installChar(cid));
   Rf_defineVar(rname, R_NilValue, srv_data->requests);
-  UNPROTECT(1);
+  UNPROTECT(3);
 }
 
 static void release_all_requests(SEXP requests) {
@@ -319,7 +324,9 @@ SEXP server_start(SEXP options) {
   memset(srv_data, 0, sizeof(struct server_user_data));
 
   srv_data->requests = PROTECT(new_env());
-  Rf_defineVar(Rf_install("nextid"), ScalarInteger(1), srv_data->requests);
+  SEXP x1 = PROTECT(ScalarInteger(1));
+  Rf_defineVar(Rf_install("nextid"), x1, srv_data->requests);
+  UNPROTECT(1);
   if ((ret = pthread_cond_init(&srv_data->process_more, NULL))) goto cleanup;
   if ((ret = pthread_cond_init(&srv_data->process_less, NULL))) goto cleanup;
   if ((ret = pthread_mutex_init(&srv_data->process_lock, NULL))) goto cleanup;
@@ -422,10 +429,10 @@ SEXP server_poll(SEXP server) {
   SEXP req = R_NilValue;
   switch(conn_data->main_todo) {
   case PRESSER_REQ:
-    req = PROTECT(presser_create_request(conn));
+    req = presser_create_request(conn);
     break;
   case PRESSER_WAIT:
-    req = PROTECT(conn_data->req);
+    req = conn_data->req;
     break;
   default:
     break;
@@ -435,7 +442,6 @@ SEXP server_poll(SEXP server) {
   fprintf(stderr, "serv %p: returning request from conn %p\n", ctx, conn);
 #endif
 
-  UNPROTECT(1);
   return req;
 }
 
@@ -480,6 +486,7 @@ SEXP server_get_ports(SEXP server) {
 SEXP presser_create_request(struct mg_connection *conn) {
   static char request_link[8192];
   int i;
+  SEXP x;
 
 #ifndef NDEBUG
   fprintf(stderr, "conn %p: creating an R request object\n", conn);
@@ -487,20 +494,44 @@ SEXP presser_create_request(struct mg_connection *conn) {
 
   const struct mg_request_info *req_info = mg_get_request_info(conn);
   SEXP req = PROTECT(new_env());
-  defineVar(Rf_install("method"), mkString(req_info->request_method), req);
+
+  x = PROTECT(mkString(req_info->request_method));
+  defineVar(Rf_install("method"), x, req);
+  UNPROTECT(1);
+
   mg_get_request_link(conn, request_link, sizeof(request_link));
-  defineVar(Rf_install("url"), mkString(request_link), req);
-  defineVar(Rf_install("request_uri"), mkString(req_info->request_uri), req);
-  defineVar(Rf_install("path"), mkString(req_info->local_uri), req);
-  defineVar(Rf_install("http_version"), mkString(req_info->http_version), req);
-  defineVar(
-    Rf_install("query_string"),
-    req_info->query_string ? mkString(req_info->query_string) : mkString(""),
-    req
-  );
-  defineVar(Rf_install("remote_addr"), mkString(req_info->remote_addr), req);
-  defineVar(Rf_install("content_length"), ScalarReal(req_info->content_length), req);
-  defineVar(Rf_install("remote_port"), ScalarInteger(req_info->remote_port), req);
+  x = PROTECT(mkString(request_link));
+  defineVar(Rf_install("url"), x, req);
+  UNPROTECT(1);
+
+  x = PROTECT(mkString(req_info->request_uri));
+  defineVar(Rf_install("request_uri"), x, req);
+  UNPROTECT(1);
+
+  x = PROTECT(mkString(req_info->local_uri));
+  defineVar(Rf_install("path"), x, req);
+  UNPROTECT(1);
+
+  x = PROTECT(mkString(req_info->http_version));
+  defineVar(Rf_install("http_version"), x, req);
+  UNPROTECT(1);
+
+  x = PROTECT(req_info->query_string ? mkString(req_info->query_string) :
+              mkString(""));
+  defineVar(Rf_install("query_string"), x, req);
+  UNPROTECT(1);
+
+  x = PROTECT(mkString(req_info->remote_addr));
+  defineVar(Rf_install("remote_addr"), x, req);
+  UNPROTECT(1);
+
+  x = PROTECT(ScalarReal(req_info->content_length));
+  defineVar(Rf_install("content_length"), x, req);
+  UNPROTECT(1);
+
+  x = PROTECT(ScalarInteger(req_info->remote_port));
+  defineVar(Rf_install("remote_port"), x, req);
+  UNPROTECT(1);
 
   SEXP hdr = PROTECT(allocVector(VECSXP, req_info->num_headers));
   SEXP nms = PROTECT(allocVector(STRSXP, req_info->num_headers));
@@ -527,8 +558,9 @@ SEXP presser_create_request(struct mg_connection *conn) {
     defineVar(Rf_install(".body"), R_NilValue, req);
   }
 
-  SEXP xreq = R_MakeExternalPtr(conn, R_NilValue, R_NilValue);
+  SEXP xreq = PROTECT(R_MakeExternalPtr(conn, R_NilValue, R_NilValue));
   defineVar(Rf_install(".xconn"), xreq, req);
+  UNPROTECT(1);
 
   struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
   conn_data->req = req;
@@ -601,11 +633,11 @@ SEXP response_send_headers(SEXP req) {
 
   r_call_on_early_exit(response_cleanup, conn);
 
-  SEXP http_version = Rf_findVar(Rf_install("http_version"), req);
-  SEXP res = Rf_findVar(Rf_install("res"), req);
-  SEXP headers = Rf_findVar(Rf_install(".headers"), res);
-  SEXP names = Rf_getAttrib(headers, R_NamesSymbol);
-  SEXP status = Rf_findVar(Rf_install(".status"), res);
+  SEXP http_version = PROTECT(Rf_findVar(Rf_install("http_version"), req));
+  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
+  SEXP headers = PROTECT(Rf_findVar(Rf_install(".headers"), res));
+  SEXP names = PROTECT(Rf_getAttrib(headers, R_NamesSymbol));
+  SEXP status = PROTECT(Rf_findVar(Rf_install(".status"), res));
   int ret, i, nh = isNull(headers) ? 0 : LENGTH(headers);
 
   CHK(mg_printf(conn, "HTTP/%s %d %s\r\n", CHAR(STRING_ELT(http_version, 0)),
@@ -622,6 +654,7 @@ SEXP response_send_headers(SEXP req) {
   fprintf(stderr, "conn %p: response headers sent\n", conn);
 #endif
 
+  UNPROTECT(5);
   return R_NilValue;
 }
 
@@ -631,7 +664,7 @@ SEXP response_send(SEXP req) {
 #ifndef NDEBUG
   fprintf(stderr, "conn %p: sending response body\n", conn);
 #endif
-  SEXP res = Rf_findVar(Rf_install("res"), req);
+  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
   SEXP headers_sent = Rf_findVar(Rf_install("headers_sent"), res);
   if (! LOGICAL(headers_sent)[0]) response_send_headers(req);
 
@@ -673,12 +706,13 @@ SEXP response_send(SEXP req) {
 
   PTHCHK(pthread_cond_signal(&srv_data->process_less));
 
+  UNPROTECT(1);
   return R_NilValue;
 }
 
 SEXP response_write(SEXP req, SEXP data) {
-  SEXP res = Rf_findVar(Rf_install("res"), req);
-  SEXP headers_sent = Rf_findVar(Rf_install("headers_sent"), res);
+  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
+  SEXP headers_sent = PROTECT(Rf_findVar(Rf_install("headers_sent"), res));
   if (! LOGICAL(headers_sent)[0]) response_send_headers(req);
 
   SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
@@ -694,6 +728,7 @@ SEXP response_write(SEXP req, SEXP data) {
 #endif
   CHK(mg_write(conn, RAW(data), len));
 
+  UNPROTECT(2);
   return R_NilValue;
 }
 
@@ -701,8 +736,9 @@ SEXP response_send_error(SEXP req, SEXP message, SEXP status) {
 #ifndef NDEBUG
   fprintf(stderr, "sending 500 response");
 #endif
-  SEXP res = Rf_findVar(Rf_install("res"), req);
+  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
   Rf_defineVar(Rf_install(".body"), message, res);
   Rf_defineVar(Rf_install(".status"), status, res);
+  UNPROTECT(1);
   return response_send(req);
 }
