@@ -177,12 +177,12 @@
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="no">time</span>)
 <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49473/"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49562/"</span></pre></body></html></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-04-19 21:57:48"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-04-19 22:51:34"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
