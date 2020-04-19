@@ -1,0 +1,1010 @@
+openapi: 3.0.0
+info:
+  title: presser::httpbin_app() API
+  version: 1.0.0
+  contact:
+    email: csardi.gabor@gmail.com
+  license:
+    name: The MIT License
+    url: 'https://opensource.org/licenses/MIT'
+  description: |
+    This is a presser web app for HTTP testing in R packages.
+    It implements the https://httpbin.org API
+
+paths:
+  /get:
+    get:
+      tags:
+      - HTTP methods
+      summary: GET request
+      description: |
+        An endpoint to make a GET request agains. It returns the request's
+        parameters and the request headers, in JSON.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get'
+  /delete:
+    delete:
+      tags:
+      - HTTP methods
+      summary: DELETE request
+      description: |
+        Endpoint to make DELETE requests againts.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+  /patch:
+    patch:
+      tags:
+      - HTTP methods
+      summary: PATCH request
+      description: |
+        Endpoint to make PATCH requests against.
+      responses:
+        '200':
+          description:  Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+  /post:
+    post:
+      tags:
+      - HTTP methods
+      summary: POST request
+      description: |
+        Endpoints to make a POST request against.
+      responses:
+        '200':
+          description:  Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+  /put:
+    put:
+      tags:
+      - HTTP methods
+      summary: PUT request
+      description: |
+        Endpoints to make a PUT request against.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+
+  '/basic-auth/:user/:password':
+    parameters:
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: password
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Base64 encoded user name and password. See <https://en.wikipedia.org/wiki/Basic_access_authentication#Client_side> for the protocol.
+    get:
+      tags:
+      - Auth
+      summary: Basic authentication.
+      description: |
+        Basic authentication with specified user and password
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '401':
+          description: Failed authentication.
+          headers:
+            WWW-Authenticate:
+              description: Contains the authentication realm.
+              schema:
+                type: string
+                pattern: '^Basic realm=".*"'
+
+  '/bearer':
+    parameters:
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+        pattern: '^Bearer '
+    get:
+      tags:
+      - Auth
+      summary: Bearer authentication.
+      description: |
+        Checks is that a token is supplied in the `Authorization` header.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  token:
+                    type: string
+        '401':
+          description: Failed authentication.
+          headers:
+            WWW-Authenticate:
+              description: Contains the authentication realm.
+              schema:
+                type: string
+                pattern: '^bearer$'
+
+  '/status/:status':
+    parameters:
+    - $ref: '#/components/parameters/status'
+    delete:
+      tags:
+      - Status codes
+      summary: Return the specified HTTP status code, works for all HTTP verbs.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`. See
+        <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes> for more
+        about status codes.
+      responses:
+        '100':
+          description: Informational responses.
+        '200':
+          description: Success.
+        '300':
+          description: Redirection.
+        '400':
+          description: Client errors.
+        '500':
+          description: Server errors.
+    get:
+      tags:
+      - Status codes
+      summary: Return the specified HTTP status code, works for all HTTP verbs.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`. See
+        <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes> for more
+        about status codes.
+      responses:
+        '100':
+          description: Informational responses.
+        '200':
+          description: Success.
+        '300':
+          description: Redirection.
+        '400':
+          description: Client errors.
+        '500':
+          description: Server errors.
+    patch:
+      tags:
+      - Status codes
+      summary: Return the specified HTTP status code, works for all HTTP verbs.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`. See
+        <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes> for more
+        about status codes.
+      responses:
+        '100':
+          description: Informational responses.
+        '200':
+          description: Success.
+        '300':
+          description: Redirection.
+        '400':
+          description: Client errors.
+        '500':
+          description: Server errors.
+    post:
+      tags:
+      - Status codes
+      summary: Return the specified HTTP status code, works for all HTTP verbs.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`. See
+        <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes> for more
+        about status codes.
+      responses:
+        '100':
+          description: Informational responses.
+        '200':
+          description: Success.
+        '300':
+          description: Redirection.
+        '400':
+          description: Client errors.
+        '500':
+          description: Server errors.
+    put:
+      tags:
+      - Status codes
+      summary: Return the specified HTTP status code, works for all HTTP verbs.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`. See
+        <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes> for more
+        about status codes.
+      responses:
+        '100':
+          description: Informational responses.
+        '200':
+          description: Success.
+        '300':
+          description: Redirection.
+        '400':
+          description: Client errors.
+        '500':
+          description: Server errors.
+
+  '/headers':
+    get:
+      tags:
+      - Request inspection
+      summary: HTTP request headers.
+      responses:
+        '200':
+          description: The requests's HTTP headers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  headers:
+                    type: object
+
+  '/ip':
+    get:
+      tags:
+      - Request inspection
+      summary: IP address of the client.
+      responses:
+        '200':
+          description: |
+            The IP address of the client, usually `127.0.0.1`, as the presser
+            server runs on the localhost.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  origin:
+                    type: string
+
+  '/user-agent':
+    get:
+      tags:
+      - Request inspection
+      summary: The client's user agent.
+      responses:
+        '200':
+          description: The content of the `User-Agent` HTTP request header.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  'user-agent':
+                    type: string
+
+  '/etag/:etag':
+    parameters:
+    - name: etag
+      in: path
+      required: true
+      description: Assumed ETag value.
+      schema:
+        type: string
+    get:
+      tags:
+      - Response inspection
+      summary: Work with ETags.
+      description: |
+        Assumes the specified `etag` parameter as the `ETag` header.
+        * If a matching tag is supplied in the `If-None-Match` header, then
+          it returns with HTTP status code 304.
+        * If a non-matching `If-Match` header is supplied, then it return with
+          HTTP status code 412.
+        * Otherwise it returns with a JSON body and status 200.
+
+        See <https://en.wikipedia.org/wiki/HTTP_ETag> for more about `ETag`
+        headers.
+      responses:
+        '200':
+          description: |
+            Non-matching `If-Non-Match` or matching `If-Match`, or no
+            such headers at all.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get'
+          headers:
+            ETag:
+              description: The supplied `etag` value.
+              schema:
+                type: string
+        '304':
+          description: |
+            Matching `If-Non-Match` header.
+        '412':
+          description: |
+            Non-matchinf `If-Match` header.
+
+  '/deny':
+    get:
+      tags:
+      - Response formats
+      summary: A simple page that is denied for robots.
+      description: |
+        This exists in conjunction with `/robots.txt` which disallows this page.
+      responses:
+        '200':
+          description: A simple page.
+          content:
+            text/plain:
+              schema:
+                type:
+                  string
+                example:
+                  'Example content.'
+
+  '/gzip':
+    get:
+      tags:
+      - Response formats
+      summary: Send gzip encoded data.
+      responses:
+        '200':
+          description: Some gzipped JSON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+          headers:
+            'Content-Encoding':
+              description: Set to `gzip`.
+              schema:
+                type: string
+                pattern: '^gzip$'
+
+  '/encoding/utf8':
+    get:
+      tags:
+      - Response formats
+      summary: Send UTF-8 enconded data.
+      responses:
+        '200':
+          description: HTML with a lot of UTF-8.
+          content:
+            text/html:
+              schema:
+                type: string
+          headers:
+            'Content-Type':
+              description: Set to `text/html; charset=utf-8`.
+              schema:
+                type: string
+
+  '/html':
+    get:
+      tags:
+      - Response formats
+      summary: Send an HTML page.
+      responses:
+        '200':
+          description: An example HTML page.
+          content:
+            text/html:
+              schema:
+                type: string
+
+  '/json':
+    get:
+      tags:
+      - Response formats
+      summary: Send a JSON document.
+      responses:
+        '200':
+          description: An example JSON document.
+          content:
+            application/json:
+              schema:
+                type: object
+
+  '/robots.txt':
+    get:
+      tags:
+      - Response formats
+      summary: Send example `robots.txt` rules.
+      description: It will not allow the `/deny` endpoint.
+      responses:
+        '200':
+          description: An example `robots.txt` file.
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  '/xml':
+    get:
+      tags:
+      - Response formats
+      summary: Send an XML document.
+      responses:
+        '200':
+          description: An example XML document.
+          content:
+            application/xml:
+              schema:
+                type: string
+
+  '/base64/:value':
+    parameters:
+    - name: value
+      in: path
+      required: true
+      description: Assumed ETag value.
+      schema:
+        type: string
+    get:
+      tags:
+      - Dynamic data
+      summary: Base64 decoder
+      description: Base64 decode the supplied value and echo it back.
+      responses:
+        '200':
+          description: Decoded base64.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+
+  '/bytes/:n':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of bytes, maximum 10000.
+      schema:
+        type: integer
+    get:
+      tags:
+      - Dynamic data
+      summary: Random bytes.
+      responses:
+        '200':
+          description: Random bytes.
+          content:
+            application/octest-stream:
+              schema:
+                type:
+                  string
+
+  '/delay/:secs':
+    parameters:
+    - name: secs
+      in: path
+      required: true
+      description: Number of seconds, fractions are supported.
+      schema:
+        type: number
+    get:
+      tags:
+      - Dynamic data
+      summary: Delayed response.
+      description: |
+        Wait for the specified number of seconds before sending the response.
+      responses:
+        '200':
+          description: JSON response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+
+  '/drip':
+    parameters:
+    - name: duration
+      in: query
+      description: Number of seconds for the whole response.
+      schema:
+        type: number
+        default: 2
+    - name: numbytes
+      in: query
+      description: Number of bytes to return.
+      schema:
+        type: integer
+        default: 10
+    - name: code
+      in: query
+      description: HTTP status code to return with.
+      schema:
+        type: integer
+        default: 200
+    - name: delay
+      in: query
+      description: Initial delay, in seconds. Zero means no delay.
+      schema:
+        type: number
+        default: 0
+    get:
+      tags:
+      - Dynamic data
+      summary: Drip bytes
+      description: |
+        Drip the specified number of bytes over the specified number of seconds,
+        potentially after some initial delay.
+      responses:
+        '200':
+          description: |
+            Data of the specified length. The status code is not neccesarily
+            200, but the one specified in the `code` query parameter.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+
+  '/uuid':
+    get:
+      tags:
+      - Dynamic data
+      summary: Random UUID.
+      description: It is pseudo-random, and not secure.
+      responses:
+        '200':
+          description: Random UUID v4 in JSON.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    example: "ee4610df-3b7b-4624-8ce9-da6975b3e9f1"
+
+  '/image':
+    parameters:
+    - name: Accept
+      in: header
+      description: Accepted image content type.
+      schema:
+        type: string
+    get:
+      tags:
+      - Images
+      summary: Return an image.
+      description: |
+        It selects the format according to the `Accept` request header.
+        Supported formats: `image/jpeg`, `image/png`, `image/svg+xml`,
+        `image/webp`, `image/*`.
+      responses:
+        '200':
+          description: Image file.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/svg+xml:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+        '406':
+          description: The client did not request a supported media type.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Client did not request a supported media type."
+                  accept:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                    - "image/jpeg"
+                    - "image/png"
+                    - "image/svg+xml"
+                    - "image/webp"
+
+  '/image/:format':
+    parameters:
+    - name: format
+      description: Image format. May be `jpeg`, `png`, `svg` or `webp`.
+      in: path
+      schema:
+        type: string
+      required: true
+    get:
+      tags:
+      - Images
+      summary: Return an image of the specified format.
+      responses:
+        '200':
+          description: Image file.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/svg+xml:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+
+  '/absolute-redirect/:n':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of times to redirect. Maximum is five.
+      schema:
+        type: integer
+    get:
+      tags:
+      - Redirects
+      summary: Redirect to an absolute URL, n times.
+      responses:
+        '302':
+          description: Redirect.
+
+  '/relative-redirect/:n':
+    parameters:
+    - name: n
+      in: path
+      description: Number of times to redirect. Maximum is five.
+      schema:
+        type: integer
+      required: true
+    get:
+      tags:
+      - Redirects
+      summary: Redirect to a relative URL, n times.
+      responses:
+        '302':
+          description: Redirect.
+
+  '/redirect-to':
+    parameters:
+    - name: url
+      in: query
+      description: URL to redirect to.
+      schema:
+        type: string
+    - name: status_code
+      in: query
+      description: HTTP status code to use for the redirection.
+      schema:
+        type: integer
+        default: 302
+    delete:
+      tags:
+      - Redirects
+      summary: Redirect to an URL.
+      description: |
+        See <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection>
+        for details.
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '300':
+          description: Multiple Choices.
+        '301':
+          description: Moved Permanently.
+        '302':
+          description: Found (Previously "Moved temporarily")
+        '303':
+          description: See Other (since HTTP/1.1)
+        '304':
+          description: Not Modified (RFC 7232)
+        '305':
+          description: Use Proxy (since HTTP/1.1)
+        '306':
+          description: Switch Proxy
+        '307':
+          description: Temporary Redirect (since HTTP/1.1)
+        '308':
+          description: Permanent Redirect (RFC 7538)
+    get:
+      tags:
+      - Redirects
+      summary: Redirect to an URL.
+      description: |
+        See <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection>
+        for details.
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '300':
+          description: Multiple Choices.
+        '301':
+          description: Moved Permanently.
+        '302':
+          description: Found (Previously "Moved temporarily")
+        '303':
+          description: See Other (since HTTP/1.1)
+        '304':
+          description: Not Modified (RFC 7232)
+        '305':
+          description: Use Proxy (since HTTP/1.1)
+        '306':
+          description: Switch Proxy
+        '307':
+          description: Temporary Redirect (since HTTP/1.1)
+        '308':
+          description: Permanent Redirect (RFC 7538)
+    patch:
+      tags:
+      - Redirects
+      summary: Redirect to an URL.
+      description: |
+        See <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection>
+        for details.
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '300':
+          description: Multiple Choices.
+        '301':
+          description: Moved Permanently.
+        '302':
+          description: Found (Previously "Moved temporarily")
+        '303':
+          description: See Other (since HTTP/1.1)
+        '304':
+          description: Not Modified (RFC 7232)
+        '305':
+          description: Use Proxy (since HTTP/1.1)
+        '306':
+          description: Switch Proxy
+        '307':
+          description: Temporary Redirect (since HTTP/1.1)
+        '308':
+          description: Permanent Redirect (RFC 7538)
+    post:
+      tags:
+      - Redirects
+      summary: Redirect to an URL.
+      description: |
+        See <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection>
+        for details.
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '300':
+          description: Multiple Choices.
+        '301':
+          description: Moved Permanently.
+        '302':
+          description: Found (Previously "Moved temporarily")
+        '303':
+          description: See Other (since HTTP/1.1)
+        '304':
+          description: Not Modified (RFC 7232)
+        '305':
+          description: Use Proxy (since HTTP/1.1)
+        '306':
+          description: Switch Proxy
+        '307':
+          description: Temporary Redirect (since HTTP/1.1)
+        '308':
+          description: Permanent Redirect (RFC 7538)
+    put:
+      tags:
+      - Redirects
+      summary: Redirect to an URL.
+      description: |
+        See <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection>
+        for details.
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '300':
+          description: Multiple Choices.
+        '301':
+          description: Moved Permanently.
+        '302':
+          description: Found (Previously "Moved temporarily")
+        '303':
+          description: See Other (since HTTP/1.1)
+        '304':
+          description: Not Modified (RFC 7232)
+        '305':
+          description: Use Proxy (since HTTP/1.1)
+        '306':
+          description: Switch Proxy
+        '307':
+          description: Temporary Redirect (since HTTP/1.1)
+        '308':
+          description: Permanent Redirect (RFC 7538)
+
+  '/anything':
+    delete:
+      tags:
+      - Anything
+      summary: Returns anything passed in request data.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '200':
+          description: The request data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+    get:
+      tags:
+      - Anything
+      summary: Returns anything passed in request data.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '200':
+          description: The request data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+    patch:
+      tags:
+      - Anything
+      summary: Returns anything passed in request data.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '200':
+          description: The request data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+    post:
+      tags:
+      - Anything
+      summary: Returns anything passed in request data.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '200':
+          description: The request data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+    put:
+      tags:
+      - Anything
+      summary: Returns anything passed in request data.
+      description: |
+        This endpoint works for these other HTTP verbs as well, the same
+        way as for `GET`: `CONNECT`, `DELETE`, `HEAD`, `MKCOL`, `OPTIONS`,
+        `PATCH`, `POST`, `PROPFIND`, `PUT`, `REPORT`.
+      responses:
+        '200':
+          description: The request data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/common'
+
+components:
+  parameters:
+    status:
+      name: status
+      in: path
+      required: true
+      description: Status code.
+      schema:
+        type: integer
+  schemas:
+    get:
+      properties:
+        args:
+          type: object
+        headers:
+          type: object
+        origin:
+          type: string
+        path:
+          type: string
+        url:
+          type: string
+      required:
+        - args
+        - headers
+        - origin
+        - path
+        - url
+
+    common:
+      properties:
+        args:
+          type: object
+        data:
+          type: object
+        files:
+          type: object
+        form:
+          type: object
+        headers:
+          type: object
+        json:
+          type: object
+        method:
+          type: string
+        path:
+          type: string
+        origin:
+          type: string
+        url:
+          type: string
