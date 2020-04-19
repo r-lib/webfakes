@@ -4,10 +4,14 @@ Version: 0.0.0.9000
 Author: Gábor Csárdi
 Maintainer: Gábor Csárdi <csardi.gabor@gmail.com>
 Description: Create a web app that makes it easier to test web clients
-  without using the internet.
+  without using the internet. It includes a web app framework with path
+  matching and parameters and templating. Can parse various 'HTTP' request
+  bodies. Can send 'JSON' data or files from the disk. Includes a web app
+  that implements the <https://httpbin.org> web service.
 License: MIT + file LICENSE
 LazyData: true
-URL: https://github.com/gaborcsardi/presser#readme
+URL: https://r-lib.github.io/presser,
+    https://github.com/gaborcsardi/presser#readme
 BugReports: https://github.com/gaborcsardi/presser/issues
 RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
