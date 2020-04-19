@@ -12,6 +12,8 @@ authors:
 navbar:
   type: default
   left:
+  - text: Intro
+    href: articles/introduction.html
   - text: How-to
     href: articles/how-to.html
   - text: Reference

@@ -1,0 +1,39 @@
+
+You can use testthat's setup and teardown files.
+You start the app in a setup file and stop it in a teardown file.
+See `?testthat::source_file`.
+Your `tests/testthat/setup-http.R` may look like this:
+
+```{r}
+http <- presser::new_app_process(presser::httpbin_app())
+```
+
+Your `tests/testthat/teardown-http.R` will be
+
+```{r, eval = FALSE}
+http$stop()
+```
+
+In the test cases you can query the `http` app process to get the URLs you need to connect to:
+
+```{r include = FALSE}
+library(testthat)
+```
+
+```{r}
+test_that("fails on 404", {
+  url <- http$url("/status/404")
+  response <- httr::GET(url)
+  expect_error(
+    httr::stop_for_status(response),
+    class = "http_404"
+  )
+})
+```
+
+```{r, include = FALSE}
+http$stop()
+```
+
+When writing your tests interactively, you may create a `http` app process in the global environment, for convenience.
+You can `source()` your `setup-http.R` file for this.

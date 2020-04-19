@@ -68,7 +68,7 @@ httpbin_app <- function(log = interactive()) {
     res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
   }
 
-  # Main page, this will be the documentation of the API, eventually
+  # Main page
 
   app$get("/", function(req, res) {
     res$send_file(

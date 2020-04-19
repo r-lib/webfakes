@@ -1,0 +1,45 @@
+
+You create a new app with `new_app()`.
+This returns an object with methods to add middleware and API
+endpoints to it.
+For example, a simple app that returns the current time in JSON would
+look like this:
+
+```{r}
+time <- presser::new_app()
+time$get("/time", function(req, res) {
+  res$send_json(list(time = format(Sys.time())), auto_unbox = TRUE)
+})
+```
+
+Now you can start this app on a random port using `web$listen()`.
+Alternatively, you can start it in a subprocess with `new_app_process()`.
+
+```{r}
+web <- presser::new_app_process(time)
+web$url()
+```
+
+Use `web$url()` to query the URL of the app. For example:
+
+```{r}
+url <- web$url("/time")
+httr::content(httr::GET(url))
+```
+
+`web$stop()` stops the app and the subprocess as well:
+
+```{r}
+web$stop()
+web$get_state()
+```
+
+You can create your app at the beginning of your test file.
+Or, if you want to use the same app in multiple test files, use a
+testthat helper file.
+Sometimes it useful if your users can create and use your test app,
+for example to create reproducible examples.
+You can include a (possibly internal) function in your package, that
+creates the app.
+
+See `?new_app()` and `?new_app_process()` for more details.

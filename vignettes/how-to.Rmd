@@ -31,44 +31,40 @@ See the sections below on writing tests with a single app or multiple apps.
 
 ## How do I use `httpbin_app()` (or another app) with testthat?
 
-You can use testthat's setup and teardown functions.
-You start the app in a setup file and stop it in a teardown file.
-See `?testthat::source_file`.
-Your `tests/testthat/setup-http.R` may look like this:
-
-```{r}
-http <- presser::new_app_process(presser::httpbin_app())
+```{R child = "partials/_howto-testthat.Rmd"}
 ```
 
-Your `tests/testthat/teardown-http.R` will be
+## How to make sure that my code works with the _real_ API?
 
-```{r, eval = FALSE}
-http$stop()
-```
+Indeed, if you use presser for your test cases, then they never touch
+the real web server.
+As you might suspect, this is not ideal, especially when you do not
+control the server.
+The web service might change their API, and your test cases will fail
+to warn you.
 
-In the test cases you can query the `http` app process to get the URLs you need to connect to:
+One practical solution is to write (at least some) flexible tests,
+that can run against a local fake webserver, or a real one, and you
+have a quick switch to change their behavior.
+I have found that environment variables work great for this.
 
-```{r include = FALSE}
-library(testthat)
-```
+E.g. if the `FAKE_HTTP_TESTS` environment variable is not set, the
+tests run with the real web server, otherwise they use a fake one.
+Another solution, that works best is the HTTP requests are in the
+downstream package code, is to introduce one environment variable for each
+API you need to connect to.
+These might be set to the real API servers, or to the fake ones.
 
-```{r}
-test_that("fails on 404", {
-  url <- http$url("/status/404")
-  response <- httr::GET(url)
-  expect_error(
-    httr::stop_for_status(response),
-    class = "http_404"
-  )
-})
-```
+Once you have some tests that can use both kinds or servers, you can
+set up your continuous integration (CI) framework, to run the tests
+agains the real server (say) once a day.
+This special CI run makes sure that your code works well with the
+real API.
+You can run all the other tests, locally and in the CI, against the
+fake local web server.
 
-```{r, include = FALSE}
-http$stop()
-```
-
-When writing your tests interactively, you may create a `http` app process in the global environment, for convenience.
-You can `source()` your `setup-http.R` file for this.
+See the next question for how presser helps you setting
+environment variables that point to your local server.
 
 ## How do I make my app connect to presser when the tests are running?
 
@@ -96,45 +92,8 @@ Sys.getenv("GITHUB_API")
 
 ## How can I write my own app?
 
-You create a new app with `new_app()`.
-This returns an object with methods to add middleware and API endpoints to it.
-For example, a simple app that returns the current time in JSON would look like this:
-
-```{r}
-time <- presser::new_app()
-time$get("/time", function(req, res) {
-  res$send_json(list(time = format(Sys.time())), auto_unbox = TRUE)
-})
+```{r child = "partials/_my-app.Rmd"}
 ```
-
-Now you can start this app on a random port using `web$listen()`.
-Alternatively, you can start it in a subprocess with `new_app_process()`.
-
-```{r}
-web <- presser::new_app_process(time)
-web$url()
-```
-
-Use `web$url()` to query the URL of the app. For example:
-
-```{r}
-url <- web$url("/time")
-httr::content(httr::GET(url))
-```
-
-`web$stop()` stops the app and the subprocess as well:
-
-```{r}
-web$stop()
-web$get_state()
-```
-
-You can create your app at the beginning of your test file.
-Or, if you want to use the same app in multiple test files, use a testthat helper file.
-Sometimes it useful if your users can create and use your test app, for example to create reproducible examples.
-You can include a (possibly internal) function in your package, that creates the app.
-
-See `?new_app()` and `?new_app_process()` for more details.
 
 ## Can I have an app for a single testthat test file?
 

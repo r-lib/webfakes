@@ -28,16 +28,19 @@ Lightweight web apps for testing. Built using the
     another R process, etc.
   - A web app is extensible, by adding new routes and middleware to it.
   - Helper functions for sending JSON, files from disk, etc.
-  - Comes with an app similar to the <https://httpbin.org> API, so for
-    simple tests you don’t need to write your own web app.
+  - Comes with an app similar to the <https://httpbin.org> API, so often
+    you don’t need to write your own web app.
+  - The web server runs in the R process, so it has no problems with
+    local firewalls.
+  - Write your own app for your custom test cases.
+  - Run one web app per test suite, per test file or per test case.
 
 ## Optional dependencies
 
-  - The jsonlite package is needed for the `mw_json()` middleware and the
-    `response$send_json()` method.
+  - The jsonlite package is needed for the `mw_json()` middleware, the
+    `response$send_json()` method and the `httpbin_app()` app.
   - The glue package is needed for the `tmpl_glue()` template engine.
   - The callr package is needed for `new_app_process()` to work.
-  - The jsonlite package is needed for the `httpbin_app()` app.
 
 ## Installation
 
@@ -82,6 +85,10 @@ test_that("HTTP errors are caught", {
   expect_error(httr::stop_for_status(resp), class = "http_404")
 })
 ```
+
+## Documentation
+
+See <https://r-lib.github.io/presser/>
 
 ## License
 
