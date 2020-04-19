@@ -38,6 +38,9 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="../articles/introduction.html">Intro</a>
+</li>
+<li>
   <a href="../articles/how-to.html">How-to</a>
 </li>
 <li>
@@ -104,7 +107,7 @@ Suggests:
 <div id="how-do-i-use-httpbin_app-or-another-app-with-testthat" class="section level2">
 <h2 class="hasAnchor">
 <a href="#how-do-i-use-httpbin_app-or-another-app-with-testthat" class="anchor"></a>How do I use <code>httpbin_app()</code> (or another app) with testthat?</h2>
-<p>You can use testthat’s setup and teardown functions. You start the app in a setup file and stop it in a teardown file. See <code><a href="https://testthat.r-lib.org/reference/source_file.html">?testthat::source_file</a></code>. Your <code>tests/testthat/setup-http.R</code> may look like this:</p>
+<p>You can use testthat’s setup and teardown files. You start the app in a setup file and stop it in a teardown file. See <code><a href="https://testthat.r-lib.org/reference/source_file.html">?testthat::source_file</a></code>. Your <code>tests/testthat/setup-http.R</code> may look like this:</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">http</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span>())</pre></body></html></div>
 <p>Your <code>tests/testthat/teardown-http.R</code> will be</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()</pre></body></html></div>
@@ -119,6 +122,15 @@ Suggests:
 })</pre></body></html></div>
 <p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> your <code>setup-http.R</code> file for this.</p>
 </div>
+<div id="how-to-make-sure-that-my-code-works-with-the-real-api" class="section level2">
+<h2 class="hasAnchor">
+<a href="#how-to-make-sure-that-my-code-works-with-the-real-api" class="anchor"></a>How to make sure that my code works with the <em>real</em> API?</h2>
+<p>Indeed, if you use presser for your test cases, then they never touch the real web server. As you might suspect, this is not ideal, especially when you do not control the server. The web service might change their API, and your test cases will fail to warn you.</p>
+<p>One practical solution is to write (at least some) flexible tests, that can run against a local fake webserver, or a real one, and you have a quick switch to change their behavior. I have found that environment variables work great for this.</p>
+<p>E.g. if the <code>FAKE_HTTP_TESTS</code> environment variable is not set, the tests run with the real web server, otherwise they use a fake one. Another solution, that works best is the HTTP requests are in the downstream package code, is to introduce one environment variable for each API you need to connect to. These might be set to the real API servers, or to the fake ones.</p>
+<p>Once you have some tests that can use both kinds or servers, you can set up your continuous integration (CI) framework, to run the tests agains the real server (say) once a day. This special CI run makes sure that your code works well with the real API. You can run all the other tests, locally and in the CI, against the fake local web server.</p>
+<p>See the next question for how presser helps you setting environment variables that point to your local server.</p>
+</div>
 <div id="how-do-i-make-my-app-connect-to-presser-when-the-tests-are-running" class="section level2">
 <h2 class="hasAnchor">
 <a href="#how-do-i-make-my-app-connect-to-presser-when-the-tests-are-running" class="anchor"></a>How do I make my app connect to presser when the tests are running?</h2>
@@ -127,7 +139,7 @@ Suggests:
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">http</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span>())
 <span class="no">http</span>$<span class="fu">local_env</span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">GITHUB_API</span> <span class="kw">=</span> <span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()))
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
-<span class="co">#&gt; [1] "http://127.0.0.1:49546/"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49450/"</span>
 <span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
 <span class="co">#&gt; [1] ""</span></pre></body></html></div>
@@ -143,12 +155,12 @@ Suggests:
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="no">time</span>)
 <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49548/"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49451/"</span></pre></body></html></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-04-19 16:09:22"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-04-19 21:57:40"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
@@ -277,7 +289,7 @@ Suggests:
   <span class="fu">expect_true</span>(<span class="no">st</span><span class="kw">[[</span><span class="st">"elapsed"</span>]] <span class="kw">&lt;</span> <span class="fl">3.0</span>)
 })
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.003   0.001   1.615</span></pre></body></html></div>
+<span class="co">#&gt;   0.002   0.000   1.468</span></pre></body></html></div>
 </div>
   </div>
 

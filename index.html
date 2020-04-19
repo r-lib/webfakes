@@ -39,6 +39,9 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="articles/introduction.html">Intro</a>
+</li>
+<li>
   <a href="articles/how-to.html">How-to</a>
 </li>
 <li>
@@ -99,17 +102,19 @@
 <li>A web app is just an R object. It can be saved to disk, copied to another R process, etc.</li>
 <li>A web app is extensible, by adding new routes and middleware to it.</li>
 <li>Helper functions for sending JSON, files from disk, etc.</li>
-<li>Comes with an app similar to the <a href="https://httpbin.org" class="uri">https://httpbin.org</a> API, so for simple tests you don’t need to write your own web app.</li>
+<li>Comes with an app similar to the <a href="https://httpbin.org" class="uri">https://httpbin.org</a> API, so often you don’t need to write your own web app.</li>
+<li>The web server runs in the R process, so it has no problems with local firewalls.</li>
+<li>Write your own app for your custom test cases.</li>
+<li>Run one web app per test suite, per test file or per test case.</li>
 </ul>
 </div>
 <div id="optional-dependencies" class="section level2">
 <h2 class="hasAnchor">
 <a href="#optional-dependencies" class="anchor"></a>Optional dependencies</h2>
 <ul>
-<li>The jsonlite package is needed for the <code><a href="reference/mw_json.html">mw_json()</a></code> middleware and the <code>response$send_json()</code> method.</li>
+<li>The jsonlite package is needed for the <code><a href="reference/mw_json.html">mw_json()</a></code> middleware, the <code>response$send_json()</code> method and the <code><a href="reference/httpbin_app.html">httpbin_app()</a></code> app.</li>
 <li>The glue package is needed for the <code><a href="reference/tmpl_glue.html">tmpl_glue()</a></code> template engine.</li>
 <li>The callr package is needed for <code><a href="reference/new_app_process.html">new_app_process()</a></code> to work.</li>
-<li>The jsonlite package is needed for the <code><a href="reference/httpbin_app.html">httpbin_app()</a></code> app.</li>
 </ul>
 </div>
 <div id="installation" class="section level2">
@@ -144,6 +149,11 @@
   <span class="no">resp</span> <span class="kw">&lt;-</span> <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>)
   <span class="fu">expect_error</span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html">stop_for_status</a></span>(<span class="no">resp</span>), <span class="kw">class</span> <span class="kw">=</span> <span class="st">"http_404"</span>)
 })</pre></div>
+</div>
+<div id="documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#documentation" class="anchor"></a>Documentation</h2>
+<p>See <a href="https://r-lib.github.io/presser/" class="uri">https://r-lib.github.io/presser/</a></p>
 </div>
 <div id="license" class="section level2">
 <h2 class="hasAnchor">
