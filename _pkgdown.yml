@@ -2,6 +2,9 @@
 development:
   mode: auto
 
+template:
+  assets: inst/examples/httpbin/assets
+
 authors:
   "Gábor Csárdi":
     href: https://github.com/gaborcsardi
@@ -13,6 +16,10 @@ navbar:
     href: articles/how-to.html
   - text: Reference
     href: reference/index.html
+  - text: Articles
+    menu:
+    - text: The builtin httpbin app's API
+      href: httpbin.html
   - text: News
     href: news/index.html
 
@@ -24,6 +31,7 @@ reference:
   - presser_response
   - new_regexp
   - new_app_process
+  - server_opts
 
 - title: Middleware to parse requests
   contents:

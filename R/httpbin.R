@@ -72,8 +72,8 @@ httpbin_app <- function(log = interactive()) {
 
   app$get("/", function(req, res) {
     res$send_file(
-      root = system.file(package = "presser", "examples", "httpbin", "data"),
-      "index.html"
+      root = system.file(package = "presser", "examples", "httpbin", "assets"),
+      "httpbin.html"
     )
   })
 
