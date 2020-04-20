@@ -425,11 +425,10 @@ SEXP server_poll(SEXP server) {
   fprintf(stderr, "serv %p: processing conn %p\n", ctx, conn);
 #endif
 
-  r_call_on_early_exit(server_poll_cleanup, conn);
-
   SEXP req = R_NilValue;
   switch(conn_data->main_todo) {
   case PRESSER_REQ:
+    r_call_on_early_exit(server_poll_cleanup, conn);
     req = presser_create_request(conn);
     break;
   case PRESSER_WAIT:
