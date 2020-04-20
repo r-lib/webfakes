@@ -303,6 +303,7 @@ static void presser_server_finalizer(SEXP server) {
   ret += pthread_mutex_destroy(&srv_data->process_lock);
   ret += pthread_cond_destroy(&srv_data->process_more);
   ret += pthread_cond_destroy(&srv_data->process_less);
+  free(srv_data);
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: that would be all for today\n", ctx_addr);
 #endif
