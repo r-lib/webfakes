@@ -128,7 +128,7 @@ server_poll <- function(srv) {
 response_send <- function(req) {
   tryCatch(
     call_with_cleanup(c_response_send, req),
-    error = function(err) NULL
+    error = function(err) cat(as.character(err), file = stderr())
   )
   invisible(NULL)
 }
@@ -144,7 +144,7 @@ response_send_error <- function(req, msg, status) {
 response_delay <- function(req, secs) {
   tryCatch(
     call_with_cleanup(c_response_delay, req, secs),
-    error = function(err) NULL
+    error = function(err) cat(as.character(err), file = stderr())
   )
   invisible(NULL)
 }
@@ -152,7 +152,7 @@ response_delay <- function(req, secs) {
 response_write <- function(req, data) {
   tryCatch(
     call_with_cleanup(c_response_write, req, data),
-    error = function(err) NULL
+    error = function(err) cat(as.character(err), file = stderr())
   )
   invisible(NULL)
 }
