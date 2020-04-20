@@ -22,6 +22,8 @@ navbar:
     menu:
     - text: The builtin httpbin app's API
       href: httpbin.html
+    - text: Presser internals
+      href: articles/internals.html
   - text: News
     href: news/index.html
 
