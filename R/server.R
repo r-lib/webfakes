@@ -117,11 +117,10 @@ server_stop <- function(srv) {
 }
 
 server_poll <- function(srv) {
-  done <- FALSE
-  while (!done) {
+  while (TRUE) {
     tryCatch(
       return(call_with_cleanup(c_server_poll, srv)),
-      error = function(err) print(err)
+      error = function(err) cat(as.character(err), file = stderr())
     )
   }
 }
