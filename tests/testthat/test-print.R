@@ -22,9 +22,10 @@ teardown({ tmp$proc$stop(); unlink(tmp$tmp) })
 # that macOS has a png device.
 
 skip_without_png_device <- function() {
-  if (.Platform$OS.type == "windows" ||
-      Sys.info()["sysname"] == "Darwin") return()
-  if (! capabilities()[["png"]]) skip("Needs a PNG device")
+  if (.Platform$OS.type == "windows") return()
+  if (! capabilities("png") || ! capabilities("X11")) {
+    skip("Needs a PNG device")
+  }
 }
 
 test_that("presser_app", {
