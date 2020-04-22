@@ -910,11 +910,11 @@ enum {
 #define PRINTF_FORMAT_STRING(s) s
 #endif
 
-#ifdef __GNUC__
-#define PRINTF_ARGS(x, y) __attribute__((format(printf, x, y)))
-#else
+  // #ifdef __GNUC__
+  // #define PRINTF_ARGS(x, y) __attribute__((format(printf, x, y)))
+  // #else
 #define PRINTF_ARGS(x, y)
-#endif
+  // #endif
 
 
 /* Send data to the client using printf() semantics.
