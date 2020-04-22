@@ -599,8 +599,14 @@ typedef long off_t;
 #define W_OK (2) /* http://msdn.microsoft.com/en-us/library/1w06ktdy.aspx */
 #endif
 #define _POSIX_
+#ifdef __MINGW32__
+#include <inttypes.h>
+#define INT64_FMT PRId64
+#define UINT64_FMT PRIu64
+#else
 #define INT64_FMT "I64d"
 #define UINT64_FMT "I64u"
+#endif
 
 #define WINCDECL __cdecl
 #define vsnprintf_impl _vsnprintf
