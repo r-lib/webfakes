@@ -9,13 +9,10 @@
 
 [![R build
 status](https://github.com/gaborcsardi/pressr/workflows/R-CMD-check/badge.svg)](https://github.com/gaborcsardi/pressr/actions)
-[![](http://www.r-pkg.org/badges/version/presser)](http://www.r-pkg.org/pkg/presser)
-[![CRAN RStudio mirror
-downloads](http://cranlogs.r-pkg.org/badges/presser)](http://www.r-pkg.org/pkg/presser)
 <!-- badges: end -->
 
 Lightweight web apps for testing. Built using the
-[https://github.com/civetweb/civetweb](civetweb) embedded web server.
+[civetweb](https://github.com/civetweb/civetweb) embedded web server.
 
 ## Features
 
