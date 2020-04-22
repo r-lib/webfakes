@@ -5,7 +5,7 @@ Author: Gábor Csárdi
 Maintainer: Gábor Csárdi <csardi.gabor@gmail.com>
 Description: Create a web app that makes it easier to test web clients
   without using the internet. It includes a web app framework with path
-  matching and parameters and templating. Can parse various 'HTTP' request
+  matching and parameters and templates. Can parse various 'HTTP' request
   bodies. Can send 'JSON' data or files from the disk. Includes a web app
   that implements the <https://httpbin.org> web service.
 License: MIT + file LICENSE
