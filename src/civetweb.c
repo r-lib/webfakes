@@ -599,8 +599,10 @@ typedef long off_t;
 #define W_OK (2) /* http://msdn.microsoft.com/en-us/library/1w06ktdy.aspx */
 #endif
 #define _POSIX_
-#define INT64_FMT "I64d"
-#define UINT64_FMT "I64u"
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+#define INT64_FMT PRId64
+#define UINT64_FMT PRIu64
 
 #define WINCDECL __cdecl
 #define vsnprintf_impl _vsnprintf
@@ -885,6 +887,8 @@ typedef unsigned short int in_port_t;
 #define INVALID_SOCKET (-1)
 #define INT64_FMT PRId64
 #define UINT64_FMT PRIu64
+#define INT64_SFMT SCNd64
+#define UINT64_SFMT SCNu64
 typedef int SOCKET;
 #define WINCDECL
 
@@ -9816,7 +9820,12 @@ send_file_data(struct mg_connection *conn,
 static int
 parse_range_header(const char *header, int64_t *a, int64_t *b)
 {
-	return sscanf(header, "bytes=%" INT64_FMT "-%" INT64_FMT, a, b);
+	/* This is an improper workaround of the crazyness that mingw/windows
+	   does around readinf int64_t*/
+	int xa, xb;
+	int ret = sscanf(header, "bytes=%d-%d", &xa, &xb);
+	*a = xa, *b = xb;
+	return ret;
 }
 
 
