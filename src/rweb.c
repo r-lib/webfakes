@@ -402,7 +402,6 @@ SEXP server_poll(SEXP server) {
 #endif
   if (ctx == NULL) R_THROW_ERROR("presser server has stopped already");
   struct server_user_data *srv_data = mg_get_user_data(ctx);
-  int ret;
 
   struct timespec limit;
   while (srv_data->nextconn == NULL) {
@@ -413,8 +412,8 @@ SEXP server_poll(SEXP server) {
       limit.tv_nsec %= 1000 * 1000 * 1000;
     }
     R_CheckUserInterrupt();
-    ret = pthread_cond_timedwait(&srv_data->process_more,
-                                 &srv_data->process_lock, &limit);
+    (void) pthread_cond_timedwait(&srv_data->process_more,
+                                  &srv_data->process_lock, &limit);
   }
 
   struct mg_connection *conn = srv_data->nextconn;
