@@ -13,6 +13,10 @@
 #'
 #' @family middleware
 #' @export
+#' @examples
+#' app <- new_app()
+#' app$use(mw_json())
+#' app
 
 mw_json <- function(type = "application/json",
                      simplifyVector = FALSE,

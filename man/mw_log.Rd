@@ -25,6 +25,11 @@ and contains
 \item and the size of the response body, in bytes.
 }
 }
+\examples{
+app <- new_app()
+app$use(mw_log())
+app
+}
 \seealso{
 Other middleware: 
 \code{\link{mw_etag}()},

@@ -23,6 +23,12 @@ handler function. If a file is served, then the rest of the handler
 functions will not be called. If a file was not found, however,
 the rest of the handlers are still called.
 }
+\examples{
+root <- system.file(package = "presser", "examples", "static", "public")
+app <- new_app()
+app$use(mw_static(root = root))
+app
+}
 \seealso{
 Other middleware: 
 \code{\link{mw_etag}()},

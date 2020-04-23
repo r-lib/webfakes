@@ -17,6 +17,11 @@ Handler function.
 This is typically data from a form. The parsed data is added
 as the \code{form} element of the request object.
 }
+\examples{
+app <- new_app()
+app$use(mw_urlencoded())
+app
+}
 \seealso{
 Other middleware: 
 \code{\link{mw_etag}()},

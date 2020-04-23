@@ -17,6 +17,11 @@ Handler function.
 Adds the parsed form fields in the \code{form} element of the request and
 the parsed files to the \code{files} element.
 }
+\examples{
+app <- new_app()
+app$use(mw_multipart())
+app
+}
 \seealso{
 Other middleware: 
 \code{\link{mw_etag}()},

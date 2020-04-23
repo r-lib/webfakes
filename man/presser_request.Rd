@@ -31,6 +31,24 @@ Body parsing middleware adds additional fields to the request object.
 See \code{\link[=mw_raw]{mw_raw()}}, \code{\link[=mw_text]{mw_text()}}, \code{\link[=mw_json]{mw_json()}}, \code{\link[=mw_multipart]{mw_multipart()}} and
 \code{\link[=mw_urlencoded]{mw_urlencoded()}}.
 }
+\examples{
+# This is how you can see the request and response objects:
+app <- new_app()
+app$get("/", function(req, res) {
+  browser()
+  res$send("done")
+})
+app
+
+# Now start this app on a port:
+# app$listen(3000)
+# and connect to it from a web browser: http://127.0.0.1:3000
+# You can also use another R session to connect:
+# httr::GET("http://127.0.0.1:3000")
+# or the command line curl tool:
+# curl -v http://127.0.0.1:3000
+# The app will stop while processing the request.
+}
 \seealso{
 \link{presser_response} for the presser response object.
 }

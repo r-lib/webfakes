@@ -333,6 +333,27 @@ pkg_data <- new.env(parent = emptyenv())
 #' @examples
 #' # see example web apps in the `/examples` directory in
 #' system.file(package = "presser", "examples")
+#'
+#' app <- new_app()
+#' app <- new_app()
+#' app$use(mw_log())
+#'
+#' app$get("/hello", function(req, res) {
+#'   res$send("Hello there!")
+#' })
+#'
+#' app$get(new_regexp("^/hi(/.*)?$"), function(req, res) {
+#'   res$send("Hi indeed!")
+#' })
+#'
+#' app$post("/hello", function(req, res) {
+#'   res$send("Got it, thanks!")
+#' })
+#'
+#' app
+#'
+#' # Start the app with: app$listen()
+#' # Or start it in another R session: new_app_process(app)
 
 new_app <- function() {
 

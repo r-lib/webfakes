@@ -75,6 +75,9 @@ server_start <- function(opts = server_opts()) {
 #' `<pid>` is the process id of the subprocess.
 #'
 #' @export
+#' @examples
+#' # See the defaults
+#' server_opts()
 
 server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
                         interfaces = "127.0.0.1",

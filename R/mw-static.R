@@ -15,6 +15,11 @@
 #'
 #' @family middleware
 #' @export
+#' @examples
+#' root <- system.file(package = "presser", "examples", "static", "public")
+#' app <- new_app()
+#' app$use(mw_static(root = root))
+#' app
 
 mw_static <- function(root, set_headers = NULL) {
 

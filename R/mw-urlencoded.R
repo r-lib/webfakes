@@ -10,6 +10,10 @@
 #'
 #' @family middleware
 #' @export
+#' @examples
+#' app <- new_app()
+#' app$use(mw_urlencoded())
+#' app
 
 mw_urlencoded <- function(type = "application/x-www-form-urlencoded") {
   function(req, res) {
