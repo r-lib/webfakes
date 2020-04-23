@@ -63,6 +63,24 @@ response in one go, first the headers, then the body.
 
 Alternatively, you can use \verb{$write()} to send the response in parts.
 }
+\examples{
+# This is how you can see the request and response objects:
+app <- new_app()
+app$get("/", function(req, res) {
+  browser()
+  res$send("done")
+})
+app
+
+# Now start this app on a port:
+# app$listen(3000)
+# and connect to it from a web browser: http://127.0.0.1:3000
+# You can also use another R session to connect:
+# httr::GET("http://127.0.0.1:3000")
+# or the command line curl tool:
+# curl -v http://127.0.0.1:3000
+# The app will stop while processing the request.
+}
 \seealso{
 \link{presser_request} for the presser request object.
 }

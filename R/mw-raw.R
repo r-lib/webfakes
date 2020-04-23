@@ -9,6 +9,10 @@
 #'
 #' @family middleware
 #' @export
+#' @examples
+#' app <- new_app()
+#' app$use(mw_raw())
+#' app
 
 mw_raw <- function(type = "application/octet-stream") {
   function(req, res) {

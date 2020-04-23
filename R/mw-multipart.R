@@ -10,6 +10,10 @@
 #'
 #' @family middleware
 #' @export
+#' @examples
+#' app <- new_app()
+#' app$use(mw_multipart())
+#' app
 
 mw_multipart <- function(type = "multipart/form-data") {
   type

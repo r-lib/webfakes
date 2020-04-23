@@ -19,6 +19,26 @@
 #' @return Template function.
 #'
 #' @export
+#' @examples
+#' # See th 'hello' app at
+#' hello_root <- system.file(package = "presser", "examples", "hello")
+#' hello_root
+#'
+#' app <- new_app()
+#' app$engine("txt", tmpl_glue())
+#' app$use(mw_log())
+#'
+#'
+#' app$get("/view", function(req, res) {
+#'   txt <- res$render("test")
+#'   res$
+#'     set_type("text/plain")$
+#'     send(txt)
+#' })
+#'
+#' # Switch to the app's root: setwd(hello_root)
+#' # Now start the app with: app$listen(3000L)
+#' # Or start it in another process: new_process(app)
 
 tmpl_glue <- function(sep = "", open = "{", close = "}", na = "NA",
                       transformer = NULL, trim = TRUE) {

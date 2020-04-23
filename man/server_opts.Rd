@@ -68,3 +68,7 @@ remote apps (started with \code{new_app_procss()}).
 \verb{<pid>} is the process id of the subprocess.
 }
 
+\examples{
+# See the defaults
+server_opts()
+}

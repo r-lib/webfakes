@@ -10,6 +10,10 @@
 #'
 #' @family middleware
 #' @export
+#' @examples
+#' app <- new_app()
+#' app$use(mw_text())
+#' app
 
 mw_text <- function(default_charset = "utf-8",
                      type = "text/plain") {

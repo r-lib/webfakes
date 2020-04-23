@@ -16,6 +16,11 @@ Handler function.
 \description{
 Adds the raw body, as a raw object to the \code{raw} field of the request.
 }
+\examples{
+app <- new_app()
+app$use(mw_raw())
+app
+}
 \seealso{
 Other middleware: 
 \code{\link{mw_etag}()},

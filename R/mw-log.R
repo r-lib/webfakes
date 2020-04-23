@@ -18,6 +18,10 @@
 #'
 #' @family middleware
 #' @export
+#' @examples
+#' app <- new_app()
+#' app$use(mw_log())
+#' app
 
 mw_log <- function(format = "dev", stream = stdout()) {
 

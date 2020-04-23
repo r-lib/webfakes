@@ -16,6 +16,11 @@ Handler function.
 \description{
 Middleware that add an \code{Etag} header to the response
 }
+\examples{
+app <- new_app()
+app$use(mw_etag())
+app
+}
 \seealso{
 Other middleware: 
 \code{\link{mw_json}()},

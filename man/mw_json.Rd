@@ -22,6 +22,11 @@ Handler function.
 \description{
 Adds the parsed object as the \code{json} element of the request object.
 }
+\examples{
+app <- new_app()
+app$use(mw_json())
+app
+}
 \seealso{
 Other middleware: 
 \code{\link{mw_etag}()},

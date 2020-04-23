@@ -8,6 +8,10 @@
 #'
 #' @family middleware
 #' @export
+#' @examples
+#' app <- new_app()
+#' app$use(mw_etag())
+#' app
 
 mw_etag <- function(algorithm = "crc32") {
   if (algorithm != "crc32") {
