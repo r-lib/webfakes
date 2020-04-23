@@ -27,7 +27,7 @@ milliseconds.}
 when setting up the subprocess.}
 }
 \value{
-A \code{presser_app_process} class.
+A \code{presser_app_process} object.
 \subsection{Methods}{
 
 The \code{presser_app_process} class has the following methods:\if{html}{\out{<div class="r">}}\preformatted{get_app()

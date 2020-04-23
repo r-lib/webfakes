@@ -10,7 +10,7 @@
 #'   milliseconds.
 #' @param callr_opts Options to pass to [callr::r_session_options()]
 #'   when setting up the subprocess.
-#' @return A `presser_app_process` class.
+#' @return A `presser_app_process` object.
 #'
 #' ## Methods
 #'

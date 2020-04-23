@@ -326,6 +326,7 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' * `views`: path where presser searches for templates.
 #'
+#' @return A new `presser_app`.
 #' @aliases presser_app
 #' @seealso [presser_request] for request objects, [presser_response] for
 #' response objects.

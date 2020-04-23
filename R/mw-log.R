@@ -15,6 +15,7 @@
 #' @param format Log format. Not implemented currently.
 #' @param stream R connection to log to. Defaults to `stdout()`, the
 #'   standard output.
+#' @return Handler function.
 #'
 #' @family middleware
 #' @export
