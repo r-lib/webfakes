@@ -185,6 +185,25 @@ after evaluation.</p></td>
 
     <p>Template function.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># See th 'hello' app at</span>
+<span class='no'>hello_root</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"presser"</span>, <span class='st'>"examples"</span>, <span class='st'>"hello"</span>)
+<span class='no'>hello_root</span></div><div class='output co'>#&gt; [1] "/Users/runner/runners/2.169.1/work/_temp/Library/presser/examples/hello"</div><div class='input'>
+<span class='no'>app</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span>()
+<span class='no'>app</span>$<span class='fu'>engine</span>(<span class='st'>"txt"</span>, <span class='fu'>tmpl_glue</span>())
+<span class='no'>app</span>$<span class='fu'>use</span>(<span class='fu'><a href='mw_log.html'>mw_log</a></span>())
+
+
+<span class='no'>app</span>$<span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/view"</span>, <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
+  <span class='no'>txt</span> <span class='kw'>&lt;-</span> <span class='no'>res</span>$<span class='fu'>render</span>(<span class='st'>"test"</span>)
+  <span class='no'>res</span>$
+    <span class='fu'>set_type</span>(<span class='st'>"text/plain"</span>)$
+    <span class='fu'>send</span>(<span class='no'>txt</span>)
+})
+
+<span class='co'># Switch to the app's root: setwd(hello_root)</span>
+<span class='co'># Now start the app with: app$listen(3000L)</span>
+<span class='co'># Or start it in another process: new_process(app)</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

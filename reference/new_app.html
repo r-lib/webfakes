@@ -138,6 +138,9 @@
     <pre class="usage"><span class='fu'>new_app</span>()</pre>
 
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A new <code>presser_app</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The typical workflow of creating a web application is:</p><ol>
@@ -421,7 +424,44 @@ response objects.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># see example web apps in the `/examples` directory in</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"presser"</span>, <span class='st'>"examples"</span>)</div><div class='output co'>#&gt; [1] "/Users/runner/runners/2.169.1/work/_temp/Library/presser/examples"</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"presser"</span>, <span class='st'>"examples"</span>)</div><div class='output co'>#&gt; [1] "/Users/runner/runners/2.169.1/work/_temp/Library/presser/examples"</div><div class='input'>
+<span class='no'>app</span> <span class='kw'>&lt;-</span> <span class='fu'>new_app</span>()
+<span class='no'>app</span> <span class='kw'>&lt;-</span> <span class='fu'>new_app</span>()
+<span class='no'>app</span>$<span class='fu'>use</span>(<span class='fu'><a href='mw_log.html'>mw_log</a></span>())
+
+<span class='no'>app</span>$<span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/hello"</span>, <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
+  <span class='no'>res</span>$<span class='fu'>send</span>(<span class='st'>"Hello there!"</span>)
+})
+
+<span class='no'>app</span>$<span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='fu'><a href='new_regexp.html'>new_regexp</a></span>(<span class='st'>"^/hi(/.*)?$"</span>), <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
+  <span class='no'>res</span>$<span class='fu'>send</span>(<span class='st'>"Hi indeed!"</span>)
+})
+
+<span class='no'>app</span>$<span class='fu'>post</span>(<span class='st'>"/hello"</span>, <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
+  <span class='no'>res</span>$<span class='fu'>send</span>(<span class='st'>"Got it, thanks!"</span>)
+})
+
+<span class='no'>app</span></div><div class='output co'>#&gt; &lt;presser_app&gt;
+#&gt; routes:
+#&gt;   use *
+#&gt;   get /hello
+#&gt;   get &lt;presser_regexp&gt; "^/hi(/.*)?$"
+#&gt;   post /hello
+#&gt; fields and methods:
+#&gt;   all(path, ...)         # add route for *all* HTTP methods
+#&gt;   delete(path, ...)      # add route for DELETE
+#&gt;   engine(ext, engine)    # add template engine for file extension
+#&gt;   head(path, ...)        # add route for HEAD
+#&gt;   listen(port)           # start web app on port
+#&gt;   patch(path, ...)       # add route for PATCH
+#&gt;   post(path, ...)        # add route for POST
+#&gt;   put(path, ...)         # add route for PUT
+#&gt;   use(...)               # add middleware
+#&gt;   locals                 # app-wide shared data
+#&gt; # see ?presser_app for all methods</div><div class='input'>
+# Start the app with: app$listen()
+# Or start it in another R session: new_app_process(app)
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
