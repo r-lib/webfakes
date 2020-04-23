@@ -12,6 +12,9 @@ mw_log(format = "dev", stream = stdout())
 \item{stream}{R connection to log to. Defaults to \code{stdout()}, the
 standard output.}
 }
+\value{
+Handler function.
+}
 \description{
 A one line log entry for every request. The output looks like this:\preformatted{GET http://127.0.0.1:3000/image 200 3 ms - 4742
 }

@@ -7,6 +7,9 @@
 \usage{
 new_app()
 }
+\value{
+A new \code{presser_app}.
+}
 \description{
 Create a new web application
 }

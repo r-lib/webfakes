@@ -59,6 +59,8 @@ server_start <- function(opts = server_opts()) {
 #' @param throttle Limit download speed for clients. If not `Inf`,
 #'   then it is the maximum number of bytes per second, that is sent to
 #'   as connection.
+#' @return List of options that can be passed to `presser_app$listen()`
+#'   (see [new_app()]), and [new_app_process()].
 #'
 #' @section Logging:
 #'

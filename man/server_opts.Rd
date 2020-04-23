@@ -48,6 +48,10 @@ possible, instead of waiting for a full buffer or timeout to occur.}
 then it is the maximum number of bytes per second, that is sent to
 as connection.}
 }
+\value{
+List of options that can be passed to \code{presser_app$listen()}
+(see \code{\link[=new_app]{new_app()}}), and \code{\link[=new_app_process]{new_app_process()}}.
+}
 \description{
 Presser web server options
 }
