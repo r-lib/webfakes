@@ -59,6 +59,10 @@ The advantages of using your own presser server, over mocking:
   mocking currently.
 * No need to worry about sensitive information in recorded requests or
   responses.
+* Often easier to usewhen testing non-normal conditions, e.g. errors that
+  are hard to trigger, low bandwidth, or rate limits.
+* Works if you stream data from a HTTP connection, instead of reading
+  the whole response at once.
 * You can reuse the same app for multiple tests, in multiple packages.
 * Easier to use for tests that require multiple rounds of requests.
 * Comes with a built-in https://httpbin.org compatible app, chances
