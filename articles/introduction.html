@@ -116,7 +116,7 @@
 <div id="presser-vs-mocking" class="section level2">
 <h2 class="hasAnchor">
 <a href="#presser-vs-mocking" class="anchor"></a>Presser vs mocking</h2>
-<p>Mocking is a general technique to mimic he behavior of a function or object that is needed in test case. In the case of HTTP requests, this typically means that both the request and its response are recorded when the tests run the first time, and saved to disk. Subsequent test runs intercept the HTTP requests, match them against the recorded requests and then replay the corresponding recorded response. See for example the <a href="https://docs.ropensci.org/vcr/">vcr</a> and <a href="https://enpiar.com/r/httptest/">httptest</a> R packages.</p>
+<p>Mocking is a general technique to mimic the behavior of a function or object that is needed in test case. In the case of HTTP requests, this typically means that both the request and its response are recorded when the tests run the first time, and saved to disk. Subsequent test runs intercept the HTTP requests, match them against the recorded requests and then replay the corresponding recorded response. See for example the <a href="https://docs.ropensci.org/vcr/">vcr</a> and <a href="https://enpiar.com/r/httptest/">httptest</a> R packages.</p>
 <p>The advantages of using your own presser server, over mocking:</p>
 <ul>
 <li>Simpler infrastructure. No separate recording and replaying phases, no recorded files. No request matching.</li>
@@ -182,12 +182,12 @@
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="no">time</span>)
 <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49619/"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49343/"</span></pre></body></html></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-04-28 10:43:30"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-04-28 10:45:34"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
