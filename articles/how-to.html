@@ -142,7 +142,7 @@ Suggests:
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">http</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span>())
 <span class="no">http</span>$<span class="fu">local_env</span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">GITHUB_API</span> <span class="kw">=</span> <span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()))
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
-<span class="co">#&gt; [1] "http://127.0.0.1:49440/"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49601/"</span>
 <span class="no">http</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
 <span class="co">#&gt; [1] ""</span></pre></body></html></div>
@@ -158,12 +158,12 @@ Suggests:
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="no">time</span>)
 <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49442/"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49602/"</span></pre></body></html></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-04-23 09:25:39"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-04-28 10:43:21"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
@@ -292,7 +292,7 @@ Suggests:
   <span class="fu">expect_true</span>(<span class="no">st</span><span class="kw">[[</span><span class="st">"elapsed"</span>]] <span class="kw">&lt;</span> <span class="fl">3.0</span>)
 })
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.001   1.539</span></pre></body></html></div>
+<span class="co">#&gt;   0.002   0.001   1.704</span></pre></body></html></div>
 </div>
   </div>
 
@@ -307,7 +307,7 @@ Suggests:
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://github.com/gaborcsardi">Gábor Csárdi</a>.</p>
+  <p>Developed by <a href="https://github.com/gaborcsardi">Gábor Csárdi</a>, Abhishek Lekshmanan, Abramo Bagnara, Adam Bailey, Alan Somers, Alberto Bignotti, Alex Kozlov,  AndreyArsov, Anton Te,  beaver,  bel2125, Ben M. Ward, Bernhard Lehner,  BigJoe, Bjoern Petri, Braedy Kuzma, Breno Ramalho Lemes,  brett, Brian Lambert, Brian Spratke,  cdbishop,  celeron55, Charles Olivi, Chris Han, Chris Jones, Chris Rehn, Christian Mauderer, Christopher Galas,  cjh, Colden Cullen, Colm Sloan,  Cortronic, Daniel Oaks, Daniel Rempel, Danny Al-Gaaf, Dave Brower,  daveelton, David Arnold, David Loffredo,  Dialga, Domenico Di Iorio, Drew Wells,  duong2179,  ehlertjd,  eugene, Eric Tsau, Erick Vieyra, Erik Beran, Erik Partridge,  extergnoto, F-Secure Corporation, Fabrice Fontaine,  feneuilflo, Fernando G. Aranda, Frank Hilliger,  Grahack, Gregor Jasny,  grenclave,  grunk,  guangqing.chen, Guilherme Amadio,  hansipie, HariKamath Kamath, Henry Chang, Herumb Shandilya, Herve Codina, Iain Morton,  ImgBotApp, Ivan Dlugos,  Jack, Jacob Repp, Jacob Skillin, Jan Kowalewski, Jan Willem Janssen, Jeremy Lin, Jesse Williamson, Jim Evans,  jmc-, Joakim L. Gilje, Jochen Scheib, Joe Mucchiello, Joel Gallant, Johan De Taeye, John Faith,  Jordan, Jordan Shelley, Joshua Boyd, Joshua D. Boyd,  k-mds,  kakwa,  kalphamon, Karol Mroz, Keith Holman, Keith Kyzivat, Ken Walters, Kevin Branigan, Kevin Wojniak, Khem Raj, Kimmo Mustonen, Krzysztof Kozlowski, Lammert Bies, Lars Immisch,  Lawrence, Li Peng,  Lianghui, Luka Rahne, Lukas Martanovic, Maarten Fremouw,  makrsmark,  marco, Mark Lakata, Martin Gaida, Mateusz Gralka, Matt Clarkson,  Mellnik, Mike Crowe,  mingodad, Morgan McGuire,  mrdvlpr.xnu,  Nat!, Neil Jensen,  newsoft,  nfrmtkr, Nick Hildebrant, Nigel Stewart,  nihildeb,  No Face Press,  palortoff, Patrick Drechsler, Patrick Trinkle, Paul Sokolovsky, Paulo Brizolara,  pavel.pimenov,  PavelVozenilek, Perttu Ahola, Peter Foerster, Philipp Friedenberger, Philipp Hasper, Piotr Zierhoffer,  pkvamme, Radoslaw Zarzynski,  Red54, Mark Retallack, Richard Screene, Rimas Misevi-ìius, Rinat Dobrokhotov,  ryankopf, Sage Weil, Sangwhan Moon, Saumitra Vikram, Scott Nations, Sebastien Jodogne, Sergey Linev,  sgmesservey,  shantanugadgil, Sherwyn Sen,  shreyajaggi8, Simon Hailes,  slidertom,  SpaceLord,  sunfch,  suzukibitman, Símal Rasmussen, Tamotsu Kanoh,  thewaterymoon, Thiago Macedo, Bernard Thilmant, Thomas Davis, Thomas Klausner, Thorsten Horstmann,  tnoho, Tom Deblauwe, Tomas Andrle, Tomasz Gorochowik, Toni Wilk, Torben Jonas, Uilian Ries, Ulrich Hertlein, Walt Steverson,  wangli28,  webxer, William Greathouse,  xeoshow,  xtne6f, Yehuda Sadeh, Yury Z,  zhen.wang, Sergey Lyubka, Arnout Vandecappelle, Benoît Amiaux, Cody Hanson, Colin Leitner, Daniel Oaks, Eric Bakan, Erik Oomen, Filipp Kovalev, Ger Hobbelt, Hendrik Polczynski, Henrique Mendonça, Igor Okulist,  Jay, Joe Mucchiello, John Safranek, Joseph Mainwaring, José Miguel Gonçalves, KIU Shueng Chuan, Katerina Blinova, Konstantin Sorokin, Marin Atanasov Nikolov, Matt Healy, Miguel Morales, Mikhail Nikalyukin,  MikieMorales, Mitch Hendrickson, Nigel Stewart,  Pavel, Pavel Khlebovich, Rogerz Zhang, Sebastian Reinhard, Stefan Doehla,  Thileepan,  abadc0de,  arvidn,  bick,  ff.feng,  jmucchiello,  jwang,  lsm,  migal,  mlamb,  nullable.type,  shantanugadgil,  tayS,  test,  valenok.</p>
 </div>
 
 <div class="pkgdown">
