@@ -1,6 +1,6 @@
 Package: presser
 Title: Lightweight Web Server for Testing
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: c(
   person("Gábor", "Csárdi", role = c("aut", "cre"),
          email = "csardi.gabor@gmail.com"),
