@@ -184,7 +184,7 @@
 <div id="errors-in-the-c-code-while-processing-the-request-or-response-" class="section level3">
 <h3 class="hasAnchor">
 <a href="#errors-in-the-c-code-while-processing-the-request-or-response-" class="anchor"></a>Errors in the C code while processing the request or response.</h3>
-<p>Errors that happen in the C code while processing the request or the response are different, because most probably we cannot send anything meaningful to the client. E.g. the most frequent such error happens when the connection breaks or the client closes the connection. These errors are caught in the <code>server_poll()</code> and <code>response_*()</code> R functions, and printed to the screen (see <code>server.R</code>). If they originate from civetweb, then they are also logged in the civetweb error log.</p>
+<p>Errors that happen in the C code while processing the request or the response are different, because most probably we cannot send anything meaningful to the client. E.g. the most frequent such error happens when the connection breaks or the client closes the connection. These errors are caught in the <code>server_poll()</code> and <code>response_*()</code> R functions, and printed to the screen (see <code>server.R</code>). If they originate from civetweb, then they are also logged in the civetweb error log. These errors invalidate the request, and finish the processing callback. This is implemented by the <code>server.R</code> functions (re)throwing a <code>presser_error</code>, which is caught and then silently ignored by the processing loop.</p>
 <p>See ‘Resource cleanup’ below for how resources are cleaned up on error.</p>
 </div>
 </div>
