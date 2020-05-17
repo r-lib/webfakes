@@ -527,9 +527,9 @@ new_app <- function() {
         if (!res$headers_sent) {
           res$send_status(404)
         } else if ((res$get_header("Transfer-Encoding") %||% "") == "chunked") {
-          res$
-            send_chunk(raw(0))$
-            send("")
+          res$send_chunk(raw(0))
+          res$headers_sent <- TRUE
+          res$send("")
         } else {
           res$send("")
         }
