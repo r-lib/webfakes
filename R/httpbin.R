@@ -362,6 +362,25 @@ httpbin_app <- function(log = interactive()) {
     }
   })
 
+  app$get(new_regexp("^/stream-bytes/(?<n>[0-9]+)$"), function(req, res) {
+    n <- suppressWarnings(as.integer(req$params$n))
+    n <- min(n, 100 * 1024)
+    seed <- suppressWarnings(as.integer(req$query$seed %||% 42))
+    chunk_size <- suppressWarnings(as.integer(req$query$chunk_size %||% 10240))
+    if (length(n) == 0 || is.na(n) || length(seed) == 0 || is.na(seed) ||
+        length(chunk_size) == 0 || is.na(chunk_size)) return("next")
+    oldseed <- .GlobalEnv$.Random.seed
+    on.exit(set.seed(oldseed))
+    set.seed(seed)
+    bytes <- as.raw(as.integer(floor(stats::runif(n, min=0, max=256))))
+    nc <- ceiling(n / chunk_size)
+    for (i in seq_len(nc)) {
+      from <- (i-1)*chunk_size + 1
+      to <- min(length(bytes), i * chunk_size)
+      res$send_chunk(bytes[from:to])
+    }
+  })
+
   app$get("/uuid", function(req, res) {
     ret <- list(uuid = uuid_random())
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
@@ -386,7 +405,7 @@ httpbin_app <- function(log = interactive()) {
       send(html)
   })
 
-  # TODO: /range/{numbytes} * /stream-bytes/{n} * /stream/{n}
+  # TODO: /range/{numbytes} * /stream/{n}
 
   # Cookies ==============================================================
 

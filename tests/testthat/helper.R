@@ -64,5 +64,21 @@ test_response_app <- function() {
     }
   })
 
+  app$get("/send-chunk", function(req, res) {
+    res$locals$turn <- (res$locals$turn %||% 0) + 1L
+    if (res$locals$turn == 1) {
+      res$
+        set_header("Content-Type", "text/plain")$
+        send_chunk("first chunk\n")$
+        delay(0.01)
+    } else if (res$locals$turn == 2) {
+      res$
+        send_chunk("second chunk\n")$
+        delay(0.01)
+    } else {
+      res$send_chunk("third and final chunk\n")
+    }
+  })
+
   app
 }

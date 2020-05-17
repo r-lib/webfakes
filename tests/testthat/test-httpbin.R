@@ -350,6 +350,31 @@ test_that("/delay", {
   expect_equal(echo$path, "/delay/0.2")
 })
 
+test_that("/stream-bytes", {
+  url <- web$url("/stream-bytes/100")
+  resp <- curl::curl_fetch_memory(url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200)
+  expect_equal(headers[["transfer-encoding"]], "chunked")
+  expect_equal(length(resp$content), 100)
+
+  ## seed works
+  url2 <- web$url("/stream-bytes/10", c(seed = 100))
+  resp2 <- curl::curl_fetch_memory(url2)
+  expect_false(identical(resp$content, resp2$content))
+
+  resp3 <- curl::curl_fetch_memory(url2)
+  expect_identical(resp2$content, resp3$content)
+
+  ## chunk_size works
+  url <- web$url("/stream-bytes/100", c(chunk_size = 30))
+  resp <- curl::curl_fetch_memory(url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200)
+  expect_equal(headers[["transfer-encoding"]], "chunked")
+  expect_equal(length(resp$content), 100)
+})
+
 test_that("/uuid", {
   url <- web$url("/uuid")
   resp <- curl::curl_fetch_memory(url)

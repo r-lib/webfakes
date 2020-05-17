@@ -583,6 +583,45 @@ paths:
               schema:
                 type: string
 
+
+  '/stream-bytes':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of bytes, maximum 102400.
+      schema:
+        type: integer
+    - name: seed
+      in: query
+      description: Random seed.
+      schema:
+        type: number
+        default: 42
+    - name: chunk-size
+      in: query
+      description: |
+        Size of a chunked for the chunked encoding. The last chunk migh be
+        shorter than his.
+      schema:
+        type: integer
+        default: 10240
+    get:
+      tags:
+      - Dynamic data
+      summary: Stream in chunks.
+      description: |
+        Streams n random bytes generated with given seed, at given chunk
+        size per packet.
+      responses:
+        '200':
+          description: Random bytes.
+          content:
+            application/octest-stream:
+              schema:
+                type:
+                  string
+
   '/uuid':
     get:
       tags:
