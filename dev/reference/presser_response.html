@@ -180,6 +180,10 @@ absolute file names. It sets the content type automatically, based
 on the extension of the file, if it is not set already.</p></li>
 <li><p><code>send_status(status)</code>: Send the specified HTTP status code, without
 a response body.</p></li>
+<li><p><code>send_chunk(data)</code>: Send a chunk of a response in chunked encoding.
+The first chunk will automatically send the HTTP response headers.
+Presser will automatically send a final zero-lengh chunk, unless
+<code>$delay()</code> is called.</p></li>
 <li><p><code>set_header(field, value)</code>: Set a response header. If the headers have
 been sent out already, then it throws a warning, and does nothing.</p></li>
 <li><p><code>set_status(status)</code>: Set the response status code. If the headers
