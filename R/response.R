@@ -96,7 +96,7 @@ new_response <- function(app, req) {
       self$.stackptr <- self$.i
       self$.delay <- secs
       response_delay(self$req, secs)
-      invisible(self)
+      invisible(NULL)
     },
 
     get_header = function(field) {

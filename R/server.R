@@ -125,7 +125,10 @@ server_poll <- function(srv) {
   while (TRUE) {
     tryCatch(
       return(call_with_cleanup(c_server_poll, srv)),
-      error = function(err) cat(as.character(err), file = stderr())
+      error = function(err) {
+        cat(as.character(err), file = stderr())
+        stop(new_presser_error())
+      }
     )
   }
 }
@@ -133,7 +136,10 @@ server_poll <- function(srv) {
 response_send <- function(req) {
   tryCatch(
     call_with_cleanup(c_response_send, req),
-    error = function(err) cat(as.character(err), file = stderr())
+    error = function(err) {
+      cat(as.character(err), file = stderr())
+      stop(new_presser_error())
+    }
   )
   invisible(NULL)
 }
@@ -141,7 +147,10 @@ response_send <- function(req) {
 response_send_chunk <- function(req, data) {
   tryCatch(
     call_with_cleanup(c_response_send_chunk, req, data),
-    error = function(err) cat(as.character(err), file = stderr())
+    error = function(err) {
+      cat(as.character(err), file = stderr())
+      stop(new_presser_error())
+    }
   )
   invisible(NULL)
 }
@@ -149,7 +158,10 @@ response_send_chunk <- function(req, data) {
 response_send_error <- function(req, msg, status) {
   tryCatch(
     call_with_cleanup(c_response_send_error, req, msg, status),
-    error = function(err) cat(as.character(err), file = stderr())
+    error = function(err) {
+      cat(as.character(err), file = stderr())
+      stop(new_presser_error())
+    }
   )
   invisible(NULL)
 }
@@ -157,7 +169,10 @@ response_send_error <- function(req, msg, status) {
 response_delay <- function(req, secs) {
   tryCatch(
     call_with_cleanup(c_response_delay, req, secs),
-    error = function(err) cat(as.character(err), file = stderr())
+    error = function(err) {
+      cat(as.character(err), file = stderr())
+      stop(new_presser_error())
+    }
   )
   invisible(NULL)
 }
@@ -165,7 +180,17 @@ response_delay <- function(req, secs) {
 response_write <- function(req, data) {
   tryCatch(
     call_with_cleanup(c_response_write, req, data),
-    error = function(err) cat(as.character(err), file = stderr())
+    error = function(err) {
+      cat(as.character(err), file = stderr())
+      stop(new_presser_error())
+    }
   )
   invisible(NULL)
+}
+
+new_presser_error <- function(...) {
+  structure(
+    list(message = "error in presser connection", ...),
+    class = c("presser_error", "error", "condition")
+  )
 }

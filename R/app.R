@@ -512,28 +512,30 @@ new_app <- function() {
       res <- req$res
       res$.delay <- NULL
 
-      for (i in sseq(res$.stackptr, length(self$.stack))) {
-        handler <- self$.stack[[i]]
-        m <- path_match(req$method, req$path, handler)
-        if (!isFALSE(m)) {
-          res$.i <- i
-          if (is.list(m)) req$params <- m$params
-          out <- handler$handler(req, res)
-          if (!identical(out, "next")) break
+      tryCatch({
+        for (i in sseq(res$.stackptr, length(self$.stack))) {
+          handler <- self$.stack[[i]]
+          m <- path_match(req$method, req$path, handler)
+          if (!isFALSE(m)) {
+            res$.i <- i
+            if (is.list(m)) req$params <- m$params
+            out <- handler$handler(req, res)
+            if (!identical(out, "next")) break
+          }
         }
-      }
 
-      if (!res$.sent && is.null(res$.delay)) {
-        if (!res$headers_sent) {
-          res$send_status(404)
-        } else if ((res$get_header("Transfer-Encoding") %||% "") == "chunked") {
-          res$send_chunk(raw(0))
-          res$headers_sent <- TRUE
-          res$send("")
-        } else {
-          res$send("")
+        if (!res$.sent && is.null(res$.delay)) {
+          if (!res$headers_sent) {
+            res$send_status(404)
+          } else if ((res$get_header("Transfer-Encoding") %||% "") == "chunked") {
+            res$send_chunk(raw(0))
+            res$headers_sent <- TRUE
+            res$send("")
+          } else {
+            res$send("")
+          }
         }
-      }
+      }, presser_error = function(err) { })
     },
 
     .get_error_log = function() {

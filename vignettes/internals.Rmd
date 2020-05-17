@@ -166,7 +166,10 @@ or the client closes the connection.
 These errors are caught in the `server_poll()` and `response_*()`
 R functions, and printed to the screen (see `server.R`).
 If they originate from civetweb, then they are also logged in the
-civetweb error log.
+civetweb error log. These errors invalidate the request, and finish
+the processing callback. This is implemented by the `server.R`
+functions (re)throwing a `presser_error`, which is caught and then
+silently ignored by the processing loop.
 
 See 'Resource cleanup' below for how resources are cleaned up on
 error.

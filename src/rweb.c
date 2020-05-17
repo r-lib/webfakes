@@ -587,6 +587,9 @@ static void response_cleanup(void *ptr) {
     pthread_mutex_lock(&conn_data->finish_lock);
     conn_data->req_todo = PRESSER_DONE;
     deregister_request(srv_data, conn_data->id);
+    SEXP req = conn_data->req;
+    SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+    R_ClearExternalPtr(xconn);
     conn_data->req = R_NilValue;
     pthread_cond_signal(&conn_data->finish_cond);
     pthread_mutex_unlock(&conn_data->finish_lock);
@@ -597,6 +600,12 @@ static void response_cleanup(void *ptr) {
 SEXP response_delay(SEXP req, SEXP secs) {
   SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
+  if (conn == 0) {
+#ifndef NDEBUG
+    fprintf(stderr, "?? a connection was cleaned up already\n");
+    return R_NilValue;
+#endif
+  }
   struct mg_context *ctx = mg_get_context(conn);
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: telling conn %p to delay\n", ctx, conn);
@@ -627,6 +636,12 @@ SEXP response_delay(SEXP req, SEXP secs) {
 SEXP response_send_headers(SEXP req) {
   SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
+  if (conn == 0) {
+#ifndef NDEBUG
+    fprintf(stderr, "?? a connection was cleaned up already\n");
+    return R_NilValue;
+#endif
+  }
 #ifndef NDEBUG
   fprintf(stderr, "conn %p: sending response headers\n", conn);
 #endif
@@ -661,6 +676,12 @@ SEXP response_send_headers(SEXP req) {
 SEXP response_send(SEXP req) {
   SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
+  if (conn == 0) {
+#ifndef NDEBUG
+    fprintf(stderr, "?? a connection was cleaned up already\n");
+    return R_NilValue;
+#endif
+  }
 #ifndef NDEBUG
   fprintf(stderr, "conn %p: sending response body\n", conn);
 #endif
@@ -717,6 +738,12 @@ SEXP response_write(SEXP req, SEXP data) {
 
   SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
+  if (conn == 0) {
+#ifndef NDEBUG
+    fprintf(stderr, "?? a connection was cleaned up already\n");
+    return R_NilValue;
+#endif
+  }
 
   r_call_on_early_exit(response_cleanup, conn);
 
@@ -739,6 +766,12 @@ SEXP response_send_chunk(SEXP req, SEXP data) {
 
   SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
+  if (conn == 0) {
+#ifndef NDEBUG
+    fprintf(stderr, "?? a connection was cleaned up already\n");
+    return R_NilValue;
+#endif
+  }
 
   r_call_on_early_exit(response_cleanup, conn);
 
