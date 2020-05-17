@@ -138,6 +138,14 @@ response_send <- function(req) {
   invisible(NULL)
 }
 
+response_send_chunk <- function(req, data) {
+  tryCatch(
+    call_with_cleanup(c_response_send_chunk, req, data),
+    error = function(err) cat(as.character(err), file = stderr())
+  )
+  invisible(NULL)
+}
+
 response_send_error <- function(req, msg, status) {
   tryCatch(
     call_with_cleanup(c_response_send_error, req, msg, status),

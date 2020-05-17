@@ -46,6 +46,10 @@ absolute file names. It sets the content type automatically, based
 on the extension of the file, if it is not set already.
 \item \code{send_status(status)}: Send the specified HTTP status code, without
 a response body.
+\item \code{send_chunk(data)}: Send a chunk of a response in chunked encoding.
+The first chunk will automatically send the HTTP response headers.
+Presser will automatically send a final zero-lengh chunk, unless
+\verb{$delay()} is called.
 \item \code{set_header(field, value)}: Set a response header. If the headers have
 been sent out already, then it throws a warning, and does nothing.
 \item \code{set_status(status)}: Set the response status code. If the headers

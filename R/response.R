@@ -42,6 +42,10 @@
 #'   on the extension of the file, if it is not set already.
 #' * `send_status(status)`: Send the specified HTTP status code, without
 #'   a response body.
+#' * `send_chunk(data)`: Send a chunk of a response in chunked encoding.
+#'   The first chunk will automatically send the HTTP response headers.
+#'   Presser will automatically send a final zero-lengh chunk, unless
+#'   `$delay()` is called.
 #' * `set_header(field, value)`: Set a response header. If the headers have
 #'   been sent out already, then it throws a warning, and does nothing.
 #' * `set_status(status)`: Set the response status code. If the headers
@@ -145,6 +149,29 @@ new_response <- function(app, req) {
       invisible(self)
     },
 
+    send_chunk = function(data) {
+      if (self$.check_sent()) return(invisible(self))
+      # The first chunk sends the headers automatically, but we make
+      # sure to set chunked encoding
+      if (! self$headers_sent) {
+        self$set_header("Transfer-Encoding", "chunked")
+        if (is.null(self$get_header("Content-Type"))) {
+          self$set_header("Content-Type", "application/octet-stream")
+        }
+        if (is.null(self$.status)) self$set_status(200L)
+        self$.set_defaults()
+      }
+      enc <- self$get_header("Transfer-Encoding")
+      if (enc != "chunked") {
+        warning("Headers sent, cannot set chunked encoding now")
+        return(invisible(self))
+      }
+      if (is.character(data)) data <- charToRaw(paste(data, collapse = "\n"))
+      response_send_chunk(self$req, data)
+      self$headers_sent <- TRUE
+      invisible(self)
+    },
+
     send_json = function(object = NULL, text = NULL, ...) {
       if (!is.null(object) && !is.null(text)) {
         stop("Specify only one of `object` and `text` in `send_json()`")
@@ -245,7 +272,8 @@ new_response <- function(app, req) {
       }
 
       # Set Content-Length if not set
-      if (is.null(self$get_header("Content-Length"))) {
+      if (is.null(self$get_header("Content-Length")) &&
+          (self$get_header("Transfer-Encoding") %||% "") != "chunked") {
         if (is.raw(self$.body)) {
           cl <- length(self$.body)
         } else if (is.character(self$.body)) {
