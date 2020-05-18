@@ -123,7 +123,7 @@
 <li>Simpler infrastructure. No separate recording and replaying phases, no recorded files. No request matching.</li>
 <li>You can use any web client you want. E.g. curl and base R’s HTTP functions do not explicitly support mocking currently.</li>
 <li>No need to worry about sensitive information in recorded requests or responses.</li>
-<li>Often easier to usewhen testing non-normal conditions, e.g. errors that are hard to trigger, low bandwidth, or rate limits.</li>
+<li>Often easier to use when testing non-normal conditions, e.g. errors that are hard to trigger, low bandwidth, or rate limits.</li>
 <li>Works if you stream data from a HTTP connection, instead of reading the whole response at once.</li>
 <li>You can reuse the same app for multiple tests, in multiple packages.</li>
 <li>Easier to use for tests that require multiple rounds of requests.</li>
@@ -183,12 +183,12 @@
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="no">time</span>)
 <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49445/"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49516/"</span></pre></body></html></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-05-17 20:35:33"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-05-18 11:37:45"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
