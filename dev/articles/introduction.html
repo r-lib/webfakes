@@ -102,7 +102,7 @@
 <p>Presser is an R package that can spin up web servers your machine to facilitate testing R code. R code that needs an HTTP connection is not trivial to test:</p>
 <ul>
 <li>Connectivity problems might prevent the tests from accessing the web server.</li>
-<li>The web server might need authentication, and it is easy to convey login information to the test suite in a secure way.</li>
+<li>The web server might need authentication, and it is not easy to convey login information to the test suite in a secure way.</li>
 <li>The web server might have rate limits, i.e, it limits the number of queries per hour or day, causing some spurious test failures.</li>
 <li>You might want to test in non-normal conditions, e.g. with low bandwidth, or when the client is rate limited. These conditions don’t normally happen on the web server and they are hard to trigger.</li>
 </ul>
@@ -183,12 +183,12 @@
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">web</span> <span class="kw">&lt;-</span> <span class="kw pkg">presser</span><span class="kw ns">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="no">time</span>)
 <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49516/"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49375/"</span></pre></body></html></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">url</span> <span class="kw">&lt;-</span> <span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-05-18 11:37:45"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-05-19 11:29:06"</span></pre></body></html></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">web</span>$<span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="no">web</span>$<span class="fu">get_state</span>()
