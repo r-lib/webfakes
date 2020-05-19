@@ -66,6 +66,38 @@ fake local web server.
 See the next question for how presser helps you setting
 environment variables that point to your local server.
 
+## How do I test a sequence of requests?
+
+To test a sequence of requests, the app needs state information that is
+kept between requests. `app$locals` is an environment that belongs to the
+app, and it can be used to record information and then retreive it in
+future requests. E.g. here is an end point that fails three times, then
+succeeds once, fails again three times, etc.
+
+```{r}
+retry <- presser::new_app()
+retry$get("/unstable", function(req, res) {
+  if (identical(res$app$locals$counter, 3L)) {
+    res$app$locals$counter <- NULL
+    res$send_json(object = list(result = "ok"))
+  } else {
+    res$app$locals$counter <- c(res$app$locals$counter, 0L)[[1]] + 1L
+    res$send_status(401)
+  }
+})
+```
+
+Let's run this app in another process and connect to it:
+
+```{r}
+pr <- presser::new_app_process(retry)
+url <- pr$url("/unstable")
+httr::GET(url)
+httr::GET(url)
+httr::GET(url)
+httr::GET(url)
+```
+
 ## How do I make my app connect to presser when the tests are running?
 
 In the typical scenario, you want your package to connect to the test app only when running the tests.
