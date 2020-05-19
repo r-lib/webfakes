@@ -18,7 +18,7 @@ R code that needs an HTTP connection is not trivial to test:
 
 * Connectivity problems might prevent the tests from accessing the
   web server.
-* The web server might need authentication, and it is easy to convey
+* The web server might need authentication, and it is not easy to convey
   login information to the test suite in a secure way.
 * The web server might have rate limits, i.e, it limits the number
   of queries per hour or day, causing some spurious test failures.
