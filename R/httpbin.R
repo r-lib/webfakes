@@ -216,7 +216,21 @@ httpbin_app <- function(log = interactive()) {
     common_get(req, res)
   })
 
-  # TODO: /cache * /cache/{value} * /response-headers (2x)
+  rsp_hdrs <- function(req, res) {
+
+    obj <- structure(list(), names = character())
+    for (i in seq_along(req$query)) {
+      key <- names(req$query)[i]
+      res$add_header(key, req$query[[i]])
+      obj[[key]] <- c(obj[[key]], req$query[[i]])
+    }
+
+    res$send_json(object = obj, auto_unbox = TRUE)
+  }
+  app$get("/response-headers", rsp_hdrs)
+  app$post("/response-headers", rsp_hdrs)
+
+  # TODO: /cache * /cache/{value}
 
   # Response formats =====================================================
 

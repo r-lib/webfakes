@@ -368,6 +368,47 @@ paths:
           description: |
             Non-matchinf `If-Match` header.
 
+  '/response-headers':
+    parameters:
+    - in: query
+      name: params
+      schema:
+        type: object
+        additionalProperties:
+          type: string
+    get:
+      tags:
+      - Response inspection
+      summary: Set response headers.
+      description: |
+        Set response headers from the passed query parameters. The same
+        parameter migth be specified multiple times to create the same HTTP
+        header multiple times.
+      responses:
+        '200':
+          description: |
+            The passed query parameters are also returned as a JSON response.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      tags:
+      - Response inspection
+      summary: Set response headers.
+      description: |
+        Set response headers from the passed query parameters. The same
+        parameter migth be specified multiple times to create the same HTTP
+        header multiple times.
+      responses:
+        '200':
+          description: |
+            The passed query parameters are also returned as a JSON response.
+          content:
+            application/json:
+              schema:
+                type: object
+
   '/deny':
     get:
       tags:
