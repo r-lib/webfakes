@@ -157,6 +157,9 @@ after the specified number of seconds have passed. Use the <code>locals</code>
 environment to distinguish between the calls. If you are using
 <code><a href='https://rdrr.io/r/base/base-defunct.html'>delay()</a></code>, and want to serve requests in parallel, then you probably
 need a multi-threaded server, see <code><a href='server_opts.html'>server_opts()</a></code>.</p></li>
+<li><p><code>add_header(field, value)</code>: Add a response header. Note that
+<code>add_header()</code> may create duplicate headers. You usually want
+<code>set_header()</code>.</p></li>
 <li><p><code>get_header(field)</code>: Query the currently set response headers. If
 <code>field</code> is not present it return <code>NULL</code>.</p></li>
 <li><p><code>on_response(fun)</code>: Run the <code>fun</code> handler function just before the
