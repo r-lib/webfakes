@@ -19,6 +19,9 @@
 #'   environment to distinguish between the calls. If you are using
 #'   `delay()`, and want to serve requests in parallel, then you probably
 #'   need a multi-threaded server, see [server_opts()].
+#' * `add_header(field, value)`: Add a response header. Note that
+#'   `add_header()` may create duplicate headers. You usually want
+#'   `set_header()`.
 #' * `get_header(field)`: Query the currently set response headers. If
 #'   `field` is not present it return `NULL`.
 #' * `on_response(fun)`: Run the `fun` handler function just before the
@@ -208,6 +211,13 @@ new_response <- function(app, req) {
     set_header = function(field, value) {
       if (self$.check_sent()) return(invisible(self))
       self$.headers[[field]] <- as.character(value)
+      invisible(self)
+    },
+
+    add_header = function(field, value) {
+      if (self$.check_sent()) return(invisible(self))
+      h <- structure(list(value), names = field)
+      self$.headers <- append(self$.headers, h)
       invisible(self)
     },
 

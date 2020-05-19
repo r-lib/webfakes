@@ -80,5 +80,12 @@ test_response_app <- function() {
     }
   })
 
+  app$get("/add-header", function(req, res) {
+    res$add_header("foo", "bar")
+    res$add_header("foo", "bar2")
+    res$add_header("foobar", "baz")
+    res$send("ready")
+  })
+
   app
 }

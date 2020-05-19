@@ -23,6 +23,9 @@ after the specified number of seconds have passed. Use the \code{locals}
 environment to distinguish between the calls. If you are using
 \code{delay()}, and want to serve requests in parallel, then you probably
 need a multi-threaded server, see \code{\link[=server_opts]{server_opts()}}.
+\item \code{add_header(field, value)}: Add a response header. Note that
+\code{add_header()} may create duplicate headers. You usually want
+\code{set_header()}.
 \item \code{get_header(field)}: Query the currently set response headers. If
 \code{field} is not present it return \code{NULL}.
 \item \code{on_response(fun)}: Run the \code{fun} handler function just before the

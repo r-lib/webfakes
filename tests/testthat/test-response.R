@@ -80,3 +80,14 @@ test_that("send_chunk", {
   expect_equal(headers[["content-type"]], "text/plain")
   expect_equal(headers[["transfer-encoding"]], "chunked")
 })
+
+test_that("add_header", {
+  url <- web$url("/add-header")
+  resp <- curl::curl_fetch_memory(url)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(
+    headers[names(headers) == "foo"],
+    list(foo = "bar", foo = "bar2")
+  )
+  expect_equal(headers[["foobar"]], "baz")
+})
