@@ -42,8 +42,8 @@ or HTML or other text. For raw vectors it sets the content type to
 \code{application/octet-stream}.
 \item \code{send_json(object = NULL, text = NULL, ...)}: Send a JSON response.
 Either \code{object} or \code{text} must be given. \code{object} will be converted
-to JSON using \code{\link[jsonlite:toJSON]{jsonlite::toJSON()}}. \code{...} are passed to
-\code{\link[jsonlite:toJSON]{jsonlite::toJSON()}}. It sets the content type appropriately.
+to JSON using \code{\link[jsonlite:fromJSON]{jsonlite::toJSON()}}. \code{...} are passed to
+\code{\link[jsonlite:fromJSON]{jsonlite::toJSON()}}. It sets the content type appropriately.
 \item \code{send_file(path, root = ".")}: Send a file. Set \code{root = "/"} for
 absolute file names. It sets the content type automatically, based
 on the extension of the file, if it is not set already.

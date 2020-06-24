@@ -26,7 +26,7 @@ LazyData: true
 URL: https://r-lib.github.io/presser,
     https://github.com/gaborcsardi/presser#readme
 BugReports: https://github.com/gaborcsardi/presser/issues
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.0.9000
 Roxygen: list(markdown = TRUE)
 Imports:
     stats,
