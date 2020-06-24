@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">presser</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -147,10 +147,10 @@
 <li><p>Create a <code>presser_app</code> object with <code>new_app()</code>.</p></li>
 <li><p>Add middleware and/or routes to it.</p></li>
 <li><p>Start is with the <code>preser_app$listen()</code> method, or start it in
-another process with <code><a href='new_app_process.html'>new_app_process()</a></code>.</p></li>
+another process with <code>new_app_process()</code>.</p></li>
 <li><p>Make queries to the web app.</p></li>
 <li><p>Stop it via <code>CTRL+C</code> / <code>ESC</code>, or, if it is running in another
-process, with the <code>$stop()</code> method of <code><a href='new_app_process.html'>new_app_process()</a></code>.</p></li>
+process, with the <code>$stop()</code> method of <code>new_app_process()</code>.</p></li>
 </ol>
 
 <p>A web application can be</p><ul>
@@ -214,15 +214,15 @@ general), then presser will send a simple HTTP 404 response.</p>
 <p><code>app$use()</code> adds a middleware to the handler stack. A middleware is
 a handler function, see 'Handler functions' below. presser comes with
 middleware to perform common tasks:</p><ul>
-<li><p><code><a href='mw_etag.html'>mw_etag()</a></code> adds an <code>Etag</code> header to the response.</p></li>
-<li><p><code><a href='mw_log.html'>mw_log()</a></code> logs each requests to standard output, or another connection.</p></li>
-<li><p><code><a href='mw_raw.html'>mw_raw()</a></code> parses raw request bodies.</p></li>
-<li><p><code><a href='mw_text.html'>mw_text()</a></code> parses plain text request bodies.</p></li>
-<li><p><code><a href='mw_json.html'>mw_json()</a></code> parses JSON request bodies.</p></li>
-<li><p><code><a href='mw_multipart.html'>mw_multipart()</a></code> parses multipart request bodies.</p></li>
-<li><p><code><a href='mw_static.html'>mw_static()</a></code> serves static files from a directory.</p></li>
-<li><p><code><a href='mw_urlencoded.html'>mw_urlencoded()</a></code> parses URL encoded request bodies.</p></li>
-</ul><p><div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>use</span>(<span class='no'>...</span>)</pre><p></div></p><ul>
+<li><p><code>mw_etag()</code> adds an <code>Etag</code> header to the response.</p></li>
+<li><p><code>mw_log()</code> logs each requests to standard output, or another connection.</p></li>
+<li><p><code>mw_raw()</code> parses raw request bodies.</p></li>
+<li><p><code>mw_text()</code> parses plain text request bodies.</p></li>
+<li><p><code>mw_json()</code> parses JSON request bodies.</p></li>
+<li><p><code>mw_multipart()</code> parses multipart request bodies.</p></li>
+<li><p><code>mw_static()</code> serves static files from a directory.</p></li>
+<li><p><code>mw_urlencoded()</code> parses URL encoded request bodies.</p></li>
+</ul><p><div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'>use</span>(<span class='kw'>...</span>)</pre><p></div></p><ul>
 <li><p><code>...</code> is a set of (middleware) handler functions. They are added to
 the handler stack, and called for every HTTP request. (Unless an HTTP
 response is created before reaching this point in the handler stack.)</p></li>
@@ -239,13 +239,13 @@ may query and modify the members of the request and/or the response
 object. If it returns the string <code>"next"</code>, then it is <em>not</em> a terminal
 handler, and once it returns, presser will move on to call the next
 handler in the stack.</p>
-<p>A typical route:<div class="r"></p><pre><span class='no'>app</span>$<span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/user/:id"</span>, <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
-  <span class='no'>id</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='no'>req</span>$<span class='no'>params</span>$<span class='no'>id</span>
-  <span class='no'>...</span>
-  <span class='no'>res</span>$
-    <span class='fu'>set_status</span>(<span class='fl'>200L</span>)$
-    <span class='fu'>set_header</span>(<span class='st'>"X-Custom-Header"</span>, <span class='st'>"foobar"</span>)$
-    <span class='fu'>send_json</span>(<span class='no'>response</span>, <span class='kw'>auto_unbox</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<p>A typical route:<div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/user/:id"</span>, <span class='fu'>function</span>(<span class='kw'>req</span>, <span class='kw'>res</span>) {
+  <span class='kw'>id</span> <span class='op'>&lt;-</span> <span class='kw'>req</span><span class='op'>$</span><span class='kw'>params</span><span class='op'>$</span><span class='kw'>id</span>
+  <span class='kw'>...</span>
+  <span class='kw'>res</span><span class='op'>$</span>
+    <span class='fu'>set_status</span>(<span class='fl'>200L</span>)<span class='op'>$</span>
+    <span class='fu'>set_header</span>(<span class='st'>"X-Custom-Header"</span>, <span class='st'>"foobar"</span>)<span class='op'>$</span>
+    <span class='fu'>send_json</span>(<span class='kw'>response</span>, auto_unbox = <span class='fl'>TRUE</span>)
 })</pre><p></div></p><ul>
 <li><p>The handler belongs to an API path, which is a wildcard path in
 this case. It matches <code>/user/alice</code>, <code>/user/bob</code>, etc. The handler
@@ -260,8 +260,8 @@ Once this handler function returns, presser will send out the HTTP
 response.</p></li>
 </ul>
 
-<p>A typical middleware:<div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>use</span>(<span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
-  <span class='no'>...</span>
+<p>A typical middleware:<div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'>use</span>(<span class='fu'>function</span>(<span class='kw'>req</span>, <span class='kw'>res</span>) {
+  <span class='kw'>...</span>
   <span class='st'>"next"</span>
 })</pre><p></div></p><ul>
 <li><p>There is no HTTP method and API path here, presser will call the
@@ -281,7 +281,7 @@ response body.</p>
 <h3>Request and response objects</h3>
 
 
-<p>See <a href='presser_request.html'>presser_request</a> and <a href='presser_response.html'>presser_response</a> for the methods of the
+<p>See presser_request and presser_response for the methods of the
 request and response objects.</p>
 
 <h3>Path specification</h3>
@@ -291,7 +291,7 @@ request and response objects.</p>
 can be</p><ul>
 <li><p>A "plain" (i.e. without parameters) string. (E.g. <code>"/list"</code>.)</p></li>
 <li><p>A parameterized string. (E.g. <code>"/user/:id"</code>.)</p></li>
-<li><p>A regular expression created via <code><a href='new_regexp.html'>new_regexp()</a></code> function.</p></li>
+<li><p>A regular expression created via <code>new_regexp()</code> function.</p></li>
 <li><p>A list or character vector of the previous ones. (Regular expressions
 must be in a list.)</p></li>
 </ul>
@@ -319,11 +319,11 @@ matching one.</p>
 
 
 <p>presser supports templates, using any template engine. It comes with
-a template engine that uses the glue package, see <code><a href='tmpl_glue.html'>tmpl_glue()</a></code>.</p>
+a template engine that uses the glue package, see <code>tmpl_glue()</code>.</p>
 <p><code>app$engine()</code> registers a template engine, for a certain file
-extension. The <code>$render()</code> method of <a href='presser_response.html'>presser_response</a>
+extension. The <code>$render()</code> method of presser_response
 can be called from the handler function to evaluate a template from a
-file.<div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>engine</span>(<span class='no'>ext</span>, <span class='no'>engine</span>)</pre><p></div></p><ul>
+file.<div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'>engine</span>(<span class='kw'>ext</span>, <span class='kw'>engine</span>)</pre><p></div></p><ul>
 <li><p><code>ext</code>: the file extension for which the template engine is added.
 It should not contain the dot. E.g. <code>"html"', </code>"brew"`.</p></li>
 <li><p><code>engine</code>: the template engine, a function that takes the file path
@@ -331,33 +331,33 @@ It should not contain the dot. E.g. <code>"html"', </code>"brew"`.</p></li>
 that can be used in the template. It should return the result.</p></li>
 </ul>
 
-<p>An example template engine that uses glue might look like this:<div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>engine</span>(<span class='st'>"txt"</span>, <span class='kw'>function</span>(<span class='no'>path</span>, <span class='no'>locals</span>) {
-  <span class='no'>txt</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'><a href='https://rdrr.io/r/base/readChar.html'>readChar</a></span>(<span class='no'>path</span>, <span class='kw'>nchars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.info.html'>file.size</a></span>(<span class='no'>path</span>), <span class='kw'>useBytes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-  <span class='kw pkg'>glue</span><span class='kw ns'>::</span><span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue_data</a></span>(<span class='no'>locals</span>, <span class='no'>txt</span>)
+<p>An example template engine that uses glue might look like this:<div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'>engine</span>(<span class='st'>"txt"</span>, <span class='fu'>function</span>(<span class='kw'>path</span>, <span class='kw'>locals</span>) {
+  <span class='kw'>txt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readChar.html'>readChar</a></span>(<span class='kw'>path</span>, nchars = <span class='fu'><a href='https://rdrr.io/r/base/file.info.html'>file.size</a></span>(<span class='kw'>path</span>), useBytes = <span class='fl'>TRUE</span>)
+  <span class='kw'>glue</span>::<span class='fu'><a href='https://glue.tidyverse.org/reference/glue.html'>glue_data</a></span>(<span class='kw'>locals</span>, <span class='kw'>txt</span>)
 })</pre><p></div></p>
-<p>(The built-in <code><a href='tmpl_glue.html'>tmpl_glue()</a></code> engine has more features.)</p>
-<p>This template engine can be used in a handler:<div class="r"></p><pre><span class='no'>app</span>$<span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/view"</span>, <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
- <span class='no'>txt</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='no'>res</span>$<span class='fu'>render</span>(<span class='st'>"test"</span>)
- <span class='no'>res</span>$
-   <span class='fu'>set_type</span>(<span class='st'>"text/plain"</span>)$
-   <span class='fu'>send</span>(<span class='no'>txt</span>)
+<p>(The built-in <code>tmpl_glue()</code> engine has more features.)</p>
+<p>This template engine can be used in a handler:<div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/view"</span>, <span class='fu'>function</span>(<span class='kw'>req</span>, <span class='kw'>res</span>) {
+ <span class='kw'>txt</span> <span class='op'>&lt;-</span> <span class='kw'>res</span><span class='op'>$</span><span class='fu'>render</span>(<span class='st'>"test"</span>)
+ <span class='kw'>res</span><span class='op'>$</span>
+   <span class='fu'>set_type</span>(<span class='st'>"text/plain"</span>)<span class='op'>$</span>
+   <span class='fu'>send</span>(<span class='kw'>txt</span>)
 })</pre><p></div></p>
 <p>The location of the templates can be set using the <code>views</code> configuration
 parameter, see the <code>$set_config()</code> method below.</p>
 <p>In the template, the variables passed in as <code>locals</code>, and also the
-response local variables (see <code>locals</code> in <a href='presser_response.html'>presser_response</a>), are
+response local variables (see <code>locals</code> in presser_response), are
 available.</p>
 
 <h3>Starting and stopping</h3>
-<p><div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>listen</span>(<span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>opts</span> <span class='kw'>=</span> <span class='fu'><a href='server_opts.html'>server_opts</a></span>())</pre><p></div></p><ul>
+<p><div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'>listen</span>(port = <span class='kw'>NULL</span>, opts = <span class='fu'>server_opts</span>())</pre><p></div></p><ul>
 <li><p><code>port</code>: port to listen on. When <code>NULL</code>, the operating system will
 automatically select a free port.</p></li>
-<li><p><code>opts</code>: options to the web server. See <code><a href='server_opts.html'>server_opts()</a></code> for the
+<li><p><code>opts</code>: options to the web server. See <code>server_opts()</code> for the
 list of options and their default values.</p></li>
 </ul>
 
 <p>This method does not return, and can be interrupted with <code>CTRL+C</code> / <code>ESC</code>
-or a SIGINT signal. See <code><a href='new_app_process.html'>new_app_process()</a></code> for interrupting an app that
+or a SIGINT signal. See <code>new_app_process()</code> for interrupting an app that
 is running in another process.</p>
 <p>When <code>port</code> is <code>NULL</code>, the operating system chooses a port where the
 app will listen. To be able to get the port number programmatically,
@@ -365,8 +365,8 @@ before the listen method blocks, it advertises the selected port in a
 <code>presser_port</code> condition, so one can catch it:</p>
 <p>presser by default binds only to the loopback interface at 127.0.0.1, so
 the presser web app is never reachable from the network.<div class="r"></p><pre><span class='fu'><a href='https://rdrr.io/r/base/conditions.html'>withCallingHandlers</a></span>(
-  <span class='no'>app</span>$<span class='fu'>listen</span>(),
-  <span class='st'>"presser_port"</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>msg</span>) <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>msg</span>$<span class='no'>port</span>)
+  <span class='kw'>app</span><span class='op'>$</span><span class='fu'>listen</span>(),
+  <span class='st'>"presser_port"</span> = <span class='fu'>function</span>(<span class='kw'>msg</span>) <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='kw'>msg</span><span class='op'>$</span><span class='kw'>port</span>)
 )</pre><p></div></p>
 
 <h3>Logging</h3>
@@ -376,7 +376,7 @@ the presser web app is never reachable from the network.<div class="r"></p><pre>
 requests, and also an error log for the errors that happen while
 the server is running. This is the default behavior for local app
 (the ones started by <code>app$listen()</code> and for remote apps (the ones
-started via <code><a href='new_app_process.html'>new_app_process()</a></code>:</p><ul>
+started via <code>new_app_process()</code>:</p><ul>
 <li><p>Local apps do not write an access log by default.</p></li>
 <li><p>Remote apps write an access log into the
 <code>&lt;tmpdir&gt;/presser/&lt;pid&gt;/access.log</code> file, where <code>&lt;tmpdir&gt;</code> is the
@@ -389,25 +389,25 @@ where <code>&lt;tmpdir&gt;</code> is the session temporary directory of the
 <em>main process</em> and <code>&lt;pid&gt;</code> is the process id of the <em>subprocess</em>`.</p></li>
 </ul>
 
-<p>See <code><a href='server_opts.html'>server_opts()</a></code> for changing the default logging behavior.</p>
+<p>See <code>server_opts()</code> for changing the default logging behavior.</p>
 
 <h3>Shared app data</h3>
-<p><div class="r"></p><pre><span class='no'>app</span>$<span class='no'>locals</span></pre><p></div></p>
+<p><div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='kw'>locals</span></pre><p></div></p>
 <p>It is often useful to share data between handlers and requests in an
 app. <code>app$locals</code> is an environment that supports this. E.g. a
-middleware that counts the number of requests can be implemented as:</p><pre><span class='no'>app</span>$<span class='fu'>use</span>(<span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
-  <span class='no'>locals</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='no'>req</span>$<span class='no'>app</span>$<span class='no'>locals</span>
-  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='no'>locals</span>$<span class='no'>num</span>)) <span class='no'>locals</span>$<span class='no'>num</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fl'>0L</span>
-  <span class='no'>locals</span>$<span class='no'>num</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='no'>locals</span>$<span class='no'>num</span> + <span class='fl'>1L</span>
+middleware that counts the number of requests can be implemented as:</p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'>use</span>(<span class='fu'>function</span>(<span class='kw'>req</span>, <span class='kw'>res</span>) {
+  <span class='kw'>locals</span> <span class='op'>&lt;-</span> <span class='kw'>req</span><span class='op'>$</span><span class='kw'>app</span><span class='op'>$</span><span class='kw'>locals</span>
+  <span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>locals</span><span class='op'>$</span><span class='kw'>num</span>)) <span class='kw'>locals</span><span class='op'>$</span><span class='kw'>num</span> <span class='op'>&lt;-</span> <span class='fl'>0L</span>
+  <span class='kw'>locals</span><span class='op'>$</span><span class='kw'>num</span> <span class='op'>&lt;-</span> <span class='kw'>locals</span><span class='op'>$</span><span class='kw'>num</span> <span class='op'>+</span> <span class='fl'>1L</span>
   <span class='st'>"next"</span>
 })</pre>
 
-<p><a href='presser_response.html'>presser_response</a> objects also have a <code>locals</code> environment, that is
+<p>presser_response objects also have a <code>locals</code> environment, that is
 initially populated as a copy of <code>app$locals</code>.</p>
 
 <h3>Configuration</h3>
-<p><div class="r"></p><pre><span class='no'>app</span>$<span class='fu'>get_config</span>(<span class='no'>key</span>)
-<span class='no'>app</span>$<span class='fu'>set_config</span>(<span class='no'>key</span>, <span class='no'>value</span>)</pre><p></div></p><ul>
+<p><div class="r"></p><pre><span class='kw'>app</span><span class='op'>$</span><span class='fu'>get_config</span>(<span class='kw'>key</span>)
+<span class='kw'>app</span><span class='op'>$</span><span class='fu'>set_config</span>(<span class='kw'>key</span>, <span class='kw'>value</span>)</pre><p></div></p><ul>
 <li><p><code>key</code>: configuration key.</p></li>
 <li><p><code>value</code>: configuration value.</p></li>
 </ul>
@@ -419,29 +419,29 @@ initially populated as a copy of <code>app$locals</code>.</p>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='presser_request.html'>presser_request</a> for request objects, <a href='presser_response.html'>presser_response</a> for
+    <div class='dont-index'><p>presser_request for request objects, presser_response for
 response objects.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># see example web apps in the `/examples` directory in</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"presser"</span>, <span class='st'>"examples"</span>)</div><div class='output co'>#&gt; [1] "/Users/runner/runners/2.169.1/work/_temp/Library/presser/examples"</div><div class='input'>
-<span class='no'>app</span> <span class='kw'>&lt;-</span> <span class='fu'>new_app</span>()
-<span class='no'>app</span> <span class='kw'>&lt;-</span> <span class='fu'>new_app</span>()
-<span class='no'>app</span>$<span class='fu'>use</span>(<span class='fu'><a href='mw_log.html'>mw_log</a></span>())
+<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(package = <span class='st'>"presser"</span>, <span class='st'>"examples"</span>)</div><div class='output co'>#&gt; [1] "/Users/runner/runners/2.263.0/work/_temp/Library/presser/examples"</div><div class='input'>
+<span class='kw'>app</span> <span class='op'>&lt;-</span> <span class='fu'>new_app</span>()
+<span class='kw'>app</span> <span class='op'>&lt;-</span> <span class='fu'>new_app</span>()
+<span class='kw'>app</span><span class='op'>$</span><span class='fu'>use</span>(<span class='fu'>mw_log</span>())
 
-<span class='no'>app</span>$<span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/hello"</span>, <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
-  <span class='no'>res</span>$<span class='fu'>send</span>(<span class='st'>"Hello there!"</span>)
+<span class='kw'>app</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/hello"</span>, <span class='fu'>function</span>(<span class='kw'>req</span>, <span class='kw'>res</span>) {
+  <span class='kw'>res</span><span class='op'>$</span><span class='fu'>send</span>(<span class='st'>"Hello there!"</span>)
 })
 
-<span class='no'>app</span>$<span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='fu'><a href='new_regexp.html'>new_regexp</a></span>(<span class='st'>"^/hi(/.*)?$"</span>), <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
-  <span class='no'>res</span>$<span class='fu'>send</span>(<span class='st'>"Hi indeed!"</span>)
+<span class='kw'>app</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='fu'>new_regexp</span>(<span class='st'>"^/hi(/.*)?$"</span>), <span class='fu'>function</span>(<span class='kw'>req</span>, <span class='kw'>res</span>) {
+  <span class='kw'>res</span><span class='op'>$</span><span class='fu'>send</span>(<span class='st'>"Hi indeed!"</span>)
 })
 
-<span class='no'>app</span>$<span class='fu'>post</span>(<span class='st'>"/hello"</span>, <span class='kw'>function</span>(<span class='no'>req</span>, <span class='no'>res</span>) {
-  <span class='no'>res</span>$<span class='fu'>send</span>(<span class='st'>"Got it, thanks!"</span>)
+<span class='kw'>app</span><span class='op'>$</span><span class='fu'>post</span>(<span class='st'>"/hello"</span>, <span class='fu'>function</span>(<span class='kw'>req</span>, <span class='kw'>res</span>) {
+  <span class='kw'>res</span><span class='op'>$</span><span class='fu'>send</span>(<span class='st'>"Got it, thanks!"</span>)
 })
 
-<span class='no'>app</span></div><div class='output co'>#&gt; &lt;presser_app&gt;
+<span class='kw'>app</span></div><div class='output co'>#&gt; &lt;presser_app&gt;
 #&gt; routes:
 #&gt;   use *
 #&gt;   get /hello
@@ -459,9 +459,8 @@ response objects.</p></div>
 #&gt;   use(...)               # add middleware
 #&gt;   locals                 # app-wide shared data
 #&gt; # see ?presser_app for all methods</div><div class='input'>
-# Start the app with: app$listen()
-# Or start it in another R session: new_app_process(app)
-</div></pre>
+<span class='co'># Start the app with: app$listen()</span>
+<span class='co'># Or start it in another R session: new_app_process(app)</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

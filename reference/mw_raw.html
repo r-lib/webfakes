@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">presser</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -135,7 +135,7 @@
     <p>Adds the raw body, as a raw object to the <code>raw</code> field of the request.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mw_raw</span>(<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"application/octet-stream"</span>)</pre>
+    <pre class="usage"><span class='fu'>mw_raw</span>(type = <span class='st'>"application/octet-stream"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,18 +153,18 @@ request object is not modified.</p></td>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other middleware: 
-<code><a href='mw_etag.html'>mw_etag</a>()</code>,
-<code><a href='mw_json.html'>mw_json</a>()</code>,
-<code><a href='mw_log.html'>mw_log</a>()</code>,
-<code><a href='mw_multipart.html'>mw_multipart</a>()</code>,
-<code><a href='mw_static.html'>mw_static</a>()</code>,
-<code><a href='mw_text.html'>mw_text</a>()</code>,
-<code><a href='mw_urlencoded.html'>mw_urlencoded</a>()</code></p></div>
+<code>mw_etag()</code>,
+<code>mw_json()</code>,
+<code>mw_log()</code>,
+<code>mw_multipart()</code>,
+<code>mw_static()</code>,
+<code>mw_text()</code>,
+<code>mw_urlencoded()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>app</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span>()
-<span class='no'>app</span>$<span class='fu'>use</span>(<span class='fu'>mw_raw</span>())
-<span class='no'>app</span></div><div class='output co'>#&gt; &lt;presser_app&gt;
+    <pre class="examples"><div class='input'><span class='kw'>app</span> <span class='op'>&lt;-</span> <span class='fu'>new_app</span>()
+<span class='kw'>app</span><span class='op'>$</span><span class='fu'>use</span>(<span class='fu'>mw_raw</span>())
+<span class='kw'>app</span></div><div class='output co'>#&gt; &lt;presser_app&gt;
 #&gt; routes:
 #&gt;   use *
 #&gt; fields and methods:

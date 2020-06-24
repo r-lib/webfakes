@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">presser</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -136,15 +136,15 @@
     </div>
 
     <pre class="usage"><span class='fu'>server_opts</span>(
-  <span class='kw'>remote</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>port</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>num_threads</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>interfaces</span> <span class='kw'>=</span> <span class='st'>"127.0.0.1"</span>,
-  <span class='kw'>enable_keep_alive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>access_log_file</span> <span class='kw'>=</span> <span class='no'>remote</span>,
-  <span class='kw'>error_log_file</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>tcp_nodelay</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>throttle</span> <span class='kw'>=</span> <span class='fl'>Inf</span>
+  remote = <span class='fl'>FALSE</span>,
+  port = <span class='kw'>NULL</span>,
+  num_threads = <span class='fl'>1</span>,
+  interfaces = <span class='st'>"127.0.0.1"</span>,
+  enable_keep_alive = <span class='fl'>FALSE</span>,
+  access_log_file = <span class='kw'>remote</span>,
+  error_log_file = <span class='fl'>TRUE</span>,
+  tcp_nodelay = <span class='fl'>FALSE</span>,
+  throttle = <span class='fl'>Inf</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -204,7 +204,7 @@ as connection.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>List of options that can be passed to <code>presser_app$listen()</code>
-(see <code><a href='new_app.html'>new_app()</a></code>), and <code><a href='new_app_process.html'>new_app_process()</a></code>.</p>
+(see <code>new_app()</code>), and <code>new_app_process()</code>.</p>
     <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
 
     
@@ -242,7 +242,7 @@ remote apps (started with <code>new_app_procss()</code>).</p>
 #&gt; [1] NA
 #&gt; 
 #&gt; $error_log_file
-#&gt; [1] "/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpT4pBGK/presser/error.log"
+#&gt; [1] "/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpVIKRne/presser/error.log"
 #&gt; 
 #&gt; $tcp_nodelay
 #&gt; [1] FALSE
