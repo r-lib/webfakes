@@ -83,7 +83,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="internals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Presser internals</h1>
@@ -169,16 +169,18 @@
 <h3 class="hasAnchor">
 <a href="#errors-in-request-handlers" class="anchor"></a>Errors in request handlers</h3>
 <p>Errors that happen in the R request handler functions are caught and the server will send an HTTP 500 response, with the R error message:</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="kw">while</span> (<span class="fl">TRUE</span>) {
-  <span class="no">req</span> <span class="kw">&lt;-</span> <span class="fu">server_poll</span>(<span class="no">srv</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="co">while</span> (<span class="fl">TRUE</span>) {
+  <span class="kw">req</span> <span class="op">&lt;-</span> <span class="fu">server_poll</span>(<span class="kw">srv</span>)
   <span class="fu"><a href="https://rdrr.io/r/base/conditions.html">tryCatch</a></span>(
-    <span class="no">self</span>$<span class="fu">.process_request</span>(<span class="no">req</span>),
-    <span class="kw">error</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">err</span>) {
-      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">err</span>), <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/showConnections.html">stderr</a></span>())
-      <span class="fu">response_send_error</span>(<span class="no">req</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="no">err</span>), <span class="fl">500L</span>)
+    <span class="kw">self</span><span class="op">$</span><span class="fu">.process_request</span>(<span class="kw">req</span>),
+    error = <span class="fu">function</span>(<span class="kw">err</span>) {
+      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="kw">err</span>), file = <span class="fu"><a href="https://rdrr.io/r/base/showConnections.html">stderr</a></span>())
+      <span class="fu">response_send_error</span>(<span class="kw">req</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="kw">err</span>), <span class="fl">500L</span>)
     }
   )
-}</pre></body></html></div>
+}
+</pre></div>
 <p>For a response that is sent out in multiple pieces, this is not possible if the status code and the headers have been sent out already. In this case we just send out the R error message.</p>
 </div>
 <div id="errors-in-the-c-code-while-processing-the-request-or-response-" class="section level3">
