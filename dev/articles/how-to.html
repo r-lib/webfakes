@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">presser</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
 
@@ -162,26 +162,26 @@ Suggests:
 <span class="kw">pr</span> <span class="op">&lt;-</span> <span class="kw">presser</span>::<span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw">retry</span>)
 <span class="kw">url</span> <span class="op">&lt;-</span> <span class="kw">pr</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/unstable"</span>)
 <span class="kw">httr</span>::<span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="kw">url</span>)
-<span class="co">#&gt; Response [http://127.0.0.1:49456/unstable]</span>
-<span class="co">#&gt;   Date: 2020-06-24 09:40</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49458/unstable]</span>
+<span class="co">#&gt;   Date: 2020-06-24 11:16</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="kw">httr</span>::<span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="kw">url</span>)
-<span class="co">#&gt; Response [http://127.0.0.1:49456/unstable]</span>
-<span class="co">#&gt;   Date: 2020-06-24 09:40</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49458/unstable]</span>
+<span class="co">#&gt;   Date: 2020-06-24 11:16</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="kw">httr</span>::<span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="kw">url</span>)
-<span class="co">#&gt; Response [http://127.0.0.1:49456/unstable]</span>
-<span class="co">#&gt;   Date: 2020-06-24 09:40</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49458/unstable]</span>
+<span class="co">#&gt;   Date: 2020-06-24 11:16</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="kw">httr</span>::<span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="kw">url</span>)
-<span class="co">#&gt; Response [http://127.0.0.1:49456/unstable]</span>
-<span class="co">#&gt;   Date: 2020-06-24 09:40</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49458/unstable]</span>
+<span class="co">#&gt;   Date: 2020-06-24 11:16</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 17 B</span>
@@ -196,7 +196,7 @@ Suggests:
 <span class="kw">http</span> <span class="op">&lt;-</span> <span class="kw">presser</span>::<span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw">presser</span>::<span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span>())
 <span class="kw">http</span><span class="op">$</span><span class="fu">local_env</span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(GITHUB_API = <span class="kw">http</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()))
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
-<span class="co">#&gt; [1] "http://127.0.0.1:49461/"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49463/"</span>
 <span class="kw">http</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>()
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span>(<span class="st">"GITHUB_API"</span>)
 <span class="co">#&gt; [1] ""</span>
@@ -216,14 +216,14 @@ Suggests:
 <div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="kw">web</span> <span class="op">&lt;-</span> <span class="kw">presser</span>::<span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span>(<span class="kw">time</span>)
 <span class="kw">web</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>()
-<span class="co">#&gt; [1] "http://127.0.0.1:49462/"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49464/"</span>
 </pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="kw">url</span> <span class="op">&lt;-</span> <span class="kw">web</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/time"</span>)
 <span class="kw">httr</span>::<span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span>(<span class="kw">httr</span>::<span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="kw">url</span>))
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-06-24 09:40:39"</span>
+<span class="co">#&gt; [1] "2020-06-24 11:16:58"</span>
 </pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
@@ -366,7 +366,7 @@ Suggests:
   <span class="fu">expect_true</span>(<span class="kw">st</span>[[<span class="st">"elapsed"</span>]] <span class="op">&lt;</span> <span class="fl">3.0</span>)
 })
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.001   1.803</span>
+<span class="co">#&gt;   0.003   0.001   1.550</span>
 </pre></div>
 </div>
   </div>
