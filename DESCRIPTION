@@ -24,8 +24,8 @@ Description: Create a web app that makes it easier to test web clients
 License: MIT + file LICENSE
 LazyData: true
 URL: https://r-lib.github.io/presser,
-    https://github.com/gaborcsardi/presser#readme
-BugReports: https://github.com/gaborcsardi/presser/issues
+    https://github.com/r-lib/presser#readme
+BugReports: https://github.com/r-lib/presser/issues
 RoxygenNote: 7.1.0.9000
 Roxygen: list(markdown = TRUE)
 Imports:
