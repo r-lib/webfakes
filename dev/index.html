@@ -131,39 +131,36 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Once on CRAN, install the package as usual:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"presser"</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"presser"</span><span class="op">)</span></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>Start a web app at the beginning of your tests or test file, and stop it after. Here is an example with the testthat package. Suppose you want to test that your <code>get_hello()</code> function can query an API:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw">web</span> <span class="op">&lt;-</span> <span class="fu">setup</span>({
-  <span class="kw">app</span> <span class="op">&lt;-</span> <span class="kw">presser</span>::<span class="fu"><a href="reference/new_app.html">new_app</a></span>()
-  <span class="kw">app</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/get.html">get</a></span>(<span class="st">"/hello/:user"</span>, <span class="fu">function</span>(<span class="kw">req</span>, <span class="kw">res</span>) {
-    <span class="kw">res</span><span class="op">$</span><span class="fu">send</span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"Hello "</span>, <span class="kw">req</span><span class="op">$</span><span class="kw">params</span><span class="op">$</span><span class="kw">user</span>, <span class="st">"!"</span>))
-  })
-  <span class="kw">presser</span>::<span class="fu"><a href="reference/new_app_process.html">new_app_process</a></span>(<span class="kw">app</span>)
-})
-<span class="fu">teardown</span>(<span class="kw">web</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>())
+<span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">setup</span><span class="op">(</span><span class="op">{</span>
+  <span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/hello/:user"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Hello "</span>, <span class="va">req</span><span class="op">$</span><span class="va">params</span><span class="op">$</span><span class="va">user</span>, <span class="st">"!"</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span>
+  <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span>
+<span class="fu">teardown</span><span class="op">(</span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">test_that</span>(<span class="st">"can use hello API"</span>, {
-  <span class="kw">url</span> <span class="op">&lt;-</span> <span class="kw">web</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/hello/Gabor"</span>)
-  <span class="fu">expect_equal</span>(<span class="fu">get_hello</span>(<span class="kw">url</span>), <span class="st">"Hello Gabor!"</span>)
-})
-</pre></div>
+<span class="fu">test_that</span><span class="op">(</span><span class="st">"can use hello API"</span>, <span class="op">{</span>
+  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello/Gabor"</span><span class="op">)</span>
+  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">get_hello</span><span class="op">(</span><span class="va">url</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></pre></div>
 <p>When testing HTTP clients you can often use the built in <code><a href="reference/httpbin_app.html">httpbin_app()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">httpbin</span> <span class="op">&lt;-</span> <span class="fu">setup</span>(<span class="kw">presser</span>::<span class="fu"><a href="reference/new_app_process.html">new_app_process</a></span>(<span class="kw">presser</span>::<span class="fu"><a href="reference/httpbin_app.html">httpbin_app</a></span>()))
-<span class="fu">teardown</span>(<span class="kw">httpbin</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/stop.html">stop</a></span>())
+<span class="va">httpbin</span> <span class="op">&lt;-</span> <span class="fu">setup</span><span class="op">(</span><span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">teardown</span><span class="op">(</span><span class="va">httpbin</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">test_that</span>(<span class="st">"HTTP errors are caught"</span>, {
-  <span class="kw">url</span> <span class="op">&lt;-</span> <span class="kw">httpbin</span><span class="op">$</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"/status/404"</span>)
-  <span class="kw">resp</span> <span class="op">&lt;-</span> <span class="kw">httr</span>::<span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="kw">url</span>)
-  <span class="fu">expect_error</span>(<span class="kw">httr</span>::<span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html">stop_for_status</a></span>(<span class="kw">resp</span>), class = <span class="st">"http_404"</span>)
-})
-</pre></div>
+<span class="fu">test_that</span><span class="op">(</span><span class="st">"HTTP errors are caught"</span>, <span class="op">{</span>
+  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">httpbin</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/status/404"</span><span class="op">)</span>
+  <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
+  <span class="fu">expect_error</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html">stop_for_status</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"http_404"</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></pre></div>
 </div>
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
@@ -216,7 +213,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
