@@ -68,7 +68,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/gaborcsardi/presser/">
+  <a href="https://github.com/r-lib/presser/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -89,7 +89,7 @@
       <h1 data-toc-skip>How to use presser in your tests</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/gaborcsardi/presser/blob/master/vignettes/how-to.Rmd"><code>vignettes/how-to.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/presser/blob/master/vignettes/how-to.Rmd"><code>vignettes/how-to.Rmd</code></a></small>
       <div class="hidden name"><code>how-to.Rmd</code></div>
 
     </div>
@@ -158,26 +158,26 @@ Suggests:
 <span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">retry</span><span class="op">)</span>
 <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49373/unstable]</span>
-<span class="co">#&gt;   Date: 2020-10-16 12:10</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49470/unstable]</span>
+<span class="co">#&gt;   Date: 2020-10-16 14:34</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49373/unstable]</span>
-<span class="co">#&gt;   Date: 2020-10-16 12:10</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49470/unstable]</span>
+<span class="co">#&gt;   Date: 2020-10-16 14:34</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49373/unstable]</span>
-<span class="co">#&gt;   Date: 2020-10-16 12:10</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49470/unstable]</span>
+<span class="co">#&gt;   Date: 2020-10-16 14:34</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49373/unstable]</span>
-<span class="co">#&gt;   Date: 2020-10-16 12:10</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49470/unstable]</span>
+<span class="co">#&gt;   Date: 2020-10-16 14:34</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 17 B</span></pre></div>
@@ -191,7 +191,7 @@ Suggests:
 <span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49379/"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49475/"</span>
 <span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span>
 <span class="co">#&gt; [1] ""</span></pre></div>
@@ -209,13 +209,13 @@ Suggests:
 <div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>
 <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49381/"</span></pre></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49476/"</span></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-10-16 12:10:09"</span></pre></div>
+<span class="co">#&gt; [1] "2020-10-16 14:34:26"</span></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
@@ -351,7 +351,7 @@ Suggests:
   <span class="fu">expect_true</span><span class="op">(</span><span class="va">st</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;</span> <span class="fl">3.0</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.001   1.258</span></pre></div>
+<span class="co">#&gt;   0.002   0.001   1.406</span></pre></div>
 </div>
   </div>
 
