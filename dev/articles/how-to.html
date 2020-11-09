@@ -127,7 +127,7 @@ Suggests:
     class <span class="op">=</span> <span class="st">"http_404"</span>
   <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; Test passed 😀</span></code></pre></div>
+<span class="co">#&gt; Test passed 😸</span></code></pre></div>
 <p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> your <code>setup-http.R</code> file for this.</p>
 </div>
 <div id="how-to-make-sure-that-my-code-works-with-the-real-api" class="section level2">
@@ -159,26 +159,26 @@ Suggests:
 <code class="sourceCode R"><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">retry</span><span class="op">)</span>
 <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49475/unstable]</span>
-<span class="co">#&gt;   Date: 2020-11-09 20:28</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49432/unstable]</span>
+<span class="co">#&gt;   Date: 2020-11-09 20:37</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49475/unstable]</span>
-<span class="co">#&gt;   Date: 2020-11-09 20:28</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49432/unstable]</span>
+<span class="co">#&gt;   Date: 2020-11-09 20:37</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49475/unstable]</span>
-<span class="co">#&gt;   Date: 2020-11-09 20:28</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49432/unstable]</span>
+<span class="co">#&gt;   Date: 2020-11-09 20:37</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt; &lt;EMPTY BODY&gt;</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49475/unstable]</span>
-<span class="co">#&gt;   Date: 2020-11-09 20:28</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49432/unstable]</span>
+<span class="co">#&gt;   Date: 2020-11-09 20:37</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 17 B</span></code></pre></div>
@@ -192,7 +192,7 @@ Suggests:
 <code class="sourceCode R"><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49480/"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49437/"</span>
 <span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span>
 <span class="co">#&gt; [1] ""</span></code></pre></div>
@@ -210,13 +210,13 @@ Suggests:
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>
 <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49481/"</span></code></pre></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49438/"</span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-11-09 20:28:11"</span></code></pre></div>
+<span class="co">#&gt; [1] "2020-11-09 20:37:50"</span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
@@ -244,7 +244,7 @@ Suggests:
   <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello/Gabor"</span><span class="op">)</span>
   <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; Test passed 🥇</span></code></pre></div>
+<span class="co">#&gt; Test passed 🌈</span></code></pre></div>
 </div>
 <div id="can-i-use-an-app-for-a-single-testthat-test" class="section level2">
 <h2 class="hasAnchor">
@@ -260,7 +260,7 @@ Suggests:
   <span class="va">echo</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">echo</span>, <span class="st">"hello there"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; Test passed 😀</span></code></pre></div>
+<span class="co">#&gt; Test passed 🌈</span></code></pre></div>
 </div>
 <div id="how-can-i-to-debug-an-app" class="section level2">
 <h2 class="hasAnchor">
@@ -354,8 +354,8 @@ Suggests:
   <span class="fu">expect_true</span><span class="op">(</span><span class="va">st</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;</span> <span class="fl">3.0</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.000   2.008 </span>
-<span class="co">#&gt; Test passed 🎊</span></code></pre></div>
+<span class="co">#&gt;   0.003   0.000   1.729 </span>
+<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
 </div>
   </div>
 
