@@ -169,8 +169,8 @@
 <h3 class="hasAnchor">
 <a href="#errors-in-request-handlers" class="anchor"></a>Errors in request handlers</h3>
 <p>Errors that happen in the R request handler functions are caught and the server will send an HTTP 500 response, with the R error message:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">while</span> <span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">while</span> <span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">req</span> <span class="op">&lt;-</span> <span class="fu">server_poll</span><span class="op">(</span><span class="va">srv</span><span class="op">)</span>
   <span class="kw"><a href="https://rdrr.io/r/base/conditions.html">tryCatch</a></span><span class="op">(</span>
     <span class="va">self</span><span class="op">$</span><span class="fu">.process_request</span><span class="op">(</span><span class="va">req</span><span class="op">)</span>,
@@ -179,7 +179,7 @@
       <span class="fu">response_send_error</span><span class="op">(</span><span class="va">req</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">err</span><span class="op">)</span>, <span class="fl">500L</span><span class="op">)</span>
     <span class="op">}</span>
   <span class="op">)</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>For a response that is sent out in multiple pieces, this is not possible if the status code and the headers have been sent out already. In this case we just send out the R error message.</p>
 </div>
 <div id="errors-in-the-c-code-while-processing-the-request-or-response-" class="section level3">
