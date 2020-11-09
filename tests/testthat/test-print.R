@@ -44,6 +44,7 @@ test_that("presser_request", {
   req <- readRDS(tmp$tmp)$req
   req$url <- "http://127.0.0.1:3000/"
   req$headers$Host <- "127.0.0.1:3000"
+  req$headers$`Accept-Encoding` <- "deflate, gzip"
   verify_output(
     test_path("fixtures", "output", "presser_request.txt"),
     req

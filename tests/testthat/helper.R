@@ -2,6 +2,8 @@
 test_response_app <- function() {
   app <- new_app()
 
+  `%||%` <- function(l, r) if (is.null(l)) r else l
+
   app$locals$applocal <- "foo"
 
   app$engine("txt", tmpl_glue())
