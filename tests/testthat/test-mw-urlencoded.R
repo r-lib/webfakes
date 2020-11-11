@@ -1,17 +1,13 @@
 
-web <- setup({
-  app <- new_app()
-  app$use(mw_urlencoded())
-  app$post("/form", function(req, res) {
-    ret <- list(
-      form = req$form
-    )
-    res$send_json(ret, pretty = TRUE, auto_unbox = TRUE)
-  })
-  new_app_process(app)
+app <- new_app()
+app$use(mw_urlencoded())
+app$post("/form", function(req, res) {
+  ret <- list(
+    form = req$form
+  )
+  res$send_json(ret, pretty = TRUE, auto_unbox = TRUE)
 })
-
-teardown(web$stop())
+web <- local_app_process(app)
 
 test_that("mw-urlencoded", {
   url <- web$url("/form")

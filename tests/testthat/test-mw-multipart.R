@@ -1,15 +1,11 @@
 
-web <- setup({
-  app <- new_app()
-  app$use(mw_multipart())
-  app$put("/form", function(req, res) {
-    ret = list(form = req$form, files = req$files)
-    res$send_json(ret, pretty = TRUE, auto_unbox = TRUE)
-  })
-  new_app_process(app)
+app <- new_app()
+app$use(mw_multipart())
+app$put("/form", function(req, res) {
+  ret = list(form = req$form, files = req$files)
+  res$send_json(ret, pretty = TRUE, auto_unbox = TRUE)
 })
-
-teardown(web$stop())
+web <- local_app_process(app)
 
 test_that("mw_multipart", {
   on.exit(rm(tmp), add = TRUE)

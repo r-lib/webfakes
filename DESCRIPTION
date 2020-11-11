@@ -38,6 +38,6 @@ Suggests:
     curl,
     glue,
     jsonlite,
-    testthat,
+    testthat (>= 3.0.0),
     withr
 Encoding: UTF-8

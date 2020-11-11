@@ -1,6 +1,5 @@
 
-web <- setup(new_app_process(httpbin_app()))
-teardown(web$stop())
+web <- local_app_process(httpbin_app())
 
 test_that("get", {
   url <- web$url("/get")
@@ -35,13 +34,10 @@ test_that("post", {
 test_methods <- c("connect", "delete", "head", "mkcol", "options",
                   "patch", "propfind", "put", "report")
 
-web2 <- setup({
-  app <- new_app()
-  handler <- function(req, res) res$send_json(list(method = req$method))
-  for (method in test_methods) app[[method]](paste0("/", method), handler)
-  new_app_process(app, port = NA)
-})
-teardown(web2$stop())
+app <- new_app()
+handler <- function(req, res) res$send_json(list(method = req$method))
+for (method in test_methods) app[[method]](paste0("/", method), handler)
+web2 <- local_app_process(app, port = NA)
 
 test_that("the rest", {
   for (method in test_methods) {

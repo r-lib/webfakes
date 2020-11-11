@@ -1,6 +1,5 @@
 
-web <- setup(new_app_process(test_response_app()))
-teardown(web$stop())
+web <- local_app_process(test_response_app())
 
 test_that("response locals", {
   url <- web$url("/local")

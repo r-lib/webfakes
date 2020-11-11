@@ -1,22 +1,18 @@
 
-web <- setup({
-  app <- new_app()
-  app$use(mw_static(root = test_path("fixtures", "static")))
-  set_headers <- function(req, res) {
-    res$set_header("foo", "bar")
-  }
-  app$use(mw_static(root = test_path("fixtures", "static2"),
-                    set_headers = set_headers))
-  app$get("/static.html", function(req, res) {
-    res$send("this is never reached")
-  })
-  app$get("/fallback", function(req, res) {
-    res$send("this is the fallback")
-  })
-  new_app_process(app)
+app <- new_app()
+app$use(mw_static(root = test_path("fixtures", "static")))
+set_headers <- function(req, res) {
+  res$set_header("foo", "bar")
+}
+app$use(mw_static(root = test_path("fixtures", "static2"),
+                  set_headers = set_headers))
+app$get("/static.html", function(req, res) {
+  res$send("this is never reached")
 })
-
-teardown(web$stop())
+app$get("/fallback", function(req, res) {
+  res$send("this is the fallback")
+})
+web <- local_app_process(app)
 
 test_that("static file", {
   url <- web$url("/static.html")
