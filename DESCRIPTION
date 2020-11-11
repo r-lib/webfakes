@@ -27,6 +27,7 @@ URL: https://r-lib.github.io/presser,
     https://github.com/r-lib/presser#readme
 BugReports: https://github.com/r-lib/presser/issues
 RoxygenNote: 7.1.0.9000
+Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 Imports:
     stats,

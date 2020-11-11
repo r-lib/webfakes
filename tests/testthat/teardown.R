@@ -1,0 +1,2 @@
+
+try(httpbin$stop())
