@@ -22,6 +22,13 @@ new_app_process(
 
 \item{opts}{Server options. See \code{\link[=server_opts]{server_opts()}} for the defaults.}
 
+\item{start}{Whether to start the web server immediately. If this is
+\code{FALSE}, and \code{auto_start} is \code{TRUE}, then it is started as neeed.}
+
+\item{auto_start}{Whether to start the web server process automatically.
+If \code{TRUE} and the process is not running, then \verb{$start()},
+\verb{$get_port()} and \verb{$url()} start the process.}
+
 \item{process_timeout}{How long to wait for the subprocess to start, in
 milliseconds.}
 
@@ -82,4 +89,8 @@ resp <- curl::curl_fetch_memory(url)
 cat(rawToChar(resp$content))
 
 proc$stop()
+}
+\seealso{
+\code{\link[=local_app_process]{local_app_process()}} for automatically cleaning up the
+subprocess.
 }

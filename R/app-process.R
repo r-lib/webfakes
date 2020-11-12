@@ -6,6 +6,11 @@
 #' @param app `presser_app` object, the web app to run.
 #' @param port Port to use. By default the OS assigns a port.
 #' @param opts Server options. See [server_opts()] for the defaults.
+#' @param start Whether to start the web server immediately. If this is
+#'   `FALSE`, and `auto_start` is `TRUE`, then it is started as neeed.
+#' @param auto_start Whether to start the web server process automatically.
+#'   If `TRUE` and the process is not running, then `$start()`,
+#'   `$get_port()` and `$url()` start the process.
 #' @param process_timeout How long to wait for the subprocess to start, in
 #'   milliseconds.
 #' @param callr_opts Options to pass to [callr::r_session_options()]
@@ -49,6 +54,8 @@
 #' parameter to return a specific path.
 #'
 #' @aliases presser_app_process
+#' @seealso [local_app_process()] for automatically cleaning up the
+#'   subprocess.
 #' @export
 #' @examples
 #' app <- new_app()
