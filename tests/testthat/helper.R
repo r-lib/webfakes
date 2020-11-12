@@ -91,3 +91,5 @@ test_response_app <- function() {
 
   app
 }
+
+httpbin <- local_app_process(httpbin_app())

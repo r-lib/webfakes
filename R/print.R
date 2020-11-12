@@ -133,19 +133,23 @@ print.presser_regexp <- function(x, ...) {
 
 format.presser_app_process <- function(x, ...) {
   header <- "<presser_app_process>"
+  state <- x$get_state()
   data <- c(
     "state:",
-    paste0("  ", x$get_state()),
+    paste0("  ", state),
+    "auto_start:",
+    paste0("  ", x$.auto_start),
     "process id:",
-    paste0("  ", if (is.null(x$.process)) "none" else x$.process$get_pid()),
+    paste0("  ", if (state == "not running") "none" else x$.process$get_pid()),
     "http url:",
-    paste0("  ", x$url())
+    paste0("  ", if (state == "live") x$url() else "NA")
   )
   methods <- c(
     "  get_app()              # get the app object",
     "  get_port()             # query port of the app",
     "  get_state()            # query web server process state",
     "  local_env(envvars)     # set temporary environment variables",
+    "  start()                # start the app",
     "  url(path, query)       # query url for an api path",
     "  stop()                 # stop web server process"
   )

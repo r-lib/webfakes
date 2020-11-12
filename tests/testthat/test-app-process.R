@@ -4,7 +4,7 @@ test_that("error if cannot start", {
   app <- new_app()
   app$listen <- function(...) Sys.sleep(1)
   expect_error(
-    new_app_process(app, process_timeout = 100),
+    new_app_process(app, process_timeout = 100, start = TRUE),
     "presser app subprocess did not start"
   )
 
@@ -12,7 +12,7 @@ test_that("error if cannot start", {
   app <- new_app()
   app$listen <- function(...) stop("oops")
   expect_error(
-    new_app_process(app),
+    new_app_process(app, start = TRUE),
     class = "callr_status_error",
     "failed to start presser app process.*oops"
   )
@@ -21,7 +21,7 @@ test_that("error if cannot start", {
   app <- new_app()
   app$listen <- function(...) "foobar"
   expect_error(
-    new_app_process(app),
+    new_app_process(app, start = TRUE),
     "Unexpected message from presser app subprocess"
   )
 })
@@ -29,7 +29,7 @@ test_that("error if cannot start", {
 test_that("get_state", {
   app <- new_app()
   on.exit(proc$stop(), add = TRUE)
-  proc <- new_app_process(app)
+  proc <- new_app_process(app, start = TRUE)
   expect_equal(proc$get_state(), "live")
   proc$.process$kill()
   expect_equal(proc$get_state(), "dead")
@@ -41,7 +41,7 @@ test_that("env vars", {
   app <- new_app()
   on.exit(proc$stop(), add = TRUE)
   withr::local_envvar(list(FOO = "foo"))
-  proc <- new_app_process(app)
+  proc <- new_app_process(app, start = TRUE)
   proc$local_env(list(FOO = "bar"))
   expect_equal(Sys.getenv("FOO", ""), "bar")
   proc$stop()

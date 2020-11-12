@@ -69,7 +69,7 @@ test_that("presser_regexp", {
 test_that("presser_app_process", {
   skip_without_png_device()
   app <- new_app()
-  proc <- new_app_process(app)
+  proc <- new_app_process(app, start = TRUE)
   proc$stop()
   # make the output deterministic
   proc$.port <- 3000

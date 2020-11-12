@@ -1,4 +1,11 @@
 
+#' TODO
+#'
+#' @param app
+#' @param ...
+#' @param .env
+#' @param .teardown_env
+#'
 #' @export
 
 local_app_process <- function(app, ..., .env = parent.frame(),

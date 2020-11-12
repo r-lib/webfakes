@@ -9,6 +9,8 @@ new_app_process(
   app,
   port = NULL,
   opts = server_opts(remote = TRUE),
+  start = FALSE,
+  auto_start = TRUE,
   process_timeout = 5000,
   callr_opts = NULL
 )

@@ -1,8 +1,6 @@
 
-web <- local_app_process(httpbin_app())
-
 test_that("get", {
-  url <- web$url("/get")
+  url <- httpbin$url("/get")
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
   data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
@@ -10,7 +8,7 @@ test_that("get", {
 })
 
 test_that("post", {
-  url <- web$url("/post")
+  url <- httpbin$url("/post")
   data <- charToRaw(jsonlite::toJSON(list(foo = "bar", foobar = 1:3)))
   handle <- curl::new_handle()
   curl::handle_setheaders(handle, "Content-Type" = "application/json")

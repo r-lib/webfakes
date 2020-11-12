@@ -65,14 +65,16 @@
 
 new_app_process <- function(app, port = NULL,
                             opts = server_opts(remote = TRUE),
-                            process_timeout = 5000, callr_opts = NULL) {
+                            start = FALSE, auto_start = TRUE,
+                            process_timeout = 5000,
+                            callr_opts = NULL) {
 
-  app; port; opts; process_timeout; callr_opts
+  app; port; opts; start; auto_start; process_timeout; callr_opts
 
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, port, opts, callr_opts) {
+    start = function() {
       self$.app <- app
       callr_opts <- do.call(callr::r_session_options, as.list(callr_opts))
       self$.process <- callr::r_session$new(callr_opts, wait = TRUE)
@@ -110,7 +112,10 @@ new_app_process <- function(app, port = NULL,
 
     get_app = function() self$.app,
 
-    get_port = function() self$.port,
+    get_port = function() {
+      if (self$get_state() == "not running" && auto_start) self$start()
+      self$.port
+    },
 
     stop = function() {
       if (is.null(self$.process)) return(invisible(self))
@@ -164,6 +169,7 @@ new_app_process <- function(app, port = NULL,
     },
 
     url = function(path = "/", query = NULL) {
+      if (self$get_state() == "not running" && auto_start) self$start()
       if (!is.null(query)) {
         query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
       }
@@ -176,6 +182,7 @@ new_app_process <- function(app, port = NULL,
     .old_env = NULL,
     .access_log = NA_character_,
     .error_log = NA_character_,
+    .auto_start = auto_start,
 
     .print_errors = function() {
       if (!is.na(self$.error_log) && file.exists(self$.error_log) &&
@@ -187,13 +194,7 @@ new_app_process <- function(app, port = NULL,
     }
   )
 
-  self$new(
-    app,
-    port = port,
-    opts = opts,
-    callr_opts = callr_opts
-  )
-  self$new <- NULL
+  if (start) self$start()
 
   self
 }
