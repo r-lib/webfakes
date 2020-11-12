@@ -70,7 +70,24 @@ void R_init_presser(DllInfo *dll) {
 
 #ifdef _WIN32
 int check_stdin() {
-  // TODO
+  HANDLE hnd = GetStdHandle(STD_INPUT_HANDLE);
+  if (hnd == INVALID_HANDLE_VALUE) {
+    R_THROW_SYSTEM_ERROR("Cannot get stdin handle");
+  }
+  DWORD type = GetFileType(hnd);
+  if (type != FILE_TYPE_PIPE) return 0;
+  DWORD ret = WaitForSingleObject(hnd, 0);
+  if (ret == WAIT_TIMEOUT) return 0;
+  if (ret == WAIT_FAILED) R_THROW_SYSTEM_ERROR("Cannot poll stdin");
+  if (ret == WAIT_OBJECT_0) {
+    DWORD avail;
+    DWORD ret2 = PeekNamedPipe(hnd, NULL, 0, NULL, &avail, NULL);
+    if (!ret2) {
+      DWORD err = GetLastError();
+      if (err == ERROR_BROKEN_PIPE) return 1;
+      R_THROW_SYSTEM_ERROR_CODE(err, "Cannot peek stdin pipe");
+    }
+  }
   return 0;
 }
 
@@ -89,6 +106,7 @@ int check_stdin() {
 
   // Event on stdin, if we cannot read, then it if EOF
   ssize_t num = read(0, buffer, 4096);
+  if (num == -1) R_THROW_SYSTEM_ERROR("Cannot read from stdin");
   if (num == 0) return 1;
 
   // Otherwise fine
