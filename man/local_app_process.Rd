@@ -8,7 +8,7 @@ local_app_process(
   app,
   ...,
   .env = parent.frame(),
-  .teardown_env = parent.frame()
+  .local_envir = parent.frame()
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ local_app_process(
 
 \item{.env}{The environment to run \code{\link[=new_app_process]{new_app_process()}} in.}
 
-\item{.teardown_env}{The environment to attach the process cleanup to.
+\item{.local_envir}{The environment to attach the process cleanup to.
 Typically a frame. When this frame finishes, the process is stopped.}
 }
 \description{
