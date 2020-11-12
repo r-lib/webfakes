@@ -13,6 +13,7 @@
 #include <windows.h>
 #else
 #include <unistd.h>
+#include <poll.h>
 #endif
 
 /* --------------------------------------------------------------------- */
@@ -20,7 +21,7 @@
 /* --------------------------------------------------------------------- */
 
 SEXP server_start(SEXP options);
-SEXP server_poll(SEXP rsrv);
+SEXP server_poll(SEXP rsrv, SEXP clean);
 SEXP server_stop(SEXP rsrv);
 SEXP server_get_ports(SEXP rsrv);
 
@@ -38,7 +39,7 @@ static const R_CallMethodDef callMethods[]  = {
 
   /* server */
   { "server_start",          (DL_FUNC) &server_start,          1 },
-  { "server_poll",           (DL_FUNC) &server_poll,           1 },
+  { "server_poll",           (DL_FUNC) &server_poll,           2 },
   { "server_stop",           (DL_FUNC) &server_stop,           1 },
   { "server_get_ports",      (DL_FUNC) &server_get_ports,      1 },
 
@@ -66,6 +67,34 @@ void R_init_presser(DllInfo *dll) {
 /* --------------------------------------------------------------------- */
 /* internals                                                             */
 /* --------------------------------------------------------------------- */
+
+#ifdef _WIN32
+int check_stdin() {
+  // TODO
+  return 0;
+}
+
+#else
+int check_stdin() {
+  static char buffer[4096];
+  struct pollfd pfd;
+  pfd.fd = 0;
+  pfd.events = POLLIN;
+  pfd.revents = 0;
+  int ret = poll(&pfd, 1, 0);
+  if (ret == -1) R_THROW_SYSTEM_ERROR("Cannot poll stdin");
+
+  // Nothing happened on stdin, keep running
+  if (ret == 0) return 0;
+
+  // Event on stdin, if we cannot read, then it if EOF
+  ssize_t num = read(0, buffer, 4096);
+  if (num == 0) return 1;
+
+  // Otherwise fine
+  return 0;
+}
+#endif
 
 #define PRESSER_NOTHING 0
 #define PRESSER_REQ     1         /* request just came it */
@@ -396,8 +425,9 @@ static void server_poll_cleanup(void *ptr) {
   pthread_cond_signal(&srv_data->process_less);
 }
 
-SEXP server_poll(SEXP server) {
+SEXP server_poll(SEXP server, SEXP clean) {
   struct mg_context *ctx = R_ExternalPtrAddr(server);
+  int cclean = LOGICAL(clean)[0];
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: polling\n", ctx);
 #endif
@@ -413,6 +443,7 @@ SEXP server_poll(SEXP server) {
       limit.tv_nsec %= 1000 * 1000 * 1000;
     }
     R_CheckUserInterrupt();
+    if (cclean && check_stdin()) R_THROW_ERROR("Cleaning up web server");
     (void) pthread_cond_timedwait(&srv_data->process_more,
                                   &srv_data->process_lock, &limit);
   }

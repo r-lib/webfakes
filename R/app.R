@@ -241,7 +241,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' ## Starting and stopping
 #'
 #' ```r
-#' app$listen(port = NULL, opts = server_opts())
+#' app$listen(port = NULL, opts = server_opts(), cleanup = TRUE)
 #' ```
 #'
 #' * `port`: port to listen on. When `NULL`, the operating system will
@@ -249,6 +249,11 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' * `opts`: options to the web server. See [server_opts()] for the
 #'   list of options and their default values.
+#'
+#' * `cleanup`: stop the server (with an error) if the standard input
+#'   of the process is closed. This is handy when the app runs in a
+#'   `callr::r_session` subprocess, because it stops the app (and the
+#'   subprocess) if the main process has terminated.
 #'
 #' This method does not return, and can be interrupted with `CTRL+C` / `ESC`
 #' or a SIGINT signal. See [new_app_process()] for interrupting an app that
@@ -336,7 +341,6 @@ pkg_data <- new.env(parent = emptyenv())
 #' system.file(package = "presser", "examples")
 #'
 #' app <- new_app()
-#' app <- new_app()
 #' app$use(mw_log())
 #'
 #' app$get("/hello", function(req, res) {
@@ -396,7 +400,7 @@ new_app <- function() {
       invisible(self)
     },
 
-    listen = function(port = NULL, opts = server_opts()) {
+    listen = function(port = NULL, opts = server_opts(), cleanup = TRUE) {
       stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
       opts$port <- port
@@ -431,7 +435,7 @@ new_app <- function() {
       on.exit(server_stop(srv), add = TRUE)
 
       while (TRUE) {
-        req <- server_poll(srv)
+        req <- server_poll(srv, cleanup)
         tryCatch(
           self$.process_request(req),
           error = function(err) {

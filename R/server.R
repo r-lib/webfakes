@@ -121,10 +121,10 @@ server_stop <- function(srv) {
   invisible(call_with_cleanup(c_server_stop, srv))
 }
 
-server_poll <- function(srv) {
+server_poll <- function(srv, cleanup = TRUE) {
   while (TRUE) {
     tryCatch(
-      return(call_with_cleanup(c_server_poll, srv)),
+      return(call_with_cleanup(c_server_poll, srv, cleanup)),
       error = function(err) {
         cat(as.character(err), file = stderr())
         stop(new_presser_error())
