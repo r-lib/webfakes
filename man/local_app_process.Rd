@@ -4,19 +4,12 @@
 \alias{local_app_process}
 \title{App process that is cleaned up automatically}
 \usage{
-local_app_process(
-  app,
-  ...,
-  .env = parent.frame(),
-  .local_envir = parent.frame()
-)
+local_app_process(app, ..., .local_envir = parent.frame())
 }
 \arguments{
 \item{app}{\code{presser_app} object, the web app to run.}
 
 \item{...}{Passed to \code{\link[=new_app_process]{new_app_process()}}.}
-
-\item{.env}{The environment to run \code{\link[=new_app_process]{new_app_process()}} in.}
 
 \item{.local_envir}{The environment to attach the process cleanup to.
 Typically a frame. When this frame finishes, the process is stopped.}
