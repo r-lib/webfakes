@@ -47,7 +47,8 @@ local_env(envvars)
 url(path = "/", query = NULL)
 }\if{html}{\out{</div>}}
 \itemize{
-\item \code{envvars}: Named list of environment variables.
+\item \code{envvars}: Named list of environment variables. The \code{{url}} substring
+is replaced by the URL of the app.
 \item \code{path}: Path to return the URL for.
 \item \code{query}: Additional query parameters, a named list, to add to the URL.
 }
@@ -68,7 +69,9 @@ already).
 }
 
 \code{local_env()} sets the given environment variables for the duration of
-the app process. It resets them in \verb{$stop()}.
+the app process. It resets them in \verb{$stop()}. Presser replaces \code{{url}}
+in the value of the environment variables with the app URL, so you can
+set environment variables that point to the app.
 
 \code{url()} returns the URL of the web app. You can use the \code{path}
 parameter to return a specific path.

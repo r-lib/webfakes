@@ -30,7 +30,8 @@
 #' url(path = "/", query = NULL)
 #' ```
 #'
-#' * `envvars`: Named list of environment variables.
+#' * `envvars`: Named list of environment variables. The `{url}` substring
+#'   is replaced by the URL of the app.
 #' * `path`: Path to return the URL for.
 #' * `query`: Additional query parameters, a named list, to add to the URL.
 #'
@@ -48,7 +49,9 @@
 #' * `"dead"` means that the subprocess has quit or crashed.
 #'
 #' `local_env()` sets the given environment variables for the duration of
-#' the app process. It resets them in `$stop()`.
+#' the app process. It resets them in `$stop()`. Presser replaces `{url}`
+#' in the value of the environment variables with the app URL, so you can
+#' set environment variables that point to the app.
 #'
 #' `url()` returns the URL of the web app. You can use the `path`
 #' parameter to return a specific path.
@@ -113,6 +116,7 @@ new_app_process <- function(app, port = NULL,
       self$.port <- msg$message$port
       self$.access_log <- msg$message$access_log
       self$.error_log <- msg$message$error_log
+      self$.set_env()
 
       invisible(self)
     },
@@ -125,8 +129,8 @@ new_app_process <- function(app, port = NULL,
     },
 
     stop = function() {
+      self$.reset_env()
       if (is.null(self$.process)) return(invisible(self))
-      if (!is.null(self$.old_env)) set_envvar(self$.old_env)
 
       if (!self$.process$is_alive()) {
         status <- self$.process$get_exit_status()
@@ -171,8 +175,31 @@ new_app_process <- function(app, port = NULL,
     },
 
     local_env = function(envvars) {
-      self$.old_env <- c(self$.old_env, set_envvar(envvars))
+      if (!is.null(self$.process)) {
+        local <- unlist(envvars)
+        local[] <- gsub("{url}", self$url(), local, fixed = TRUE)
+        self$.old_env <- c(self$.old_env, set_envvar(local))
+      } else {
+        self$.local_env <- utils::modifyList(
+          as.list(self$.local_env),
+          as.list(envvars)
+        )
+      }
       invisible(self)
+    },
+
+    .set_env = function() {
+      local <- unlist(self$.local_env)
+      local[] <- gsub("{url}", self$url(), local, fixed = TRUE)
+      self$.old_env <- set_envvar(local)
+      invisible(self)
+    },
+
+    .reset_env = function() {
+      if (!is.null(self$.old_env)) {
+        set_envvar(self$.old_env)
+        self$.old_env <- NULL
+      }
     },
 
     url = function(path = "/", query = NULL) {
@@ -200,6 +227,8 @@ new_app_process <- function(app, port = NULL,
       }
     }
   )
+
+  reg.finalizer(self, function(x) x$.reset_env())
 
   if (start) self$start()
 

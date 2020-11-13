@@ -93,3 +93,4 @@ test_response_app <- function() {
 }
 
 httpbin <- local_app_process(httpbin_app())
+httpbin$local_env(c(FOO = "{url}xxx"))
