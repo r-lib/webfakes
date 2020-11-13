@@ -18,7 +18,7 @@ http <- presser::new_app_process(presser::httpbin_app())
 ```
 
 (Before testthat 3.0.0, you had to write the teardown expression in a `tests/testthat/teardown-http.R` file.
-That still works, but a single setup file is considered to be better practice.)
+That still works, but a single setup file is considered to be better practice, see [this testthat vignette](https://testthat.r-lib.org/articles/test-fixtures.html).)
 
 In the test cases you can query the `http` app process to get the URLs you need to connect to:
 
