@@ -70,13 +70,15 @@ environment variables that point to your local server.
 
 To test a sequence of requests, the app needs state information that is
 kept between requests. `app$locals` is an environment that belongs to the
-app, and it can be used to record information and then retreive it in
+app, and it can be used to record information and then retrieve it in
 future requests. E.g. here is an end point that fails three times, then
 succeeds once, fails again three times, etc.
 
+Note that the `counter` starts at 0, not 1.
+
 ```{r}
-retry <- presser::new_app()
-retry$get("/unstable", function(req, res) {
+flaky <- presser::new_app()
+flaky$get("/unstable", function(req, res) {
   if (identical(res$app$locals$counter, 3L)) {
     res$app$locals$counter <- NULL
     res$send_json(object = list(result = "ok"))
@@ -90,12 +92,9 @@ retry$get("/unstable", function(req, res) {
 Let's run this app in another process and connect to it:
 
 ```{r}
-pr <- presser::new_app_process(retry)
+pr <- presser::new_app_process(flaky)
 url <- pr$url("/unstable")
-httr::GET(url)
-httr::GET(url)
-httr::GET(url)
-httr::GET(url)
+httr::RETRY("GET", url, times = 4)
 ```
 
 ## How do I make my app connect to presser when the tests are running?
