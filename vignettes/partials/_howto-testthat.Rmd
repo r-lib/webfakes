@@ -1,18 +1,24 @@
 
-You can use testthat's setup and teardown files.
-You start the app in a setup file and stop it in a teardown file.
+You can use testthat's setup files.
+You start the app in a setup file and also register a teardown
+expression for it. 
+`local_app_process()` can do both in one go.
 See `?testthat::source_file`.
 Your `tests/testthat/setup-http.R` may look like this:
 
-```{r}
+```{r eval = FALSE}
+http <- presser::local_app_process(
+  presser::httpbin_app(),
+  .local_envir = testthat::teardown_env()
+)
+```
+
+```{r include = FALSE}
 http <- presser::new_app_process(presser::httpbin_app())
 ```
 
-Your `tests/testthat/teardown-http.R` will be
-
-```{r, eval = FALSE}
-http$stop()
-```
+(Before testthat 3.0.0, you had to write the teardown expression in a `tests/testthat/teardown-http.R` file.
+That still works, but a single setup file is considered to be better practice.)
 
 In the test cases you can query the `http` app process to get the URLs you need to connect to:
 

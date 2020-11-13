@@ -1,6 +1,10 @@
 ---
 title: "How to use presser in your tests"
 output: rmarkdown::html_vignette
+editor_options:
+  markdown:
+    wrap: sentence
+    canonical: true
 ---
 
 ```{r, include = FALSE}
@@ -14,13 +18,12 @@ knitr::opts_chunk$set(
 
 First, you need to add presser to the `DESCRIPTION` file of your package.
 Use the `Suggests` field, as presser is only needed for testing:
-```
-...
-Suggests:
-  presser,
-  testthat
-...
-```
+
+    ...
+    Suggests:
+      presser,
+      testthat
+    ...
 
 Then you need to decide if you want a single web app for all your test cases.
 The alternative is to use different apps for some or all test files.
@@ -34,45 +37,30 @@ See the sections below on writing tests with a single app or multiple apps.
 ```{R child = "partials/_howto-testthat.Rmd"}
 ```
 
-## How to make sure that my code works with the _real_ API?
+## How to make sure that my code works with the *real* API?
 
-Indeed, if you use presser for your test cases, then they never touch
-the real web server.
-As you might suspect, this is not ideal, especially when you do not
-control the server.
-The web service might change their API, and your test cases will fail
-to warn you.
+Indeed, if you use presser for your test cases, then they never touch the real web server.
+As you might suspect, this is not ideal, especially when you do not control the server.
+The web service might change their API, and your test cases will fail to warn you.
 
-One practical solution is to write (at least some) flexible tests,
-that can run against a local fake webserver, or a real one, and you
-have a quick switch to change their behavior.
+One practical solution is to write (at least some) flexible tests, that can run against a local fake webserver, or a real one, and you have a quick switch to change their behavior.
 I have found that environment variables work great for this.
 
-E.g. if the `FAKE_HTTP_TESTS` environment variable is not set, the
-tests run with the real web server, otherwise they use a fake one.
-Another solution, that works best is the HTTP requests are in the
-downstream package code, is to introduce one environment variable for each
-API you need to connect to.
+E.g. if the `FAKE_HTTP_TESTS` environment variable is not set, the tests run with the real web server, otherwise they use a fake one.
+Another solution, that works best is the HTTP requests are in the downstream package code, is to introduce one environment variable for each API you need to connect to.
 These might be set to the real API servers, or to the fake ones.
 
-Once you have some tests that can use both kinds or servers, you can
-set up your continuous integration (CI) framework, to run the tests
-agains the real server (say) once a day.
-This special CI run makes sure that your code works well with the
-real API.
-You can run all the other tests, locally and in the CI, against the
-fake local web server.
+Once you have some tests that can use both kinds or servers, you can set up your continuous integration (CI) framework, to run the tests agains the real server (say) once a day.
+This special CI run makes sure that your code works well with the real API.
+You can run all the other tests, locally and in the CI, against the fake local web server.
 
-See the next question for how presser helps you setting
-environment variables that point to your local server.
+See the next question for how presser helps you setting environment variables that point to your local server.
 
 ## How do I test a sequence of requests?
 
-To test a sequence of requests, the app needs state information that is
-kept between requests. `app$locals` is an environment that belongs to the
-app, and it can be used to record information and then retrieve it in
-future requests. E.g. here is an end point that fails three times, then
-succeeds once, fails again three times, etc.
+To test a sequence of requests, the app needs state information that is kept between requests.
+`app$locals` is an environment that belongs to the app, and it can be used to record information and then retreive it in future requests.
+E.g. here is an end point that fails three times, then succeeds once, fails again three times, etc.
 
 Note that the `counter` starts at 0, not 1.
 
@@ -102,11 +90,11 @@ httr::RETRY("GET", url, times = 4)
 In the typical scenario, you want your package to connect to the test app only when running the tests.
 One way to achieve this is to allow specifying the web server URL(s) via environment variables.
 E.g. when writing a GitHub API client, your package can check use `GITHUB_URL` environment variable.
-When this is not set, the package connects to the proper GitHub API.
-When testing, you can point it to your test app.
+When this is not set, the package connects to the proper GitHub API. When testing, you can point it to your test app.
 
 `new_app_process()` helps you setting up temporary environment variables.
-These are active while the process is running, and they are removed or reset in `$stop()`. For example:
+These are active while the process is running, and they are removed or reset in `$stop()`.
+For example:
 
 ```{r, include = FALSE}
 # Make sure this is not set in the vignette
@@ -114,7 +102,7 @@ Sys.unsetenv("GITHUB_API")
 ```
 
 ```{r}
-http <- presser::new_app_process(presser::httpbin_app())
+http <- presser::local_app_process(presser::httpbin_app(), start = TRUE)
 http$local_env(list(GITHUB_API = http$url()))
 Sys.getenv("GITHUB_API")
 http$stop()
@@ -128,18 +116,22 @@ Sys.getenv("GITHUB_API")
 
 ## Can I have an app for a single testthat test file?
 
-To run a web app for a single test file, start it in `testthat::setup()` and stop it in `testthat::teardown()`.
-You can do this at the beginning of the file:
+To run a web app for a single test file, start it with `new_app_process()` at the beginning of the file, and register its cleanup using `withr::defer()`.
+Even simpler, use `local_app_process()` which is the same as `new_app_process()` but it automatically stops the web server process, at the end of the test file:
 
 ```{r}
-web <- setup({
-  app <- presser::new_app()
-  app$get("/hello/:user", function(req, res) {
-    res$send(paste0("Hello ", req$params$user, "!"))
-  })
-  presser::new_app_process(app)
+app <- presser::new_app()
+app$get("/hello/:user", function(req, res) {
+  res$send(paste0("Hello ", req$params$user, "!"))
 })
-teardown(web$stop())
+```
+
+```{r start1, include = FALSE}
+web <- presser::local_app_process(app)
+```
+
+```{r eval = FALSE}
+<<start1>>
 ```
 
 Then in the test cases, use `web$url()` to get the URL to connect to.
@@ -154,15 +146,15 @@ test_that("can use hello API", {
 ## Can I use an app for a single testthat test?
 
 Sure.
-For this you need to create the app process within the `testthat::test_that()` test case and use `on.exit()` to stop it.
+For this you need to create the app process within the `testthat::test_that()` test case.
+`local_app_process()` automatically cleans it up at the end of the block.
 It goes like this:
 
 ```{r}
 test_that("query works", {
   app <- presser::new_app()
   app$get("/hello", function(req, res) res$send("hello there"))
-  on.exit(try(web$stop()))
-  web <- presser::new_app_process(app)
+  web <- presser::local_app_process(app)
 
   echo <- httr::content(httr::GET(web$url("/hello")))
   expect_equal(echo, "hello there")
@@ -171,7 +163,7 @@ test_that("query works", {
 
 ## How can I to debug an app?
 
-To debug an app, it is best to run it in the main R process, i.e. _not_ via `new_app_process()`.
+To debug an app, it is best to run it in the main R process, i.e. *not* via `new_app_process()`.
 You can add breakpoints, or `browser()` calls to your handler functions, and then invoke your app from another process.
 You might find the `curl` command line tool to send HTTP requests to the app, or you can just use another R process.
 Here is an example.
@@ -188,15 +180,17 @@ app$get("/debug", function(req, res) {
 
 Now start the app on port 3000:
 
-```r
+``` {.r}
 app$listen(port = 3000)
 ```
+
 ```{r echo = FALSE}
 message("Running presser web app on port 3000")
 ```
 
 Connect to the app from another R or `curl` process:
-```sh
+
+``` {.sh}
 curl -v http://127.0.0.1:3000/debug
 ```
 
@@ -219,6 +213,7 @@ Got your back
 ```
 
 Your main R session will print the incoming request:
+
 ```{r echo = FALSE}
 cat('<presser_request>
 method:
@@ -263,21 +258,20 @@ Indeed, the `/delay/` end point is implemented using this feature.
 
 However, the request thread of the web server is still busy while on hold, so to take advantage of this, you need to allow multiple threads.
 The `num_threads` argument of the `$listen()` method of `presser_app` lets you specify the number of request threads the web server will use.
-Similarly, the `num_threads` argument of `new_app_process()` lets you modify the number of threads.
+Similarly, the `num_threads` argument of `local_app_process()` lets you modify the number of threads.
 
 When testing asynchronous or parallel code, that might invoke multiple, possibly delayed requests, it is best to increase the number of threads.
 The code below calls the same API request concurrently, three times.
 Each request takes 1 second to answer, but if the web server has more than three threads, together they'll still take about 1 second.
 
 ```{r}
-web <- setup(
-  presser::new_app_process(
-    presser::httpbin_app(),
-    opts = presser::server_opts(num_threads = 3)
-  )
+web <- presser::local_app_process(
+  presser::httpbin_app(),
+  opts = presser::server_opts(num_threads = 3)
 )
-teardown(web$stop())
+```
 
+```{r}
 test_that("", {
   url <- web$url("/delay/1")
   p <- curl::new_pool()

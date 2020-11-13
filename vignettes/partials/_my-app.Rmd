@@ -34,6 +34,9 @@ web$stop()
 web$get_state()
 ```
 
+`local_app_process()` is similar to `new_app_process()`, but it stops the server process at the end of the calling block. 
+This means that the process is automatically cleaned up at the end of a `test_that()` block or at the end of the test file.
+
 You can create your app at the beginning of your test file.
 Or, if you want to use the same app in multiple test files, use a
 testthat helper file.
@@ -42,4 +45,4 @@ for example to create reproducible examples.
 You can include a (possibly internal) function in your package, that
 creates the app.
 
-See `?new_app()` and `?new_app_process()` for more details.
+See `?new_app()`, `?new_app_process()` and `?local_app_process` for more details.
