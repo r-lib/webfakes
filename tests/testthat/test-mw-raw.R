@@ -1,16 +1,12 @@
 
-web <- setup({
-  app <- new_app()
-  app$use(mw_raw())
-  app$post("/raw", function(req, res) {
-    res$
-      set_type("application/octet-stream")$
-      send(req$raw)
-  })
-  new_app_process(app)
+app <- new_app()
+app$use(mw_raw())
+app$post("/raw", function(req, res) {
+  res$
+    set_type("application/octet-stream")$
+    send(req$raw)
 })
-
-teardown(web$stop())
+web <- local_app_process(app)
 
 test_that("raw body parser", {
   url <- web$url("/raw")

@@ -6,6 +6,11 @@
 #' @param app `presser_app` object, the web app to run.
 #' @param port Port to use. By default the OS assigns a port.
 #' @param opts Server options. See [server_opts()] for the defaults.
+#' @param start Whether to start the web server immediately. If this is
+#'   `FALSE`, and `auto_start` is `TRUE`, then it is started as neeed.
+#' @param auto_start Whether to start the web server process automatically.
+#'   If `TRUE` and the process is not running, then `$start()`,
+#'   `$get_port()` and `$url()` start the process.
 #' @param process_timeout How long to wait for the subprocess to start, in
 #'   milliseconds.
 #' @param callr_opts Options to pass to [callr::r_session_options()]
@@ -25,7 +30,8 @@
 #' url(path = "/", query = NULL)
 #' ```
 #'
-#' * `envvars`: Named list of environment variables.
+#' * `envvars`: Named list of environment variables. The `{url}` substring
+#'   is replaced by the URL of the app.
 #' * `path`: Path to return the URL for.
 #' * `query`: Additional query parameters, a named list, to add to the URL.
 #'
@@ -43,12 +49,16 @@
 #' * `"dead"` means that the subprocess has quit or crashed.
 #'
 #' `local_env()` sets the given environment variables for the duration of
-#' the app process. It resets them in `$stop()`.
+#' the app process. It resets them in `$stop()`. Presser replaces `{url}`
+#' in the value of the environment variables with the app URL, so you can
+#' set environment variables that point to the app.
 #'
 #' `url()` returns the URL of the web app. You can use the `path`
 #' parameter to return a specific path.
 #'
 #' @aliases presser_app_process
+#' @seealso [local_app_process()] for automatically cleaning up the
+#'   subprocess.
 #' @export
 #' @examples
 #' app <- new_app()
@@ -65,14 +75,16 @@
 
 new_app_process <- function(app, port = NULL,
                             opts = server_opts(remote = TRUE),
-                            process_timeout = 5000, callr_opts = NULL) {
+                            start = FALSE, auto_start = TRUE,
+                            process_timeout = 5000,
+                            callr_opts = NULL) {
 
-  app; port; opts; process_timeout; callr_opts
+  app; port; opts; start; auto_start; process_timeout; callr_opts
 
   self <- new_object(
     "presser_app_process",
 
-    new = function(app, port, opts, callr_opts) {
+    start = function() {
       self$.app <- app
       callr_opts <- do.call(callr::r_session_options, as.list(callr_opts))
       self$.process <- callr::r_session$new(callr_opts, wait = TRUE)
@@ -104,17 +116,21 @@ new_app_process <- function(app, port = NULL,
       self$.port <- msg$message$port
       self$.access_log <- msg$message$access_log
       self$.error_log <- msg$message$error_log
+      self$.set_env()
 
       invisible(self)
     },
 
     get_app = function() self$.app,
 
-    get_port = function() self$.port,
+    get_port = function() {
+      if (self$get_state() == "not running" && auto_start) self$start()
+      self$.port
+    },
 
     stop = function() {
+      self$.reset_env()
       if (is.null(self$.process)) return(invisible(self))
-      if (!is.null(self$.old_env)) set_envvar(self$.old_env)
 
       if (!self$.process$is_alive()) {
         status <- self$.process$get_exit_status()
@@ -159,11 +175,35 @@ new_app_process <- function(app, port = NULL,
     },
 
     local_env = function(envvars) {
-      self$.old_env <- c(self$.old_env, set_envvar(envvars))
+      if (!is.null(self$.process)) {
+        local <- unlist(envvars)
+        local[] <- gsub("{url}", self$url(), local, fixed = TRUE)
+        self$.old_env <- c(self$.old_env, set_envvar(local))
+      } else {
+        self$.local_env <- utils::modifyList(
+          as.list(self$.local_env),
+          as.list(envvars)
+        )
+      }
       invisible(self)
     },
 
+    .set_env = function() {
+      local <- unlist(self$.local_env)
+      local[] <- gsub("{url}", self$url(), local, fixed = TRUE)
+      self$.old_env <- set_envvar(local)
+      invisible(self)
+    },
+
+    .reset_env = function() {
+      if (!is.null(self$.old_env)) {
+        set_envvar(self$.old_env)
+        self$.old_env <- NULL
+      }
+    },
+
     url = function(path = "/", query = NULL) {
+      if (self$get_state() == "not running" && auto_start) self$start()
       if (!is.null(query)) {
         query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
       }
@@ -176,6 +216,7 @@ new_app_process <- function(app, port = NULL,
     .old_env = NULL,
     .access_log = NA_character_,
     .error_log = NA_character_,
+    .auto_start = auto_start,
 
     .print_errors = function() {
       if (!is.na(self$.error_log) && file.exists(self$.error_log) &&
@@ -187,13 +228,9 @@ new_app_process <- function(app, port = NULL,
     }
   )
 
-  self$new(
-    app,
-    port = port,
-    opts = opts,
-    callr_opts = callr_opts
-  )
-  self$new <- NULL
+  reg.finalizer(self, function(x) x$.reset_env())
+
+  if (start) self$start()
 
   self
 }

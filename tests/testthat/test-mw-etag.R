@@ -1,31 +1,28 @@
 
-web <- setup({
-  app <- new_app()$
-    use(mw_etag())$
-    get("/txt", function(req, res) {
-      res$
-        set_type("text/plain")$
-        send("textual")
-    })$
-    get("/txt-empty", function(req, res) {
-      res$
-        set_type("text/plain")$
-        send("")
-    })$
-    get("/raw", function(req, res) {
-      res$
-        set_type("applicartion/octet-stream")$
-        send(charToRaw("textual"))
-    })$
-    get("/raw-empty", function(req, res) {
-      res$
-        set_type("applicartion/octet-stream")$
-        send(raw(0))
-    })
-  new_app_process(app)
-})
+app <- new_app()$
+  use(mw_etag())$
+  get("/txt", function(req, res) {
+    res$
+      set_type("text/plain")$
+      send("textual")
+  })$
+  get("/txt-empty", function(req, res) {
+    res$
+      set_type("text/plain")$
+      send("")
+  })$
+  get("/raw", function(req, res) {
+    res$
+      set_type("applicartion/octet-stream")$
+      send(charToRaw("textual"))
+  })$
+  get("/raw-empty", function(req, res) {
+    res$
+      set_type("applicartion/octet-stream")$
+      send(raw(0))
+  })
 
-teardown(web$stop())
+web <- local_app_process(app)
 
 test_that("text/plain response", {
   url <- web$url("/txt")

@@ -9,6 +9,8 @@ new_app_process(
   app,
   port = NULL,
   opts = server_opts(remote = TRUE),
+  start = FALSE,
+  auto_start = TRUE,
   process_timeout = 5000,
   callr_opts = NULL
 )
@@ -19,6 +21,13 @@ new_app_process(
 \item{port}{Port to use. By default the OS assigns a port.}
 
 \item{opts}{Server options. See \code{\link[=server_opts]{server_opts()}} for the defaults.}
+
+\item{start}{Whether to start the web server immediately. If this is
+\code{FALSE}, and \code{auto_start} is \code{TRUE}, then it is started as neeed.}
+
+\item{auto_start}{Whether to start the web server process automatically.
+If \code{TRUE} and the process is not running, then \verb{$start()},
+\verb{$get_port()} and \verb{$url()} start the process.}
 
 \item{process_timeout}{How long to wait for the subprocess to start, in
 milliseconds.}
@@ -38,7 +47,8 @@ local_env(envvars)
 url(path = "/", query = NULL)
 }\if{html}{\out{</div>}}
 \itemize{
-\item \code{envvars}: Named list of environment variables.
+\item \code{envvars}: Named list of environment variables. The \code{{url}} substring
+is replaced by the URL of the app.
 \item \code{path}: Path to return the URL for.
 \item \code{query}: Additional query parameters, a named list, to add to the URL.
 }
@@ -59,7 +69,9 @@ already).
 }
 
 \code{local_env()} sets the given environment variables for the duration of
-the app process. It resets them in \verb{$stop()}.
+the app process. It resets them in \verb{$stop()}. Presser replaces \code{{url}}
+in the value of the environment variables with the app URL, so you can
+set environment variables that point to the app.
 
 \code{url()} returns the URL of the web app. You can use the \code{path}
 parameter to return a specific path.
@@ -80,4 +92,8 @@ resp <- curl::curl_fetch_memory(url)
 cat(rawToChar(resp$content))
 
 proc$stop()
+}
+\seealso{
+\code{\link[=local_app_process]{local_app_process()}} for automatically cleaning up the
+subprocess.
 }

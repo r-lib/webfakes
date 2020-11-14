@@ -245,13 +245,17 @@ response local variables (see \code{locals} in \link{presser_response}), are
 available.
 }
 
-\subsection{Starting and stopping}{\if{html}{\out{<div class="r">}}\preformatted{app$listen(port = NULL, opts = server_opts())
+\subsection{Starting and stopping}{\if{html}{\out{<div class="r">}}\preformatted{app$listen(port = NULL, opts = server_opts(), cleanup = TRUE)
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{port}: port to listen on. When \code{NULL}, the operating system will
 automatically select a free port.
 \item \code{opts}: options to the web server. See \code{\link[=server_opts]{server_opts()}} for the
 list of options and their default values.
+\item \code{cleanup}: stop the server (with an error) if the standard input
+of the process is closed. This is handy when the app runs in a
+\code{callr::r_session} subprocess, because it stops the app (and the
+subprocess) if the main process has terminated.
 }
 
 This method does not return, and can be interrupted with \code{CTRL+C} / \code{ESC}
@@ -329,7 +333,6 @@ Currently used configuration values:
 # see example web apps in the `/examples` directory in
 system.file(package = "presser", "examples")
 
-app <- new_app()
 app <- new_app()
 app$use(mw_log())
 
