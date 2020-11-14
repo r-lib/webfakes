@@ -1,7 +1,7 @@
 
 # Development version
 
-# 1.1.0
+# presser 1.1.0
 
 * Support chunked resposes via the new `response$send_chunk()` method.
 
@@ -14,6 +14,6 @@
 * The web server now does not crash if the connection is closed by the
   client while delaying the response.
 
-# 1.0.0
+# presser 1.0.0
 
 First public release.
