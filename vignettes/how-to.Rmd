@@ -37,6 +37,31 @@ See the sections below on writing tests with a single app or multiple apps.
 ```{R child = "partials/_howto-testthat.Rmd"}
 ```
 
+## How do I start the app when writing the tests?
+
+It is convenient to start the presser server process(es) when working on the tests interactively, e.g. when using `devtools::load_all()`.
+With `local_app_process()` in the testthat `setup*.R` file this is not automatic, because `devtools::load_all()` does not run these files.
+So you would need to source the `setup*.R` files manually, which is error prone.
+
+One solution is to create server processes in the testthat `helper*.R` files.
+`load_all()` executes the helper files by default.
+So instead of using a setup file, you can simply do this in the `helper-http.R` file:
+
+```{r eval = FALSE}
+httpbin <- local_app_process(httpbin_app())
+```
+
+If the app process is created in the helper file, then it is ready use after `load_all()`, and (by default) the actual process will be started at the first `$url()` or `$get_port()` call.
+You can also start it manually with `$start()`.
+
+Such a process is not cleaned up automatically at the end of the test suite, unless you clean it up by registering a `$stop()` call in a setup file, like this:
+
+```{r eval = FALSE}
+withr::defer(httpbin$stop(), testthat::teardown_env())
+```
+
+In practice this is not really necessary, because `R CMD check` runs the tests in a separate process, and when that finishes, the presser processes are cleaned up as well.
+
 ## How to make sure that my code works with the *real* API?
 
 Indeed, if you use presser for your test cases, then they never touch the real web server.
