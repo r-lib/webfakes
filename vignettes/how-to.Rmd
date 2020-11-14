@@ -62,6 +62,11 @@ withr::defer(httpbin$stop(), testthat::teardown_env())
 
 In practice this is not necessary, because `R CMD check` runs the tests in a separate process, and when that finishes, the presser processes are cleaned up as well.
 
+When running `devtools::test()`, `testthat::test_local()` or another testthat function to run (part of) the test suite in the current session, the `helper*.R` files are (re)loaded first.
+This will terminate the currently running app processes, if any, and create new app process objects.
+Should the test suite auto-start some of the test processes from `helper*.R`, these will not be cleaned up at the end of the test suite, but only at the next `load_all()` or `test()` call, or at the end of the R session.
+This lets you run your test code interactively, either via `test()` or manually, without thinking too much about the presser processes.
+
 ## How to make sure that my code works with the *real* API?
 
 Indeed, if you use presser for your test cases, then they never touch the real web server.
