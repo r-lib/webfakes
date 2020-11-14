@@ -36,6 +36,7 @@ reference:
   - presser_response
   - new_regexp
   - new_app_process
+  - local_app_process
   - server_opts
 
 - title: Middleware to parse requests
