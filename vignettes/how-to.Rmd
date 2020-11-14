@@ -54,13 +54,13 @@ httpbin <- local_app_process(httpbin_app())
 If the app process is created in the helper file, then it is ready use after `load_all()`, and (by default) the actual process will be started at the first `$url()` or `$get_port()` call.
 You can also start it manually with `$start()`.
 
-Such a process is not cleaned up automatically at the end of the test suite, unless you clean it up by registering a `$stop()` call in a setup file, like this:
+Processes created in helper files are not cleaned up automatically at the end of the test suite, unless you clean them up by registering a `$stop()` call in a setup file, like this:
 
 ```{r eval = FALSE}
 withr::defer(httpbin$stop(), testthat::teardown_env())
 ```
 
-In practice this is not really necessary, because `R CMD check` runs the tests in a separate process, and when that finishes, the presser processes are cleaned up as well.
+In practice this is not necessary, because `R CMD check` runs the tests in a separate process, and when that finishes, the presser processes are cleaned up as well.
 
 ## How to make sure that my code works with the *real* API?
 
