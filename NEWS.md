@@ -1,6 +1,16 @@
 
 # Development version
 
+* New `local_app_process()` function to automatically clean up the
+  server process.
+
+* Now `new_app_process()` (and the new `local_app_process()` as well) only
+  start the server process for frist `$url()` or `$get_port()` call,
+  by default.
+
+* Now `new_app_process()` and `local_app_process()` automatically clean up
+  the server process is the main R process terminates.
+
 # presser 1.1.0
 
 * Support chunked resposes via the new `response$send_chunk()` method.
