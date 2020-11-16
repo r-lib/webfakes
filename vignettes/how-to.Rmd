@@ -90,9 +90,19 @@ See the next question for how presser helps you setting environment variables th
 
 To test a sequence of requests, the app needs state information that is kept between requests.
 `app$locals` is an environment that belongs to the app, and it can be used to record information and then retrieve it in future requests.
+You could store anything in `app$locals`, something simple like a counter variable, something fancier like a sqlite database.
+You can add something to `app$locals` via methods or directly after creating the app.
+
+```{r}
+store <- presser::new_app()
+store$locals$packages <- list("presser")
+ls(store$locals)
+store$locals$packages
+```
+
 E.g. here is an end point that fails three times, then succeeds once, fails again three times, etc.
 
-Note that the `counter` starts at 0, not 1.
+Note that the `counter` created by the code below starts at 0, not 1.
 
 ```{r}
 flaky <- presser::new_app()
@@ -113,6 +123,61 @@ Let's run this app in another process and connect to it:
 pr <- presser::new_app_process(flaky)
 url <- pr$url("/unstable")
 httr::RETRY("GET", url, times = 4)
+```
+
+Another example where we send information to an app and then retrieve it.
+
+```{r}
+store <- presser::new_app()
+# Storing "data" for the app
+store$locals$packages <- list("presser")
+# Get method
+store$get("/packages", function(req, res) {
+  res$send_json(res$app$locals$packages, auto_unbox = TRUE)
+})
+# Post method, store information from the query
+store$post("/packages", function(req, res) {
+  res$app$locals$packages <- c(res$app$locals$packages, req$query$name)
+  res$send_json(res$app$locals$packages, auto_unbox = TRUE)
+})
+
+# Start the app
+web <- presser::local_app_process(store, start = TRUE)
+# Get current information
+get_packages <- function() {
+  httr::content(
+    httr::GET(
+      httr::modify_url(
+        web$url(), 
+        path = "packages"
+        )
+      )
+    )
+}
+get_packages()
+
+
+# Post new information
+post_package <- function(name) {
+  httr::POST(
+  httr::modify_url(
+    web$url(),  
+    path = "packages",
+    query = list(name = name)
+  )
+)
+}
+post_package("vcr")
+# Get current information
+get_packages()
+
+post_package("httptest")
+# Get current information
+get_packages()
+
+# stop app
+web$stop()
+
 ```
 
 ## How do I make my app connect to presser when the tests are running?
