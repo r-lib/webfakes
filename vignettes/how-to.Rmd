@@ -25,12 +25,62 @@ Use the `Suggests` field, as presser is only needed for testing:
       testthat
     ...
 
-Then you need to decide if you want a single web app for all your test cases.
+Then, you might need to tweak your package code slightly to make sure every call to a real web service can be targeted at another URL instead (of a fake app).
+See next subsection.
+
+Last but not least, you need to decide if you want a single web app for all your test cases.
 The alternative is to use different apps for some or all test files.
 Occasionally you may want to use a special app for a single test case.
 Each app runs in a new subprocess, and it takes typically about 100-400ms to start.
 
-See the sections below on writing tests with a single app or multiple apps.
+See the sections later on on writing tests with a single app or multiple apps.
+
+## How do I make my app connect to presser when the tests are running?
+
+In the typical scenario, you want your package to connect to the test app only when running the tests.
+One way to achieve this is to allow specifying the web server URL(s) via environment variables.
+E.g. when writing a GitHub API client, your package can check use `GITHUB_URL` environment variable.
+
+E.g.
+
+``` {.r}
+service_url <- function() {
+    if(nzchar(Sys.getenv("GITHUB_URL")) {
+        return(Sys.getenv("GITHUB_URL"))
+    }
+    return("https://api.github.com")
+}
+
+# rest of the package code
+
+foobar <- function() {
+    httr::GET(service_url())
+}
+```
+
+When this is not set, the package connects to the proper GitHub API. When testing, you can point it to your test app.
+
+`new_app_process()` helps you setting up temporary environment variables.
+These are active while the process is running, and they are removed or reset in `$stop()`.
+For example:
+
+```{r, include = FALSE}
+# Make sure this is not set in the vignette
+Sys.unsetenv("GITHUB_API")
+```
+
+```{r}
+http <- presser::local_app_process(presser::httpbin_app(), start = TRUE)
+http$local_env(list(GITHUB_API = "{url}"))
+Sys.getenv("GITHUB_API")
+http$stop()
+Sys.getenv("GITHUB_API")
+```
+
+## How can I write my own app?
+
+```{r child = "partials/_my-app.Rmd"}
+```
 
 ## How do I use `httpbin_app()` (or another app) with testthat?
 
@@ -67,24 +117,52 @@ This will terminate the currently running app processes, if any, and create new 
 Should the test suite auto-start some of the test processes from `helper*.R`, these will not be cleaned up at the end of the test suite, but only at the next `load_all()` or `test()` call, or at the end of the R session.
 This lets you run your test code interactively, either via `test()` or manually, without thinking too much about the presser processes.
 
-## How to make sure that my code works with the *real* API?
+## Can I have an app for a single testthat test file?
 
-Indeed, if you use presser for your test cases, then they never touch the real web server.
-As you might suspect, this is not ideal, especially when you do not control the server.
-The web service might change their API, and your test cases will fail to warn you.
+To run a web app for a single test file, start it with `new_app_process()` at the beginning of the file, and register its cleanup using `withr::defer()`.
+Even simpler, use `local_app_process()` which is the same as `new_app_process()` but it automatically stops the web server process, at the end of the test file:
 
-One practical solution is to write (at least some) flexible tests, that can run against a local fake webserver, or a real one, and you have a quick switch to change their behavior.
-I have found that environment variables work great for this.
+```{r}
+app <- presser::new_app()
+app$get("/hello/:user", function(req, res) {
+  res$send(paste0("Hello ", req$params$user, "!"))
+})
+```
 
-E.g. if the `FAKE_HTTP_TESTS` environment variable is not set, the tests run with the real web server, otherwise they use a fake one.
-Another solution, that works best is the HTTP requests are in the downstream package code, is to introduce one environment variable for each API you need to connect to.
-These might be set to the real API servers, or to the fake ones.
+```{r start1, include = FALSE}
+web <- presser::local_app_process(app)
+```
 
-Once you have some tests that can use both kinds or servers, you can set up your continuous integration (CI) framework, to run the tests agains the real server (say) once a day.
-This special CI run makes sure that your code works well with the real API.
-You can run all the other tests, locally and in the CI, against the fake local web server.
+```{r eval = FALSE}
+<<start1>>
+```
 
-See the next question for how presser helps you setting environment variables that point to your local server.
+Then in the test cases, use `web$url()` to get the URL to connect to.
+
+```{r}
+test_that("can use hello API", {
+  url <- web$url("/hello/Gabor")
+  expect_equal(httr::content(httr::GET(url)), "Hello Gabor!")
+})
+```
+
+## Can I use an app for a single testthat test?
+
+Sure.
+For this you need to create the app process within the `testthat::test_that()` test case.
+`local_app_process()` automatically cleans it up at the end of the block.
+It goes like this:
+
+```{r}
+test_that("query works", {
+  app <- presser::new_app()
+  app$get("/hello", function(req, res) res$send("hello there"))
+  web <- presser::local_app_process(app)
+
+  echo <- httr::content(httr::GET(web$url("/hello")))
+  expect_equal(echo, "hello there")
+})
+```
 
 ## How do I test a sequence of requests?
 
@@ -178,82 +256,6 @@ get_packages()
 # stop app
 web$stop()
 
-```
-
-## How do I make my app connect to presser when the tests are running?
-
-In the typical scenario, you want your package to connect to the test app only when running the tests.
-One way to achieve this is to allow specifying the web server URL(s) via environment variables.
-E.g. when writing a GitHub API client, your package can check use `GITHUB_URL` environment variable.
-When this is not set, the package connects to the proper GitHub API. When testing, you can point it to your test app.
-
-`new_app_process()` helps you setting up temporary environment variables.
-These are active while the process is running, and they are removed or reset in `$stop()`.
-For example:
-
-```{r, include = FALSE}
-# Make sure this is not set in the vignette
-Sys.unsetenv("GITHUB_API")
-```
-
-```{r}
-http <- presser::local_app_process(presser::httpbin_app(), start = TRUE)
-http$local_env(list(GITHUB_API = "{url}"))
-Sys.getenv("GITHUB_API")
-http$stop()
-Sys.getenv("GITHUB_API")
-```
-
-## How can I write my own app?
-
-```{r child = "partials/_my-app.Rmd"}
-```
-
-## Can I have an app for a single testthat test file?
-
-To run a web app for a single test file, start it with `new_app_process()` at the beginning of the file, and register its cleanup using `withr::defer()`.
-Even simpler, use `local_app_process()` which is the same as `new_app_process()` but it automatically stops the web server process, at the end of the test file:
-
-```{r}
-app <- presser::new_app()
-app$get("/hello/:user", function(req, res) {
-  res$send(paste0("Hello ", req$params$user, "!"))
-})
-```
-
-```{r start1, include = FALSE}
-web <- presser::local_app_process(app)
-```
-
-```{r eval = FALSE}
-<<start1>>
-```
-
-Then in the test cases, use `web$url()` to get the URL to connect to.
-
-```{r}
-test_that("can use hello API", {
-  url <- web$url("/hello/Gabor")
-  expect_equal(httr::content(httr::GET(url)), "Hello Gabor!")
-})
-```
-
-## Can I use an app for a single testthat test?
-
-Sure.
-For this you need to create the app process within the `testthat::test_that()` test case.
-`local_app_process()` automatically cleans it up at the end of the block.
-It goes like this:
-
-```{r}
-test_that("query works", {
-  app <- presser::new_app()
-  app$get("/hello", function(req, res) res$send("hello there"))
-  web <- presser::local_app_process(app)
-
-  echo <- httr::content(httr::GET(web$url("/hello")))
-  expect_equal(echo, "hello there")
-})
 ```
 
 ## How can I debug an app?
@@ -385,3 +387,22 @@ test_that("", {
   expect_true(st[["elapsed"]] < 3.0)
 })
 ```
+
+## How to make sure that my code works with the *real* API?
+
+Indeed, if you use presser for your test cases, then they never touch the real web server.
+As you might suspect, this is not ideal, especially when you do not control the server.
+The web service might change their API, and your test cases will fail to warn you.
+
+One practical solution is to write (at least some) flexible tests, that can run against a local fake webserver, or a real one, and you have a quick switch to change their behavior.
+I have found that environment variables work great for this.
+
+E.g. if the `FAKE_HTTP_TESTS` environment variable is not set, the tests run with the real web server, otherwise they use a fake one.
+Another solution, that works best is the HTTP requests are in the downstream package code, is to introduce one environment variable for each API you need to connect to.
+These might be set to the real API servers, or to the fake ones.
+
+Once you have some tests that can use both kinds or servers, you can set up your continuous integration (CI) framework, to run the tests agains the real server (say) once a day.
+This special CI run makes sure that your code works well with the real API.
+You can run all the other tests, locally and in the CI, against the fake local web server.
+
+See the next question for how presser helps you setting environment variables that point to your local server.
