@@ -191,7 +191,7 @@ test_that("query works", {
 })
 ```
 
-## How can I to debug an app?
+## How can I debug an app?
 
 To debug an app, it is best to run it in the main R process, i.e. *not* via `new_app_process()`.
 You can add breakpoints, or `browser()` calls to your handler functions, and then invoke your app from another process.
