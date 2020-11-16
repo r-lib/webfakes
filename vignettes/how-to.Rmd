@@ -133,7 +133,7 @@ Sys.unsetenv("GITHUB_API")
 
 ```{r}
 http <- presser::local_app_process(presser::httpbin_app(), start = TRUE)
-http$local_env(list(GITHUB_API = http$url()))
+http$local_env(list(GITHUB_API = "{url}"))
 Sys.getenv("GITHUB_API")
 http$stop()
 Sys.getenv("GITHUB_API")
