@@ -3,7 +3,6 @@ You can use testthat's setup files.
 You start the app in a setup file and also register a teardown
 expression for it. 
 `local_app_process()` can do both in one go.
-See `?testthat::source_file`.
 Your `tests/testthat/setup-http.R` may look like this:
 
 ```{r eval = FALSE}
