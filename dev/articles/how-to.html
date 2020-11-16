@@ -128,7 +128,7 @@ Suggests:
     class <span class="op">=</span> <span class="st">"http_404"</span>
   <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
+<span class="co">#&gt; Test passed 🌈</span></code></pre></div>
 <p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> your <code>setup-http.R</code> file for this.</p>
 </div>
 <div id="how-do-i-start-the-app-when-writing-the-tests" class="section level2">
@@ -157,7 +157,7 @@ Suggests:
 <div id="how-do-i-test-a-sequence-of-requests" class="section level2">
 <h2 class="hasAnchor">
 <a href="#how-do-i-test-a-sequence-of-requests" class="anchor"></a>How do I test a sequence of requests?</h2>
-<p>To test a sequence of requests, the app needs state information that is kept between requests. <code>app$locals</code> is an environment that belongs to the app, and it can be used to record information and then retreive it in future requests. E.g. here is an end point that fails three times, then succeeds once, fails again three times, etc.</p>
+<p>To test a sequence of requests, the app needs state information that is kept between requests. <code>app$locals</code> is an environment that belongs to the app, and it can be used to record information and then retrieve it in future requests. E.g. here is an end point that fails three times, then succeeds once, fails again three times, etc.</p>
 <p>Note that the <code>counter</code> starts at 0, not 1.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">flaky</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
@@ -175,11 +175,11 @@ Suggests:
 <code class="sourceCode R"><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">flaky</span><span class="op">)</span>
 <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 1.9 seconds...</span>
 <span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 8 seconds...</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49551/unstable]</span>
-<span class="co">#&gt;   Date: 2020-11-16 12:24</span>
+<span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span>
+<span class="co">#&gt; Request failed [401]. Retrying in 6 seconds...</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49575/unstable]</span>
+<span class="co">#&gt;   Date: 2020-11-16 12:32</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 17 B</span></code></pre></div>
@@ -214,13 +214,13 @@ Suggests:
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>
 <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49557/"</span></code></pre></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49588/"</span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-11-16 12:24:14"</span></code></pre></div>
+<span class="co">#&gt; [1] "2020-11-16 12:32:24"</span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
@@ -248,7 +248,7 @@ Suggests:
   <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
+<span class="co">#&gt; Test passed 🌈</span></code></pre></div>
 </div>
 <div id="can-i-use-an-app-for-a-single-testthat-test" class="section level2">
 <h2 class="hasAnchor">
@@ -266,9 +266,9 @@ Suggests:
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
 <span class="co">#&gt; Test passed 🥳</span></code></pre></div>
 </div>
-<div id="how-can-i-to-debug-an-app" class="section level2">
+<div id="how-can-i-debug-an-app" class="section level2">
 <h2 class="hasAnchor">
-<a href="#how-can-i-to-debug-an-app" class="anchor"></a>How can I to debug an app?</h2>
+<a href="#how-can-i-debug-an-app" class="anchor"></a>How can I debug an app?</h2>
 <p>To debug an app, it is best to run it in the main R process, i.e. <em>not</em> via <code><a href="../reference/new_app_process.html">new_app_process()</a></code>. You can add breakpoints, or <code><a href="https://rdrr.io/r/base/browser.html">browser()</a></code> calls to your handler functions, and then invoke your app from another process. You might find the <code>curl</code> command line tool to send HTTP requests to the app, or you can just use another R process. Here is an example. We will simply print the incoming request object to the screen now. For a real debugging session you probably want to place a <code><a href="https://rdrr.io/r/base/browser.html">browser()</a></code> command there.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
@@ -358,8 +358,8 @@ Suggests:
 <span class="co">#&gt; one is done</span>
 <span class="co">#&gt; one is done</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.001   1.266 </span>
-<span class="co">#&gt; Test passed 🌈</span></code></pre></div>
+<span class="co">#&gt;   0.006   0.002   1.341 </span>
+<span class="co">#&gt; Test passed 😀</span></code></pre></div>
 </div>
   </div>
 
