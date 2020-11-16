@@ -89,7 +89,7 @@ See the next question for how presser helps you setting environment variables th
 ## How do I test a sequence of requests?
 
 To test a sequence of requests, the app needs state information that is kept between requests.
-`app$locals` is an environment that belongs to the app, and it can be used to record information and then retreive it in future requests.
+`app$locals` is an environment that belongs to the app, and it can be used to record information and then retrieve it in future requests.
 E.g. here is an end point that fails three times, then succeeds once, fails again three times, etc.
 
 Note that the `counter` starts at 0, not 1.
@@ -191,7 +191,7 @@ test_that("query works", {
 })
 ```
 
-## How can I to debug an app?
+## How can I debug an app?
 
 To debug an app, it is best to run it in the main R process, i.e. *not* via `new_app_process()`.
 You can add breakpoints, or `browser()` calls to your handler functions, and then invoke your app from another process.
