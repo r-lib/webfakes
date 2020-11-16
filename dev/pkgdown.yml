@@ -5,7 +5,7 @@ articles:
   how-to: how-to.html
   internals: internals.html
   introduction: introduction.html
-last_built: 2020-11-16T12:31Z
+last_built: 2020-11-16T12:35Z
 urls:
   reference: https://r-lib.github.io/presser//reference
   article: https://r-lib.github.io/presser//articles
