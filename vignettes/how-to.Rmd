@@ -38,8 +38,7 @@ See the sections later on on writing tests with a single app or multiple apps.
 ## How do I make my app connect to presser when the tests are running?
 
 In the typical scenario, you want your package to connect to the test app only when running the tests.
-If the URL to the web service is not an argument of the functions,
-one way to achieve this is to allow specifying the web server URL(s) via environment variables.
+If the URL to the web service is not an argument of the functions, one way to achieve this is to allow specifying the web server URL(s) via environment variables.
 E.g. when writing a GitHub API client, your package can check use `GITHUB_URL` environment variable.
 
 E.g.
@@ -69,6 +68,9 @@ For example:
 # Make sure this is not set in the vignette
 Sys.unsetenv("GITHUB_API")
 ```
+
+In `$local_env()` environment variables, presser replaces `{url}` with the actual app URL.
+This is needed by default, because the web server process starts up only later, so the URL is not known yet.
 
 ```{r}
 http <- presser::local_app_process(presser::httpbin_app(), start = TRUE)
@@ -205,10 +207,11 @@ httr::RETRY("GET", url, times = 4)
 ```
 
 Another example where we send information to an app and then retrieve it.
+On a POST request we store the `name` query parameter in `app$locals$packages`, which can be queried with a GET request.
 
 ```{r}
 store <- presser::new_app()
-# Storing "data" for the app
+# Initial "data" for the app
 store$locals$packages <- list("presser")
 # Get method
 store$get("/packages", function(req, res) {
@@ -219,8 +222,11 @@ store$post("/packages", function(req, res) {
   res$app$locals$packages <- c(res$app$locals$packages, req$query$name)
   res$send_json(res$app$locals$packages, auto_unbox = TRUE)
 })
+```
 
-# Start the app
+Now we start the app in a subprocess, and run a GET query against it.
+
+```{r}
 web <- presser::local_app_process(store, start = TRUE)
 # Get current information
 get_packages <- function() {
@@ -234,9 +240,11 @@ get_packages <- function() {
     )
 }
 get_packages()
+```
 
+Let's POST some new information.
 
-# Post new information
+```{r}
 post_package <- function(name) {
   httr::POST(
   httr::modify_url(
@@ -253,8 +261,11 @@ get_packages()
 post_package("httptest")
 # Get current information
 get_packages()
+```
 
-# stop app
+Stop the app process:
+
+```{r}
 web$stop()
 
 ```
