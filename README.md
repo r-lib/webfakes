@@ -95,7 +95,7 @@ test_that("HTTP errors are caught", {
 })
 ```
 
-    #> Test passed 🎉
+    #> Test passed 😀
 
 ## Vocabulary
 
@@ -123,7 +123,7 @@ request (query, body), to produce a response and, optionally, to change
 data in the app’s local environment (so that further requests will have
 access to it).
 
-**Middleware** As explained in [Express.js
+**Middleware functions** As explained in [Express.js
 docs](https://expressjs.com/en/guide/writing-middleware.html),
 “Middleware functions are functions that have access to the request
 object (req), the response object (res), and the next function in the
@@ -134,7 +134,7 @@ whole app. In vocabulary close to usethis’ functions, when you write
 `mw_raw()`. There are built-in middleware functions in the package
 (their name starts with `mw_`), and you can add your own.
 
-**Handler stack** This is a fancy word to mention both routes and
+**Handler stack** This is a fancy phrase to mention both routes and
 middleware functions. Together they define *what* your web service does
 *for what request* (routes, handler functions), with *what tools*
 (middleware functions).

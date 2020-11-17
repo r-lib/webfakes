@@ -36,7 +36,7 @@ request (query, body), to produce a response and, optionally, to change
 data in the app’s local environment (so that further requests will have
 access to it).
 
-\strong{Middleware} As explained in \href{https://expressjs.com/en/guide/writing-middleware.html}{Express.js docs},
+\strong{Middleware functions} As explained in \href{https://expressjs.com/en/guide/writing-middleware.html}{Express.js docs},
 “Middleware functions are functions that have access to the request
 object (req), the response object (res), and the next function in the
 application’s request-response cycle.” They are in the middle between
@@ -46,7 +46,7 @@ whole app. In vocabulary close to usethis’ functions, when you write
 \code{mw_raw()}. There are built-in middleware functions in the package
 (their name starts with \code{mw_}), and you can add your own.
 
-\strong{Handler stack} This is a fancy word to mention both routes and
+\strong{Handler stack} This is a fancy phrase to mention both routes and
 middleware functions. Together they define \emph{what} your web service does
 \emph{for what request} (routes, handler functions), with \emph{what tools}
 (middleware functions).

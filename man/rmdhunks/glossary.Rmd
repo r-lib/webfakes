@@ -17,7 +17,7 @@ Handler functions are what you use to parse the request (query, body), to produc
  and, optionally, to change data in the app's local environment (so that further requests 
  will have access to it).
   
-**Middleware** As explained in [Express.js docs](https://expressjs.com/en/guide/writing-middleware.html), 
+**Middleware functions** As explained in [Express.js docs](https://expressjs.com/en/guide/writing-middleware.html), 
 "Middleware functions are functions that have access to the request object (req), 
 the response object (res), and the next function in the application’s request-response cycle."
 They are in the middle between request and response.
@@ -27,6 +27,6 @@ In vocabulary close to usethis' functions, when you write `app$use(mw_raw())` th
 There are built-in middleware functions in the package (their name starts with `mw_`), 
 and you can add your own.
  
-**Handler stack** This is a fancy word to mention both routes and middleware functions.
+**Handler stack** This is a fancy phrase to mention both routes and middleware functions.
 Together they define _what_ your web service does _for what request_ (routes, handler functions), 
 with _what tools_ (middleware functions).
