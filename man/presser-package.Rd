@@ -28,7 +28,8 @@ how an application’s endpoints (URIs) respond to client requests.”. Each
 route therefore is defined by a combination of HTTP methods (\code{get()},
 \code{post()}, etc. or \code{all()} for any HTTP method) and a path definition (a
 string, parameterized string or regular expression), and by some code,
-handler functions.
+handler functions. If you don’t define any route, your app will return
+404 for all requests.
 
 \strong{Handler functions} Handler functions are what you use to parse the
 request (query, body), to produce a response and to change data in the
