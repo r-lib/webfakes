@@ -27,20 +27,27 @@ than its specifications, and can be shared/saved to disk.
 how an application’s endpoints (URIs) respond to client requests.”. Each
 route therefore is defined by a combination of HTTP methods (\code{get()},
 \code{post()}, etc. or \code{all()} for any HTTP method) and a path definition (a
-string, parameterized string or regular expression).
+string, parameterized string or regular expression), and by some code,
+handler functions.
+
+\strong{Handler functions} Handler functions are what you use to parse the
+request (query, body), to produce a response and to change data in the
+app’s local environment.
 
 \strong{Middleware} As explained in \href{https://expressjs.com/en/guide/writing-middleware.html}{Express.js docs},
 “Middleware functions are functions that have access to the request
 object (req), the response object (res), and the next function in the
 application’s request-response cycle.” They are in the middle between
-request and response. So middleware functions are what you use to parse
-the request (query, body), to produce a response and to change data in
-the app’s local environment. There are built-in middleware functions in
-the package, and you can add your own.
+request and response. You have to view them as utility functions for the
+whole app. In vocabulary close to usethis’ functions, when you write
+\code{app$use(mw_raw())} the whole app will have access to the middleware
+\code{mw_raw()}. There are built-in middleware functions in the package
+(their name starts with \code{mw_}), and you can add your own.
 
 \strong{Handler stack} This is a fancy word to mention both routes and
 middleware functions. Together they define \emph{what} your web service does
-(middleware) \emph{for what request} (routes).
+\emph{for what request} (routes, handler functions), with \emph{what tools}
+(middleware functions).
 }
 \seealso{
 Useful links:

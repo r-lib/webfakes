@@ -9,15 +9,22 @@ Until you start it an app is no more than its specifications, and can be shared/
 "Routing refers to how an application’s endpoints (URIs) respond to client requests.".
 Each route therefore is defined by a combination of HTTP methods 
 (`get()`, `post()`, etc. or `all()` for any HTTP method) and
-a path definition (a string, parameterized string or regular expression).
+a path definition (a string, parameterized string or regular expression), and by some code, handler functions.
+
+**Handler functions**
+Handler functions are what you use to parse the request (query, body), to produce a response
+ and to change data in the app's local environment.
   
 **Middleware** As explained in [Express.js docs](https://expressjs.com/en/guide/writing-middleware.html), 
 "Middleware functions are functions that have access to the request object (req), 
 the response object (res), and the next function in the application’s request-response cycle."
 They are in the middle between request and response.
-So middleware functions are what you use to parse the request (query, body), to produce a response
- and to change data in the app's local environment.
-There are built-in middleware functions in the package, and you can add your own.
+You have to view them as utility functions for the whole app. 
+In vocabulary close to usethis' functions, when you write `app$use(mw_raw())` the whole app will have
+ access to the middleware `mw_raw()`.
+There are built-in middleware functions in the package (their name starts with `mw_`), 
+and you can add your own.
  
 **Handler stack** This is a fancy word to mention both routes and middleware functions.
-Together they define _what_ your web service does (middleware) _for what request_ (routes).
+Together they define _what_ your web service does _for what request_ (routes, handler functions), 
+with _what tools_ (middleware functions).

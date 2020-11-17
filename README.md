@@ -12,12 +12,17 @@ status](https://github.com/gaborcsardi/pressr/workflows/R-CMD-check/badge.svg)](
 
 <!-- badges: end -->
 
-Lightweight web apps for testing. Built using the
+Lightweight fake web apps for testing. Built using the
 [civetweb](https://github.com/civetweb/civetweb) embedded web server.
 
 ## Features
 
-  - Complete web app framework, define handlers for HTTP request in R.
+  - Complete web app framework, define handlers for HTTP requests in R.
+  - Write your own app for your custom test cases; our use app similar
+    to the <https://httpbin.org> API, so often you don’t need to write
+    your own web app (e.g. if you are writing an HTTP client (httr,
+    curl, crul).
+  - Run one web app per test suite, per test file or per test case.
   - Flexible path matching, with parameters and regular expressions.
   - Built in templating system using glue or bring your own template
     engine.
@@ -26,12 +31,13 @@ Lightweight web apps for testing. Built using the
     another R process, etc.
   - A web app is extensible, by adding new routes and middleware to it.
   - Helper functions for sending JSON, files from disk, etc.
-  - Comes with an app similar to the <https://httpbin.org> API, so often
-    you don’t need to write your own web app.
+  - App-specific environment to store any data including data from
+    requests to the fake app.
+  - After a web app is launched from R, you can interact with it from R
+    but also from the command line, your browser, etc. Nice for
+    debugging.
   - The web server runs in the R process, so it has no problems with
     local firewalls.
-  - Write your own app for your custom test cases.
-  - Run one web app per test suite, per test file or per test case.
   - Multi-threaded web server supports concurrent HTTP requests.
   - Limit download speed to simulate low bandwidth.
 
@@ -89,7 +95,47 @@ test_that("HTTP errors are caught", {
 })
 ```
 
-    #> Test passed 🌈
+    #> Test passed 😸
+
+## Vocabulary
+
+The presser package uses vocabulary that is standard for web apps,
+especially those developed with Express.js, but not necessarily well
+known to all R package developers.
+
+**Apps** Central to this package are *apps* that are fake web services,
+fake web APIs. When you define them they are not started, you start them
+either by using the `$listen()` method, or by launching them in a new
+process. See `?presser::new_app`. Until you start it an app is no more
+than its specifications, and can be shared/saved to disk.
+
+**Routes** As explained in [Express.js
+docs](https://expressjs.com/en/guide/routing.html), “Routing refers to
+how an application’s endpoints (URIs) respond to client requests.”. Each
+route therefore is defined by a combination of HTTP methods (`get()`,
+`post()`, etc. or `all()` for any HTTP method) and a path definition (a
+string, parameterized string or regular expression), and by some code,
+handler functions.
+
+**Handler functions** Handler functions are what you use to parse the
+request (query, body), to produce a response and to change data in the
+app’s local environment.
+
+**Middleware** As explained in [Express.js
+docs](https://expressjs.com/en/guide/writing-middleware.html),
+“Middleware functions are functions that have access to the request
+object (req), the response object (res), and the next function in the
+application’s request-response cycle.” They are in the middle between
+request and response. You have to view them as utility functions for the
+whole app. In vocabulary close to usethis’ functions, when you write
+`app$use(mw_raw())` the whole app will have access to the middleware
+`mw_raw()`. There are built-in middleware functions in the package
+(their name starts with `mw_`), and you can add your own.
+
+**Handler stack** This is a fancy word to mention both routes and
+middleware functions. Together they define *what* your web service does
+*for what request* (routes, handler functions), with *what tools*
+(middleware functions).
 
 ## Documentation
 
