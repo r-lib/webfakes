@@ -1,0 +1,23 @@
+The presser package uses vocabulary that is standard for web apps, especially those developed with Express.js, but not necessarily well known to all R package developers.
+
+**Apps** Central to this package are _apps_ that are fake web services, fake web APIs.
+When you define them they are not started, you start them either by using the `$listen()` method,
+ or by launching them in a new process. See `?presser::new_app`.
+Until you start it an app is no more than its specifications, and can be shared/saved to disk.
+ 
+**Routes** As explained in [Express.js docs](https://expressjs.com/en/guide/routing.html), 
+"Routing refers to how an application’s endpoints (URIs) respond to client requests.".
+Each route therefore is defined by a combination of HTTP methods 
+(`get()`, `post()`, etc. or `all()` for any HTTP method) and
+a path definition (a string, parameterized string or regular expression).
+  
+**Middleware** As explained in [Express.js docs](https://expressjs.com/en/guide/writing-middleware.html), 
+"Middleware functions are functions that have access to the request object (req), 
+the response object (res), and the next function in the application’s request-response cycle."
+They are in the middle between request and response.
+So middleware functions are what you use to parse the request (query, body), to produce a response
+ and to change data in the app's local environment.
+There are built-in middleware functions in the package, and you can add your own.
+ 
+**Handler stack** This is a fancy word to mention both routes and middleware functions.
+Together they define _what_ your web service does (middleware) _for what request_ (routes).

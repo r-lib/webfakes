@@ -107,6 +107,11 @@ test_that("HTTP errors are caught", {
 })
 ```
 
+## Vocabulary
+
+```{r child='man/rmdhunks/glossary.Rmd'}
+```
+
 ## Documentation
 
 See <https://r-lib.github.io/presser/>
