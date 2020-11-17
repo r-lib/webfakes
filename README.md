@@ -95,7 +95,7 @@ test_that("HTTP errors are caught", {
 })
 ```
 
-    #> Test passed 🥇
+    #> Test passed 🎉
 
 ## Vocabulary
 
@@ -114,13 +114,14 @@ docs](https://expressjs.com/en/guide/routing.html), “Routing refers to
 how an application’s endpoints (URIs) respond to client requests.”. Each
 route therefore is defined by a combination of HTTP methods (`get()`,
 `post()`, etc. or `all()` for any HTTP method) and a path definition (a
-string, parameterized string or regular expression), and by some code,
-handler functions. If you don’t define any route, your app will return
-404 for all requests.
+string, parameterized string or regular expression), and by some code
+using handler functions. If you don’t define any route, your app will
+return 404 for all requests.
 
 **Handler functions** Handler functions are what you use to parse the
-request (query, body), to produce a response and to change data in the
-app’s local environment.
+request (query, body), to produce a response and, optionally, to change
+data in the app’s local environment (so that further requests will have
+access to it).
 
 **Middleware** As explained in [Express.js
 docs](https://expressjs.com/en/guide/writing-middleware.html),
