@@ -1,6 +1,10 @@
 ---
 title: "Happy HTTP testing with presser"
 output: rmarkdown::html_vignette
+editor_options: 
+  markdown: 
+    wrap: sentence
+    canonical: true
 ---
 
 ```{r, include = FALSE}
@@ -12,97 +16,67 @@ knitr::opts_chunk$set(
 
 ## What is presser?
 
-Presser is an R package that can spin up web servers your machine to
-facilitate testing R code.
+Presser is an R package that can spin up web servers on your machine to facilitate testing R code.
 R code that needs an HTTP connection is not trivial to test:
 
-* Connectivity problems might prevent the tests from accessing the
-  web server.
-* The web server might need authentication, and it is not easy to convey
-  login information to the test suite in a secure way.
-* The web server might have rate limits, i.e, it limits the number
-  of queries per hour or day, causing some spurious test failures.
-* You might want to test in non-normal conditions, e.g. with low
-  bandwidth, or when the client is rate limited.
-  These conditions don't normally happen on the web server and they
-  are hard to trigger.
+-   Connectivity problems might prevent the tests from accessing the web server.
+-   The web server might need authentication, and it is not easy to convey login information to the test suite in a secure way.
+-   The web server might have rate limits, i.e, it limits the number of queries per hour or day, causing some spurious test failures.
+-   You might want to test in non-normal conditions, e.g. with low bandwidth, or when the client is rate limited. These conditions don't normally happen on the web server and they are hard to trigger.
 
-With presser you can easily start a custom web app, that is running on
-the local machine.
+With presser you can easily start a custom web app, that is running on the local machine.
 
-* Presser does not need a network connection.
-* Presser does not need authentication.
-  Well, unless you want it to.
-* Presser does not have rate limits.
-* Presser can simulate low bandwidth, or a broken connection.
+-   Presser does not need a network connection.
+-   Presser does not need authentication. Well, unless you want it to.
+-   Presser does not have rate limits.
+-   Presser can simulate low bandwidth, or a broken connection.
 
 ## Presser vs mocking
 
-Mocking is a general technique to mimic the behavior of a function or
-object that is needed in test case.
-In the case of HTTP requests, this typically means that both the
-request and its response are recorded when the tests run the first
-time, and saved to disk.
-Subsequent test runs intercept the HTTP requests, match them against
-the recorded requests and then replay the corresponding recorded
-response.
-See for example the [vcr](https://docs.ropensci.org/vcr/) and
-[httptest](https://enpiar.com/r/httptest/) R packages.
+Mocking is a general technique to mimic the behavior of a function or object that is needed in test case.
+In the case of HTTP requests, this typically means that both the request and its response are recorded when the tests run the first time, and saved to disk.
+Subsequent test runs intercept the HTTP requests, match them against the recorded requests and then replay the corresponding recorded response.
+See for example the [vcr](https://docs.ropensci.org/vcr/) and [httptest](https://enpiar.com/r/httptest/) R packages.
 
 The advantages of using your own presser server, over mocking:
 
-* Simpler infrastructure.
-  No separate recording and replaying phases, no recorded files.
-  No request matching.
-* You can use any web client you want.
-  E.g. curl and base R's HTTP functions do not explicitly support
-  mocking currently.
-* No need to worry about sensitive information in recorded requests or
-  responses.
-* Often easier to use when testing non-normal conditions, e.g. errors that
-  are hard to trigger, low bandwidth, or rate limits.
-* Works if you stream data from a HTTP connection, instead of reading
-  the whole response at once.
-* You can reuse the same app for multiple tests, in multiple packages.
-* Easier to use for tests that require multiple rounds of requests.
-* Comes with a built-in https://httpbin.org compatible app, chances
-  are, you don't even need to write your testing app, just start
-  writing tests right away.
-* Better test writing experience.
-  This is subjective, and your mileage may vary.
+-   Simpler infrastructure. No separate recording and replaying phases, no recorded files. No request matching.
+-   You can use any web client you want. E.g. curl and base R's HTTP functions do not explicitly support mocking currently.
+-   No need to worry about sensitive information in recorded requests or responses.
+-   Often easier to use when testing non-normal conditions, e.g. errors that are hard to trigger, low bandwidth, or rate limits.
+-   Works if you stream data from a HTTP connection, instead of reading the whole response at once.
+-   You can reuse the same app for multiple tests, in multiple packages.
+-   Easier to use for tests that require multiple rounds of requests.
+-   Comes with a built-in <https://httpbin.org> compatible app, chances are, you don't even need to write your testing app, just start writing tests right away.
+-   Better test writing experience. This is subjective, and your mileage may vary.
 
 ## Presser vs the real API
 
-* No network needed. No more `skip_if_offline()`.
-* Much faster.
-* No rate limits. But you can simulate one if you want to.
-* You can write your custom app.
-* Simulate low bandwidth or a broken connection.
+-   No network needed. No more `skip_if_offline()`.
+-   Much faster.
+-   No rate limits. But you can simulate one if you want to.
+-   You can write your custom app.
+-   Simulate low bandwidth or a broken connection.
 
 ## Presser vs httpbin.org
 
-* No network needed. No more `skip_if_offline()`.
-* Much faster.
-* You can use the built-in `presser::httpbin_app()` app, so it is
-  easy to switch from httpbin.org.
-* You can write your custom app, httpbin.org might not have what
-  you need.
+-   No network needed. No more `skip_if_offline()`.
+-   Much faster.
+-   You can use the built-in `presser::httpbin_app()` app, so it is easy to switch from httpbin.org.
+-   You can write your custom app, httpbin.org might not have what you need.
 
 ## Using `presser::httpbin_app()` with testthat
 
 ```{r child = "partials/_howto-testthat.Rmd"}
 ```
 
-You can also create a web server for a test file, or even for a single
-test case.
+You can also create a web server for a test file, or even for a single test case.
 See the How-to for details how.
 
 ## Writing apps
 
-If the builtin `httpbin_app()` is not appropriate for your tests,
-you can write your own app.
-You can also extend the `httpbin_app()` app, if you don't want to
-start from scratch.
+If the builtin `httpbin_app()` is not appropriate for your tests, you can write your own app.
+You can also extend the `httpbin_app()` app, if you don't want to start from scratch.
 
 ```{r child = "partials/_my-app.Rmd"}
 ```
