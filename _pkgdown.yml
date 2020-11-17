@@ -17,6 +17,8 @@ navbar:
     href: articles/introduction.html
   - text: How-to
     href: articles/how-to.html
+  - text: Glossary
+    href: articles/glossary.html
   - text: Reference
     href: reference/index.html
   - text: Articles
