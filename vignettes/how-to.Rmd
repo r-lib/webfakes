@@ -25,7 +25,7 @@ Use the `Suggests` field, as presser is only needed for testing:
       testthat
     ...
 
-Then, you might need to tweak your package code slightly to make sure every call to a real web service can be targeted at another URL instead (of a fake app).
+Then, unless the URL to the web service is an argument of your package functions, you might need to tweak your package code slightly to make sure every call to a real web service can be targeted at another URL instead (of a fake app).
 See next subsection.
 
 Last but not least, you need to decide if you want a single web app for all your test cases.
@@ -38,7 +38,8 @@ See the sections later on on writing tests with a single app or multiple apps.
 ## How do I make my app connect to presser when the tests are running?
 
 In the typical scenario, you want your package to connect to the test app only when running the tests.
-One way to achieve this is to allow specifying the web server URL(s) via environment variables.
+If the URL to the web service is not an argument of the functions,
+one way to achieve this is to allow specifying the web server URL(s) via environment variables.
 E.g. when writing a GitHub API client, your package can check use `GITHUB_URL` environment variable.
 
 E.g.
