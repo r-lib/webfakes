@@ -111,6 +111,23 @@ test_that("HTTP errors are caught", {
 
 See <https://r-lib.github.io/presser/>
 
+## Links
+
+### Other solutions for HTTP testing in R:
+
+-   [vcr](https://github.com/ropensci/vcr)
+-   [httptest](https://github.com/nealrichardson/httptest)
+
+### R web application frameworks
+
+presser focuses on testing, these packages are for writing real web apps:
+
+-   [shiny](https://github.com/rstudio/shiny)
+-   [opencpu](https://www.opencpu.org/)
+-   [plumber](https://github.com/rstudio/plumber)
+-   [fiery](https://github.com/thomasp85/fiery)
+-   [RestRserve](https://github.com/rexyai/RestRserve)
+
 ## License
 
 MIT © RStudio

@@ -12,12 +12,17 @@ status](https://github.com/gaborcsardi/pressr/workflows/R-CMD-check/badge.svg)](
 
 <!-- badges: end -->
 
-Lightweight web apps for testing. Built using the
+Lightweight fake web apps for testing. Built using the
 [civetweb](https://github.com/civetweb/civetweb) embedded web server.
 
 ## Features
 
-  - Complete web app framework, define handlers for HTTP request in R.
+  - Complete web app framework, define handlers for HTTP requests in R.
+  - Write your own app for your custom test cases; our use app similar
+    to the <https://httpbin.org> API, so often you don’t need to write
+    your own web app (e.g. if you are writing an HTTP client (httr,
+    curl, crul).
+  - Run one web app per test suite, per test file or per test case.
   - Flexible path matching, with parameters and regular expressions.
   - Built in templating system using glue or bring your own template
     engine.
@@ -26,12 +31,13 @@ Lightweight web apps for testing. Built using the
     another R process, etc.
   - A web app is extensible, by adding new routes and middleware to it.
   - Helper functions for sending JSON, files from disk, etc.
-  - Comes with an app similar to the <https://httpbin.org> API, so often
-    you don’t need to write your own web app.
+  - App-specific environment to store any data including data from
+    requests to the fake app.
+  - After a web app is launched from R, you can interact with it from R
+    but also from the command line, your browser, etc. Nice for
+    debugging.
   - The web server runs in the R process, so it has no problems with
     local firewalls.
-  - Write your own app for your custom test cases.
-  - Run one web app per test suite, per test file or per test case.
   - Multi-threaded web server supports concurrent HTTP requests.
   - Limit download speed to simulate low bandwidth.
 
@@ -89,11 +95,29 @@ test_that("HTTP errors are caught", {
 })
 ```
 
-    #> Test passed 🌈
+    #> Test passed 😸
 
 ## Documentation
 
 See <https://r-lib.github.io/presser/>
+
+## Links
+
+### Other solutions for HTTP testing in R:
+
+  - [vcr](https://github.com/ropensci/vcr)
+  - [httptest](https://github.com/nealrichardson/httptest)
+
+### R web application frameworks
+
+presser focuses on testing, these packages are for writing real web
+apps:
+
+  - [shiny](https://github.com/rstudio/shiny)
+  - [opencpu](https://www.opencpu.org/)
+  - [plumber](https://github.com/rstudio/plumber)
+  - [fiery](https://github.com/thomasp85/fiery)
+  - [RestRserve](https://github.com/rexyai/RestRserve)
 
 ## License
 
