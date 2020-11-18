@@ -101,22 +101,23 @@
 <!-- badges: start -->
 
 <!-- badges: end -->
-<p>Lightweight web apps for testing. Built using the <a href="https://github.com/civetweb/civetweb">civetweb</a> embedded web server.</p>
+<p>Lightweight fake web apps for testing. Built using the <a href="https://github.com/civetweb/civetweb">civetweb</a> embedded web server.</p>
 <div id="features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#features" class="anchor"></a>Features</h2>
 <ul>
-<li>Complete web app framework, define handlers for HTTP request in R.</li>
+<li>Complete web app framework, define handlers for HTTP requests in R.</li>
+<li>Write your own app for your custom test cases; our use app similar to the <a href="https://httpbin.org" class="uri">https://httpbin.org</a> API, so often you don’t need to write your own web app (e.g. if you are writing an HTTP client (httr, curl, crul).</li>
+<li>Run one web app per test suite, per test file or per test case.</li>
 <li>Flexible path matching, with parameters and regular expressions.</li>
 <li>Built in templating system using glue or bring your own template engine.</li>
 <li>Middleware to parse JSON, multipart and URL encoded request bodies.</li>
 <li>A web app is just an R object. It can be saved to disk, copied to another R process, etc.</li>
 <li>A web app is extensible, by adding new routes and middleware to it.</li>
 <li>Helper functions for sending JSON, files from disk, etc.</li>
-<li>Comes with an app similar to the <a href="https://httpbin.org" class="uri">https://httpbin.org</a> API, so often you don’t need to write your own web app.</li>
+<li>App-specific environment to store any data including data from requests to the fake app.</li>
+<li>After a web app is launched from R, you can interact with it from R but also from the command line, your browser, etc. Nice for debugging.</li>
 <li>The web server runs in the R process, so it has no problems with local firewalls.</li>
-<li>Write your own app for your custom test cases.</li>
-<li>Run one web app per test suite, per test file or per test case.</li>
 <li>Multi-threaded web server supports concurrent HTTP requests.</li>
 <li>Limit download speed to simulate low bandwidth.</li>
 </ul>
@@ -162,12 +163,36 @@
   <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
   <span class="fu">expect_error</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html">stop_for_status</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"http_404"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#&gt; Test passed 🌈</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#&gt; Test passed 😸</span></span></code></pre></div>
 </div>
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#documentation" class="anchor"></a>Documentation</h2>
 <p>See <a href="https://r-lib.github.io/presser/" class="uri">https://r-lib.github.io/presser/</a></p>
+</div>
+<div id="links" class="section level2">
+<h2 class="hasAnchor">
+<a href="#links" class="anchor"></a>Links</h2>
+<div id="other-solutions-for-http-testing-in-r" class="section level3">
+<h3 class="hasAnchor">
+<a href="#other-solutions-for-http-testing-in-r" class="anchor"></a>Other solutions for HTTP testing in R:</h3>
+<ul>
+<li><a href="https://github.com/ropensci/vcr">vcr</a></li>
+<li><a href="https://github.com/nealrichardson/httptest">httptest</a></li>
+</ul>
+</div>
+<div id="r-web-application-frameworks" class="section level3">
+<h3 class="hasAnchor">
+<a href="#r-web-application-frameworks" class="anchor"></a>R web application frameworks</h3>
+<p>presser focuses on testing, these packages are for writing real web apps:</p>
+<ul>
+<li><a href="https://github.com/rstudio/shiny">shiny</a></li>
+<li><a href="https://www.opencpu.org/">opencpu</a></li>
+<li><a href="https://github.com/rstudio/plumber">plumber</a></li>
+<li><a href="https://github.com/thomasp85/fiery">fiery</a></li>
+<li><a href="https://github.com/rexyai/RestRserve">RestRserve</a></li>
+</ul>
+</div>
 </div>
 <div id="license" class="section level2">
 <h2 class="hasAnchor">
