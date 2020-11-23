@@ -16,9 +16,7 @@ oauth2_app <- function(
     client_id = client_id
   )
 
-  app$use(mw_static(system.file("examples", "static", "public", package = "presser")))
-
-  # How to get a token
+  # First step, asking the user for access
   app$get("/authorize", function(req, res) {
 
     # Missing information either client secret or client ID
