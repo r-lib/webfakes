@@ -15,9 +15,13 @@ url <- httr::modify_url(
 resp <- httr::GET(url)
 httr::stop_for_status(resp)
 
-httr::content(resp)
+file <- tempfile()
+xml2::write_html(
+  httr::content(resp),
+  file)
+browseURL(file)
 
-### Things that error
+### Things that error #######################
 
 url <- httr::modify_url(
   process$url(),
