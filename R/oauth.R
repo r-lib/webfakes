@@ -6,6 +6,9 @@ oauth2_app <- function(
   # Create app
   app <- new_app()
 
+  # Needed later
+  app$engine("html", tmpl_glue())
+
   # Register third-party app
   app$locals$apps <- data.frame(
     app_name = app_name,
@@ -36,20 +39,19 @@ oauth2_app <- function(
           send_status(400L)
       } else {
 
-        code <- sodium::bin2hex(sodium::random(7))
-
-        res$app$locals$authorization_codes <- c(res$app$locals$authorization_codes, code)
+        fs::dir_create("views")
+        writeLines(
+          "<body>Hey would you authorize the Third-Party App {app} to access your account</body>?
+",
+          file.path("views", "authorize.html")
+          )
+        txt <- res$render("authorize", locals = list(app = corresponding_app$app_name[1]))
 
         res$
           set_status(200L)$
-          send_json(
-            list(
-              url = sub(
-                req$url, "/authorize.*",
-                paste0("/cb?code=", code, "&state=", req$query$state)
-                )
-              )
-            )
+          set_type("text/html")$
+          send(txt)
+
       }
     }
 
