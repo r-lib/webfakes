@@ -6,9 +6,6 @@ oauth2_server_app <- function(
   # Create app
   app <- new_app()
 
-  # Needed later
-  app$engine("html", tmpl_glue())
-
   # Register third-party app
   app$locals$apps <- data.frame(
     app_name = app_name,
@@ -56,7 +53,7 @@ oauth2_server_app <- function(
       }
     }
 
-    app$get("/token", function(req, res) {
+    app$post("/token", function(req, res) {
 
       if (req$query$code) {
 
@@ -67,7 +64,7 @@ oauth2_server_app <- function(
 
         res$
           send_json(list(
-            token = token
+            access_token = token
           ))
 
       } else {
@@ -117,8 +114,9 @@ oauth2_third_party_app <- function(
   })
 
   app$get("/cb", function (req, res) {
-    httr::POST(
-      httr::modify_url(
+
+    res$
+      send_json(list(url =       httr::modify_url(
         app$locals$server_url,
         path = "token",
         query = list(
@@ -127,13 +125,24 @@ oauth2_third_party_app <- function(
           client_id = app$locals$client_id,
           client_secret = app$locals$client_secret
         )
-      )
-    ) -> resp
-
-    content <- httr::content(resp)
-
-    res$
-      send_json(content)
+      )))
+    # httr::POST(
+    #   httr::modify_url(
+    #     app$locals$server_url,
+    #     path = "token",
+    #     query = list(
+    #       grant_type="authorization_code",
+    #       code = req$query$code,
+    #       client_id = app$locals$client_id,
+    #       client_secret = app$locals$client_secret
+    #     )
+    #   )
+    # ) -> resp
+    #
+    # content <- httr::content(resp)
+    #
+    # res$
+    #   send_json(content)
 
   })
 }
