@@ -56,6 +56,26 @@ oauth2_server_app <- function(
       }
     }
 
+    app$get("/token", function(req, res) {
+
+      if (req$query$code) {
+
+        token <- sodium::bin2hex(sodium::random(5))
+
+        req$app$locals$tokens <- c(req$app$locals$tokens, token)
+        req$app$locals$codes <- req$app$locals$codes[req$app$locals$codes != req$query$code]
+
+        res$
+          send_json(list(
+            token = token
+          ))
+
+      } else {
+        res$
+          send_status(401L)
+      }
+
+    })
 
   })
 
@@ -64,11 +84,13 @@ oauth2_server_app <- function(
 
 oauth2_third_party_app <- function(
   client_secret = "client_secret",
-  client_id = "client_id"
+  client_id = "client_id",
+  server_url
 ) {
   app <- new_app()
   app$locals$client_secret <- client_secret
   app$locals$client_id <- client_id
+  app$locals$server_url <- server_url
 
   app$get("/login", function (req, res) {
 
@@ -78,7 +100,7 @@ oauth2_third_party_app <- function(
     req$app$locals$state <- state
 
     url <- httr::modify_url(
-        req$query$server_url,
+      app$locals$server_url,
         path = "authorize",
         query = list(
           state = state,
@@ -97,16 +119,21 @@ oauth2_third_party_app <- function(
   app$get("/cb", function (req, res) {
     httr::POST(
       httr::modify_url(
-        req$query$server_url,
-        path = token,
+        app$locals$server_url,
+        path = "token",
         query = list(
           grant_type="authorization_code",
           code = req$query$code,
-          redirect_uri = {url},
-          client_id = client_id,
-          client_secret = client_secret
+          client_id = app$locals$client_id,
+          client_secret = app$locals$client_secret
         )
       )
     ) -> resp
+
+    content <- httr::content(resp)
+
+    res$
+      send_json(content)
+
   })
 }
