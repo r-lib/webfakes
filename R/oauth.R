@@ -60,7 +60,7 @@ oauth2_server_app <- function(
 
     app$post("/token", function(req, res) {
 
-      #if (req$query$code %in% req$app$locals$codes) {
+      if (req$query$code %in% req$app$locals$codes) {
 
         token <- sodium::bin2hex(sodium::random(5))
 
@@ -72,10 +72,10 @@ oauth2_server_app <- function(
             "access_token" = token
           ))
 
-      # } else {
-      #   res$
-      #     send_status(401L)
-      # }
+      } else {
+        res$
+          send_status(401L)
+      }
 
 
 
