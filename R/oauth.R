@@ -107,7 +107,7 @@ oauth2_third_party_app <- function(
           state = state,
           client_secret = req$app$locals$client_secret,
           client_id = req$app$locals$client_id,
-          redirect_uri = req$query$self_url
+          redirect_uri = paste0(urltools::scheme(req$url), "://", urltools::domain(req$url), ":", urltools::port(req$url))
         )
       )
 

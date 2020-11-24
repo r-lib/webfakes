@@ -18,9 +18,7 @@ oauth2_third_party_process <- local_app_process(oauth2_third_party_app)
 url <- oauth2_third_party_process$url()
 url <- httr::modify_url(
   url,
-  path = "login",
-  query = list(server_url = oauth2_server_process$url(),
-               self_url = url)
+  path = "login"
 )
 
 resp <- httr::GET(url)
