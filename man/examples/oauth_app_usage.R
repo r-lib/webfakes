@@ -27,5 +27,3 @@ xml2::write_html(
   httr::content(resp),
   file)
 browseURL(file)
-
-httr::GET("http://127.0.0.1:42539//cb?state=b7b980658c&code=31e4b4984b62fff95dbbe0a8ba0169")
