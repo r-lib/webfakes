@@ -42,7 +42,11 @@ oauth2_server_app <- function(
         state <- req$query$state
         url <- req$query$redirect_uri
 
-        txt <- glue::glue("<body><p>Hey would you authorize the Third-Party App {app} to access your account?</p><p><a href='{url}/cb?state={state}&code={code}'>Continue</a>
+        txt <- glue::glue(
+        "<body><p>
+        Hey would you authorize the Third-Party App {app} to access your account?
+        </p>
+        <p><a href='{url}/cb?state={state}&code={code}'>Continue</a>
 </p></body>")
 
         res$

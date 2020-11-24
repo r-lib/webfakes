@@ -1,8 +1,12 @@
 load_all()
-# create and launch app
+# create and launch apps
+
+# the server
+# we register the third-party app directly
 oauth2_server_app <- oauth2_server_app(client_id = "123", client_secret = "pssst")
 oauth2_server_process <- local_app_process(oauth2_server_app)
 
+# the third-party app
 oauth2_third_party_app <- oauth2_third_party_app(
   client_id = "123",
   client_secret = "pssst",
