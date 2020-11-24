@@ -5,7 +5,7 @@ oauth2_server_app <- function(
   ) {
   # Create app
   app <- new_app()
-
+  app$locals$listener <- local_app_process(useless())
   # Register third-party app
   app$locals$apps <- data.frame(
     app_name = app_name,
@@ -42,17 +42,30 @@ oauth2_server_app <- function(
         state <- req$query$state
         url <- req$query$redirect_uri
 
+        listener_url <- req$app$locals$listener$url()
+
         txt <- glue::glue(
         "<body><p>
         Hey would you authorize the Third-Party App {app} to access your account?
         </p>
-        <p><a href='{url}/cb?state={state}&code={code}'>Continue</a>
+        <p><a href='{listener_url}/kill'>Yes, allow!</a>
 </p></body>")
 
+        file <- tempfile()
+        writeLines(
+          txt,
+          file)
+        browseURL(file)
+
+       accepted <- unlist(httr::content(httr::GET(httr::modify_url(listener_url, path = "/killed"))))
+       while(!accepted) {
+         Sys.sleep(0.1)
+         accepted <- unlist(httr::content(httr::GET(httr::modify_url(listener_url, path = "/killed"))))
+       }
+
         res$
-          set_status(200L)$
-          set_type("text/html")$
-          send(txt)
+          set_header("location", glue::glue("{url}/cb?state={state}&code={code}"))$
+          send_status(302L)
 
       }
     }
@@ -140,4 +153,24 @@ oauth2_third_party_app <- function(
       send_json(content)
 
   })
+}
+
+useless <- function() {
+  app <- new_app()
+  app$locals$killed <- FALSE
+  app$get("/kill", function(req, res) {
+    req$app$locals$killed <- TRUE
+
+    res$
+      set_type("text/plain")$
+      send("Return to R!")
+  })
+
+  app$get("/killed", function(req, res) {
+    res$
+      send_json(
+        list(req$app$locals$killed))
+  })
+
+  return(app)
 }

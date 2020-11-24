@@ -22,10 +22,6 @@ url <- httr::modify_url(
 )
 
 resp <- httr::GET(url)
-resp
+httr::content(resp)
 
-file <- tempfile()
-xml2::write_html(
-  httr::content(resp),
-  file)
-browseURL(file)
+
