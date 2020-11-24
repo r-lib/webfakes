@@ -8,7 +8,6 @@ oauth2_third_party_process <- local_app_process(oauth2_third_party_app)
 
 # request code,
 # need to add
-url <- "http://127.0.0.1:3000"
 url <- oauth2_third_party_process$url()
 url <- httr::modify_url(
   url,
