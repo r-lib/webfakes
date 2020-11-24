@@ -6,6 +6,12 @@ load_all()
 oauth2_server_app <- oauth2_server_app(client_id = "123", client_secret = "pssst")
 oauth2_server_process <- local_app_process(oauth2_server_app)
 
+# at the moment no security so I could get a token with
+httr::POST(httr::modify_url(oauth2_server_process$url(),
+                            path = "token",
+                            query = list(code = "1")
+                            ))
+
 # the third-party app
 oauth2_third_party_app <- oauth2_third_party_app(
   client_id = "123",

@@ -56,10 +56,11 @@ oauth2_server_app <- function(
 
       }
     }
+  })
 
     app$post("/token", function(req, res) {
 
-      if (req$query$code %in% req$app$locals$codes) {
+      #if (req$query$code %in% req$app$locals$codes) {
 
         token <- sodium::bin2hex(sodium::random(5))
 
@@ -68,15 +69,15 @@ oauth2_server_app <- function(
 
         res$
           send_json(list(
-            access_token = token
+            "access_token" = token
           ))
 
-      } else {
-        res$
-          send_status(401L)
-      }
+      # } else {
+      #   res$
+      #     send_status(401L)
+      # }
 
-    })
+
 
   })
 
@@ -135,6 +136,7 @@ oauth2_third_party_app <- function(
     content <- httr::content(resp)
 
     res$
+      set_status(200L)$
       send_json(content)
 
   })
