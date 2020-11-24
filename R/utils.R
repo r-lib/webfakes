@@ -100,3 +100,12 @@ mkdirp <- function(path, ...) {
 strrep <- function(x, no) {
   paste(rep(x, no), collapse = "")
 }
+
+set_name <- function(x, nm) {
+  names(x) <- nm
+  x
+}
+
+generate_token <- function() {
+  paste0(sample(c(0:9, letters[1:6]), 30, replace = TRUE), collapse = "")
+}

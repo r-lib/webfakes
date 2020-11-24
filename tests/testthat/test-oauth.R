@@ -1,47 +1,60 @@
 
 test_that("oauth2_resource_app", {
-  web <- local_app_process(oauth2_resource_app(redirect_uri = "https://dummy"))
-  auth <- web$url(
-    "/authorize",
-    query = c(
-      client_id = "client_id",
-      redirect_uri = "https://dummy",
-      state = "mystate"
-    )
+
+  # Create the resource server
+  rsapp <- local_app_process(
+    oauth2_resource_app(),
+    opts = server_opts(num_threads = 3)
   )
+  regi_url <- rsapp$url("/register")
+  auth_url <- rsapp$url("/authorize")
+  toke_url <- rsapp$url("/token")
 
-  resp <- curl::curl_fetch_memory(auth)
+  # Create the third party app server
+  tpapp <- local_app_process(
+    oauth2_third_party_app("3P app"),
+    opts = server_opts(num_threads = 3)
+  )
+  redi_url <- tpapp$url("/login/redirect")
+  conf_url <- tpapp$url("/login/config")
 
+  # Register the third party app at the resource server
+  # In real life this is done by the admin of the third party app
+  url <- paste0(
+    regi_url,
+    "?name=3P%20app",
+    "&redirect_uri=", redi_url
+  )
+  resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
-  expect_equal(resp$type, "text/html")
-  html <- rawToChar(resp$content)
-  expect_match(html, "https://dummy\\?code=[a-f0-9]+&state=mystate")
+  regdata <- jsonlite::fromJSON(rawToChar(resp$content))
 
-  # Get the code, and request a token with it
-  code <- sub("^.*code=([a-f0-9]+).*$", "\\1", html)
-
-  token <- web$url("/token")
+  # Now set this data on the third party app
+  # In real life this is included in the config of the third party app
+  # by its admin
+  auth_data <- jsonlite::toJSON(list(
+    auth_url = auth_url,
+    token_url = toke_url,
+    client_id = regdata$client_id,
+    client_secret = regdata$client_secret
+  ), auto_unbox = TRUE)
   handle <- curl::new_handle()
-  data <- charToRaw(paste0(
-    "grant_type=authorization_code&",
-    "code=", code, "&",
-    "client_id=client_id&",
-    "client_secret=client_secret&",
-    "redirect_uri=https://dummy"
-  ))
   curl::handle_setheaders(
     handle,
-    "content-type" = "application/x-www-form-urlencoded"
+    "content-type" = "application/json"
   )
   curl::handle_setopt(
     handle,
     customrequest = "POST",
-    postfieldsize = length(data),
-    postfields = data
+    postfieldsize = nchar(auth_data),
+    postfields = auth_data
   )
-  resp2 <- curl::curl_fetch_memory(token, handle = handle)
-
+  resp2 <- curl::curl_fetch_memory(conf_url, handle = handle)
   expect_equal(resp2$status_code, 200L)
-  token <- jsonlite::fromJSON(rawToChar(resp2$content), simplifyVector = FALSE)
-  expect_match(token$access_token, "^token-[a-f0-9]+$")
+
+  # Now everything is set up, a user can go to the login page of the
+  # third party app:
+  # browseURL(tpapp$url("/login"))
+
+  # TODO: automate what is happening in the browser, here
 })
