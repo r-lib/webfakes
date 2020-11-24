@@ -25,22 +25,3 @@ xml2::write_html(
   httr::content(resp),
   file)
 browseURL(file)
-### Things that error #######################
-
-url <- httr::modify_url(
-  process$url(),
-  path = "authorize",
-  query = list(client_id = "lala")
-)
-
-resp <- httr::GET(url)
-httr::stop_for_status(resp)
-
-url <- httr::modify_url(
-  process$url(),
-  path = "authorize",
-  query = list(client_id = "lala", client_secret = "lili")
-)
-
-resp <- httr::GET(url)
-httr::stop_for_status(resp)
