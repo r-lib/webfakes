@@ -37,28 +37,16 @@ oauth2_server_app <- function(
           send_status(400L)
       } else {
 
-        fs::dir_create("views")
-        writeLines(
-          "<body><p>Hey would you authorize the Third-Party App {app} to access your account?</p><p><a href='{url}/cb?state={state}&code={code}'>Continue</a>
-</p></body>
-",
-          file.path("views", "authorize.html")
-          )
-
         code <- sodium::bin2hex(sodium::random(15))
 
         req$app$locals$codes <- c(req$app$locals$codes, code)
 
+        app <- corresponding_app$app_name[1]
+        state <- req$query$state
+        url <- req$query$redirect_uri
 
-        txt <- res$render(
-          "authorize",
-          locals = list(
-            app = corresponding_app$app_name[1],
-            state = req$query$state,
-            url = req$query$redirect_uri,
-            code = code
-            )
-          )
+        txt <- glue::glue("<body><p>Hey would you authorize the Third-Party App {app} to access your account?</p><p><a href='{url}/cb?state={state}&code={code}'>Continue</a>
+</p></body>")
 
         res$
           set_status(200L)$
@@ -94,8 +82,8 @@ oauth2_third_party_app <- function(
         path = "authorize",
         query = list(
           state = state,
-          client_secret = app$locals$client_secret,
-          client_id = app$locals$client_id,
+          client_secret = req$app$locals$client_secret,
+          client_id = req$app$locals$client_id,
           redirect_uri = req$query$self_url
         )
       )
@@ -106,7 +94,7 @@ oauth2_third_party_app <- function(
 
   })
 
-  app$get("cb", function (req, res) {
+  app$get("/cb", function (req, res) {
     httr::POST(
       httr::modify_url(
         req$query$server_url,

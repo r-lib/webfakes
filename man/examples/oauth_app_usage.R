@@ -20,14 +20,11 @@ url <- httr::modify_url(
 resp <- httr::GET(url)
 resp
 
-httr::GET(httr::content(resp))
-
 file <- tempfile()
 xml2::write_html(
-  text,
+  httr::content(resp),
   file)
 browseURL(file)
-
 ### Things that error #######################
 
 url <- httr::modify_url(
