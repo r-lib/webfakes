@@ -1,110 +1,130 @@
-oauth2_server_app <- function(
-  app_name = "Third-Party App",
-  client_secret = "client_secret",
-  client_id = "client_id"
-  ) {
+
+oauth2_resource_app <- function(redirect_uri) {
+
   # Create app
   app <- new_app()
-  app$locals$listener <- local_app_process(useless())
-  # Register third-party app
-  app$locals$apps <- data.frame(
-    app_name = app_name,
-    client_secret = client_secret,
-    client_id = client_id
+
+  # Parse body for /token
+  app$use(mw_urlencoded())
+  app$use(mw_json())
+
+  app$locals$tpapps <- data.frame(
+    name = "Third-Party Application",
+    client_secret = "client_secret",
+    client_id = "client_id",
+    redirect_uri = redirect_uri
   )
+
+  generate_token <- function() {
+    paste0(sample(c(0:9, letters[1:6]), 30, replace = TRUE), collapse = "")
+  }
+
+  app$set_config("views", system.file("views", package = "presser"))
+  app$engine("html", tmpl_glue())
 
   # First step, asking the user for access
   app$get("/authorize", function(req, res) {
 
-    # Missing information either client secret or client ID
-    if (is.null(req$query$client_secret) || is.null(req$query$client_id)) {
+    # Missing or invalid client id
+    if (is.null(req$query$client_id)) {
       res$
-        # How would I set a status message, maybe in the body
-        send_status(400L)
-    } else {
+        set_status(400L)$
+        send("Invalid authorization request, no client id")
+      return()
 
-      corresponding_app <- res$app$locals$apps[
-        res$app$locals$apps$client_secret == req$query$client_secret &&
-          res$app$local$apps$client_id == req$query$client_id,]
-
-      # Wrong client ID or token
-      if (nrow(corresponding_app) == 0) {
-        res$
-          # How would I set a status message
-          send_status(400L)
-      } else {
-
-        code <- sodium::bin2hex(sodium::random(15))
-
-        req$app$locals$codes <- c(req$app$locals$codes, code)
-
-        app <- corresponding_app$app_name[1]
-        state <- req$query$state
-        url <- req$query$redirect_uri
-
-        listener_url <- req$app$locals$listener$url()
-
-        txt <- glue::glue(
-        "<body><p>
-        Hey would you authorize the Third-Party App {app} to access your account?
-        </p>
-        <p><a href='{listener_url}/kill'>Yes, allow!</a>
-</p></body>")
-
-        file <- tempfile()
-        writeLines(
-          txt,
-          file)
-        browseURL(file)
-
-       accepted <- unlist(httr::content(httr::GET(httr::modify_url(listener_url, path = "/killed"))))
-       while(!accepted) {
-         Sys.sleep(0.1)
-         accepted <- unlist(httr::content(httr::GET(httr::modify_url(listener_url, path = "/killed"))))
-       }
-
-        res$
-          set_header("location", glue::glue("{url}/cb?state={state}&code={code}"))$
-          send_status(302L)
-
-      }
+    } else if (! req$query$client_id %in% app$locals$tpapps$client_id) {
+      res$
+        set_status(400L)$
+        send("Invalid authorization request, unknown client id")
+      return()
     }
+
+    tpapps <- app$locals$tpapps
+    tprec <- tpapps[match(req$query$client_id, tpapps$client_id), ]
+
+    # Bad redirect URL?
+    if (req$query$redirect_uri %||% "" != tprec$redirect_uri) {
+      res$
+        set_status(400L)$
+        send("Invalid authorization request, redirect URL mismatch")
+      return()
+    }
+
+    code <- generate_token()
+    # TODO: make this app specific
+    app$locals$codes <- c(app$locals$codes, code)
+
+    data <- list(
+      app = tprec$name,
+      redirect_uri = tprec$redirect_uri,
+      code = code,
+      state = req$query$state %||% ""
+    )
+    html <- res$render("authorize", data)
+    res$
+      set_type("text/html")$
+      send(html)
   })
 
-    app$post("/token", function(req, res) {
+  app$post("/token", function(req, res) {
 
-      if (req$query$code %in% req$app$locals$codes) {
+    if (req$form$grant_type %||% "" != "authorization_code") {
+      res$
+        set_status(400L)$
+        send("Invalid grant type, must be 'authorization_code'")
+      return()
+    }
 
-        token <- sodium::bin2hex(sodium::random(5))
+    if (! req$form$code %in% app$locals$codes) {
+      res$
+        set_status(400L)$
+        send("Unknown authorization code")
+      return()
+    }
 
-        req$app$locals$tokens <- c(req$app$locals$tokens, token)
-        req$app$locals$codes <- req$app$locals$codes[req$app$locals$codes != req$query$code]
+    tpapps <- app$locals$tpapps
 
-        res$
-          send_json(list(access_token = token, expires_in = 3600L),
-                    auto_unbox = TRUE)
+    if (! req$form$client_id %in% tpapps$client_id) {
+      res$
+        set_status(400L)$
+        send("Invalid client id")
+      return()
+    }
 
-      } else {
-        res$
-          send_status(401L)
-      }
+    tprec <- tpapps[match(req$form$client_id, tpapps$client_id), ]
 
+    if (req$form$client_secret %||% "" != tprec$client_secret) {
+      res$
+        set_status(400L)$
+        send("Invalid token request, client secret mismatch")
+      return()
+    }
 
+    if (req$form$redirect_uri %||% "" != tprec$redirect_uri) {
+      res$
+        set_status(400L)$
+        send("Invalid token request, redirect URL mismatch")
+      return()
+    }
 
+    token <- paste0("token-", generate_token())
+    app$locals$tokens <- c(req$app$locals$tokens, token)
+    app$locals$codes <- setdiff(app$locals$codes, req$query$code)
+
+    res$
+      send_json(
+        list(access_token = token, expires_in = 3600L),
+        auto_unbox = TRUE
+      )
   })
 
-  return(app)
+  app
 }
 
-oauth2_third_party_app <- function(
-  client_secret = "client_secret",
-  client_id = "client_id",
-  server_url
-) {
+oauth2_third_party_app <- function() {
   app <- new_app()
-  app$locals$client_secret <- client_secret
-  app$locals$client_id <- client_id
-  app$locals$server_url <- server_url
+  app$locals$client_secret <- "client_secret"
+  app$locals$client_id <- "client_id"
 
   app$get("/login", function (req, res) {
 
