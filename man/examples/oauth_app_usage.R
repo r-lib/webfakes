@@ -24,4 +24,29 @@ url <- httr::modify_url(
 resp <- httr::GET(url)
 httr::content(resp)
 
+#################################
+load_all()
+# create and launch apps
 
+# the server
+# we register the third-party app directly
+oauth2_server_app <- oauth2_server_app(client_id = "123", client_secret = "pssst")
+oauth2_server_process <- local_app_process(oauth2_server_app)
+
+endpoint <- httr::oauth_endpoint(
+  base_url = oauth2_server_process$url(),
+  authorize = "authorize",
+  access = "token"
+)
+
+app <- httr::oauth_app(
+  appname = "Third-Party App",
+  secret = "pssst",
+  key = "123"
+)
+
+httr::oauth2.0_token(
+  endpoint,
+  app,
+  query_authorize_extra = list(client_secret = "pssst")
+  )

@@ -81,9 +81,8 @@ oauth2_server_app <- function(
         req$app$locals$codes <- req$app$locals$codes[req$app$locals$codes != req$query$code]
 
         res$
-          send_json(list(
-            "access_token" = token
-          ))
+          send_json(list(access_token = token, expires_in = 3600L),
+                    auto_unbox = TRUE)
 
       } else {
         res$
