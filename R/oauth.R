@@ -1,4 +1,4 @@
-oauth2_app <- function(
+oauth2_server_app <- function(
   app_name = "Third-Party App",
   client_secret = "client_secret",
   client_id = "client_id"
@@ -22,7 +22,7 @@ oauth2_app <- function(
     # Missing information either client secret or client ID
     if (is.null(req$query$client_secret) || is.null(req$query$client_id)) {
       res$
-        # How would I set a status message
+        # How would I set a status message, maybe in the body
         send_status(400L)
     } else {
 
@@ -39,14 +39,26 @@ oauth2_app <- function(
 
         fs::dir_create("views")
         writeLines(
-          "<body><p>Hey would you authorize the Third-Party App {app} to access your account?</p><p><a href='{url}/allow?state={state}'>Continue</a>
+          "<body><p>Hey would you authorize the Third-Party App {app} to access your account?</p><p><a href='{url}/cb?state={state}&code={code}'>Continue</a>
 </p></body>
 ",
           file.path("views", "authorize.html")
           )
-        txt <- res$render("authorize", locals = list(app = corresponding_app$app_name[1],
-                                                     state = req$query$state,
-                                                     url = sub("/authorize.*", "",req$url)))
+
+        code <- sodium::bin2hex(sodium::random(15))
+
+        req$app$locals$codes <- c(req$app$locals$codes, code)
+
+
+        txt <- res$render(
+          "authorize",
+          locals = list(
+            app = corresponding_app$app_name[1],
+            state = req$query$state,
+            url = req$query$redirect_uri,
+            code = code
+            )
+          )
 
         res$
           set_status(200L)$
@@ -59,18 +71,54 @@ oauth2_app <- function(
 
   })
 
-  app$get("/allow", function(req, res) {
+  return(app)
+}
 
-    code <- sodium::bin2hex(sodium::random(15))
+oauth2_third_party_app <- function(
+  client_secret = "client_secret",
+  client_id = "client_id"
+) {
+  app <- new_app()
+  app$locals$client_secret <- client_secret
+  app$locals$client_id <- client_id
 
-    req$app$locals$codes <- c(req$app$locals$codes, code)
+  app$get("/login", function (req, res) {
+
+    state <- sodium::bin2hex(sodium::random(5))
+
+    # might need a cookie to store the state
+    req$app$locals$state <- state
+
+    url <- httr::modify_url(
+        req$query$server_url,
+        path = "authorize",
+        query = list(
+          state = state,
+          client_secret = app$locals$client_secret,
+          client_id = app$locals$client_id,
+          redirect_uri = req$query$self_url
+        )
+      )
 
     res$
-      set_status(200L)$
-      send_json(list(
-        url = sub(req$url, "allow.*", glue::glue("cb?state={req$query$state}&code={code}"))
-      ))
+      set_header("location", url)$
+      send_status(302L)
+
   })
 
-  return(app)
+  app$get("cb", function (req, res) {
+    httr::POST(
+      httr::modify_url(
+        req$query$server_url,
+        path = token,
+        query = list(
+          grant_type="authorization_code",
+          code = req$query$code,
+          redirect_uri = {url},
+          client_id = client_id,
+          client_secret = client_secret
+        )
+      )
+    ) -> resp
+  })
 }
