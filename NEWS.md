@@ -1,6 +1,9 @@
 
 # Development version
 
+* `mw_json()` and `mw_urlencoded()` now do not fail when the request
+  body in `NULL`.
+
 * New `local_app_process()` function to automatically clean up the
   server process.
 

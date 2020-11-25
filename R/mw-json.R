@@ -25,11 +25,13 @@ mw_json <- function(type = "application/json",
   function(req, res) {
     ct <- req$get_header("Content-Type") %||% ""
     if (! ct %in% tolower(type)) return("next")
-    req$json <- jsonlite::fromJSON(
-      rawToChar(req$.body),
-      simplifyVector = simplifyVector,
-      ...
-    )
+    if (!is.null(req$.body)) {
+      req$json <- jsonlite::fromJSON(
+        rawToChar(req$.body),
+        simplifyVector = simplifyVector,
+        ...
+        )
+    }
     "next"
   }
 }
