@@ -157,13 +157,13 @@ Suggests:
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>
 <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49515/"</span></code></pre></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49505/"</span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-11-25 14:20:51"</span></code></pre></div>
+<span class="co">#&gt; [1] "2020-11-25 14:53:30"</span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
@@ -193,7 +193,7 @@ Suggests:
     class <span class="op">=</span> <span class="st">"http_404"</span>
   <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
+<span class="co">#&gt; Test passed 😀</span></code></pre></div>
 <p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> your <code>setup-http.R</code> file for this. Alternatively, you can start the app process in a helper file. See “How do I start the app when writing the tests?” just below.</p>
 </div>
 <div id="how-do-i-start-the-app-when-writing-the-tests" class="section level2">
@@ -228,7 +228,7 @@ Suggests:
   <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
+<span class="co">#&gt; Test passed 🎉</span></code></pre></div>
 </div>
 <div id="can-i-use-an-app-for-a-single-testthat-test" class="section level2">
 <h2 class="hasAnchor">
@@ -244,7 +244,7 @@ Suggests:
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">echo</span>, <span class="st">"hello there"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; Test passed 🌈</span></code></pre></div>
+<span class="co">#&gt; Test passed 😀</span></code></pre></div>
 </div>
 <div id="how-do-i-test-a-sequence-of-requests" class="section level2">
 <h2 class="hasAnchor">
@@ -277,10 +277,10 @@ Suggests:
 <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
 <span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 3 seconds...</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49524/unstable]</span>
-<span class="co">#&gt;   Date: 2020-11-25 14:21</span>
+<span class="co">#&gt; Request failed [401]. Retrying in 1.4 seconds...</span>
+<span class="co">#&gt; Request failed [401]. Retrying in 2.6 seconds...</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49513/unstable]</span>
+<span class="co">#&gt;   Date: 2020-11-25 14:53</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 17 B</span></code></pre></div>
@@ -327,8 +327,8 @@ Suggests:
 <span class="op">)</span>
 <span class="op">}</span>
 <span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49530/packages?name=vcr]</span>
-<span class="co">#&gt;   Date: 2020-11-25 14:21</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49519/packages?name=vcr]</span>
+<span class="co">#&gt;   Date: 2020-11-25 14:53</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 18 B</span>
@@ -341,8 +341,8 @@ Suggests:
 <span class="co">#&gt; [1] "vcr"</span>
 
 <span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49530/packages?name=httptest]</span>
-<span class="co">#&gt;   Date: 2020-11-25 14:21</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49519/packages?name=httptest]</span>
+<span class="co">#&gt;   Date: 2020-11-25 14:53</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 29 B</span>
@@ -452,7 +452,7 @@ Suggests:
 <span class="co">#&gt; one is done</span>
 <span class="co">#&gt; one is done</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.000   1.630 </span>
+<span class="co">#&gt;   0.002   0.000   1.740 </span>
 <span class="co">#&gt; Test passed 🎊</span></code></pre></div>
 </div>
 <div id="how-to-make-sure-that-my-code-works-with-the-real-api" class="section level2">
