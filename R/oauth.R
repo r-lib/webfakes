@@ -211,7 +211,8 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
     res$redirect(url)$send()
   })
 
-  app$get("/login/redirect", function (req, res) {
+  # I could not convince curl to redirect a POST to a GET, so both are good
+  app$all("/login/redirect", function (req, res) {
 
     code <- req$query$code
     state <- req$query$state
