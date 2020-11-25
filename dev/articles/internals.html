@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Presser internals • presser</title>
+<title>Webfakes internals • webfakes</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Presser internals">
-<meta property="og:description" content="presser">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Webfakes internals">
+<meta property="og:description" content="webfakes">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -31,7 +31,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
+        <a class="navbar-link" href="../index.html">webfakes</a>
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
@@ -61,7 +61,7 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -71,7 +71,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/presser/">
+  <a href="https://github.com/r-lib/webfakes/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -89,10 +89,10 @@
       </header><script src="internals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Presser internals</h1>
+      <h1 data-toc-skip>Webfakes internals</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/presser/blob/master/vignettes/internals.Rmd"><code>vignettes/internals.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/webfakes/blob/master/vignettes/internals.Rmd"><code>vignettes/internals.Rmd</code></a></small>
       <div class="hidden name"><code>internals.Rmd</code></div>
 
     </div>
@@ -154,9 +154,9 @@
 <p>Currently the main R thread can set <code>req_todo</code> to two different values.</p>
 <ul>
 <li>
-<code>PRESSER_DONE</code> means that the request was processed, and the request thread can quit. Most requests are like this.</li>
+<code>WEBFAKES_DONE</code> means that the request was processed, and the request thread can quit. Most requests are like this.</li>
 <li>
-<code>PRESSER_WAIT</code> means that the request thread still needs to stay around and sleep for the specified number of <code>secs</code>. After sleeping for the specified amount of time, the request thread will signal <code>process_more</code> again, notifying the main R thread, but it also sets <code>main_todo</code> to <code>PRESSER_WAIT</code>, so the main R thread knows that this is not a new request. The main R thread can just take the stored request from the <code>req</code> field of the connection user data in this case.</li>
+<code>WEBFAKES_WAIT</code> means that the request thread still needs to stay around and sleep for the specified number of <code>secs</code>. After sleeping for the specified amount of time, the request thread will signal <code>process_more</code> again, notifying the main R thread, but it also sets <code>main_todo</code> to <code>WEBFAKES_WAIT</code>, so the main R thread knows that this is not a new request. The main R thread can just take the stored request from the <code>req</code> field of the connection user data in this case.</li>
 </ul>
 </div>
 <div id="error-handling" class="section level2">
@@ -188,7 +188,7 @@
 <div id="errors-in-the-c-code-while-processing-the-request-or-response-" class="section level3">
 <h3 class="hasAnchor">
 <a href="#errors-in-the-c-code-while-processing-the-request-or-response-" class="anchor"></a>Errors in the C code while processing the request or response.</h3>
-<p>Errors that happen in the C code while processing the request or the response are different, because most probably we cannot send anything meaningful to the client. E.g. the most frequent such error happens when the connection breaks or the client closes the connection. These errors are caught in the <code>server_poll()</code> and <code>response_*()</code> R functions, and printed to the screen (see <code>server.R</code>). If they originate from civetweb, then they are also logged in the civetweb error log. These errors invalidate the request, and finish the processing callback. This is implemented by the <code>server.R</code> functions (re)throwing a <code>presser_error</code>, which is caught and then silently ignored by the processing loop.</p>
+<p>Errors that happen in the C code while processing the request or the response are different, because most probably we cannot send anything meaningful to the client. E.g. the most frequent such error happens when the connection breaks or the client closes the connection. These errors are caught in the <code>server_poll()</code> and <code>response_*()</code> R functions, and printed to the screen (see <code>server.R</code>). If they originate from civetweb, then they are also logged in the civetweb error log. These errors invalidate the request, and finish the processing callback. This is implemented by the <code>server.R</code> functions (re)throwing a <code>webfakes_error</code>, which is caught and then silently ignored by the processing loop.</p>
 <p>See ‘Resource cleanup’ below for how resources are cleaned up on error.</p>
 </div>
 </div>
@@ -198,7 +198,7 @@
 <p>See the ‘Multithreading’ section above as well.</p>
 <p>We create a <code>req</code> object for an incoming request, before passing it to R from C. This object is an environment and it is kept until the response to the request is completely sent out. (Or the connection is closed for some reason.) The <code>req</code> object is also added to the connection user data of civetweb. Additionally, the server keeps an list (environment) of all request objects. The latter makes sure that the request object is not garbage collected, so we don’t need to worry about that.</p>
 <p>When a response is delayed, the app makes a note about the position of the handler function in the handler stack (in <code>.stackptr</code>), so that this handler function can be called again, after the delay.</p>
-<p>Then it calls <code>response_write()</code> which sends a <code>PRESSER_WAIT</code> message to the request thread. Then the main R thread can continue processing and potentially serving other requests, assuming the server has been started with at least two threads. After the wait, the request thread sends a message to the main R thread again, and the app’s poll call will get the same request object for the second (etc.) time. The app starts calling the handler functions from the recorded <code>.stackptr</code> position.</p>
+<p>Then it calls <code>response_write()</code> which sends a <code>WEBFAKES_WAIT</code> message to the request thread. Then the main R thread can continue processing and potentially serving other requests, assuming the server has been started with at least two threads. After the wait, the request thread sends a message to the main R thread again, and the app’s poll call will get the same request object for the second (etc.) time. The app starts calling the handler functions from the recorded <code>.stackptr</code> position.</p>
 </div>
 <div id="interruption" class="section level2">
 <h2 class="hasAnchor">
@@ -216,7 +216,7 @@
 <p>There are some points in the C code where R errors happen while the code is holding resources. We use (a copy of) the cleancall package to take care of resource cleanup here.</p>
 <p>The first such place is the <code>server_poll()</code> C function, after a request is in from the request thread. Creating an R object for the request involves a lot of R API calls, and if one of them fails, we need to clean up the resources associated with this connection. (The error will be logged and the R <code>server_poll()</code> function will continue polling.) The cleanup in this case involves:</p>
 <ul>
-<li>Sending a <code>PRESSER_DONE</code> message to the request thread, so it will quit.</li>
+<li>Sending a <code>WEBFAKES_DONE</code> message to the request thread, so it will quit.</li>
 <li>Removing the request from the server’s list of current requests.</li>
 <li>Signaling the <code>process_less</code> condition, to let other threads know that we are again ready to process requests.</li>
 </ul>

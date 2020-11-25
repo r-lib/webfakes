@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lightweight Web Server for Testing • presser</title>
+<title>Lightweight Web Server for Testing • webfakes</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -35,7 +35,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">presser</a>
+        <a class="navbar-link" href="index.html">webfakes</a>
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
@@ -65,7 +65,7 @@
       <a href="httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="articles/internals.html">Presser internals</a>
+      <a href="articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -75,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/presser/">
+  <a href="https://github.com/r-lib/webfakes/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -92,9 +92,9 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="presser" class="section level1">
+<div id="webfakes" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#presser" class="anchor"></a>presser</h1></div>
+<a href="#webfakes" class="anchor"></a>webfakes</h1></div>
 <blockquote>
 <p>Your own web server for happy HTTP testing</p>
 </blockquote>
@@ -136,7 +136,7 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Once on CRAN, install the package as usual:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"presser"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"webfakes"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
@@ -144,11 +144,11 @@
 <p>Start a web app at the beginning of your tests or test file, and stop it after. Here is an example with the testthat package. Suppose you want to test that your <code>get_hello()</code> function can query an API:</p>
 <p><code><a href="reference/local_app_process.html">local_app_process()</a></code> helps you clean up the web server process after the test block, or test file. It is similar to the <code>withr::local_*</code> functions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/hello/:user"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Hello "</span>, <span class="va">req</span><span class="op">$</span><span class="va">params</span><span class="op">$</span><span class="va">user</span>, <span class="st">"!"</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span>
+<span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span>
 
 <span class="fu">test_that</span><span class="op">(</span><span class="st">"can use hello API"</span>, <span class="op">{</span>
   <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello/Gabor"</span><span class="op">)</span>
@@ -156,7 +156,7 @@
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 <p>When testing HTTP clients you can often use the built in <code><a href="reference/httpbin_app.html">httpbin_app()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">httpbin</span> <span class="op">&lt;-</span> <span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">presser</span><span class="fu">::</span><span class="fu"><a href="reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">httpbin</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">test_that</span><span class="op">(</span><span class="st">"HTTP errors are caught"</span>, <span class="op">{</span>
   <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">httpbin</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/status/404"</span><span class="op">)</span>
@@ -168,7 +168,7 @@
 <div id="documentation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#documentation" class="anchor"></a>Documentation</h2>
-<p>See <a href="https://r-lib.github.io/presser/" class="uri">https://r-lib.github.io/presser/</a></p>
+<p>See <a href="https://r-lib.github.io/webfakes/" class="uri">https://r-lib.github.io/webfakes/</a></p>
 </div>
 <div id="links" class="section level2">
 <h2 class="hasAnchor">
@@ -184,7 +184,7 @@
 <div id="r-web-application-frameworks" class="section level3">
 <h3 class="hasAnchor">
 <a href="#r-web-application-frameworks" class="anchor"></a>R web application frameworks</h3>
-<p>presser focuses on testing, these packages are for writing real web apps:</p>
+<p>webfakes focuses on testing, these packages are for writing real web apps:</p>
 <ul>
 <li><a href="https://github.com/rstudio/shiny">shiny</a></li>
 <li><a href="https://www.opencpu.org/">opencpu</a></li>
@@ -206,11 +206,9 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=presser">https://​cloud.r-project.org/​package=presser</a>
+<li>Browse source code at <br><a href="https://github.com/r-lib/webfakes/">https://​github.com/​r-lib/​webfakes/​</a>
 </li>
-<li>Browse source code at <br><a href="https://github.com/r-lib/presser/">https://​github.com/​r-lib/​presser/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/r-lib/presser/issues">https://​github.com/​r-lib/​presser/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/r-lib/webfakes/issues">https://​github.com/​r-lib/​webfakes/​issues</a>
 </li>
 </ul>
 </div>

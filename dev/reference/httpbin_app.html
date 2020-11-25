@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generic web app for testing HTTP clients — httpbin_app • presser</title>
+<title>Generic web app for testing HTTP clients — httpbin_app • webfakes</title>
 
 
 <!-- jquery -->
@@ -71,7 +71,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
+        <a class="navbar-link" href="../index.html">webfakes</a>
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
@@ -101,7 +101,7 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -111,7 +111,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/r-lib/presser/">
+  <a href="https://github.com/r-lib/webfakes/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -130,7 +130,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Generic web app for testing HTTP clients</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/presser/blob/master/R/httpbin.R'><code>R/httpbin.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/httpbin.R'><code>R/httpbin.R</code></a></small>
     <div class="hidden name"><code>httpbin_app.Rd</code></div>
     </div>
 
@@ -151,7 +151,7 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>presser_app</code>.</p>
+    <p>A <code>webfakes_app</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'>httpbin_app</span><span class='op'>(</span><span class='op'>)</span>
@@ -163,7 +163,7 @@
 #&gt; [1] "close"
 #&gt; 
 #&gt; $date
-#&gt; [1] "2020-11-18 09:57:57"
+#&gt; [1] "2020-11-25 14:20:39"
 #&gt; 
 #&gt; $`content-type`
 #&gt; [1] "application/json"
@@ -172,19 +172,19 @@
 #&gt; [1] "308"
 #&gt; 
 #&gt; $etag
-#&gt; [1] "\"b5685d86\""
+#&gt; [1] "\"7023410c\""
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='va'>resp</span><span class='op'>$</span><span class='va'>content</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; {
 #&gt;   "args": {},
 #&gt;   "headers": {
-#&gt;     "Host": "127.0.0.1:49531",
+#&gt;     "Host": "127.0.0.1:49504",
 #&gt;     "User-Agent": "R/4.0.3 R (4.0.3 x86_64-apple-darwin17.0 x86_64 darwin17.0) on GitHub Actions",
 #&gt;     "Accept": "*/*",
 #&gt;     "Accept-Encoding": "deflate, gzip"
 #&gt;   },
 #&gt;   "origin": "127.0.0.1",
 #&gt;   "path": "/get",
-#&gt;   "url": "http://127.0.0.1:49531/get"
+#&gt;   "url": "http://127.0.0.1:49504/get"
 #&gt; }</div><div class='input'><span class='va'>proc</span><span class='op'>$</span><span class='kw'>stop</span><span class='op'>(</span><span class='op'>)</span>
 </div></pre>
   </div>

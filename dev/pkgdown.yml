@@ -6,8 +6,8 @@ articles:
   how-to: how-to.html
   internals: internals.html
   introduction: introduction.html
-last_built: 2020-11-18T09:57Z
+last_built: 2020-11-25T14:20Z
 urls:
-  reference: https://r-lib.github.io/presser//reference
-  article: https://r-lib.github.io/presser//articles
+  reference: https://r-lib.github.io/webfakes//reference
+  article: https://r-lib.github.io/webfakes//articles
 

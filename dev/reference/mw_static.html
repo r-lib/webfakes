@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Middleware function to serve static files — mw_static • presser</title>
+<title>Middleware function to serve static files — mw_static • webfakes</title>
 
 
 <!-- jquery -->
@@ -75,7 +75,7 @@ the rest of the handlers are still called." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
+        <a class="navbar-link" href="../index.html">webfakes</a>
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
@@ -105,7 +105,7 @@ the rest of the handlers are still called." />
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -115,7 +115,7 @@ the rest of the handlers are still called." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/r-lib/presser/">
+  <a href="https://github.com/r-lib/webfakes/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -134,7 +134,7 @@ the rest of the handlers are still called." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Middleware function to serve static files</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/presser/blob/master/R/mw-static.R'><code>R/mw-static.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/mw-static.R'><code>R/mw-static.R</code></a></small>
     <div class="hidden name"><code>mw_static.Rd</code></div>
     </div>
 
@@ -178,11 +178,11 @@ supports.</p></td>
 <code><a href='mw_urlencoded.html'>mw_urlencoded</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>root</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"presser"</span>, <span class='st'>"examples"</span>, <span class='st'>"static"</span>, <span class='st'>"public"</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='va'>root</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"webfakes"</span>, <span class='st'>"examples"</span>, <span class='st'>"static"</span>, <span class='st'>"public"</span><span class='op'>)</span>
 <span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='va'>app</span><span class='op'>$</span><span class='fu'>use</span><span class='op'>(</span><span class='fu'>mw_static</span><span class='op'>(</span>root <span class='op'>=</span> <span class='va'>root</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>app</span>
-</div><div class='output co'>#&gt; &lt;presser_app&gt;
+</div><div class='output co'>#&gt; &lt;webfakes_app&gt;
 #&gt; routes:
 #&gt;   use *
 #&gt; fields and methods:
@@ -196,7 +196,7 @@ supports.</p></td>
 #&gt;   put(path, ...)         # add route for PUT
 #&gt;   use(...)               # add middleware
 #&gt;   locals                 # app-wide shared data
-#&gt; # see ?presser_app for all methods</div></pre>
+#&gt; # see ?webfakes_app for all methods</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

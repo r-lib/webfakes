@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Middleware to parse a JSON body — mw_json • presser</title>
+<title>Middleware to parse a JSON body — mw_json • webfakes</title>
 
 
 <!-- jquery -->
@@ -71,7 +71,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
+        <a class="navbar-link" href="../index.html">webfakes</a>
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
@@ -101,7 +101,7 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -111,7 +111,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/r-lib/presser/">
+  <a href="https://github.com/r-lib/webfakes/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -130,7 +130,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Middleware to parse a JSON body</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/presser/blob/master/R/mw-json.R'><code>R/mw-json.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/mw-json.R'><code>R/mw-json.R</code></a></small>
     <div class="hidden name"><code>mw_json.Rd</code></div>
     </div>
 
@@ -178,7 +178,7 @@ the JSON parsing.</p></td>
     <pre class="examples"><div class='input'><span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='va'>app</span><span class='op'>$</span><span class='fu'>use</span><span class='op'>(</span><span class='fu'>mw_json</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>app</span>
-</div><div class='output co'>#&gt; &lt;presser_app&gt;
+</div><div class='output co'>#&gt; &lt;webfakes_app&gt;
 #&gt; routes:
 #&gt;   use *
 #&gt; fields and methods:
@@ -192,7 +192,7 @@ the JSON parsing.</p></td>
 #&gt;   put(path, ...)         # add route for PUT
 #&gt;   use(...)               # add middleware
 #&gt;   locals                 # app-wide shared data
-#&gt; # see ?presser_app for all methods</div></pre>
+#&gt; # see ?webfakes_app for all methods</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>App process that is cleaned up automatically — local_app_process • webfakes</title>
+<title>A webfakes request object — webfakes_request • webfakes</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,11 @@
 
 
 
-<meta property="og:title" content="App process that is cleaned up automatically — local_app_process" />
-<meta property="og:description" content="You can start the process with an explicit $start() call.
-Alternatively it starts up at the first $url() or $get_port()
-call." />
+<meta property="og:title" content="A webfakes request object — webfakes_request" />
+<meta property="og:description" content="webfakes creates a webfakes_request object for every incoming HTTP
+request. This object is passed to every matched route and middleware,
+until the response is sent. It has reference semantics, so handlers
+can modify it." />
 
 
 <meta name="robots" content="noindex">
@@ -131,41 +132,77 @@ call." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>App process that is cleaned up automatically</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/local-app-process.R'><code>R/local-app-process.R</code></a></small>
-    <div class="hidden name"><code>local_app_process.Rd</code></div>
+    <h1>A webfakes request object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/request.R'><code>R/request.R</code></a></small>
+    <div class="hidden name"><code>webfakes_request.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>You can start the process with an explicit <code>$start()</code> call.
-Alternatively it starts up at the first <code>$url()</code> or <code>$get_port()</code>
-call.</p>
+    <p>webfakes creates a <code>webfakes_request</code> object for every incoming HTTP
+request. This object is passed to every matched route and middleware,
+until the response is sent. It has reference semantics, so handlers
+can modify it.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>local_app_process</span><span class='op'>(</span><span class='va'>app</span>, <span class='va'>...</span>, .local_envir <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>app</th>
-      <td><p><code>webfakes_app</code> object, the web app to run.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Passed to <code><a href='new_app_process.html'>new_app_process()</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>.local_envir</th>
-      <td><p>The environment to attach the process cleanup to.
-Typically a frame. When this frame finishes, the process is stopped.</p></td>
-    </tr>
-    </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Fields and methods:</p><ul>
+<li><p><code>app</code>: The <code>webfakes_app</code> object itself.</p></li>
+<li><p><code>headers</code>: Named list of HTTP request headers.</p></li>
+<li><p><code>hostname</code>: The Host header, the server hostname and maybe port.</p></li>
+<li><p><code>method</code>: HTTP method.</p></li>
+<li><p><code>path</code>: Server path.</p></li>
+<li><p><code>protocol</code>: <code>"http"</code> or <code>"https"</code>.</p></li>
+<li><p><code>query_string</code>: The raw query string, without the starting <code>?</code>.</p></li>
+<li><p><code>query</code>: Parsed query parameters in a named list.</p></li>
+<li><p><code>remote_addr</code>: String, the domain name or IP address of the client.
+webfakes runs on the localhost, so this is <code>127.0.0.1</code>.</p></li>
+<li><p><code>url</code>: The full URL of the request.</p></li>
+<li><p><code>get_header(field)</code>: Function to query a request header. Returns
+<code>NULL</code> if the header is not present.</p></li>
+</ul>
+
+<p>Body parsing middleware adds additional fields to the request object.
+See <code><a href='mw_raw.html'>mw_raw()</a></code>, <code><a href='mw_text.html'>mw_text()</a></code>, <code><a href='mw_json.html'>mw_json()</a></code>, <code><a href='mw_multipart.html'>mw_multipart()</a></code> and
+<code><a href='mw_urlencoded.html'>mw_urlencoded()</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='new_app_process.html'>new_app_process()</a></code> for more details.</p></div>
+    <div class='dont-index'><p><a href='webfakes_response.html'>webfakes_response</a> for the webfakes response object.</p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># This is how you can see the request and response objects:</span>
+<span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>app</span><span class='op'>$</span><span class='fu'>get</span><span class='op'>(</span><span class='st'>"/"</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>req</span>, <span class='va'>res</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/browser.html'>browser</a></span><span class='op'>(</span><span class='op'>)</span>
+  <span class='va'>res</span><span class='op'>$</span><span class='fu'>send</span><span class='op'>(</span><span class='st'>"done"</span><span class='op'>)</span>
+<span class='op'>}</span><span class='op'>)</span>
+<span class='va'>app</span>
+</div><div class='output co'>#&gt; &lt;webfakes_app&gt;
+#&gt; routes:
+#&gt;   get /
+#&gt; fields and methods:
+#&gt;   all(path, ...)         # add route for *all* HTTP methods
+#&gt;   delete(path, ...)      # add route for DELETE
+#&gt;   engine(ext, engine)    # add template engine for file extension
+#&gt;   head(path, ...)        # add route for HEAD
+#&gt;   listen(port)           # start web app on port
+#&gt;   patch(path, ...)       # add route for PATCH
+#&gt;   post(path, ...)        # add route for POST
+#&gt;   put(path, ...)         # add route for PUT
+#&gt;   use(...)               # add middleware
+#&gt;   locals                 # app-wide shared data
+#&gt; # see ?webfakes_app for all methods</div><div class='input'>
+<span class='co'># Now start this app on a port:</span>
+<span class='co'># app$listen(3000)</span>
+<span class='co'># and connect to it from a web browser: http://127.0.0.1:3000</span>
+<span class='co'># You can also use another R session to connect:</span>
+<span class='co'># httr::GET("http://127.0.0.1:3000")</span>
+<span class='co'># or the command line curl tool:</span>
+<span class='co'># curl -v http://127.0.0.1:3000</span>
+<span class='co'># The app will stop while processing the request.</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

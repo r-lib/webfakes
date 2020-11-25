@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a new web application — new_app • presser</title>
+<title>Create a new web application — new_app • webfakes</title>
 
 
 <!-- jquery -->
@@ -71,7 +71,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
+        <a class="navbar-link" href="../index.html">webfakes</a>
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
@@ -101,7 +101,7 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -111,7 +111,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/r-lib/presser/">
+  <a href="https://github.com/r-lib/webfakes/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -130,7 +130,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create a new web application</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/presser/blob/master/R/app.R'><code>R/app.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/app.R'><code>R/app.R</code></a></small>
     <div class="hidden name"><code>new_app.Rd</code></div>
     </div>
 
@@ -143,13 +143,13 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A new <code>presser_app</code>.</p>
+    <p>A new <code>webfakes_app</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The typical workflow of creating a web application is:</p><ol>
-<li><p>Create a <code>presser_app</code> object with <code>new_app()</code>.</p></li>
+<li><p>Create a <code>webfakes_app</code> object with <code>new_app()</code>.</p></li>
 <li><p>Add middleware and/or routes to it.</p></li>
-<li><p>Start is with the <code>presser_app$listen()</code> method, or start it in
+<li><p>Start is with the <code>webfakes_app$listen()</code> method, or start it in
 another process with <code><a href='new_app_process.html'>new_app_process()</a></code>.</p></li>
 <li><p>Make queries to the web app.</p></li>
 <li><p>Stop it via <code>CTRL+C</code> / <code>ESC</code>, or, if it is running in another
@@ -164,13 +164,13 @@ process, with the <code>$stop()</code> method of <code><a href='new_app_process.
 <li><p>extended by simply adding new routes and/or middleware.</p></li>
 </ul>
 
-<p>The presser API is very much influenced by the
+<p>The webfakes API is very much influenced by the
 <a href='http://expressjs.com/'>express.js</a> project.</p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Create web app objects</h3>
 <p><div class="r"></p><pre><span class='fu'>new_app</span><span class='op'>(</span><span class='op'>)</span>
 </pre><p></div></p>
-<p><code>new_app()</code> returns a <code>presser_app</code> object the has the methods listed
+<p><code>new_app()</code> returns a <code>webfakes_app</code> object the has the methods listed
 on this page.</p>
-<p>An app is an environment with S3 class <code>presser_app</code>.</p>
+<p>An app is an environment with S3 class <code>webfakes_app</code>.</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The handler stack</h3>
 
@@ -206,17 +206,17 @@ handler stack, and called if they match an incoming HTTP request.
 See 'Handler functions' below.</p></li>
 </ul>
 
-<p>presser also has methods for the less frequently used HTTP verbs:
+<p>webfakes also has methods for the less frequently used HTTP verbs:
 <code>CONNECT</code>, <code>MKCOL</code>, <code>OPTIONS</code>, <code>PROPFIND</code>, <code>REPORT</code>. (The method
 names are always in lowercase.)</p>
 <p>If a request is not handled by any routes (or handler functions in
-general), then presser will send a simple HTTP 404 response.</p>
+general), then webfakes will send a simple HTTP 404 response.</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Middleware</h3>
 
 
 <p><code>app$use()</code> adds a middleware to the handler stack. A middleware is
-a handler function, see 'Handler functions' below. presser comes with
+a handler function, see 'Handler functions' below. webfakes comes with
 middleware to perform common tasks:</p><ul>
 <li><p><code><a href='mw_etag.html'>mw_etag()</a></code> adds an <code>Etag</code> header to the response.</p></li>
 <li><p><code><a href='mw_log.html'>mw_log()</a></code> logs each requests to standard output, or another connection.</p></li>
@@ -238,11 +238,11 @@ response is created before reaching this point in the handler stack.)</p></li>
 
 
 <p>A handler function is a route or middleware. A handler function is
-called by presser with the incoming HTTP request and the outgoing
+called by webfakes with the incoming HTTP request and the outgoing
 HTTP response objects (being built) as arguments. The handler function
 may query and modify the members of the request and/or the response
 object. If it returns the string <code>"next"</code>, then it is <em>not</em> a terminal
-handler, and once it returns, presser will move on to call the next
+handler, and once it returns, webfakes will move on to call the next
 handler in the stack.</p>
 <p>A typical route:<div class="r"></p><pre><span class='va'>app</span><span class='op'>$</span><span class='fu'>get</span><span class='op'>(</span><span class='st'>"/user/:id"</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>req</span>, <span class='va'>res</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>id</span> <span class='op'>&lt;-</span> <span class='va'>req</span><span class='op'>$</span><span class='va'>params</span><span class='op'>$</span><span class='va'>id</span>
@@ -258,11 +258,11 @@ this case. It matches <code>/user/alice</code>, <code>/user/bob</code>, etc. The
 will be only called for GET methods and matching API paths.</p></li>
 <li><p>The handler receives the request (<code>req</code>) and the response (<code>res</code>).</p></li>
 <li><p>It sets the HTTP status, additional headers, and sends the data.
-(In this case the <code>presser_response$send_json()</code> method automatically
+(In this case the <code>webfakes_response$send_json()</code> method automatically
 converts <code>response</code> to JSON and sets the <code>Content-Type</code> and
 <code>Content-Length</code> headers.</p></li>
 <li><p>This is a terminal handler, because it does <em>not</em> return <code>"next"</code>.
-Once this handler function returns, presser will send out the HTTP
+Once this handler function returns, webfakes will send out the HTTP
 response.</p></li>
 </ul>
 
@@ -271,10 +271,10 @@ response.</p></li>
   <span class='st'>"next"</span>
 <span class='op'>}</span><span class='op'>)</span>
 </pre><p></div></p><ul>
-<li><p>There is no HTTP method and API path here, presser will call the
+<li><p>There is no HTTP method and API path here, webfakes will call the
 handler for each HTTP request.</p></li>
 <li><p>This is not a terminal handler, it does return <code>"next"</code>, so after it
-returns presser will look for the next handler in the stack.</p></li>
+returns webfakes will look for the next handler in the stack.</p></li>
 </ul>
 
 
@@ -288,7 +288,7 @@ response body.</p>
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Request and response objects</h3>
 
 
-<p>See <a href='presser_request.html'>presser_request</a> and <a href='presser_response.html'>presser_response</a> for the methods of the
+<p>See <a href='webfakes_request.html'>webfakes_request</a> and <a href='webfakes_response.html'>webfakes_response</a> for the methods of the
 request and response objects.</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Path specification</h3>
@@ -310,7 +310,7 @@ must be in a list.)</p></li>
 <p>Paths that are specified as parameterized strings or regular expressions
 can have parameters.</p>
 <p>For parameterized strings the keys may contain letters, numbers and
-underscores. When presser matches an API path to a handler with a
+underscores. When webfakes matches an API path to a handler with a
 parameterized string path, the parameters will be added to the
 request, as <code>params</code>. I.e. in the handler function (and subsequent
 handler functions, if the current one is not terminal), they are
@@ -325,10 +325,10 @@ matching one.</p>
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Templates</h3>
 
 
-<p>presser supports templates, using any template engine. It comes with
+<p>webfakes supports templates, using any template engine. It comes with
 a template engine that uses the glue package, see <code><a href='tmpl_glue.html'>tmpl_glue()</a></code>.</p>
 <p><code>app$engine()</code> registers a template engine, for a certain file
-extension. The <code>$render()</code> method of <a href='presser_response.html'>presser_response</a>
+extension. The <code>$render()</code> method of <a href='webfakes_response.html'>webfakes_response</a>
 can be called from the handler function to evaluate a template from a
 file.<div class="r"></p><pre><span class='va'>app</span><span class='op'>$</span><span class='fu'>engine</span><span class='op'>(</span><span class='va'>ext</span>, <span class='va'>engine</span><span class='op'>)</span>
 </pre><p></div></p><ul>
@@ -355,7 +355,7 @@ that can be used in the template. It should return the result.</p></li>
 <p>The location of the templates can be set using the <code>views</code> configuration
 parameter, see the <code>$set_config()</code> method below.</p>
 <p>In the template, the variables passed in as <code>locals</code>, and also the
-response local variables (see <code>locals</code> in <a href='presser_response.html'>presser_response</a>), are
+response local variables (see <code>locals</code> in <a href='webfakes_response.html'>webfakes_response</a>), are
 available.</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Starting and stopping</h3>
@@ -377,30 +377,30 @@ is running in another process.</p>
 <p>When <code>port</code> is <code>NULL</code>, the operating system chooses a port where the
 app will listen. To be able to get the port number programmatically,
 before the listen method blocks, it advertises the selected port in a
-<code>presser_port</code> condition, so one can catch it:</p>
-<p>presser by default binds only to the loopback interface at 127.0.0.1, so
-the presser web app is never reachable from the network.<div class="r"></p><pre><span class='fu'><a href='https://rdrr.io/r/base/conditions.html'>withCallingHandlers</a></span><span class='op'>(</span>
+<code>webfakes_port</code> condition, so one can catch it:</p>
+<p>webfakes by default binds only to the loopback interface at 127.0.0.1, so
+the webfakes web app is never reachable from the network.<div class="r"></p><pre><span class='fu'><a href='https://rdrr.io/r/base/conditions.html'>withCallingHandlers</a></span><span class='op'>(</span>
   <span class='va'>app</span><span class='op'>$</span><span class='fu'>listen</span><span class='op'>(</span><span class='op'>)</span>,
-  <span class='st'>"presser_port"</span> <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>msg</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>msg</span><span class='op'>$</span><span class='va'>port</span><span class='op'>)</span>
+  <span class='st'>"webfakes_port"</span> <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>msg</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>msg</span><span class='op'>$</span><span class='va'>port</span><span class='op'>)</span>
 <span class='op'>)</span>
 </pre><p></div></p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Logging</h3>
 
 
-<p>presser can write an access log that contains an entry for all incoming
+<p>webfakes can write an access log that contains an entry for all incoming
 requests, and also an error log for the errors that happen while
 the server is running. This is the default behavior for local app
 (the ones started by <code>app$listen()</code> and for remote apps (the ones
 started via <code><a href='new_app_process.html'>new_app_process()</a></code>:</p><ul>
 <li><p>Local apps do not write an access log by default.</p></li>
 <li><p>Remote apps write an access log into the
-<code>&lt;tmpdir&gt;/presser/&lt;pid&gt;/access.log</code> file, where <code>&lt;tmpdir&gt;</code> is the
+<code>&lt;tmpdir&gt;/webfakes/&lt;pid&gt;/access.log</code> file, where <code>&lt;tmpdir&gt;</code> is the
 session temporary directory of the <em>main process</em>, and <code>&lt;pid&gt;</code> is
 the process id of the <em>subprocess</em>.</p></li>
-<li><p>Local apps write an error log to <code>&lt;tmpdir&gt;/presser/error.log</code>, where
+<li><p>Local apps write an error log to <code>&lt;tmpdir&gt;/webfakes/error.log</code>, where
 <code>&lt;tmpdir&gt;</code> is the session temporary directory of the current process.</p></li>
-<li><p>Remote app write an error log to the <code>&lt;tmpdir&gt;/presser/&lt;pid&gt;/error.log</code>,
+<li><p>Remote app write an error log to the <code>&lt;tmpdir&gt;/webfakes/&lt;pid&gt;/error.log</code>,
 where <code>&lt;tmpdir&gt;</code> is the session temporary directory of the
 <em>main process</em> and <code>&lt;pid&gt;</code> is the process id of the <em>subprocess</em>`.</p></li>
 </ul>
@@ -420,7 +420,7 @@ middleware that counts the number of requests can be implemented as:</p><pre><sp
 <span class='op'>}</span><span class='op'>)</span>
 </pre>
 
-<p><a href='presser_response.html'>presser_response</a> objects also have a <code>locals</code> environment, that is
+<p><a href='webfakes_response.html'>webfakes_response</a> objects also have a <code>locals</code> environment, that is
 initially populated as a copy of <code>app$locals</code>.</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Configuration</h3>
@@ -432,19 +432,19 @@ initially populated as a copy of <code>app$locals</code>.</p>
 </ul>
 
 <p>Currently used configuration values:</p><ul>
-<li><p><code>views</code>: path where presser searches for templates.</p></li>
+<li><p><code>views</code>: path where webfakes searches for templates.</p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='presser_request.html'>presser_request</a> for request objects, <a href='presser_response.html'>presser_response</a> for
+    <div class='dont-index'><p><a href='webfakes_request.html'>webfakes_request</a> for request objects, <a href='webfakes_response.html'>webfakes_response</a> for
 response objects.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># see example web apps in the `/examples` directory in</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"presser"</span>, <span class='st'>"examples"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "/Users/runner/work/_temp/Library/presser/examples"</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"webfakes"</span>, <span class='st'>"examples"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "/Users/runner/work/_temp/Library/webfakes/examples"</div><div class='input'>
 <span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'>new_app</span><span class='op'>(</span><span class='op'>)</span>
 <span class='va'>app</span><span class='op'>$</span><span class='fu'>use</span><span class='op'>(</span><span class='fu'><a href='mw_log.html'>mw_log</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
@@ -461,11 +461,11 @@ response objects.</p></div>
 <span class='op'>}</span><span class='op'>)</span>
 
 <span class='va'>app</span>
-</div><div class='output co'>#&gt; &lt;presser_app&gt;
+</div><div class='output co'>#&gt; &lt;webfakes_app&gt;
 #&gt; routes:
 #&gt;   use *
 #&gt;   get /hello
-#&gt;   get &lt;presser_regexp&gt; "^/hi(/.*)?$"
+#&gt;   get &lt;webfakes_regexp&gt; "^/hi(/.*)?$"
 #&gt;   post /hello
 #&gt; fields and methods:
 #&gt;   all(path, ...)         # add route for *all* HTTP methods
@@ -478,7 +478,7 @@ response objects.</p></div>
 #&gt;   put(path, ...)         # add route for PUT
 #&gt;   use(...)               # add middleware
 #&gt;   locals                 # app-wide shared data
-#&gt; # see ?presser_app for all methods</div><div class='input'>
+#&gt; # see ?webfakes_app for all methods</div><div class='input'>
 <span class='co'># Start the app with: app$listen()</span>
 <span class='co'># Or start it in another R session: new_app_process(app)</span>
 </div></pre>
