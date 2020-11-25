@@ -14,7 +14,7 @@ oauth2_resource_app <- function() {
     redirect_uri = character()
   )
 
-  app$set_config("views", system.file("views", package = "webflakes"))
+  app$set_config("views", system.file("views", package = "webfakes"))
   app$engine("html", tmpl_glue())
 
   app$get("/register", function(req, res) {
