@@ -293,7 +293,7 @@ test_that("/deny", {
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
   path <- system.file(
-    package = "presser",
+    package = "webfakes",
     "examples", "httpbin", "data", "deny.txt"
   )
   expect_equal(resp$content, read_bin(path))
@@ -335,7 +335,7 @@ test_that("/json", {
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$type, "application/json")
   path <- system.file(
-    package = "presser",
+    package = "webfakes",
     "examples", "httpbin", "data", "example.json"
   )
   expect_equal(resp$content, read_bin(path))
@@ -346,7 +346,7 @@ test_that("/robots.txt", {
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$type, "text/plain")
   path <- system.file(
-    package = "presser",
+    package = "webfakes",
     "examples", "httpbin", "data", "robots.txt"
   )
   expect_equal(resp$content, read_bin(path))
@@ -357,7 +357,7 @@ test_that("/xml", {
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$type, "application/xml")
   path <- system.file(
-    package = "presser",
+    package = "webfakes",
     "examples", "httpbin", "data", "example.xml"
   )
   expect_equal(resp$content, read_bin(path))

@@ -1,3 +1,0 @@
-> new_regexp("^(foo|bar)$")
-<presser_regexp> "^(foo|bar)$"
-

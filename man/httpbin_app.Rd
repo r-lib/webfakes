@@ -10,7 +10,7 @@ httpbin_app(log = interactive())
 \item{log}{Whether to log requests to the standard output.}
 }
 \value{
-A \code{presser_app}.
+A \code{webfakes_app}.
 }
 \description{
 A web app similar to \url{https://httpbin.org}.

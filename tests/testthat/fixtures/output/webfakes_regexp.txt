@@ -1,0 +1,3 @@
+> new_regexp("^(foo|bar)$")
+<webfakes_regexp> "^(foo|bar)$"
+

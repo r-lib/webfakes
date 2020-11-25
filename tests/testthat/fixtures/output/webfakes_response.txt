@@ -1,7 +1,7 @@
 > res
-<presser_reeponse>
+<webfakes_reeponse>
 fields and methods:
-  app                    # the presser_app the response belongs to
+  app                    # the webfakes_app the response belongs to
   locals                 # response-wide shared data
   get_header(field)      # query response header
   on_response(fun)       # call handler function for complete response
@@ -16,5 +16,5 @@ fields and methods:
                               # set a response header
   set_status(status)     # set response status code
   set_type(type)         # set Content-Type
- # see ?presser_response for details
+ # see ?webfakes_response for details
 

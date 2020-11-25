@@ -1,5 +1,5 @@
 > req
-<presser_request>
+<webfakes_request>
 method:
   get
 url:
@@ -13,7 +13,7 @@ headers:
   Accept: */*
   Accept-Encoding: deflate, gzip
 fields and methods:
-  app                    # the presser_app the request belongs to
+  app                    # the webfakes_app the request belongs to
   headers                # HTTP request headers
   hostname               # server hostname, the Host header
   method                 # HTTP method of request (lowercase)
@@ -24,5 +24,5 @@ fields and methods:
   remote_addr            # IP address of the client
   url                    # full URL of the request
   get_header(field)      # get a request header
- # see ?presser_request for details
+ # see ?webfakes_request for details
 

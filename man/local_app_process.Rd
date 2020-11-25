@@ -7,7 +7,7 @@
 local_app_process(app, ..., .local_envir = parent.frame())
 }
 \arguments{
-\item{app}{\code{presser_app} object, the web app to run.}
+\item{app}{\code{webfakes_app} object, the web app to run.}
 
 \item{...}{Passed to \code{\link[=new_app_process]{new_app_process()}}.}
 

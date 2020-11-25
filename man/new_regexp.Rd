@@ -2,8 +2,8 @@
 % Please edit documentation in R/path.R
 \name{new_regexp}
 \alias{new_regexp}
-\alias{presser_regexp}
-\title{Create a new regular expression to use in presser routes}
+\alias{webfakes_regexp}
+\title{Create a new regular expression to use in webfakes routes}
 \usage{
 new_regexp(x)
 }
@@ -11,10 +11,10 @@ new_regexp(x)
 \item{x}{String scalar containing a regular expression.}
 }
 \value{
-String with class \code{presser_regexp}.
+String with class \code{webfakes_regexp}.
 }
 \description{
-Note that presser uses PERL regular expressions.
+Note that webfakes uses PERL regular expressions.
 }
 \details{
 As R does not have data type or class for regular expressions,

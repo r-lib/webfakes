@@ -16,7 +16,7 @@
 #' @family middleware
 #' @export
 #' @examples
-#' root <- system.file(package = "presser", "examples", "static", "public")
+#' root <- system.file(package = "webfakes", "examples", "static", "public")
 #' app <- new_app()
 #' app$use(mw_static(root = root))
 #' app

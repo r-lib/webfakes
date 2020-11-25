@@ -1,5 +1,5 @@
 > app
-<presser_app>
+<webfakes_app>
 routes:
   use * # add etag
   get /api
@@ -14,5 +14,5 @@ fields and methods:
   put(path, ...)         # add route for PUT
   use(...)               # add middleware
   locals                 # app-wide shared data
-# see ?presser_app for all methods
+# see ?webfakes_app for all methods
 

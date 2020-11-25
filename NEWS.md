@@ -14,7 +14,7 @@
 * Now `new_app_process()` and `local_app_process()` automatically clean up
   the server process is the main R process terminates.
 
-# presser 1.1.0
+# webfakes 1.1.0
 
 * Support chunked resposes via the new `response$send_chunk()` method.
 
@@ -27,6 +27,6 @@
 * The web server now does not crash if the connection is closed by the
   client while delaying the response.
 
-# presser 1.0.0
+# webfakes 1.0.0
 
 First public release.

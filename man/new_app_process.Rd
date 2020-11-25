@@ -2,8 +2,8 @@
 % Please edit documentation in R/app-process.R
 \name{new_app_process}
 \alias{new_app_process}
-\alias{presser_app_process}
-\title{Run a presser app in another process}
+\alias{webfakes_app_process}
+\title{Run a webfakes app in another process}
 \usage{
 new_app_process(
   app,
@@ -16,7 +16,7 @@ new_app_process(
 )
 }
 \arguments{
-\item{app}{\code{presser_app} object, the web app to run.}
+\item{app}{\code{webfakes_app} object, the web app to run.}
 
 \item{port}{Port to use. By default the OS assigns a port.}
 
@@ -36,10 +36,10 @@ milliseconds.}
 when setting up the subprocess.}
 }
 \value{
-A \code{presser_app_process} object.
+A \code{webfakes_app_process} object.
 \subsection{Methods}{
 
-The \code{presser_app_process} class has the following methods:\if{html}{\out{<div class="r">}}\preformatted{get_app()
+The \code{webfakes_app_process} class has the following methods:\if{html}{\out{<div class="r">}}\preformatted{get_app()
 get_port()
 stop()
 get_state()
@@ -69,7 +69,7 @@ already).
 }
 
 \code{local_env()} sets the given environment variables for the duration of
-the app process. It resets them in \verb{$stop()}. Presser replaces \code{{url}}
+the app process. It resets them in \verb{$stop()}. Webfakes replaces \code{{url}}
 in the value of the environment variables with the app URL, so you can
 set environment variables that point to the app.
 

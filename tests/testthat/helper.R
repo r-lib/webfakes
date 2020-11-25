@@ -27,7 +27,7 @@ test_response_app <- function() {
 
   app$get("/file", function(req, res) {
     res$send_file(
-      root = system.file(package = "presser"),
+      root = system.file(package = "webfakes"),
       file.path("examples", "static", "public", "foo", "bar.json")
     )
   })

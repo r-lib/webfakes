@@ -5,7 +5,7 @@ test_that("error if cannot start", {
   app$listen <- function(...) Sys.sleep(1)
   expect_error(
     new_app_process(app, process_timeout = 100, start = TRUE),
-    "presser app subprocess did not start"
+    "webfakes app subprocess did not start"
   )
 
   # errors before/while starting
@@ -14,7 +14,7 @@ test_that("error if cannot start", {
   expect_error(
     new_app_process(app, start = TRUE),
     class = "callr_status_error",
-    "failed to start presser app process.*oops"
+    "failed to start webfakes app process.*oops"
   )
 
   # sends a different message first
@@ -22,7 +22,7 @@ test_that("error if cannot start", {
   app$listen <- function(...) "foobar"
   expect_error(
     new_app_process(app, start = TRUE),
-    "Unexpected message from presser app subprocess"
+    "Unexpected message from webfakes app subprocess"
   )
 })
 
@@ -33,7 +33,7 @@ test_that("get_state", {
   expect_equal(proc$get_state(), "live")
   proc$.process$kill()
   expect_equal(proc$get_state(), "dead")
-  expect_output(proc$stop(), "presser process dead")
+  expect_output(proc$stop(), "webfakes process dead")
   expect_equal(proc$get_state(), "not running")
 })
 

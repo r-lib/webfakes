@@ -4,7 +4,7 @@
 #' A web app similar to <https://httpbin.org>.
 #'
 #' @param log Whether to log requests to the standard output.
-#' @return A `presser_app`.
+#' @return A `webfakes_app`.
 #'
 #' @export
 #' @examples
@@ -72,7 +72,7 @@ httpbin_app <- function(log = interactive()) {
 
   app$get("/", function(req, res) {
     res$send_file(
-      root = system.file(package = "presser", "examples", "httpbin", "assets"),
+      root = system.file(package = "webfakes", "examples", "httpbin", "assets"),
       "httpbin.html"
     )
   })
@@ -238,7 +238,7 @@ httpbin_app <- function(log = interactive()) {
     res$
       set_type("text/plain")$
       send_file(
-        root = system.file(package = "presser"),
+        root = system.file(package = "webfakes"),
         file.path("examples", "httpbin", "data", "deny.txt")
       )
   })
@@ -264,35 +264,35 @@ httpbin_app <- function(log = interactive()) {
     res$
       set_type("text/html; charset=utf-8")$
       send_file(
-        root = system.file(package = "presser"),
+        root = system.file(package = "webfakes"),
         file.path("examples", "httpbin", "data", "utf8.html")
       )
   })
 
   app$get("/html", function(req, res) {
     res$send_file(
-      root = system.file(package = "presser"),
+      root = system.file(package = "webfakes"),
       file.path("examples", "httpbin", "data", "example.html")
     )
   })
 
   app$get("/json", function(req, res) {
     res$send_file(
-      root = system.file(package = "presser"),
+      root = system.file(package = "webfakes"),
       file.path("examples", "httpbin", "data", "example.json")
     )
   })
 
   app$get("/robots.txt", function(req, res) {
     res$send_file(
-      root = system.file(package = "presser"),
+      root = system.file(package = "webfakes"),
       file.path("examples", "httpbin", "data", "robots.txt")
     )
   })
 
   app$get("/xml", function(req, res) {
     res$send_file(
-      root = system.file(package = "presser"),
+      root = system.file(package = "webfakes"),
       file.path("examples", "httpbin", "data", "example.xml")
     )
   })
@@ -455,7 +455,7 @@ httpbin_app <- function(log = interactive()) {
         "image/*" = "Rlogo.png"
       )
       res$send_file(
-        root = system.file(package = "presser"),
+        root = system.file(package = "webfakes"),
         file.path("examples", "httpbin", "images", fls[act])
       )
     }
@@ -465,7 +465,7 @@ httpbin_app <- function(log = interactive()) {
           function(req, res) {
     filename <- paste0("Rlogo.", req$params$format)
     res$send_file(
-      root = system.file(package = "presser"),
+      root = system.file(package = "webfakes"),
       file.path("examples", "httpbin", "images", filename)
     )
   })

@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: presser::httpbin_app() API
+  title: webfakes::httpbin_app() API
   version: 1.0.0
   contact:
     email: csardi.gabor@gmail.com
@@ -8,7 +8,7 @@ info:
     name: The MIT License
     url: 'https://opensource.org/licenses/MIT'
   description: |
-    This is a presser web app for HTTP testing in R packages.
+    This is a webfakes web app for HTTP testing in R packages.
     It implements the https://httpbin.org API
 
 paths:
@@ -299,7 +299,7 @@ paths:
       responses:
         '200':
           description: |
-            The IP address of the client, usually `127.0.0.1`, as the presser
+            The IP address of the client, usually `127.0.0.1`, as the webfakes
             server runs on the localhost.
           content:
             application/json:

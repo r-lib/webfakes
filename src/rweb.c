@@ -32,7 +32,7 @@ SEXP response_write(SEXP req, SEXP data);
 SEXP response_send_error(SEXP req, SEXP message, SEXP status);
 SEXP response_send_chunk(SEXP req, SEXP data);
 
-SEXP presser_crc32(SEXP v);
+SEXP webfakes_crc32(SEXP v);
 
 static const R_CallMethodDef callMethods[]  = {
   CLEANCALL_METHOD_RECORD,
@@ -51,11 +51,11 @@ static const R_CallMethodDef callMethods[]  = {
   { "response_send_error",   (DL_FUNC) &response_send_error,   3 },
   { "response_send_chunk",   (DL_FUNC) &response_send_chunk,   2 },
   /* others */
-  { "presser_crc32",        (DL_FUNC) &presser_crc32,        1 },
+  { "webfakes_crc32",        (DL_FUNC) &webfakes_crc32,        1 },
   { NULL, NULL, 0 }
 };
 
-void R_init_presser(DllInfo *dll) {
+void R_init_webfakes(DllInfo *dll) {
   R_registerRoutines(dll, NULL, callMethods, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
@@ -114,10 +114,10 @@ int check_stdin() {
 }
 #endif
 
-#define PRESSER_NOTHING 0
-#define PRESSER_REQ     1         /* request just came it */
-#define PRESSER_WAIT    2         /* waited a bit / wait a bit */
-#define PRESSER_DONE    3         /* request is done */
+#define WEBFAKES_NOTHING 0
+#define WEBFAKES_REQ     1         /* request just came it */
+#define WEBFAKES_WAIT    2         /* waited a bit / wait a bit */
+#define WEBFAKES_DONE    3         /* request is done */
 
 struct server_user_data {
   SEXP requests;
@@ -140,17 +140,17 @@ struct connection_user_data {
   int id;
 };
 
-SEXP presser_create_request(struct mg_connection *conn);
+SEXP webfakes_create_request(struct mg_connection *conn);
 
 #define PTHCHK(expr) if ((ret = expr)) {                                \
   mg_cry(conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);       \
   R_THROW_SYSTEM_ERROR_CODE(                                            \
-    ret, "Cannot process presser web server requests");                 \
+    ret, "Cannot process webfakes web server requests");                 \
 }
 
 #define CHK(expr) if ((ret = expr) < 0) {                               \
   mg_cry(conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);       \
-  R_THROW_ERROR("Cannot process presser web server requests");          \
+  R_THROW_ERROR("Cannot process webfakes web server requests");          \
 }
 
 static R_INLINE SEXP new_env() {
@@ -208,7 +208,7 @@ static int begin_request(struct mg_connection *conn) {
   if (srv_data->shutdown) return 1;
   struct connection_user_data conn_data = {
     PTHREAD_COND_INITIALIZER, PTHREAD_MUTEX_INITIALIZER,
-    PRESSER_REQ, PRESSER_NOTHING, 0.0, R_NilValue, 0,
+    WEBFAKES_REQ, WEBFAKES_NOTHING, 0.0, R_NilValue, 0,
   };
   mg_set_user_connection_data(conn, &conn_data);
 
@@ -237,7 +237,7 @@ static int begin_request(struct mg_connection *conn) {
 #ifndef NDEBUG
     fprintf(stderr, "conn %p: waiting for order\n", conn);
 #endif
-    while (conn_data.req_todo == PRESSER_NOTHING) {
+    while (conn_data.req_todo == WEBFAKES_NOTHING) {
       if (pthread_cond_wait(&conn_data.finish_cond,
                             &conn_data.finish_lock)) {
         goto exit;
@@ -246,8 +246,8 @@ static int begin_request(struct mg_connection *conn) {
 #ifndef NDEBUG
     fprintf(stderr, "conn %p: got order: %d\n", conn, conn_data.req_todo);
 #endif
-    if (conn_data.req_todo == PRESSER_DONE) goto exit;
-    if (conn_data.req_todo == PRESSER_WAIT) {
+    if (conn_data.req_todo == WEBFAKES_DONE) goto exit;
+    if (conn_data.req_todo == WEBFAKES_WAIT) {
 #ifndef NDEBUG
       fprintf(stderr, "conn %p: sleeping\n", conn);
 #endif
@@ -259,8 +259,8 @@ static int begin_request(struct mg_connection *conn) {
 #endif
     }
     if (srv_data->shutdown) goto exit;
-    conn_data.main_todo = PRESSER_WAIT;
-    conn_data.req_todo = PRESSER_NOTHING;
+    conn_data.main_todo = WEBFAKES_WAIT;
+    conn_data.req_todo = WEBFAKES_NOTHING;
   }
 
  exit:
@@ -318,7 +318,7 @@ static void release_all_requests(SEXP requests) {
         struct mg_context *ctx = mg_get_context(conn);
         struct server_user_data *srv_data = mg_get_user_data(ctx);
         pthread_mutex_lock(&conn_data->finish_lock);
-        conn_data->req_todo = PRESSER_DONE;
+        conn_data->req_todo = WEBFAKES_DONE;
         conn_data->req = R_NilValue;
         pthread_cond_signal(&conn_data->finish_cond);
         pthread_mutex_unlock(&conn_data->finish_lock);
@@ -331,7 +331,7 @@ static void release_all_requests(SEXP requests) {
   UNPROTECT(1);
 }
 
-static void presser_server_finalizer(SEXP server) {
+static void webfakes_server_finalizer(SEXP server) {
   struct mg_context *ctx = R_ExternalPtrAddr(server);
   if (ctx == NULL) return;
 #ifndef NDEBUG
@@ -366,7 +366,7 @@ SEXP server_start(SEXP options) {
   SEXP server = R_NilValue;
   struct server_user_data *srv_data =
     malloc(sizeof(struct server_user_data));
-  if (!srv_data) R_THROW_SYSTEM_ERROR("Cannot start presser server");
+  if (!srv_data) R_THROW_SYSTEM_ERROR("Cannot start webfakes server");
   struct mg_context *ctx = NULL;
   int ret = 0;
 
@@ -391,7 +391,7 @@ SEXP server_start(SEXP options) {
   ctx = mg_start(&callbacks, srv_data, (const char **) coptions);
   if (ctx == NULL) goto cleanup;
   PROTECT(server = R_MakeExternalPtr(ctx, srv_data->requests, R_NilValue));
-  R_RegisterCFinalizer(server, presser_server_finalizer);
+  R_RegisterCFinalizer(server, webfakes_server_finalizer);
 
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: hi everyone, ready to serve\n", ctx);
@@ -416,9 +416,9 @@ SEXP server_start(SEXP options) {
   if (ctx) mg_stop(ctx);
   pthread_mutex_unlock(&srv_data->process_lock);
   if (ret) {
-    R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot start presser web server");
+    R_THROW_SYSTEM_ERROR_CODE(ret, "Cannot start webfakes web server");
   } else {
-    R_THROW_ERROR("Cannot start presser web server");
+    R_THROW_ERROR("Cannot start webfakes web server");
   }
 
   /* Never reached */
@@ -435,7 +435,7 @@ static void server_poll_cleanup(void *ptr) {
   struct server_user_data *srv_data = mg_get_user_data(ctx);
   mg_cry(conn, "Cleaning up broken connection at %s:%d", __FILE__, __LINE__);
   pthread_mutex_lock(&conn_data->finish_lock);
-  conn_data->req_todo = PRESSER_DONE;
+  conn_data->req_todo = WEBFAKES_DONE;
   deregister_request(srv_data, conn_data->id);
   conn_data->req = R_NilValue;
   pthread_cond_signal(&conn_data->finish_cond);
@@ -449,7 +449,7 @@ SEXP server_poll(SEXP server, SEXP clean) {
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: polling\n", ctx);
 #endif
-  if (ctx == NULL) R_THROW_ERROR("presser server has stopped already");
+  if (ctx == NULL) R_THROW_ERROR("webfakes server has stopped already");
   struct server_user_data *srv_data = mg_get_user_data(ctx);
 
   struct timespec limit;
@@ -476,11 +476,11 @@ SEXP server_poll(SEXP server, SEXP clean) {
 
   SEXP req = R_NilValue;
   switch(conn_data->main_todo) {
-  case PRESSER_REQ:
+  case WEBFAKES_REQ:
     r_call_on_early_exit(server_poll_cleanup, conn);
-    req = presser_create_request(conn);
+    req = webfakes_create_request(conn);
     break;
-  case PRESSER_WAIT:
+  case WEBFAKES_WAIT:
     req = conn_data->req;
     break;
   default:
@@ -495,13 +495,13 @@ SEXP server_poll(SEXP server, SEXP clean) {
 }
 
 SEXP server_stop(SEXP server) {
-  presser_server_finalizer(server);
+  webfakes_server_finalizer(server);
   return R_NilValue;
 }
 
 SEXP server_get_ports(SEXP server) {
   struct mg_context *ctx = R_ExternalPtrAddr(server);
-  if (ctx == NULL) R_THROW_ERROR("presser server has stopped already");
+  if (ctx == NULL) R_THROW_ERROR("webfakes server has stopped already");
   struct server_user_data *srv_data = mg_get_user_data(ctx);
 
   int i, num_ports = srv_data->num_ports;
@@ -532,7 +532,7 @@ SEXP server_get_ports(SEXP server) {
 /* request                                                               */
 /* --------------------------------------------------------------------- */
 
-SEXP presser_create_request(struct mg_connection *conn) {
+SEXP webfakes_create_request(struct mg_connection *conn) {
   static char request_link[8192];
   int i;
   SEXP x;
@@ -596,7 +596,7 @@ SEXP presser_create_request(struct mg_connection *conn) {
     int ret = mg_read(conn, RAW(body), req_info->content_length);
     if (ret < 0) {
       mg_cry(conn, "ERROR @ %s %s:%d", __func__, __FILE__, __LINE__);
-      R_THROW_ERROR("Cannot read from presser HTTP client");
+      R_THROW_ERROR("Cannot read from webfakes HTTP client");
     }
     if (ret != req_info->content_length) {
       warning("Partial HTTP request body from client");
@@ -634,7 +634,7 @@ static void response_cleanup(void *ptr) {
     mg_cry(conn, "Cleaning up broken connection %p at %s:%d", conn,
            __FILE__, __LINE__);
     pthread_mutex_lock(&conn_data->finish_lock);
-    conn_data->req_todo = PRESSER_DONE;
+    conn_data->req_todo = WEBFAKES_DONE;
     deregister_request(srv_data, conn_data->id);
     SEXP req = conn_data->req;
     SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
@@ -666,7 +666,7 @@ SEXP response_delay(SEXP req, SEXP secs) {
 
   pthread_mutex_lock(&conn_data->finish_lock);
   conn_data->secs = REAL(secs)[0];
-  conn_data->req_todo = PRESSER_WAIT;
+  conn_data->req_todo = WEBFAKES_WAIT;
 
   PTHCHK(pthread_cond_signal(&conn_data->finish_cond));
   PTHCHK(pthread_mutex_unlock(&conn_data->finish_lock));
@@ -759,7 +759,7 @@ SEXP response_send(SEXP req) {
 
   pthread_mutex_lock(&conn_data->finish_lock);
 
-  conn_data->req_todo = PRESSER_DONE;
+  conn_data->req_todo = WEBFAKES_DONE;
   deregister_request(srv_data, conn_data->id);
   conn_data->req = R_NilValue;
 

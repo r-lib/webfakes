@@ -1,5 +1,5 @@
 > proc
-<presser_app_process>
+<webfakes_app_process>
 state:
   not running
 auto_start:
@@ -16,5 +16,5 @@ fields and methods:
   start()                # start the app
   url(path, query)       # query url for an api path
   stop()                 # stop web server process
-# see ?presser_app_process for details
+# see ?webfakes_app_process for details
 

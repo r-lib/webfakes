@@ -26,47 +26,47 @@ skip_without_png_device <- function() {
   }
 }
 
-test_that("presser_app", {
+test_that("webfakes_app", {
   skip_without_png_device()
   app <- new_app()
   app$use("add etag" = mw_etag())
   app$get("/api", function(req, res) res$send("foobar"))
   verify_output(
-    test_path("fixtures", "output", "presser_app.txt"),
+    test_path("fixtures", "output", "webfakes_app.txt"),
     app
   )
 })
 
-test_that("presser_request", {
+test_that("webfakes_request", {
   skip_without_png_device()
   req <- readRDS(tmp)$req
   req$url <- "http://127.0.0.1:3000/"
   req$headers$Host <- "127.0.0.1:3000"
   req$headers$`Accept-Encoding` <- "deflate, gzip"
   verify_output(
-    test_path("fixtures", "output", "presser_request.txt"),
+    test_path("fixtures", "output", "webfakes_request.txt"),
     req
   )
 })
 
-test_that("presser_response", {
+test_that("webfakes_response", {
   skip_without_png_device()
   res <- readRDS(tmp)$res
   verify_output(
-    test_path("fixtures", "output", "presser_response.txt"),
+    test_path("fixtures", "output", "webfakes_response.txt"),
     res
   )
 })
 
-test_that("presser_regexp", {
+test_that("webfakes_regexp", {
   skip_without_png_device()
   verify_output(
-    test_path("fixtures", "output", "presser_regexp.txt"),
+    test_path("fixtures", "output", "webfakes_regexp.txt"),
     new_regexp("^(foo|bar)$")
   )
 })
 
-test_that("presser_app_process", {
+test_that("webfakes_app_process", {
   skip_without_png_device()
   app <- new_app()
   proc <- new_app_process(app, start = TRUE)
@@ -74,7 +74,7 @@ test_that("presser_app_process", {
   # make the output deterministic
   proc$.port <- 3000
   verify_output(
-    test_path("fixtures", "output", "presser_app_process.txt"),
+    test_path("fixtures", "output", "webfakes_app_process.txt"),
     proc
   )
 })

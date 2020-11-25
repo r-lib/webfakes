@@ -1,14 +1,14 @@
 
-#' A presser response object
+#' A webfakes response object
 #'
-#' presser creates a `presser_response` object for every incoming HTTP
+#' webfakes creates a `webfakes_response` object for every incoming HTTP
 #' request. This object is passed to every matched route and middleware,
 #' until the HTTP response is sent. It has reference semantics, so handlers
 #' can modify it.
 #'
 #' Fields and methods:
 #'
-#' * `app`: The `presser_app` object itself.
+#' * `app`: The `webfakes_app` object itself.
 #' * `req`: The request object.
 #' * `headers_sent`: Whether the response headers were already sent out.
 #' * `locals`: Local variables, the are shared between the handler
@@ -47,7 +47,7 @@
 #'   a response body.
 #' * `send_chunk(data)`: Send a chunk of a response in chunked encoding.
 #'   The first chunk will automatically send the HTTP response headers.
-#'   Presser will automatically send a final zero-lengh chunk, unless
+#'   Webfakes will automatically send a final zero-lengh chunk, unless
 #'   `$delay()` is called.
 #' * `set_header(field, value)`: Set a response header. If the headers have
 #'   been sent out already, then it throws a warning, and does nothing.
@@ -65,8 +65,8 @@
 #'
 #' Alternatively, you can use `$write()` to send the response in parts.
 #'
-#' @seealso [presser_request] for the presser request object.
-#' @name presser_response
+#' @seealso [webfakes_request] for the webfakes request object.
+#' @name webfakes_response
 #' @examples
 #' # This is how you can see the request and response objects:
 #' app <- new_app()
@@ -88,7 +88,7 @@ NULL
 
 new_response <- function(app, req) {
   self <- new_object(
-    "presser_response",
+    "webfakes_response",
 
     app = app,
     req = req,

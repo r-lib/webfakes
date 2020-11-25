@@ -1,5 +1,5 @@
 ---
-title: "presser glossary"
+title: "webfakes glossary"
 output: rmarkdown::html_vignette
 editor_options:
   markdown:
@@ -14,22 +14,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-The presser package uses vocabulary that is standard for web apps, especially those developed with Express.js, but not necessarily well known to all R package developers.
+The webfakes package uses vocabulary that is standard for web apps, especially those developed with Express.js, but not necessarily well known to all R package developers.
 
 ## app
 
-(Also: fake web app, presser app.) A web application that can be served by presser's web server, typically in another process, an *app process*.
+(Also: fake web app, webfakes app.) A web application that can be served by webfakes's web server, typically in another process, an *app process*.
 Sometimes we call it a *fake* web app, to emphasize that we use it for testing real web apps and APIs.
 
-You can create a presser app with the `new_app()` function.
-A presser app is an R object that you can save to disk with `saveRDS()` , and you can also include it in your package.
+You can create a webfakes app with the `new_app()` function.
+A webfakes app is an R object that you can save to disk with `saveRDS()` , and you can also include it in your package.
 
 You can start an with its `$listen()` method.
 Since the main R process runs that test suite code, you usually run them in a subprocess, see `new_app_process()` or `local_app_process()`.
 
 ## app process
 
-(Also: web server process, presser subprocess.) An app process is an R subprocess, started from the main R process, to serve a presser *app*.
+(Also: web server process, webfakes subprocess.) An app process is an R subprocess, started from the main R process, to serve a webfakes *app*.
 
 You can create an app process object with `new_app_process()` or `local_app_process()`.
 By default the actual process does not start yet, when you create it.
@@ -68,7 +68,7 @@ Use `httpbin_app()` to create an instance of this app.
 A middleware is a handler function that is not bound to a path.
 It is called by the router, like other handler functions.
 It may manipulate the request or the response, or can have a side effect.
-Some example built-in middleware functions in presser:
+Some example built-in middleware functions in webfakes:
 
 -   `mw_json()` parses a request's JSON body into an R object.
 -   `mw_log()` logs requests and responses to the screen or to a file.
@@ -87,7 +87,7 @@ See `?new_regexp()` for regular expressions and "Path parameters" in `?new_app()
 
 A route is a handler function that is bound to certain paths of you web app.
 If the request URL matches the path of the route, then the handler function is called, to give it a chance to send the appropriate response.
-Route paths may have parameters or they can be regular expressions in presser.
+Route paths may have parameters or they can be regular expressions in webfakes.
 
 ## routing
 

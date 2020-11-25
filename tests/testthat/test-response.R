@@ -32,7 +32,7 @@ test_that("send_file", {
   url <- web$url("/file")
   resp <- curl::curl_fetch_memory(url)
   path <- system.file(
-    package = "presser",
+    package = "webfakes",
     "examples", "static", "public", "foo", "bar.json"
   )
   expect_equal(resp$content, read_bin(path))

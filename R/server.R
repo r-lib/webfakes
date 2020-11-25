@@ -35,9 +35,9 @@ server_start <- function(opts = server_opts()) {
   srv
 }
 
-#' Presser web server options
+#' Webfakes web server options
 #'
-#' @param remote Meta-option. If set to `TRUE`, presser uses slightly
+#' @param remote Meta-option. If set to `TRUE`, webfakes uses slightly
 #'   different defaults, that are more appropriate for a background
 #'   server process.
 #' @param port Port to start the web server on. Defaults to a randomly
@@ -47,7 +47,7 @@ server_start <- function(opts = server_opts()) {
 #'   parallel or you make concurrent HTTP requests.
 #' @param interfaces The network interfaces to listen on. Being a test
 #'   web server, it defaults to the localhost. Only bind to a public
-#'   interface if you know what you are doing. presser was not designed
+#'   interface if you know what you are doing. webfakes was not designed
 #'   to serve public web pages.
 #' @param enable_keep_alive Whether the server keeps connections alive.
 #' @param access_log_file `TRUE`, `FALSE`, or a path. See 'Logging'
@@ -59,7 +59,7 @@ server_start <- function(opts = server_opts()) {
 #' @param throttle Limit download speed for clients. If not `Inf`,
 #'   then it is the maximum number of bytes per second, that is sent to
 #'   as connection.
-#' @return List of options that can be passed to `presser_app$listen()`
+#' @return List of options that can be passed to `webfakes_app$listen()`
 #'   (see [new_app()]), and [new_app_process()].
 #'
 #' @section Logging:
@@ -67,9 +67,9 @@ server_start <- function(opts = server_opts()) {
 #' * For `access_log_file`, `TRUE` means `<log-dir>/access.log`.
 #' * For `error_log_file`, `TRUE` means `<log-dir>/error.log`.
 #'
-#' `<log-dir>` is set to the contents of the `PRESSER_LOG_DIR`
+#' `<log-dir>` is set to the contents of the `WEBFAKES_LOG_DIR`
 #' environment variable, if it is set. Otherwise it is set to
-#' `<tmpdir>/presser` for local apps and `<tmpdir>/<pid>/presser` for
+#' `<tmpdir>/webfakes` for local apps and `<tmpdir>/<pid>/webfakes` for
 #' remote apps (started with `new_app_procss()`).
 #'
 #' `<tmpdir>` is the session temporary directory of the _main process_.
@@ -89,7 +89,7 @@ server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
                         tcp_nodelay = FALSE,
                         throttle = Inf) {
 
-  log_dir <- Sys.getenv("PRESSER_LOG_DIR", file.path(tempdir(), "presser"))
+  log_dir <- Sys.getenv("WEBFAKES_LOG_DIR", file.path(tempdir(), "webfakes"))
   if (isTRUE(access_log_file)) {
     if (remote) {
       access_log_file <- file.path(log_dir, "%p", "access.log")
@@ -127,7 +127,7 @@ server_poll <- function(srv, cleanup = TRUE) {
       return(call_with_cleanup(c_server_poll, srv, cleanup)),
       error = function(err) {
         cat(as.character(err), file = stderr())
-        stop(new_presser_error())
+        stop(new_webfakes_error())
       }
     )
   }
@@ -138,7 +138,7 @@ response_send <- function(req) {
     call_with_cleanup(c_response_send, req),
     error = function(err) {
       cat(as.character(err), file = stderr())
-      stop(new_presser_error())
+      stop(new_webfakes_error())
     }
   )
   invisible(NULL)
@@ -149,7 +149,7 @@ response_send_chunk <- function(req, data) {
     call_with_cleanup(c_response_send_chunk, req, data),
     error = function(err) {
       cat(as.character(err), file = stderr())
-      stop(new_presser_error())
+      stop(new_webfakes_error())
     }
   )
   invisible(NULL)
@@ -160,7 +160,7 @@ response_send_error <- function(req, msg, status) {
     call_with_cleanup(c_response_send_error, req, msg, status),
     error = function(err) {
       cat(as.character(err), file = stderr())
-      stop(new_presser_error())
+      stop(new_webfakes_error())
     }
   )
   invisible(NULL)
@@ -171,7 +171,7 @@ response_delay <- function(req, secs) {
     call_with_cleanup(c_response_delay, req, secs),
     error = function(err) {
       cat(as.character(err), file = stderr())
-      stop(new_presser_error())
+      stop(new_webfakes_error())
     }
   )
   invisible(NULL)
@@ -182,15 +182,15 @@ response_write <- function(req, data) {
     call_with_cleanup(c_response_write, req, data),
     error = function(err) {
       cat(as.character(err), file = stderr())
-      stop(new_presser_error())
+      stop(new_webfakes_error())
     }
   )
   invisible(NULL)
 }
 
-new_presser_error <- function(...) {
+new_webfakes_error <- function(...) {
   structure(
-    list(message = "error in presser connection", ...),
-    class = c("presser_error", "error", "condition")
+    list(message = "error in webfakes connection", ...),
+    class = c("webfakes_error", "error", "condition")
   )
 }

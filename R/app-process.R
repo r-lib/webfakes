@@ -1,9 +1,9 @@
 
-#' Run a presser app in another process
+#' Run a webfakes app in another process
 #'
 #' Runs an app in a subprocess, using [callr::r_session].
 #'
-#' @param app `presser_app` object, the web app to run.
+#' @param app `webfakes_app` object, the web app to run.
 #' @param port Port to use. By default the OS assigns a port.
 #' @param opts Server options. See [server_opts()] for the defaults.
 #' @param start Whether to start the web server immediately. If this is
@@ -15,11 +15,11 @@
 #'   milliseconds.
 #' @param callr_opts Options to pass to [callr::r_session_options()]
 #'   when setting up the subprocess.
-#' @return A `presser_app_process` object.
+#' @return A `webfakes_app_process` object.
 #'
 #' ## Methods
 #'
-#' The `presser_app_process` class has the following methods:
+#' The `webfakes_app_process` class has the following methods:
 #'
 #' ```r
 #' get_app()
@@ -49,14 +49,14 @@
 #' * `"dead"` means that the subprocess has quit or crashed.
 #'
 #' `local_env()` sets the given environment variables for the duration of
-#' the app process. It resets them in `$stop()`. Presser replaces `{url}`
+#' the app process. It resets them in `$stop()`. Webfakes replaces `{url}`
 #' in the value of the environment variables with the app URL, so you can
 #' set environment variables that point to the app.
 #'
 #' `url()` returns the URL of the web app. You can use the `path`
 #' parameter to return a specific path.
 #'
-#' @aliases presser_app_process
+#' @aliases webfakes_app_process
 #' @seealso [local_app_process()] for automatically cleaning up the
 #'   subprocess.
 #' @export
@@ -82,7 +82,7 @@ new_app_process <- function(app, port = NULL,
   app; port; opts; start; auto_start; process_timeout; callr_opts
 
   self <- new_object(
-    "presser_app_process",
+    "webfakes_app_process",
 
     start = function() {
       self$.app <- app
@@ -91,7 +91,7 @@ new_app_process <- function(app, port = NULL,
       self$.process$call(
         args = list(app, port, opts),
         function(app, port, opts) {
-          library(presser)
+          library(webfakes)
           .GlobalEnv$app <- app
           app$listen(port = port, opts = opts)
         }
@@ -99,18 +99,18 @@ new_app_process <- function(app, port = NULL,
 
       if (self$.process$poll_process(process_timeout) != "ready") {
         self$.process$kill()
-        stop("presser app subprocess did not start :(")
+        stop("webfakes app subprocess did not start :(")
       }
       msg <- self$.process$read()
       if (msg$code == 200 && !is.null(msg$error)) {
         msg$error$message <- paste0(
-          "failed to start presser app process: ",
+          "failed to start webfakes app process: ",
           msg$error$message
         )
         stop(msg$error)
       }
       if (msg$code != 301) {
-        stop("Unexpected message from presser app subprocess. ",
+        stop("Unexpected message from webfakes app subprocess. ",
              "Report a bug please.")
       }
       self$.port <- msg$message$port
@@ -137,13 +137,13 @@ new_app_process <- function(app, port = NULL,
         out <- err <- NULL
         try_silently(out <- self$.process$read_output())
         try_silently(err <- self$.process$read_error())
-        cat0("presser process dead, exit code: ", status, "\n")
+        cat0("webfakes process dead, exit code: ", status, "\n")
         if (!is.null(out)) cat0("stdout:", out, "\n")
         if (!is.null(err)) cat0("stderr:", err, "\n")
       }
 
       # The details are important here, for the sake of covr,
-      # so that we can test the presser package itself.
+      # so that we can test the webfakes package itself.
       # 1. The subprocess serving the app is in Sys.sleep(), which we
       #    need to interrupt first.
       # 2. Then we need to read out the result of that $call()
@@ -222,7 +222,7 @@ new_app_process <- function(app, port = NULL,
       if (!is.na(self$.error_log) && file.exists(self$.error_log) &&
           file.info(self$.error_log)$size > 0) {
         err <- readLines(self$.error_log, warn = FALSE)
-        cat("presser web server errors:\n")
+        cat("webfakes web server errors:\n")
         cat(err, sep = "\n")
       }
     }

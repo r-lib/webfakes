@@ -1,14 +1,14 @@
 You can use testthat's setup files. You start the app in a setup file and also register a teardown expression for it. `local_app_process()` can do both in one go. Your `tests/testthat/setup-http.R` may look like this:
 
 ```{r eval = FALSE}
-http <- presser::local_app_process(
-  presser::httpbin_app(),
+http <- webfakes::local_app_process(
+  webfakes::httpbin_app(),
   .local_envir = testthat::teardown_env()
 )
 ```
 
 ```{r include = FALSE}
-http <- presser::new_app_process(presser::httpbin_app())
+http <- webfakes::new_app_process(webfakes::httpbin_app())
 ```
 
 (Before testthat 3.0.0, you had to write the teardown expression in a `tests/testthat/teardown-http.R` file. That still works, but a single setup file is considered to be better practice, see [this testthat vignette](https://testthat.r-lib.org/articles/test-fixtures.html).)

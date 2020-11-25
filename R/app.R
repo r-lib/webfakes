@@ -6,9 +6,9 @@ pkg_data <- new.env(parent = emptyenv())
 #' @details
 #' The typical workflow of creating a web application is:
 #'
-#' 1. Create a `presser_app` object with `new_app()`.
+#' 1. Create a `webfakes_app` object with `new_app()`.
 #' 1. Add middleware and/or routes to it.
-#' 1. Start is with the `presser_app$listen()` method, or start it in
+#' 1. Start is with the `webfakes_app$listen()` method, or start it in
 #'    another process with [new_app_process()].
 #' 1. Make queries to the web app.
 #' 1. Stop it via `CTRL+C` / `ESC`, or, if it is running in another
@@ -21,7 +21,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' * embedded into a package,
 #' * extended by simply adding new routes and/or middleware.
 #'
-#' The presser API is very much influenced by the
+#' The webfakes API is very much influenced by the
 #' [express.js](http://expressjs.com/) project.
 #'
 #' ## Create web app objects
@@ -30,10 +30,10 @@ pkg_data <- new.env(parent = emptyenv())
 #' new_app()
 #' ```
 #'
-#' `new_app()` returns a `presser_app` object the has the methods listed
+#' `new_app()` returns a `webfakes_app` object the has the methods listed
 #' on this page.
 #'
-#' An app is an environment with S3 class `presser_app`.
+#' An app is an environment with S3 class `webfakes_app`.
 #'
 #' ## The handler stack
 #'
@@ -68,17 +68,17 @@ pkg_data <- new.env(parent = emptyenv())
 #'   handler stack, and called if they match an incoming HTTP request.
 #'   See 'Handler functions' below.
 #'
-#' presser also has methods for the less frequently used HTTP verbs:
+#' webfakes also has methods for the less frequently used HTTP verbs:
 #' `CONNECT`, `MKCOL`, `OPTIONS`, `PROPFIND`, `REPORT`. (The method
 #' names are always in lowercase.)
 #'
 #' If a request is not handled by any routes (or handler functions in
-#' general), then presser will send a simple HTTP 404 response.
+#' general), then webfakes will send a simple HTTP 404 response.
 #'
 #' ## Middleware
 #'
 #' `app$use()` adds a middleware to the handler stack. A middleware is
-#' a handler function, see 'Handler functions' below. presser comes with
+#' a handler function, see 'Handler functions' below. webfakes comes with
 #' middleware to perform common tasks:
 #'
 #' * [mw_etag()] adds an `Etag` header to the response.
@@ -101,11 +101,11 @@ pkg_data <- new.env(parent = emptyenv())
 #' ## Handler functions
 #'
 #' A handler function is a route or middleware. A handler function is
-#' called by presser with the incoming HTTP request and the outgoing
+#' called by webfakes with the incoming HTTP request and the outgoing
 #' HTTP response objects (being built) as arguments. The handler function
 #' may query and modify the members of the request and/or the response
 #' object. If it returns the string `"next"`, then it is _not_ a terminal
-#' handler, and once it returns, presser will move on to call the next
+#' handler, and once it returns, webfakes will move on to call the next
 #' handler in the stack.
 #'
 #' A typical route:
@@ -126,11 +126,11 @@ pkg_data <- new.env(parent = emptyenv())
 #'   will be only called for GET methods and matching API paths.
 #' * The handler receives the request (`req`) and the response (`res`).
 #' * It sets the HTTP status, additional headers, and sends the data.
-#'   (In this case the `presser_response$send_json()` method automatically
+#'   (In this case the `webfakes_response$send_json()` method automatically
 #'   converts `response` to JSON and sets the `Content-Type` and
 #'   `Content-Length` headers.
 #' * This is a terminal handler, because it does _not_ return `"next"`.
-#'   Once this handler function returns, presser will send out the HTTP
+#'   Once this handler function returns, webfakes will send out the HTTP
 #'   response.
 #'
 #' A typical middleware:
@@ -142,10 +142,10 @@ pkg_data <- new.env(parent = emptyenv())
 #' })
 #' ````
 #'
-#' * There is no HTTP method and API path here, presser will call the
+#' * There is no HTTP method and API path here, webfakes will call the
 #'   handler for each HTTP request.
 #' * This is not a terminal handler, it does return `"next"`, so after it
-#'   returns presser will look for the next handler in the stack.
+#'   returns webfakes will look for the next handler in the stack.
 #'
 #' ## Errors
 #'
@@ -155,7 +155,7 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' ## Request and response objects
 #'
-#' See [presser_request] and [presser_response] for the methods of the
+#' See [webfakes_request] and [webfakes_response] for the methods of the
 #' request and response objects.
 #'
 #' ## Path specification
@@ -175,7 +175,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' can have parameters.
 #'
 #' For parameterized strings the keys may contain letters, numbers and
-#' underscores. When presser matches an API path to a handler with a
+#' underscores. When webfakes matches an API path to a handler with a
 #' parameterized string path, the parameters will be added to the
 #' request, as `params`. I.e. in the handler function (and subsequent
 #' handler functions, if the current one is not terminal), they are
@@ -191,11 +191,11 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' ## Templates
 #'
-#' presser supports templates, using any template engine. It comes with
+#' webfakes supports templates, using any template engine. It comes with
 #' a template engine that uses the glue package, see [tmpl_glue()].
 #'
 #' `app$engine()` registers a template engine, for a certain file
-#' extension. The `$render()` method of [presser_response]
+#' extension. The `$render()` method of [webfakes_response]
 #' can be called from the handler function to evaluate a template from a
 #' file.
 #'
@@ -235,7 +235,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' parameter, see the `$set_config()` method below.
 #'
 #' In the template, the variables passed in as `locals`, and also the
-#' response local variables (see `locals` in [presser_response]), are
+#' response local variables (see `locals` in [webfakes_response]), are
 #' available.
 #'
 #' ## Starting and stopping
@@ -262,21 +262,21 @@ pkg_data <- new.env(parent = emptyenv())
 #' When `port` is `NULL`, the operating system chooses a port where the
 #' app will listen. To be able to get the port number programmatically,
 #' before the listen method blocks, it advertises the selected port in a
-#' `presser_port` condition, so one can catch it:
+#' `webfakes_port` condition, so one can catch it:
 #'
-#' presser by default binds only to the loopback interface at 127.0.0.1, so
-#' the presser web app is never reachable from the network.
+#' webfakes by default binds only to the loopback interface at 127.0.0.1, so
+#' the webfakes web app is never reachable from the network.
 #'
 #' ```r
 #' withCallingHandlers(
 #'   app$listen(),
-#'   "presser_port" = function(msg) print(msg$port)
+#'   "webfakes_port" = function(msg) print(msg$port)
 #' )
 #' ```
 #'
 #' ## Logging
 #'
-#' presser can write an access log that contains an entry for all incoming
+#' webfakes can write an access log that contains an entry for all incoming
 #' requests, and also an error log for the errors that happen while
 #' the server is running. This is the default behavior for local app
 #' (the ones started by `app$listen()` and for remote apps (the ones
@@ -284,12 +284,12 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' * Local apps do not write an access log by default.
 #' * Remote apps write an access log into the
-#'   `<tmpdir>/presser/<pid>/access.log` file, where `<tmpdir>` is the
+#'   `<tmpdir>/webfakes/<pid>/access.log` file, where `<tmpdir>` is the
 #'   session temporary directory of the _main process_, and `<pid>` is
 #'   the process id of the _subprocess_.
-#' * Local apps write an error log to `<tmpdir>/presser/error.log`, where
+#' * Local apps write an error log to `<tmpdir>/webfakes/error.log`, where
 #'   `<tmpdir>` is the session temporary directory of the current process.
-#' * Remote app write an error log to the `<tmpdir>/presser/<pid>/error.log`,
+#' * Remote app write an error log to the `<tmpdir>/webfakes/<pid>/error.log`,
 #'   where `<tmpdir>` is the session temporary directory of the
 #'   _main process_ and `<pid>` is the process id of the _subprocess_`.
 #'
@@ -314,7 +314,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' })
 #' ```
 #'
-#' [presser_response] objects also have a `locals` environment, that is
+#' [webfakes_response] objects also have a `locals` environment, that is
 #' initially populated as a copy of `app$locals`.
 #'
 #' ## Configuration
@@ -329,16 +329,16 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' Currently used configuration values:
 #'
-#' * `views`: path where presser searches for templates.
+#' * `views`: path where webfakes searches for templates.
 #'
-#' @return A new `presser_app`.
-#' @aliases presser_app
-#' @seealso [presser_request] for request objects, [presser_response] for
+#' @return A new `webfakes_app`.
+#' @aliases webfakes_app
+#' @seealso [webfakes_request] for request objects, [webfakes_response] for
 #' response objects.
 #' @export
 #' @examples
 #' # see example web apps in the `/examples` directory in
-#' system.file(package = "presser", "examples")
+#' system.file(package = "webfakes", "examples")
 #'
 #' app <- new_app()
 #' app$use(mw_log())
@@ -363,7 +363,7 @@ pkg_data <- new.env(parent = emptyenv())
 new_app <- function() {
 
   self <- new_object(
-    "presser_app",
+    "webfakes_app",
 
     all = function(path, ...) {
       self$.stack <- c(self$.stack, parse_handlers("all", path, ...))
@@ -415,7 +415,7 @@ new_app <- function() {
       })
       ports <- server_get_ports(srv)
       self$.port <- ports$port[1]
-      message("Running presser web app on port ", self$.port)
+      message("Running webfakes web app on port ", self$.port)
       if (!is.na(opts$access_log_file)) {
         message("Access log file: ", opts$access_log_file)
       }
@@ -428,7 +428,7 @@ new_app <- function() {
           access_log = attr(srv, "options")$access_log_file,
           error_log = attr(srv, "options")$error_log_file
         ),
-        class = c("presser_port", "callr_message", "condition")
+        class = c("webfakes_port", "callr_message", "condition")
       )
       message(msg)
 
@@ -539,7 +539,7 @@ new_app <- function() {
             res$send("")
           }
         }
-      }, presser_error = function(err) { })
+      }, webfakes_error = function(err) { })
     },
 
     .get_error_log = function() {
@@ -567,7 +567,7 @@ parse_handlers <- function(method, path, ...) {
       )
       ans <- c(ans, list(rec))
     } else {
-      stop("Invalid presser handler")
+      stop("Invalid webfakes handler")
     }
   }
 

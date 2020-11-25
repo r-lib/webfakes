@@ -1,4 +1,4 @@
 library(testthat)
-library(presser)
+library(webfakes)
 
-test_check("presser")
+test_check("webfakes")

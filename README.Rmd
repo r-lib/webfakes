@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
   fig.height = 8)
 ```
 
-# presser
+# webfakes
 
 > Your own web server for happy HTTP testing
 
@@ -58,7 +58,7 @@ Built using the [civetweb](https://github.com/civetweb/civetweb) embedded web se
 Once on CRAN, install the package as usual:
 
 ``` r
-install.packages("presser")
+install.packages("webfakes")
 ```
 
 ## Usage
@@ -75,11 +75,11 @@ library(testthat)
 It is similar to the `withr::local_*` functions.
 
 ``` r
-app <- presser::new_app()
+app <- webfakes::new_app()
 app$get("/hello/:user", function(req, res) {
   res$send(paste0("Hello ", req$params$user, "!"))
 })
-web <- presser::local_app_process(app)
+web <- webfakes::local_app_process(app)
 
 test_that("can use hello API", {
   url <- web$url("/hello/Gabor")
@@ -90,12 +90,12 @@ test_that("can use hello API", {
 When testing HTTP clients you can often use the built in `httpbin_app()`:
 
 ```{r eval = FALSE}
-httpbin <- presser::local_app_process(presser::httpbin_app())
+httpbin <- webfakes::local_app_process(webfakes::httpbin_app())
 ```
 
 ```{r include = FALSE}
 suppressMessages(
-  httpbin <- presser::local_app_process(presser::httpbin_app())
+  httpbin <- webfakes::local_app_process(webfakes::httpbin_app())
 )
 ```
 
@@ -109,7 +109,7 @@ test_that("HTTP errors are caught", {
 
 ## Documentation
 
-See <https://r-lib.github.io/presser/>
+See <https://r-lib.github.io/webfakes/>
 
 ## Links
 
@@ -120,7 +120,7 @@ See <https://r-lib.github.io/presser/>
 
 ### R web application frameworks
 
-presser focuses on testing, these packages are for writing real web apps:
+webfakes focuses on testing, these packages are for writing real web apps:
 
 -   [shiny](https://github.com/rstudio/shiny)
 -   [opencpu](https://www.opencpu.org/)
