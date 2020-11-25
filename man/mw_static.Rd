@@ -24,7 +24,7 @@ functions will not be called. If a file was not found, however,
 the rest of the handlers are still called.
 }
 \examples{
-root <- system.file(package = "presser", "examples", "static", "public")
+root <- system.file(package = "webfakes", "examples", "static", "public")
 app <- new_app()
 app$use(mw_static(root = root))
 app

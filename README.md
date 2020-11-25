@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# presser
+# webfakes
 
 > Your own web server for happy HTTP testing
 
@@ -54,7 +54,7 @@ Lightweight fake web apps for testing. Built using the
 Once on CRAN, install the package as usual:
 
 ``` r
-install.packages("presser")
+install.packages("webfakes")
 ```
 
 ## Usage
@@ -68,11 +68,11 @@ the test block, or test file. It is similar to the `withr::local_*`
 functions.
 
 ``` r
-app <- presser::new_app()
+app <- webfakes::new_app()
 app$get("/hello/:user", function(req, res) {
   res$send(paste0("Hello ", req$params$user, "!"))
 })
-web <- presser::local_app_process(app)
+web <- webfakes::local_app_process(app)
 
 test_that("can use hello API", {
   url <- web$url("/hello/Gabor")
@@ -84,7 +84,7 @@ When testing HTTP clients you can often use the built in
 `httpbin_app()`:
 
 ``` r
-httpbin <- presser::local_app_process(presser::httpbin_app())
+httpbin <- webfakes::local_app_process(webfakes::httpbin_app())
 ```
 
 ``` r
@@ -99,7 +99,7 @@ test_that("HTTP errors are caught", {
 
 ## Documentation
 
-See <https://r-lib.github.io/presser/>
+See <https://r-lib.github.io/webfakes/>
 
 ## Links
 
@@ -110,7 +110,7 @@ See <https://r-lib.github.io/presser/>
 
 ### R web application frameworks
 
-presser focuses on testing, these packages are for writing real web
+webfakes focuses on testing, these packages are for writing real web
 apps:
 
   - [shiny](https://github.com/rstudio/shiny)

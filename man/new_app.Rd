@@ -2,13 +2,13 @@
 % Please edit documentation in R/app.R
 \name{new_app}
 \alias{new_app}
-\alias{presser_app}
+\alias{webfakes_app}
 \title{Create a new web application}
 \usage{
 new_app()
 }
 \value{
-A new \code{presser_app}.
+A new \code{webfakes_app}.
 }
 \description{
 Create a new web application
@@ -16,9 +16,9 @@ Create a new web application
 \details{
 The typical workflow of creating a web application is:
 \enumerate{
-\item Create a \code{presser_app} object with \code{new_app()}.
+\item Create a \code{webfakes_app} object with \code{new_app()}.
 \item Add middleware and/or routes to it.
-\item Start is with the \code{presser_app$listen()} method, or start it in
+\item Start is with the \code{webfakes_app$listen()} method, or start it in
 another process with \code{\link[=new_app_process]{new_app_process()}}.
 \item Make queries to the web app.
 \item Stop it via \code{CTRL+C} / \code{ESC}, or, if it is running in another
@@ -34,15 +34,15 @@ A web application can be
 \item extended by simply adding new routes and/or middleware.
 }
 
-The presser API is very much influenced by the
+The webfakes API is very much influenced by the
 \href{http://expressjs.com/}{express.js} project.
 \subsection{Create web app objects}{\if{html}{\out{<div class="r">}}\preformatted{new_app()
 }\if{html}{\out{</div>}}
 
-\code{new_app()} returns a \code{presser_app} object the has the methods listed
+\code{new_app()} returns a \code{webfakes_app} object the has the methods listed
 on this page.
 
-An app is an environment with S3 class \code{presser_app}.
+An app is an environment with S3 class \code{webfakes_app}.
 }
 
 \subsection{The handler stack}{
@@ -79,18 +79,18 @@ handler stack, and called if they match an incoming HTTP request.
 See 'Handler functions' below.
 }
 
-presser also has methods for the less frequently used HTTP verbs:
+webfakes also has methods for the less frequently used HTTP verbs:
 \code{CONNECT}, \code{MKCOL}, \code{OPTIONS}, \code{PROPFIND}, \code{REPORT}. (The method
 names are always in lowercase.)
 
 If a request is not handled by any routes (or handler functions in
-general), then presser will send a simple HTTP 404 response.
+general), then webfakes will send a simple HTTP 404 response.
 }
 
 \subsection{Middleware}{
 
 \code{app$use()} adds a middleware to the handler stack. A middleware is
-a handler function, see 'Handler functions' below. presser comes with
+a handler function, see 'Handler functions' below. webfakes comes with
 middleware to perform common tasks:
 \itemize{
 \item \code{\link[=mw_etag]{mw_etag()}} adds an \code{Etag} header to the response.
@@ -113,11 +113,11 @@ response is created before reaching this point in the handler stack.)
 \subsection{Handler functions}{
 
 A handler function is a route or middleware. A handler function is
-called by presser with the incoming HTTP request and the outgoing
+called by webfakes with the incoming HTTP request and the outgoing
 HTTP response objects (being built) as arguments. The handler function
 may query and modify the members of the request and/or the response
 object. If it returns the string \code{"next"}, then it is \emph{not} a terminal
-handler, and once it returns, presser will move on to call the next
+handler, and once it returns, webfakes will move on to call the next
 handler in the stack.
 
 A typical route:\if{html}{\out{<div class="r">}}\preformatted{app$get("/user/:id", function(req, res) \{
@@ -135,11 +135,11 @@ this case. It matches \verb{/user/alice}, \verb{/user/bob}, etc. The handler
 will be only called for GET methods and matching API paths.
 \item The handler receives the request (\code{req}) and the response (\code{res}).
 \item It sets the HTTP status, additional headers, and sends the data.
-(In this case the \code{presser_response$send_json()} method automatically
+(In this case the \code{webfakes_response$send_json()} method automatically
 converts \code{response} to JSON and sets the \code{Content-Type} and
 \code{Content-Length} headers.
 \item This is a terminal handler, because it does \emph{not} return \code{"next"}.
-Once this handler function returns, presser will send out the HTTP
+Once this handler function returns, webfakes will send out the HTTP
 response.
 }
 
@@ -149,10 +149,10 @@ A typical middleware:\if{html}{\out{<div class="r">}}\preformatted{app$use(funct
 \})
 }\if{html}{\out{</div>}}
 \itemize{
-\item There is no HTTP method and API path here, presser will call the
+\item There is no HTTP method and API path here, webfakes will call the
 handler for each HTTP request.
 \item This is not a terminal handler, it does return \code{"next"}, so after it
-returns presser will look for the next handler in the stack.
+returns webfakes will look for the next handler in the stack.
 }
 }
 
@@ -165,7 +165,7 @@ response body.
 
 \subsection{Request and response objects}{
 
-See \link{presser_request} and \link{presser_response} for the methods of the
+See \link{webfakes_request} and \link{webfakes_response} for the methods of the
 request and response objects.
 }
 
@@ -188,7 +188,7 @@ Paths that are specified as parameterized strings or regular expressions
 can have parameters.
 
 For parameterized strings the keys may contain letters, numbers and
-underscores. When presser matches an API path to a handler with a
+underscores. When webfakes matches an API path to a handler with a
 parameterized string path, the parameters will be added to the
 request, as \code{params}. I.e. in the handler function (and subsequent
 handler functions, if the current one is not terminal), they are
@@ -205,11 +205,11 @@ matching one.
 
 \subsection{Templates}{
 
-presser supports templates, using any template engine. It comes with
+webfakes supports templates, using any template engine. It comes with
 a template engine that uses the glue package, see \code{\link[=tmpl_glue]{tmpl_glue()}}.
 
 \code{app$engine()} registers a template engine, for a certain file
-extension. The \verb{$render()} method of \link{presser_response}
+extension. The \verb{$render()} method of \link{webfakes_response}
 can be called from the handler function to evaluate a template from a
 file.\if{html}{\out{<div class="r">}}\preformatted{app$engine(ext, engine)
 }\if{html}{\out{</div>}}
@@ -241,7 +241,7 @@ The location of the templates can be set using the \code{views} configuration
 parameter, see the \verb{$set_config()} method below.
 
 In the template, the variables passed in as \code{locals}, and also the
-response local variables (see \code{locals} in \link{presser_response}), are
+response local variables (see \code{locals} in \link{webfakes_response}), are
 available.
 }
 
@@ -265,19 +265,19 @@ is running in another process.
 When \code{port} is \code{NULL}, the operating system chooses a port where the
 app will listen. To be able to get the port number programmatically,
 before the listen method blocks, it advertises the selected port in a
-\code{presser_port} condition, so one can catch it:
+\code{webfakes_port} condition, so one can catch it:
 
-presser by default binds only to the loopback interface at 127.0.0.1, so
-the presser web app is never reachable from the network.\if{html}{\out{<div class="r">}}\preformatted{withCallingHandlers(
+webfakes by default binds only to the loopback interface at 127.0.0.1, so
+the webfakes web app is never reachable from the network.\if{html}{\out{<div class="r">}}\preformatted{withCallingHandlers(
   app$listen(),
-  "presser_port" = function(msg) print(msg$port)
+  "webfakes_port" = function(msg) print(msg$port)
 )
 }\if{html}{\out{</div>}}
 }
 
 \subsection{Logging}{
 
-presser can write an access log that contains an entry for all incoming
+webfakes can write an access log that contains an entry for all incoming
 requests, and also an error log for the errors that happen while
 the server is running. This is the default behavior for local app
 (the ones started by \code{app$listen()} and for remote apps (the ones
@@ -285,12 +285,12 @@ started via \code{new_app_process()}:
 \itemize{
 \item Local apps do not write an access log by default.
 \item Remote apps write an access log into the
-\verb{<tmpdir>/presser/<pid>/access.log} file, where \verb{<tmpdir>} is the
+\verb{<tmpdir>/webfakes/<pid>/access.log} file, where \verb{<tmpdir>} is the
 session temporary directory of the \emph{main process}, and \verb{<pid>} is
 the process id of the \emph{subprocess}.
-\item Local apps write an error log to \verb{<tmpdir>/presser/error.log}, where
+\item Local apps write an error log to \verb{<tmpdir>/webfakes/error.log}, where
 \verb{<tmpdir>} is the session temporary directory of the current process.
-\item Remote app write an error log to the \verb{<tmpdir>/presser/<pid>/error.log},
+\item Remote app write an error log to the \verb{<tmpdir>/webfakes/<pid>/error.log},
 where \verb{<tmpdir>} is the session temporary directory of the
 \emph{main process} and \verb{<pid>} is the process id of the \emph{subprocess}`.
 }
@@ -311,7 +311,7 @@ middleware that counts the number of requests can be implemented as:\preformatte
 \})
 }
 
-\link{presser_response} objects also have a \code{locals} environment, that is
+\link{webfakes_response} objects also have a \code{locals} environment, that is
 initially populated as a copy of \code{app$locals}.
 }
 
@@ -325,13 +325,13 @@ app$set_config(key, value)
 
 Currently used configuration values:
 \itemize{
-\item \code{views}: path where presser searches for templates.
+\item \code{views}: path where webfakes searches for templates.
 }
 }
 }
 \examples{
 # see example web apps in the `/examples` directory in
-system.file(package = "presser", "examples")
+system.file(package = "webfakes", "examples")
 
 app <- new_app()
 app$use(mw_log())
@@ -354,6 +354,6 @@ app
 # Or start it in another R session: new_app_process(app)
 }
 \seealso{
-\link{presser_request} for request objects, \link{presser_response} for
+\link{webfakes_request} for request objects, \link{webfakes_response} for
 response objects.
 }

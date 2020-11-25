@@ -1,3 +1,3 @@
 
-#' @useDynLib presser, .registration = TRUE, .fixes = "c_"
+#' @useDynLib webfakes, .registration = TRUE, .fixes = "c_"
 NULL

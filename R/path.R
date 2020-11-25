@@ -1,7 +1,7 @@
 
-#' Create a new regular expression to use in presser routes
+#' Create a new regular expression to use in webfakes routes
 #'
-#' Note that presser uses PERL regular expressions.
+#' Note that webfakes uses PERL regular expressions.
 #'
 #' @details
 #' As R does not have data type or class for regular expressions,
@@ -9,16 +9,16 @@
 #' when adding routes.
 #'
 #' @param x String scalar containing a regular expression.
-#' @return String with class `presser_regexp`.
+#' @return String with class `webfakes_regexp`.
 #'
-#' @aliases presser_regexp
+#' @aliases webfakes_regexp
 #' @seealso The 'Path specification' and 'Path parameters' chapters
 #' of the manual of [new_app()].
 #' @export
 #' @examples
 #' new_regexp("^/api/match/(?<pattern>.*)$")
 
-new_regexp <- function(x) structure(x, class = "presser_regexp")
+new_regexp <- function(x) structure(x, class = "webfakes_regexp")
 
 path_match <- function(method, path, handler) {
   if (handler$method == "use") return(TRUE)
@@ -30,17 +30,17 @@ path_match <- function(method, path, handler) {
 pattern_match <- function(path, patterns) {
 
   # Make sure patterns is a list
-  if (inherits(patterns, "presser_regexp")) {
+  if (inherits(patterns, "webfakes_regexp")) {
     patterns <- list(patterns)
   } else if (is.character(patterns)) {
     patterns <- as.list(patterns)
   }
 
   for (p in patterns) {
-    if (!inherits(p, "presser_regexp") && grepl(":", p)) {
+    if (!inherits(p, "webfakes_regexp") && grepl(":", p)) {
       p <- path_to_regexp(p)
     }
-    if (inherits(p, "presser_regexp")) {
+    if (inherits(p, "webfakes_regexp")) {
       m <- re_match(path, p)
       if (m$match) return(list(params = as.list(m$groups)))
     } else {

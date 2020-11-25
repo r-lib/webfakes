@@ -6,7 +6,7 @@ For example, a simple app that returns the current time in JSON would
 look like this:
 
 ```{r}
-time <- presser::new_app()
+time <- webfakes::new_app()
 time$get("/time", function(req, res) {
   res$send_json(list(time = format(Sys.time())), auto_unbox = TRUE)
 })
@@ -16,7 +16,7 @@ Now you can start this app on a random port using `web$listen()`.
 Alternatively, you can start it in a subprocess with `new_app_process()`.
 
 ```{r}
-web <- presser::new_app_process(time)
+web <- webfakes::new_app_process(time)
 web$url()
 ```
 

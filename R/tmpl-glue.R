@@ -21,7 +21,7 @@
 #' @export
 #' @examples
 #' # See th 'hello' app at
-#' hello_root <- system.file(package = "presser", "examples", "hello")
+#' hello_root <- system.file(package = "webfakes", "examples", "hello")
 #' hello_root
 #'
 #' app <- new_app()

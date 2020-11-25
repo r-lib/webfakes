@@ -1,5 +1,5 @@
 
-library(presser)
+library(webfakes)
 
 app <- new_app()
 app$engine("txt", tmpl_glue())

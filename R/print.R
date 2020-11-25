@@ -7,7 +7,7 @@ format_named_list <- function(name, data) {
 
 format_path <- function(patterns) {
   # Make sure patterns is a list
-  if (inherits(patterns, "presser_regexp")) {
+  if (inherits(patterns, "webfakes_regexp")) {
     patterns <- list(patterns)
   } else if (is.character(patterns)) {
     patterns <- as.list(patterns)
@@ -17,8 +17,8 @@ format_path <- function(patterns) {
 
 #' @export
 
-format.presser_app <- function(x, ...) {
-  header <- "<presser_app>"
+format.webfakes_app <- function(x, ...) {
+  header <- "<webfakes_app>"
   data <- vapply(x$.stack, FUN.VALUE = character(1), function(x) {
     name <- if (nchar(x$name %||% "")) paste0(" # ", x$name)
     paste0("  ", x$method, " ", format_path(x$path), name)
@@ -35,21 +35,21 @@ format.presser_app <- function(x, ...) {
     "  use(...)               # add middleware",
     "  locals                 # app-wide shared data"
   )
-  help <- "# see ?presser_app for all methods"
+  help <- "# see ?webfakes_app for all methods"
   c(header, "routes:", data, "fields and methods:", methods, help)
 }
 
 #' @export
 
-print.presser_app <- function(x, ...) {
+print.webfakes_app <- function(x, ...) {
   cat(format(x, ...), sep = "\n")
   invisible(x)
 }
 
 #' @export
 
-format.presser_request <- function(x, ...) {
-  header <- "<presser_request>"
+format.webfakes_request <- function(x, ...) {
+  header <- "<webfakes_request>"
   data <- c(
     "method:",
     paste0("  ", x$method),
@@ -61,7 +61,7 @@ format.presser_request <- function(x, ...) {
     format_named_list("headers", x$headers)
   )
   methods <- c(
-    "  app                    # the presser_app the request belongs to",
+    "  app                    # the webfakes_app the request belongs to",
     "  headers                # HTTP request headers",
     "  hostname               # server hostname, the Host header",
     "  method                 # HTTP method of request (lowercase)",
@@ -73,23 +73,23 @@ format.presser_request <- function(x, ...) {
     "  url                    # full URL of the request",
     "  get_header(field)      # get a request header"
   )
-  help <- " # see ?presser_request for details"
+  help <- " # see ?webfakes_request for details"
   c(header, data, "fields and methods:", methods, help)
 }
 
 #' @export
 
-print.presser_request <- function(x, ...) {
+print.webfakes_request <- function(x, ...) {
   cat(format(x, ...), sep = "\n")
   invisible(x)
 }
 
 #' @export
 
-format.presser_response <- function(x, ...) {
-  header <- "<presser_reeponse>"
+format.webfakes_response <- function(x, ...) {
+  header <- "<webfakes_reeponse>"
   methods <- c(
-    "  app                    # the presser_app the response belongs to",
+    "  app                    # the webfakes_app the response belongs to",
     "  locals                 # response-wide shared data",
     "  get_header(field)      # query response header",
     "  on_response(fun)       # call handler function for complete response",
@@ -105,34 +105,34 @@ format.presser_response <- function(x, ...) {
     "  set_status(status)     # set response status code",
     "  set_type(type)         # set Content-Type"
   )
-  help <- " # see ?presser_response for details"
+  help <- " # see ?webfakes_response for details"
   c(header, "fields and methods:", methods, help)
 }
 
 #' @export
 
-print.presser_response <- function(x, ...) {
+print.webfakes_response <- function(x, ...) {
   cat(format(x, ...), sep = "\n")
   invisible(x)
 }
 
 #' @export
 
-format.presser_regexp <- function(x, ...) {
-  paste0("<presser_regexp> ", encodeString(x, quote = "\""))
+format.webfakes_regexp <- function(x, ...) {
+  paste0("<webfakes_regexp> ", encodeString(x, quote = "\""))
 }
 
 #' @export
 
-print.presser_regexp <- function(x, ...) {
+print.webfakes_regexp <- function(x, ...) {
   cat(format(x, ...), sep = "\n")
   invisible(x)
 }
 
 #' @export
 
-format.presser_app_process <- function(x, ...) {
-  header <- "<presser_app_process>"
+format.webfakes_app_process <- function(x, ...) {
+  header <- "<webfakes_app_process>"
   state <- x$get_state()
   data <- c(
     "state:",
@@ -153,13 +153,13 @@ format.presser_app_process <- function(x, ...) {
     "  url(path, query)       # query url for an api path",
     "  stop()                 # stop web server process"
   )
-  help <- "# see ?presser_app_process for details"
+  help <- "# see ?webfakes_app_process for details"
   c(header, data, "fields and methods:", methods, help)
 }
 
 #' @export
 
-print.presser_app_process <- function(x, ...) {
+print.webfakes_app_process <- function(x, ...) {
   cat(format(x, ...), sep = "\n")
   invisible(x)
 }

@@ -1,5 +1,5 @@
 ---
-title: "How to use presser in your tests"
+title: "How to use webfakes in your tests"
 output: rmarkdown::html_vignette
 editor_options:
   markdown:
@@ -14,14 +14,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-## How do I use presser in my package?
+## How do I use webfakes in my package?
 
-First, you need to add presser to the `DESCRIPTION` file of your package.
-Use the `Suggests` field, as presser is only needed for testing:
+First, you need to add webfakes to the `DESCRIPTION` file of your package.
+Use the `Suggests` field, as webfakes is only needed for testing:
 
     ...
     Suggests:
-      presser,
+      webfakes,
       testthat
     ...
 
@@ -35,7 +35,7 @@ Each app runs in a new subprocess, and it takes typically about 100-400ms to sta
 
 See the sections later on on writing tests with a single app or multiple apps.
 
-## How do I make my app connect to presser when the tests are running?
+## How do I make my app connect to webfakes when the tests are running?
 
 In the typical scenario, you want your package to connect to the test app only when running the tests.
 If the URL to the web service is not an argument of the functions, one way to achieve this is to allow specifying the web server URL(s) via environment variables.
@@ -69,11 +69,11 @@ For example:
 Sys.unsetenv("GITHUB_API")
 ```
 
-In `$local_env()` environment variables, presser replaces `{url}` with the actual app URL.
+In `$local_env()` environment variables, webfakes replaces `{url}` with the actual app URL.
 This is needed by default, because the web server process starts up only later, so the URL is not known yet.
 
 ```{r}
-http <- presser::local_app_process(presser::httpbin_app(), start = TRUE)
+http <- webfakes::local_app_process(webfakes::httpbin_app(), start = TRUE)
 http$local_env(list(GITHUB_API = "{url}"))
 Sys.getenv("GITHUB_API")
 http$stop()
@@ -92,7 +92,7 @@ Sys.getenv("GITHUB_API")
 
 ## How do I start the app when writing the tests?
 
-It is convenient to start the presser server process(es) when working on the tests interactively, e.g. when using `devtools::load_all()`.
+It is convenient to start the webfakes server process(es) when working on the tests interactively, e.g. when using `devtools::load_all()`.
 With `local_app_process()` in the testthat `setup*.R` file this is not automatic, because `devtools::load_all()` does not run these files.
 So you would need to source the `setup*.R` files manually, which is error prone.
 
@@ -113,12 +113,12 @@ Processes created in helper files are not cleaned up automatically at the end of
 withr::defer(httpbin$stop(), testthat::teardown_env())
 ```
 
-In practice this is not necessary, because `R CMD check` runs the tests in a separate process, and when that finishes, the presser processes are cleaned up as well.
+In practice this is not necessary, because `R CMD check` runs the tests in a separate process, and when that finishes, the webfakes processes are cleaned up as well.
 
 When running `devtools::test()`, `testthat::test_local()` or another testthat function to run (part of) the test suite in the current session, the `helper*.R` files are (re)loaded first.
 This will terminate the currently running app processes, if any, and create new app process objects.
 Should the test suite auto-start some of the test processes from `helper*.R`, these will not be cleaned up at the end of the test suite, but only at the next `load_all()` or `test()` call, or at the end of the R session.
-This lets you run your test code interactively, either via `test()` or manually, without thinking too much about the presser processes.
+This lets you run your test code interactively, either via `test()` or manually, without thinking too much about the webfakes processes.
 
 ## Can I have an app for a single testthat test file?
 
@@ -126,14 +126,14 @@ To run a web app for a single test file, start it with `new_app_process()` at th
 Even simpler, use `local_app_process()` which is the same as `new_app_process()` but it automatically stops the web server process, at the end of the test file:
 
 ```{r}
-app <- presser::new_app()
+app <- webfakes::new_app()
 app$get("/hello/:user", function(req, res) {
   res$send(paste0("Hello ", req$params$user, "!"))
 })
 ```
 
 ```{r start1, include = FALSE}
-web <- presser::local_app_process(app)
+web <- webfakes::local_app_process(app)
 ```
 
 ```{r eval = FALSE}
@@ -158,9 +158,9 @@ It goes like this:
 
 ```{r}
 test_that("query works", {
-  app <- presser::new_app()
+  app <- webfakes::new_app()
   app$get("/hello", function(req, res) res$send("hello there"))
-  web <- presser::local_app_process(app)
+  web <- webfakes::local_app_process(app)
 
   echo <- httr::content(httr::GET(web$url("/hello")))
   expect_equal(echo, "hello there")
@@ -175,8 +175,8 @@ You could store anything in `app$locals`, something simple like a counter variab
 You can add something to `app$locals` via methods or directly after creating the app.
 
 ```{r}
-store <- presser::new_app()
-store$locals$packages <- list("presser")
+store <- webfakes::new_app()
+store$locals$packages <- list("webfakes")
 ls(store$locals)
 store$locals$packages
 ```
@@ -186,7 +186,7 @@ E.g. here is an end point that fails three times, then succeeds once, fails agai
 Note that the `counter` created by the code below starts at 0, not 1.
 
 ```{r}
-flaky <- presser::new_app()
+flaky <- webfakes::new_app()
 flaky$get("/unstable", function(req, res) {
   if (identical(res$app$locals$counter, 3L)) {
     res$app$locals$counter <- NULL
@@ -201,7 +201,7 @@ flaky$get("/unstable", function(req, res) {
 Let's run this app in another process and connect to it:
 
 ```{r}
-pr <- presser::new_app_process(flaky)
+pr <- webfakes::new_app_process(flaky)
 url <- pr$url("/unstable")
 httr::RETRY("GET", url, times = 4)
 ```
@@ -210,9 +210,9 @@ Another example where we send information to an app and then retrieve it.
 On a POST request we store the `name` query parameter in `app$locals$packages`, which can be queried with a GET request.
 
 ```{r}
-store <- presser::new_app()
+store <- webfakes::new_app()
 # Initial "data" for the app
-store$locals$packages <- list("presser")
+store$locals$packages <- list("webfakes")
 # Get method
 store$get("/packages", function(req, res) {
   res$send_json(res$app$locals$packages, auto_unbox = TRUE)
@@ -227,7 +227,7 @@ store$post("/packages", function(req, res) {
 Now we start the app in a subprocess, and run a GET query against it.
 
 ```{r}
-web <- presser::local_app_process(store, start = TRUE)
+web <- webfakes::local_app_process(store, start = TRUE)
 # Get current information
 get_packages <- function() {
   httr::content(
@@ -280,7 +280,7 @@ We will simply print the incoming request object to the screen now.
 For a real debugging session you probably want to place a `browser()` command there.
 
 ```{r}
-app <- presser::new_app()
+app <- webfakes::new_app()
 app$get("/debug", function(req, res) {
   print(req)
   res$send("Got your back")
@@ -294,7 +294,7 @@ app$listen(port = 3000)
 ```
 
 ```{r echo = FALSE}
-message("Running presser web app on port 3000")
+message("Running webfakes web app on port 3000")
 ```
 
 Connect to the app from another R or `curl` process:
@@ -324,7 +324,7 @@ Got your back
 Your main R session will print the incoming request:
 
 ```{r echo = FALSE}
-cat('<presser_request>
+cat('<webfakes_request>
 method:
   get
 url:
@@ -337,7 +337,7 @@ headers:
   User-Agent: curl/7.54.0
   Accept: */*
 fields and methods:
-  app                    # the presser_app the request belongs to
+  app                    # the webfakes_app the request belongs to
   headers                # HTTP request headers
   hostname               # server hostname, the Host header
   method                 # HTTP method of request (lowercase)
@@ -348,7 +348,7 @@ fields and methods:
   remote_addr            # IP address of the client
   url                    # full URL of the request
   get_header(field)      # get a request header
- # see ?presser_request for details
+ # see ?webfakes_request for details
 ')
 ```
 
@@ -356,17 +356,17 @@ Press `CTRL+C` or `ESC` to interrupt the app in the main session.
 
 ## Can I test asynchronous or parallel HTTP requests?
 
-R is single threaded and a presser app runs an R interpreter, so it cannot process multiple requests at the same time.
+R is single threaded and a webfakes app runs an R interpreter, so it cannot process multiple requests at the same time.
 The web server itself runs in a separate thread, and it can also process each request in a separate thread, but at any time only one request can use the R interpreter.
 
 This is important, because sometimes test requests may take longer to process.
 For example the `/delay/:secs` end point of `httpbin_app()` wait for the specified number of seconds before responding, to simulate a slow web server.
 If this wait is implemented via the standard `Sys.sleep()` R function, then no other requests can be processed until the sleep is over.
-To avoid this, presser can put the waiting request on hold, return from the R interpreter, and respond to other incoming requests.
+To avoid this, webfakes can put the waiting request on hold, return from the R interpreter, and respond to other incoming requests.
 Indeed, the `/delay/` end point is implemented using this feature.
 
 However, the request thread of the web server is still busy while on hold, so to take advantage of this, you need to allow multiple threads.
-The `num_threads` argument of the `$listen()` method of `presser_app` lets you specify the number of request threads the web server will use.
+The `num_threads` argument of the `$listen()` method of `webfakes_app` lets you specify the number of request threads the web server will use.
 Similarly, the `num_threads` argument of `local_app_process()` lets you modify the number of threads.
 
 When testing asynchronous or parallel code, that might invoke multiple, possibly delayed requests, it is best to increase the number of threads.
@@ -374,9 +374,9 @@ The code below calls the same API request concurrently, three times.
 Each request takes 1 second to answer, but if the web server has more than three threads, together they'll still take about 1 second.
 
 ```{r}
-web <- presser::local_app_process(
-  presser::httpbin_app(),
-  opts = presser::server_opts(num_threads = 3)
+web <- webfakes::local_app_process(
+  webfakes::httpbin_app(),
+  opts = webfakes::server_opts(num_threads = 3)
 )
 ```
 
@@ -402,7 +402,7 @@ test_that("", {
 
 ## How to make sure that my code works with the *real* API?
 
-Indeed, if you use presser for your test cases, then they never touch the real web server.
+Indeed, if you use webfakes for your test cases, then they never touch the real web server.
 As you might suspect, this is not ideal, especially when you do not control the server.
 The web service might change their API, and your test cases will fail to warn you.
 
@@ -417,4 +417,4 @@ Once you have some tests that can use both kinds or servers, you can set up your
 This special CI run makes sure that your code works well with the real API.
 You can run all the other tests, locally and in the CI, against the fake local web server.
 
-See the next question for how presser helps you setting environment variables that point to your local server.
+See the next question for how webfakes helps you setting environment variables that point to your local server.

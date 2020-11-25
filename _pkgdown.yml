@@ -1,4 +1,4 @@
-url: https://r-lib.github.io/presser/
+url: https://r-lib.github.io/webfakes/
 
 development:
   mode: auto
@@ -25,7 +25,7 @@ navbar:
     menu:
     - text: The builtin httpbin app's API
       href: httpbin.html
-    - text: Presser internals
+    - text: Webfakes internals
       href: articles/internals.html
   - text: News
     href: news/index.html
@@ -34,8 +34,8 @@ reference:
 - title: Create and run web apps
   contents:
   - new_app
-  - presser_request
-  - presser_response
+  - webfakes_request
+  - webfakes_response
   - new_regexp
   - new_app_process
   - local_app_process

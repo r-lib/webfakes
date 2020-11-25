@@ -64,7 +64,7 @@ static char hexa[16] = {
 };
 
 /* crc32 hash */
-SEXP presser_crc32(SEXP v) {
+SEXP webfakes_crc32(SEXP v) {
   int len = LENGTH(v);
   Rbyte *begin = RAW(v), *end = begin + len;
   uint32_t crc = 0xffffffff;

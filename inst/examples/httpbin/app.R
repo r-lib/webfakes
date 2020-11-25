@@ -1,5 +1,5 @@
 
-library(presser)
+library(webfakes)
 
 app <- httpbin_app()
 

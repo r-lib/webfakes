@@ -2,7 +2,7 @@
 % Please edit documentation in R/server.R
 \name{server_opts}
 \alias{server_opts}
-\title{Presser web server options}
+\title{Webfakes web server options}
 \usage{
 server_opts(
   remote = FALSE,
@@ -17,7 +17,7 @@ server_opts(
 )
 }
 \arguments{
-\item{remote}{Meta-option. If set to \code{TRUE}, presser uses slightly
+\item{remote}{Meta-option. If set to \code{TRUE}, webfakes uses slightly
 different defaults, that are more appropriate for a background
 server process.}
 
@@ -30,7 +30,7 @@ parallel or you make concurrent HTTP requests.}
 
 \item{interfaces}{The network interfaces to listen on. Being a test
 web server, it defaults to the localhost. Only bind to a public
-interface if you know what you are doing. presser was not designed
+interface if you know what you are doing. webfakes was not designed
 to serve public web pages.}
 
 \item{enable_keep_alive}{Whether the server keeps connections alive.}
@@ -49,11 +49,11 @@ then it is the maximum number of bytes per second, that is sent to
 as connection.}
 }
 \value{
-List of options that can be passed to \code{presser_app$listen()}
+List of options that can be passed to \code{webfakes_app$listen()}
 (see \code{\link[=new_app]{new_app()}}), and \code{\link[=new_app_process]{new_app_process()}}.
 }
 \description{
-Presser web server options
+Webfakes web server options
 }
 \section{Logging}{
 
@@ -62,9 +62,9 @@ Presser web server options
 \item For \code{error_log_file}, \code{TRUE} means \verb{<log-dir>/error.log}.
 }
 
-\verb{<log-dir>} is set to the contents of the \code{PRESSER_LOG_DIR}
+\verb{<log-dir>} is set to the contents of the \code{WEBFAKES_LOG_DIR}
 environment variable, if it is set. Otherwise it is set to
-\verb{<tmpdir>/presser} for local apps and \verb{<tmpdir>/<pid>/presser} for
+\verb{<tmpdir>/webfakes} for local apps and \verb{<tmpdir>/<pid>/webfakes} for
 remote apps (started with \code{new_app_procss()}).
 
 \verb{<tmpdir>} is the session temporary directory of the \emph{main process}.
