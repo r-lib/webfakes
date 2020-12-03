@@ -12,10 +12,16 @@
 #' or you could adapt one of them / both of them to better mimick a particular
 #' OAuth2.0 flow.
 #'
-#' @return
-#' @export
+#' For more details see `vignette("oauth", package = "webfakes")`.
 #'
-#' @examples
+#' @name oauth2.0
+#' @aliases NULL
+
+#' @section `oauth2_resource_app()`:
+#' App representing the API server (resource/authorization)
+#' @export
+#' @return a `webfakes` app
+#' @rdname oauth2.0
 oauth2_resource_app <- function() {
   app <- new_app()
   app$use(mw_log())
@@ -178,6 +184,11 @@ oauth2_resource_app <- function() {
   app
 }
 
+#' @section `oauth2_third_party_app()`:
+#' App representing the third-party app
+#' @export
+#' @return a `webfakes` app
+#' @rdname oauth2.0
 oauth2_third_party_app <- function(name = "Third-Party app") {
   app <- new_app()
   app$use(mw_log())
