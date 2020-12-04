@@ -1,21 +1,35 @@
 Package: webfakes
 Title: Lightweight Web Server for Testing
 Version: 1.1.0.9000
-Authors@R: c(
-  person("Gábor", "Csárdi", role = c("aut", "cre"),
-         email = "csardi.gabor@gmail.com"),
-  person(family = "RStudio, Pbc.", role = "cph"),
-  person(family = "Civetweb contributors", role = "ctb",
-         comment = "see inst/credits/ciwetweb.md"),
-  person(family = "Redoc contributors", role = "ctb",
-         comment = "see inst/credits/redoc.md"),
-  person("L. Peter", "Deutsch", rol = "ctb",
-         comment = "src/md5.h"),
-  person("Martin", "Purschke", rol = "ctb",
-         comment = "src/md5.h"),
-  person(family = "Aladdin Enterprises", rol = "cph",
-         comment = "src/md5.h")
-  )
+Authors@R: 
+    c(person(given = "Gábor",
+             family = "Csárdi",
+             role = c("aut", "cre"),
+             email = "csardi.gabor@gmail.com"),
+      person(family = "RStudio, Pbc.",
+             role = "cph"),
+      person(family = "Civetweb contributors",
+             role = "ctb",
+             comment = "see inst/credits/ciwetweb.md"),
+      person(family = "Redoc contributors",
+             role = "ctb",
+             comment = "see inst/credits/redoc.md"),
+      person(given = "L. Peter",
+             family = "Deutsch",
+             role = "ctb",
+             comment = "src/md5.h"),
+      person(given = "Martin",
+             family = "Purschke",
+             role = "ctb",
+             comment = "src/md5.h"),
+      person(family = "Aladdin Enterprises",
+             role = "cph",
+             comment = "src/md5.h"),
+      person(given = "Maëlle",
+             family = "Salmon",
+             role = "ctb",
+             email = "maelle.salmon@yahoo.se",
+             comment = c(ORCID = "0000-0002-2815-0399")))
 Description: Create a web app that makes it easier to test web clients
   without using the internet. It includes a web app framework with path
   matching and parameters and templates. Can parse various 'HTTP' request
@@ -26,7 +40,7 @@ LazyData: true
 URL: https://r-lib.github.io/webfakes,
     https://github.com/r-lib/webfakes#readme
 BugReports: https://github.com/r-lib/webfakes/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.1.9000
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 Imports:
@@ -34,11 +48,14 @@ Imports:
     tools,
     utils
 Suggests:
+    knitr,
     callr,
     curl,
     glue,
     jsonlite,
     testthat (>= 3.0.0),
     withr,
-    xml2
+    xml2,
+    rmarkdown
 Encoding: UTF-8
+VignetteBuilder: knitr
