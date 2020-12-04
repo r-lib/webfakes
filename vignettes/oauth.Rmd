@@ -99,6 +99,15 @@ Once they have done that they get a token.
 ## OAuth2.0 with httr
 
 ``` {r httr}
+url <- paste0(
+  regi_url,
+  "?name=3P%20app",
+  "&redirect_uri=", oauth_callback()
+)
+reg_resp <- httr::GET(url)
+reg_resp
+regdata <- httr::content(reg_resp)
+regdata
 app <- httr::oauth_app(
   "3P app",
   key = regdata$client_id[[1]],
