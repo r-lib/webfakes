@@ -101,18 +101,18 @@ Once they have done that they get a token.
 ``` {r httr}
 url <- paste0(
   regi_url,
-  "?name=3P%20app",
-  "&redirect_uri=", oauth_callback()
+  "?name=3P%20app2",
+  "&redirect_uri=", httr::oauth_callback()
 )
 reg_resp <- httr::GET(url)
 reg_resp
 regdata <- httr::content(reg_resp)
 regdata
 app <- httr::oauth_app(
-  "3P app",
+  "3P app2",
   key = regdata$client_id[[1]],
   secret = regdata$client_secret[[1]],
-  redirect_uri = redi_url
+  redirect_uri = httr::oauth_callback()
 )
 
 endpoint <- httr::oauth_endpoint(
