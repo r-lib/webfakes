@@ -1,5 +1,5 @@
 rsapp <- local_app_process(
-  oauth2_resource_app(),
+  oauth2_resource_app(access_duration = 10L),
   opts = server_opts(num_threads = 3)
 )
 
@@ -34,3 +34,5 @@ token <- httr::oauth2.0_token(
 )
 httr::GET(rsapp$url("/data"))
 httr::content(httr::GET(rsapp$url("/data"), config = token))
+Sys.sleep(10)
+httr::GET(rsapp$url("/data"), config = token)
