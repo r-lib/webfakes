@@ -4,13 +4,15 @@
 \alias{mw_log}
 \title{Log requests to the standard output or other connection}
 \usage{
-mw_log(format = "dev", stream = stdout())
+mw_log(format = "dev", stream = "stdout")
 }
 \arguments{
 \item{format}{Log format. Not implemented currently.}
 
-\item{stream}{R connection to log to. Defaults to \code{stdout()}, the
-standard output.}
+\item{stream}{R connection to log to. \code{"stdout"} means the standard
+output, \code{"stderr"} is the standard error. You can also supply a
+connection object, but then you need to be sure that it will be
+valid when the app is actually running.}
 }
 \value{
 Handler function.

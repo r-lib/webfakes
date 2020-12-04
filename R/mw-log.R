@@ -13,8 +13,10 @@
 #' * and the size of the response body, in bytes.
 #'
 #' @param format Log format. Not implemented currently.
-#' @param stream R connection to log to. Defaults to `stdout()`, the
-#'   standard output.
+#' @param stream R connection to log to. `"stdout"` means the standard
+#'   output, `"stderr"` is the standard error. You can also supply a
+#'   connection object, but then you need to be sure that it will be
+#'   valid when the app is actually running.
 #' @return Handler function.
 #'
 #' @family middleware
@@ -24,7 +26,7 @@
 #' app$use(mw_log())
 #' app
 
-mw_log <- function(format = "dev", stream = stdout()) {
+mw_log <- function(format = "dev", stream = "stdout") {
 
   format; stream
 
@@ -33,6 +35,8 @@ mw_log <- function(format = "dev", stream = stdout()) {
     start <- Sys.time()
 
     fmt <- function(req, res) {
+      if (identical(stream, "stdout")) stream <- stdout()
+      if (identical(stream, "stderr")) stream <- stderr()
       len <- if (is.null(res$.body)) {
         0L                              # nocov
       } else if (is.raw(res$.body)) {
