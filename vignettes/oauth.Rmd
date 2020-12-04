@@ -25,7 +25,7 @@ In this vignette, we shall look at how to implement a flow using both apps, or t
 In both cases we shall use the httr package as HTTP client.
 For an example using the curl package instead, look at the test file `test-oauth.R` of webfakes instead.
 
-## OAuth2.0 dance
+## OAuth2.0 app creation & registration
 
 First we need to create the resource server, and we create variables holding its different URLs.
 
@@ -91,7 +91,30 @@ httr::POST(
 )
 
 ```
+## OAuth2.0 dance
 
-##
+At this state an user can `browseURL(tpapp$url("/login"))` and allow the third-party app access to their account.
+Once they have done that they get a token.
+
+## OAuth2.0 with httr
+
+``` {r httr}
+app <- httr::oauth_app(
+  "3P app",
+  key = regdata$client_id[[1]],
+  secret = regdata$client_secret[[1]],
+  redirect_uri = redi_url
+)
+
+endpoint <- httr::oauth_endpoint(
+  authorize = auth_url,
+  access = toke_url
+)
+
+token <- httr::oauth2.0_token(
+  endpoint, app
+)
+
+```
 
 
