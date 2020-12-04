@@ -1,0 +1,97 @@
+---
+title: "OAuth2.0 webfakes app"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{oauth}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(webfakes)
+```
+
+```{r child='../man/rmd-fragments/oauth2.Rmd'} 
+```
+
+In this vignette, we shall look at how to implement a flow using both apps, or the server app together with httr's OAuth tools.
+In both cases we shall use the httr package as HTTP client.
+For an example using the curl package instead, look at the test file `test-oauth.R` of webfakes instead.
+
+## OAuth2.0 dance
+
+First we need to create the resource server, and we create variables holding its different URLs.
+
+```{r resource-server-creation}
+rsapp <- local_app_process(
+  oauth2_resource_app(),
+  opts = server_opts(num_threads = 3)
+)
+
+rsapp
+
+regi_url <- rsapp$url("/register")
+auth_url <- rsapp$url("/authorize")
+toke_url <- rsapp$url("/token")
+```
+
+Then we create the third-party app, and we create variables holding its different URLs.
+
+```{r third-party-app-creation}
+tpapp <- local_app_process(
+  oauth2_third_party_app("3P app"),
+  opts = server_opts(num_threads = 3)
+)
+
+tpapp
+
+redi_url <- tpapp$url("/login/redirect")
+conf_url <- tpapp$url("/login/config")
+```
+
+We then need to register the third-party app at the resource server.
+In real life this is done by the admin of the third party app
+
+
+```{r register}
+url <- paste0(
+  regi_url,
+  "?name=3P%20app",
+  "&redirect_uri=", redi_url
+)
+reg_resp <- httr::GET(url)
+reg_resp
+regdata <- httr::content(reg_resp)
+regdata
+```
+
+Now set this data on the third-party app
+In real life this is included in the config of the third party app
+by its admin.
+
+```{r register-data}
+auth_data <- list(
+  auth_url = auth_url,
+  token_url = toke_url,
+  client_id = regdata$client_id[[1]],
+  client_secret = regdata$client_secret[[1]]
+)
+
+httr::POST(
+  conf_url,
+  body = auth_data,
+  encode = "json"
+)
+
+```
+
+##
+
+
