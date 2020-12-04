@@ -149,4 +149,6 @@ The token can also be used as fake token when you use mocking (with vcr or httpt
 
 ## Future work
 
-The 
+It might be interesting for the server app to
+* have some sort of data endpoint (needing authentication with an access token, and taking the token expiry into account)
+* have a refresh endpoint.
