@@ -1,17 +1,9 @@
 
 #' OAuth 2.0
 #'
-#' @description
-#' These two apps allow to imitate the simplified OAuth2.0 flow described in
-#' [Aaron Parecki's tutorial](https://aaronparecki.com/oauth-2-simplified/).
-#' One app (`oauth2_resource_app()`) is the API server (resource/authorization),
-#' the other plays the role of a third-party app.
-#' They are useful when testing or demonstrating code handling OAuth2.0
-#' authorization, token caching, etc. in a package:
-#' The apps can be used in your tests directly,
-#' or you could adapt one of them / both of them to better mimick a particular
-#' OAuth2.0 flow.
+#' @includeRmd man/rmd-fragments/oauth2.Rmd description
 #'
+#' @details
 #' For more details see `vignette("oauth", package = "webfakes")`.
 #'
 #' @name oauth2.0
@@ -187,7 +179,6 @@ oauth2_resource_app <- function() {
 #' @section `oauth2_third_party_app()`:
 #' App representing the third-party app
 #' @export
-#' @return a `webfakes` app
 #' @rdname oauth2.0
 oauth2_third_party_app <- function(name = "Third-Party app") {
   app <- new_app()
