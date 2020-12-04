@@ -4,9 +4,14 @@
 \alias{oauth2_third_party_app}
 \title{OAuth 2.0}
 \usage{
-oauth2_resource_app()
+oauth2_resource_app(access_duration = 3600L, refresh_duration = 7200L)
 
 oauth2_third_party_app(name = "Third-Party app")
+}
+\arguments{
+\item{access_duration}{After how many seconds should the access token expire.}
+
+\item{refresh_duration}{After how many seconds should the refresh token expire.}
 }
 \value{
 a \code{webfakes} app

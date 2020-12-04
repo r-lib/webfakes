@@ -14,7 +14,9 @@
 #' @export
 #' @return a `webfakes` app
 #' @rdname oauth2.0
-oauth2_resource_app <- function() {
+#' @param access_duration After how many seconds should the access token expire.
+#' @param refresh_duration After how many seconds should the refresh token expire.
+oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L) {
   app <- new_app()
   app$use(mw_log())
 
@@ -163,14 +165,36 @@ oauth2_resource_app <- function() {
     }
 
     token <- paste0("token-", generate_token())
-    app$locals$tokens <- c(app$locals$tokens, token)
+
+    app$locals$tokens <- rbind(
+      app$locals$tokens,
+      data.frame(token = token, expiry = Sys.time() + access_duration)
+      )
+
     app$locals$codes <- setdiff(app$locals$codes, req$query$code)
 
     res$
       send_json(
-        list(access_token = token, expires_in = 3600L),
+        list(access_token = token, expiry = access_duration),
         auto_unbox = TRUE
       )
+  })
+
+  app$get("/data", function(req, res){
+    app$locals$tokens <- app$locals$tokens[app$locals$tokens$expiry > Sys.time(),]
+    if (!("Authorization" %in% names(req$headers))) {
+      res$
+        send_status(401L)
+    } else {
+      token <- gsub("Bearer ", "", req$headers$Authorization[[1]])
+      if (!token %in% app$locals$tokens$token) {
+        res$
+          send_status(401L)
+      } else {
+        res$
+          send_json(list(data = "top secret!"))
+      }
+    }
   })
 
   app
