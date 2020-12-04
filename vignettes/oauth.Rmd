@@ -106,6 +106,7 @@ Once they have done that they get a token.
 
 ### OAuth2.0 app creation & registration
 
+What's crucial here is setting `httr::oauth_callback()` as redirect URI, which is what you do when creating an app for rtweet for instance.
 
 ``` {r httr}
 url <- paste0(
@@ -144,6 +145,7 @@ token <- httr::oauth2.0_token(
 ## Applications
 
 With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.
+The token can also be used as fake token when you use mocking (with vcr or httptest) in your tests (the fake token could be used on continuous integration for instance).
 
 ## Future work
 
