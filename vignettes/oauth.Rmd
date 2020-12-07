@@ -151,11 +151,13 @@ token <- httr::oauth2.0_token(
 
 Below we use the token that we cached when creating the vignette (and whose refresh token is valid forever).
 
-```{r get-token, echo = FALSE}
+```{r get-token, echo = TRUE}
+# to make sure the app has our access and refresh tokens
 httr::GET(rsapp$url("/noninteractive"))
-httr::content(httr::GET(rsapp$url("/locals")))
+
+# reading the credentials of the cached token
+# and creating an httr token whose URLs are those of the app at hand
 token <- readRDS("token.rds")[[1]]
-token$credentials
 token <- httr::oauth2.0_token(
   endpoint = endpoint,
   app = app,
