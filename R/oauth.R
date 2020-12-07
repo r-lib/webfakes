@@ -7,19 +7,19 @@
 #' For more details see `vignette("oauth", package = "webfakes")`.
 #'
 #' @name oauth2.0
-#' @aliases NULL
+#' @aliases oauth2_resource_app, oauth2_third_party_app
 
 #' @section `oauth2_resource_app()`:
 #' App representing the API server (resource/authorization)
-#' @export
 #' @return a `webfakes` app
-#' @rdname oauth2.0
 #' @param access_duration After how many seconds should access tokens expire.
 #' @param refresh_duration After how many seconds should refresh tokens expire
 #' (ignored if `refresh` is `FALSE`).
 #' @param refresh Should a refresh token be returned (logical).
 #' @param seed Random seed used when creating tokens.
 #' @inheritParams mw_log
+#' @export
+#' @rdname oauth2.0
 oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
                                 refresh = TRUE, seed = 42, stream = "stdout") {
 
@@ -303,6 +303,7 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
 
 #' @section `oauth2_third_party_app()`:
 #' App representing the third-party app
+#' @param name Name of the third-party app
 #' @export
 #' @rdname oauth2.0
 oauth2_third_party_app <- function(name = "Third-Party app", stream = "stdout") {
