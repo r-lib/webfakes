@@ -28,12 +28,11 @@ For an example using the curl package instead, look at the test file `test-oauth
 ## In all cases: create the resource server
 
 First we need to create the resource server, and we create variables holding its different URLs.
-Here we keep the default values for the parameters deciding whether a refresh token is produced when 
-an access token is (`refresh`) and how long the access and refresh tokens are valid (`3600L` and `7200L`, respectively).
+
 
 ```{r resource-server-creation}
 rsapp <- local_app_process(
-  oauth2_resource_app(),
+  oauth2_resource_app(refresh_duration = Inf, access_duration = 10L),
   opts = server_opts(num_threads = 3)
 )
 
@@ -123,7 +122,7 @@ regdata
 
 Now we set the registration data on the third-party app.
 
-```{r httr-dance, eval = FALSE}
+```{r httr-dance}
 app <- httr::oauth_app(
   "3P app2",
   key = regdata$client_id[[1]],
@@ -141,100 +140,32 @@ endpoint <- httr::oauth_endpoint(
 Now we can launch the token creation.
 This can only be done interactively
 
-```{r httr-dance, eval = FALSE}
+```{r httr-dance2, eval = FALSE}
 token <- httr::oauth2.0_token(
   endpoint, app
 )
 
 ```
 
-## OAuth's httr tools, server with refresh or not
+Below we use the token that we cached when creating the vignette (and whose refresh token is valid forever).
 
-### With refresh
-
-```{r refresh, eval = FALSE}
-rsapp <- local_app_process(
-  oauth2_resource_app(access_duration = 10L),
-  opts = server_opts(num_threads = 3)
-)
-
-rsapp
-
-regi_url <- rsapp$url("/register")
-auth_url <- rsapp$url("/authorize")
-toke_url <- rsapp$url("/token")
-url <- paste0(
-  regi_url,
-  "?name=3P%20app2",
-  "&redirect_uri=", httr::oauth_callback()
-)
-reg_resp <- httr::GET(url)
-reg_resp
-regdata <- httr::content(reg_resp)
-regdata
-app <- httr::oauth_app(
-  "3P app2",
-  key = regdata$client_id[[1]],
-  secret = regdata$client_secret[[1]],
-  redirect_uri = httr::oauth_callback()
-)
-
-endpoint <- httr::oauth_endpoint(
-  authorize = auth_url,
-  access = toke_url
-)
-
+```{r get-token, echo = FALSE}
+token <- readRDS("token.rds")[[1]]
 token <- httr::oauth2.0_token(
-  endpoint, app
+  endpoint = endpoint,
+  app = app,
+  credentials = token$credentials
 )
-httr::GET(rsapp$url("/data"))
-httr::content(httr::GET(rsapp$url("/data"), config = token))
-Sys.sleep(10)
-httr::GET(rsapp$url("/data"), config = token)
 ```
 
-### Without refresh
 
-```{r no-refresh, eval = FALSE}
-rsapp <- local_app_process(
-  oauth2_resource_app(access_duration = 10L, refresh = FALSE),
-  opts = server_opts(num_threads = 3)
-)
-
-rsapp
-
-regi_url <- rsapp$url("/register")
-auth_url <- rsapp$url("/authorize")
-toke_url <- rsapp$url("/token")
-url <- paste0(
-  regi_url,
-  "?name=3P%20app2",
-  "&redirect_uri=", httr::oauth_callback()
-)
-reg_resp <- httr::GET(url)
-reg_resp
-regdata <- httr::content(reg_resp)
-regdata
-app <- httr::oauth_app(
-  "3P app2",
-  key = regdata$client_id[[1]],
-  secret = regdata$client_secret[[1]],
-  redirect_uri = httr::oauth_callback()
-)
-
-endpoint <- httr::oauth_endpoint(
-  authorize = auth_url,
-  access = toke_url
-)
-
-token <- httr::oauth2.0_token(
-  endpoint, app
-)
-
+```{r refresh, error = TRUE}
+# Not authorized, since we provide no token
 httr::GET(rsapp$url("/data"))
-httr::content(httr::GET(rsapp$url("/data"), config = token))
-Sys.sleep(10)
-httr::GET(rsapp$url("/data"), config = token)
+
+# We'll get data, the token will be refreshed automatically
+httr::status_code(httr::GET(rsapp$url("/data"), config = token))
+
 ```
 
 ## Applications
