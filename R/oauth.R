@@ -261,7 +261,7 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
   })
 
   app$get("/noninteractive", function(req, res) {
-    access_token <- produce_access_token(access_duration)
+    access_token <- produce_access_token(0L)
     refresh_token <- produce_refresh_token(
       refresh_duration = refresh_duration,
       refresh = refresh
