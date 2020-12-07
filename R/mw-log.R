@@ -52,7 +52,7 @@ mw_log <- function(format = "dev", stream = "stdout") {
         toupper(req$method), req$url, res$.status, t, len
       )
       cat0(msg, file = stream)
-      flush(stream)
+      if (inherits(stream, "connection")) flush(stream)
     }
     res$on_response(fmt)
 

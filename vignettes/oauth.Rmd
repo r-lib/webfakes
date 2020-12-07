@@ -31,8 +31,13 @@ First we need to create the resource server, and we create variables holding its
 
 
 ```{r resource-server-creation}
+templog <- tempfile()
 rsapp <- local_app_process(
-  oauth2_resource_app(refresh_duration = 9999999999999999L, access_duration = 10L),
+  oauth2_resource_app(
+    refresh_duration = 9999999999999999L, 
+    access_duration = 10L,
+    stream = templog
+    ),
   opts = server_opts(num_threads = 3)
 )
 
@@ -178,6 +183,25 @@ httr::content(httr::GET(rsapp$url("/data"), config = token))
 ## Applications
 
 With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.
+
+## Debugging
+
+The resource app has
+
+* an argument `stream` letting you write the log to a file. Here we wrote to `templog`.
+
+```{r log}
+readLines(templog)
+file.remove(templog)
+``` 
+
+* an endpoint `/locals` that lets you see the current access and refresh tokens.
+
+```{r}
+httr::content(
+  httr::GET(rsapp$url("/locals"))
+)
+```
 
 ## Conclusion
 

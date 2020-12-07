@@ -28,7 +28,7 @@ is_na_scalar <- function(x) {
 }
 
 cat0 <- function(..., sep = "") {
-  cat(..., sep = sep)
+  cat(..., sep = sep, append = TRUE)
 }
 
 str_trim <- function(x) {

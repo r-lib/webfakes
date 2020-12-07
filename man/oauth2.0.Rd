@@ -8,7 +8,8 @@ oauth2_resource_app(
   access_duration = 3600L,
   refresh_duration = 7200L,
   refresh = TRUE,
-  seed = 42
+  seed = 42,
+  stream = "stdout"
 )
 
 oauth2_third_party_app(name = "Third-Party app")
@@ -22,6 +23,11 @@ oauth2_third_party_app(name = "Third-Party app")
 \item{refresh}{Should a refresh token be returned (logical).}
 
 \item{seed}{Random seed set when creating the app.}
+
+\item{stream}{R connection to log to. \code{"stdout"} means the standard
+output, \code{"stderr"} is the standard error. You can also supply a
+connection object, but then you need to be sure that it will be
+valid when the app is actually running.}
 }
 \value{
 a \code{webfakes} app

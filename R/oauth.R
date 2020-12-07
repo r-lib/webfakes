@@ -19,8 +19,9 @@
 #' (ignored if `refresh` is `FALSE`).
 #' @param refresh Should a refresh token be returned (logical).
 #' @param seed Random seed set when creating the app.
+#' @inheritParams mw_log
 oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
-                                refresh = TRUE, seed = 42) {
+                                refresh = TRUE, seed = 42, stream = "stdout") {
 
   if (!requireNamespace("withr", quietly = TRUE)) {
     stop("This app requires the withr package, please install it.")
@@ -31,7 +32,7 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
   app$locals$access_produced <- 0
   app$locals$refresh_produced <- 0
 
-  app$use(mw_log())
+  app$use(mw_log(stream = stream))
 
   # Parse body for /authorize/decision, /token
   app$use(mw_urlencoded())
@@ -274,7 +275,7 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
 
     res$
       set_status(200L)$
-      send_json(list(tokens = app$locals$tokens, refresh = app$locals$refresh_tokens), auto_unbox = TRUE)
+      send_json(list(access = app$locals$tokens, refresh = app$locals$refresh_tokens), auto_unbox = TRUE)
   })
 
   app$get("/data", function(req, res){
