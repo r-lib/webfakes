@@ -184,6 +184,30 @@ httr::content(httr::GET(rsapp$url("/data"), config = token))
 
 With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.
 
+Like all webfakes apps, OAuth2.0 apps are extensible: you can add your own endpoints to it. E.g.
+
+```{r}
+rsapp2 <- oauth2_resource_app(
+    refresh_duration = 9999999999999999L, 
+    access_duration = 10L,
+    stream = templog
+    )
+rsapp2$get("/docs", function(req, res) {
+  res$
+    set_status(200L)$
+    send("See vignette('oauth', package = 'webfakes')")
+})
+
+rsapp2_process <- local_app_process(
+  rsapp2,
+  opts = server_opts(num_threads = 3)
+)
+
+httr::content(httr::GET(rsapp2_process$url("/docs")))
+```
+
+If you want to customize one of the apps or both apps a lot, it might make sense to use their source code as starting point or inspiration
+
 ## Debugging
 
 On top of the [usual debugging advice for webfakes apps](https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-), the resource app has

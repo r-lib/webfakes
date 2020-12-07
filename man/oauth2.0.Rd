@@ -15,14 +15,14 @@ oauth2_resource_app(
 oauth2_third_party_app(name = "Third-Party app")
 }
 \arguments{
-\item{access_duration}{After how many seconds should the access token expire.}
+\item{access_duration}{After how many seconds should access tokens expire.}
 
-\item{refresh_duration}{After how many seconds should the refresh token expire
+\item{refresh_duration}{After how many seconds should refresh tokens expire
 (ignored if \code{refresh} is \code{FALSE}).}
 
 \item{refresh}{Should a refresh token be returned (logical).}
 
-\item{seed}{Random seed set when creating the app.}
+\item{seed}{Random seed used when creating tokens.}
 
 \item{stream}{R connection to log to. \code{"stdout"} means the standard
 output, \code{"stderr"} is the standard error. You can also supply a

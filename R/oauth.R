@@ -14,11 +14,11 @@
 #' @export
 #' @return a `webfakes` app
 #' @rdname oauth2.0
-#' @param access_duration After how many seconds should the access token expire.
-#' @param refresh_duration After how many seconds should the refresh token expire
+#' @param access_duration After how many seconds should access tokens expire.
+#' @param refresh_duration After how many seconds should refresh tokens expire
 #' (ignored if `refresh` is `FALSE`).
 #' @param refresh Should a refresh token be returned (logical).
-#' @param seed Random seed set when creating the app.
+#' @param seed Random seed used when creating tokens.
 #' @inheritParams mw_log
 oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
                                 refresh = TRUE, seed = 42, stream = "stdout") {
@@ -172,6 +172,7 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
     )
     return(refresh_token)
   }
+
   app$post("/token", function(req, res) {
 
 
