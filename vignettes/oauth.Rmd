@@ -186,7 +186,7 @@ With these apps, or only the resource server app, you can now test your code tha
 
 ## Debugging
 
-The resource app has
+On top of the [usual debugging advice for webfakes apps](https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-), the resource app has
 
 * an argument `stream` letting you write the log to a file. Here we wrote to `templog`.
 
