@@ -1,4 +1,4 @@
-The webfakes package comes with two app that
+The webfakes package comes with two apps that
 allow to imitate the simplified OAuth2.0 flow described in
 [Aaron Parecki's tutorial](https://aaronparecki.com/oauth-2-simplified/).
 One app (`oauth2_resource_app()`) is the API server (resource/authorization),

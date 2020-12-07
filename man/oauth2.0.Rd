@@ -33,7 +33,7 @@ valid when the app is actually running.}
 a \code{webfakes} app
 }
 \description{
-The webfakes package comes with two app that allow to imitate the
+The webfakes package comes with two apps that allow to imitate the
 simplified OAuth2.0 flow described in \href{https://aaronparecki.com/oauth-2-simplified/}{Aaron Parecki’s tutorial}. One app
 (\code{oauth2_resource_app()}) is the API server (resource/authorization),
 the other plays the role of a third-party app. They are useful when
