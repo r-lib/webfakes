@@ -12,7 +12,7 @@ oauth2_resource_app(
   stream = "stdout"
 )
 
-oauth2_third_party_app(name = "Third-Party app")
+oauth2_third_party_app(name = "Third-Party app", stream = "stdout")
 }
 \arguments{
 \item{access_duration}{After how many seconds should access tokens expire.}

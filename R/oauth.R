@@ -305,9 +305,9 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
 #' App representing the third-party app
 #' @export
 #' @rdname oauth2.0
-oauth2_third_party_app <- function(name = "Third-Party app") {
+oauth2_third_party_app <- function(name = "Third-Party app", stream = "stdout") {
   app <- new_app()
-  app$use(mw_log())
+  app$use(mw_log(stream = stream))
 
   app$use(mw_urlencoded())
   app$use(mw_json())
