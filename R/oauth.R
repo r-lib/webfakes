@@ -21,8 +21,12 @@
 #' @param seed Random seed set when creating the app.
 oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
                                 refresh = TRUE, seed = 42) {
-  set.seed(seed)
+
   app <- new_app()
+
+  app$locals$access_produced <- 0
+  app$locals$refresh_produced <- 0
+
   app$use(mw_log())
 
   # Parse body for /authorize/decision, /token
@@ -129,6 +133,10 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
   })
 
   produce_access_token <- function(access_duration) {
+
+    app$locals$access_produced <- app$locals$access_produced + 1
+    set.seed(app$locals$access_produced + seed)
+
     token <- paste0("token-", generate_token())
     app$locals$tokens <- rbind(
       app$locals$tokens,
@@ -142,6 +150,9 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
     if (!refresh) {
       return(NA)
     }
+
+    app$locals$refresh_produced <- app$locals$refresh_produced + 1
+    set.seed(app$locals$refresh_produced + seed)
 
     refresh_token <- paste0("refresh_token-", generate_token())
     app$locals$refresh_tokens <- rbind(
