@@ -32,7 +32,7 @@ First we need to create the resource server, and we create variables holding its
 
 ```{r resource-server-creation}
 rsapp <- local_app_process(
-  oauth2_resource_app(refresh_duration = Inf, access_duration = 10L),
+  oauth2_resource_app(refresh_duration = 9999999999999999L, access_duration = 10L),
   opts = server_opts(num_threads = 3)
 )
 
@@ -141,8 +141,10 @@ Now we can launch the token creation.
 This can only be done interactively
 
 ```{r httr-dance2, eval = FALSE}
+file.remove(file.path("vignettes", "token.rds"))
 token <- httr::oauth2.0_token(
-  endpoint, app
+  endpoint, app,
+  cache = file.path("vignettes", "token.rds")
 )
 
 ```
@@ -164,7 +166,7 @@ token <- httr::oauth2.0_token(
 httr::GET(rsapp$url("/data"))
 
 # We'll get data, the token will be refreshed automatically
-httr::status_code(httr::GET(rsapp$url("/data"), config = token))
+httr::content(httr::GET(rsapp$url("/data"), config = token))
 
 ```
 

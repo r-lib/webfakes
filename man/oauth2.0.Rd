@@ -7,7 +7,8 @@
 oauth2_resource_app(
   access_duration = 3600L,
   refresh_duration = 7200L,
-  refresh = TRUE
+  refresh = TRUE,
+  seed = 42
 )
 
 oauth2_third_party_app(name = "Third-Party app")
@@ -19,6 +20,8 @@ oauth2_third_party_app(name = "Third-Party app")
 (ignored if \code{refresh} is \code{FALSE}).}
 
 \item{refresh}{Should a refresh token be returned (logical).}
+
+\item{seed}{Random seed set when creating the app.}
 }
 \value{
 a \code{webfakes} app

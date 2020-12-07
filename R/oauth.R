@@ -18,8 +18,10 @@
 #' @param refresh_duration After how many seconds should the refresh token expire
 #' (ignored if `refresh` is `FALSE`).
 #' @param refresh Should a refresh token be returned (logical).
+#' @param seed Random seed set when creating the app.
 oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
-                                refresh = TRUE) {
+                                refresh = TRUE, seed = 42) {
+  set.seed(seed)
   app <- new_app()
   app$use(mw_log())
 
@@ -157,10 +159,10 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
         app$locals$refresh_tokens$expiry > Sys.time(),
         ]
 
-      if (! (req$form$refresh_token %in% app$locals$refresh_tokens)) {
-        res$
+      if (! (req$form$refresh_token %in% app$locals$refresh_tokens$token)) {
+           res$
           set_status(400L)$
-          send("Invalid or expired refresh token")
+          send_json(list(error = "invalid_request"), auto_unbox = TRUE)
         return()
       }
 
@@ -241,12 +243,14 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
     app$locals$tokens <- app$locals$tokens[app$locals$tokens$expiry > Sys.time(),]
     if (!("Authorization" %in% names(req$headers))) {
       res$
-        send_status(401L)
+        set_status(401L)$
+        send("Missing bearer token")
     } else {
       token <- gsub("Bearer ", "", req$headers$Authorization[[1]])
       if (!token %in% app$locals$tokens$token) {
         res$
-          send_status(401L)
+          set_status(401L)$
+          send("Invalid bearer token")
       } else {
         res$
           send_json(list(data = "top secret!"))
