@@ -240,7 +240,6 @@ httr::GET(rsapp$url("/data"), config = token)
 ## Applications
 
 With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.
-The token can also be used as fake token when you use mocking (with vcr or httptest) in your tests (the fake token could be used on continuous integration for instance to fool your package).
 
 ## Conclusion
 
