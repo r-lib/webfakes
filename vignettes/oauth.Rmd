@@ -107,7 +107,63 @@ At this state an user can `browseURL(tpapp$url("/login"))` and allow the third-p
 Once they have done that they get a token in the browser.
 You can try that interactively, and refer to the test file `test-oauth.R` to see a programmatic version of the clicking.
 
+Once the OAuth2.0 dance is finished in the browser you see the tokens the resource app produced, returned by the third-party app.
+The third-party app also saved the tokens to its own environment.
+You can change what appears in the browser.
+
+
+```{r hook}
+thirdp <- oauth2_third_party_app("3P app")
+thirdp$redirect_hook <- function(res, tokens) {
+  res$
+    set_status(200L)$
+    send("Authentication complete, return to R!")
+}
+
+tpapp2 <- local_app_process(
+  thirdp,
+  opts = server_opts(num_threads = 3)
+)
+
+tpapp2
+
+redi_url <- tpapp2$url("/login/redirect")
+conf_url <- tpapp2$url("/login/config")
+url <- paste0(
+  regi_url,
+  "?name=3P%20app2",
+  "&redirect_uri=", redi_url
+)
+reg_resp <- httr::GET(url)
+reg_resp
+regdata <- httr::content(reg_resp)
+regdata
+auth_data <- list(
+  auth_url = auth_url,
+  token_url = toke_url,
+  client_id = regdata$client_id[[1]],
+  client_secret = regdata$client_secret[[1]]
+)
+
+httr::POST(
+  conf_url,
+  body = auth_data,
+  encode = "json"
+)
+```
+
+Then again `browseURL(tpapp2$url("/login"))` and `httr::content(httr::GET(tpapp2$url("/locals")))` to 
+see the saved tokens.
+Now the third-party app can get data on your behalf (the whole goal of OAuth!) --- it could also post data on your behalf if the resource app had endpoints for that.
+In real life, access by the third-party app might be limited to some scopes, but the apps shipped with webfakes do not handle that.
+
+```{r, eval = FALSE}
+httr::content(httr::GET(tpapp2$url("/data")))
+```
+
 ## With httr's OAuth tools
+
+When you use httr's OAuth tool, there's some gymnastics happening as R is playing the role of a third-party app via httr and httpuv (to listen to the redirect URI).
 
 ### OAuth2.0 app creation & registration
 
@@ -206,11 +262,11 @@ rsapp2_process <- local_app_process(
 httr::content(httr::GET(rsapp2_process$url("/docs")))
 ```
 
-If you want to customize one of the apps or both apps a lot, it might make sense to use their source code as starting point or inspiration
+If you want to customize one of the apps or both apps a lot, it might make sense to use their source code as starting point or inspiration.
 
 ## Debugging
 
-On top of the [usual debugging advice for webfakes apps](https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-), the resource app has
+On top of the [usual debugging advice for webfakes apps](https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-), the apps have (exemplified below for the resource app)
 
 * an argument `stream` letting you write the log to a file. Here we wrote to `templog`.
 

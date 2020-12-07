@@ -405,6 +405,49 @@ oauth2_third_party_app <- function(name = "Third-Party app", stream = "stdout") 
       return()
     }
 
-    res$send_json(text = rawToChar(resp$content))
+    tokens <- rawToChar(resp$content)
+    app$locals$tokens <- jsonlite::fromJSON(tokens)
+
+    app$redirect_hook(res, tokens)
   })
+
+  app$redirect_hook <- function(res, tokens) {
+    res$
+      send_json(text = tokens)
+  }
+
+  app$get("/locals", function(req, res) {
+    res$
+      set_status(200L)$
+      send_json(app$locals$tokens, auto_unbox = TRUE)
+  })
+
+  app$get("/data", function(req, res) {
+    resp <- httr::GET(gsub("token", "data", app$locals$token_url),
+                      httr::add_headers(Authorization = paste("Bearer",
+                                                              app$locals$tokens$access_token)))
+
+    refresh_token <- app$locals$tokens$refresh_token
+
+    if (httr::status_code(resp) == 401 && !is.null(refresh_token)) {
+
+      req_params <- list(
+        refresh_token = refresh_token,
+        grant_type = "refresh_token"
+      )
+
+      refresh_resp <- httr::POST(app$locals$token_url, body = req_params, encode = "form")
+      httr::stop_for_status(refresh_resp)
+      app$locals$tokens <- httr::content(refresh_resp)
+
+
+      resp <- httr::GET(gsub("token", "data", app$locals$token_url),
+                        httr::add_headers(Authorization = paste("Bearer",
+                                                                app$locals$tokens$access_token)))
+    }
+
+    res$
+      send_json(httr::content(resp), auto_unbox = TRUE)
+  })
+
 }
