@@ -128,30 +128,30 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
     }
   })
 
+  produce_access_token <- function(access_duration) {
+    token <- paste0("token-", generate_token())
+    app$locals$tokens <- rbind(
+      app$locals$tokens,
+      data.frame(token = token, expiry = Sys.time() + access_duration)
+    )
+    return(token)
+  }
+
+  produce_refresh_token <- function(refresh_duration, refresh) {
+
+    if (!refresh) {
+      return(NA)
+    }
+
+    refresh_token <- paste0("refresh_token-", generate_token())
+    app$locals$refresh_tokens <- rbind(
+      app$locals$refresh_tokens,
+      data.frame(token = refresh_token, expiry = Sys.time() + refresh_duration)
+    )
+    return(refresh_token)
+  }
   app$post("/token", function(req, res) {
 
-    produce_access_token <- function(access_duration) {
-      token <- paste0("token-", generate_token())
-      app$locals$tokens <- rbind(
-        app$locals$tokens,
-        data.frame(token = token, expiry = Sys.time() + access_duration)
-      )
-      return(token)
-    }
-
-    produce_refresh_token <- function(refresh_duration, refresh) {
-
-      if (!refresh) {
-        return(NA)
-      }
-
-      refresh_token <- paste0("refresh_token-", generate_token())
-      app$locals$refresh_tokens <- rbind(
-        app$locals$refresh_tokens,
-        data.frame(token = refresh_token, expiry = Sys.time() + refresh_duration)
-      )
-      return(refresh_token)
-    }
 
     if (req$form$grant_type == "refresh_token") {
 
@@ -237,6 +237,23 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
              refresh_token = refresh_token),
         auto_unbox = TRUE
       )
+  })
+
+  app$get("/noninteractive", function(req, res) {
+    access_token <- produce_access_token(access_duration)
+    refresh_token <- produce_refresh_token(
+      refresh_duration = refresh_duration,
+      refresh = refresh
+    )
+    res$
+      send_status(200L)
+  })
+
+  app$get("/locals", function(req, res) {
+
+    res$
+      set_status(200L)$
+      send_json(list(tokens = app$locals$tokens, refresh = app$locals$refresh_tokens), auto_unbox = TRUE)
   })
 
   app$get("/data", function(req, res){
