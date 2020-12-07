@@ -28,6 +28,8 @@ For an example using the curl package instead, look at the test file `test-oauth
 ## In all cases: create the resource server
 
 First we need to create the resource server, and we create variables holding its different URLs.
+Here we keep the default values for the parameters deciding whether a refresh token is produced when 
+an access token is (`refresh`) and how long the access and refresh tokens are valid (`3600L` and `7200L`, respectively).
 
 ```{r resource-server-creation}
 rsapp <- local_app_process(
@@ -46,7 +48,6 @@ toke_url <- rsapp$url("/token")
 
 ### OAuth2.0 app creation & registration
 
-
 Then we create the third-party app, and we create variables holding its different URLs.
 
 ```{r third-party-app-creation}
@@ -64,7 +65,6 @@ conf_url <- tpapp$url("/login/config")
 We then need to register the third-party app at the resource server.
 In real life this is done by the admin of the third party app
 
-
 ```{r register}
 url <- paste0(
   regi_url,
@@ -77,7 +77,7 @@ regdata <- httr::content(reg_resp)
 regdata
 ```
 
-Now set this data on the third-party app
+Now we set this data on the third-party app
 In real life this is included in the config of the third party app
 by its admin.
 
@@ -100,7 +100,8 @@ httr::POST(
 ## OAuth2.0 dance
 
 At this state an user can `browseURL(tpapp$url("/login"))` and allow the third-party app access to their account.
-Once they have done that they get a token.
+Once they have done that they get a token in the browser.
+You can try that interactively, and refer to the test file `test-oauth.R` to see a programmatic version of the clicking.
 
 ## With httr's OAuth tools
 
@@ -120,10 +121,100 @@ regdata <- httr::content(reg_resp)
 regdata
 ```
 
+Now we set the registration data on the third-party app.
+
+```{r httr-dance, eval = FALSE}
+app <- httr::oauth_app(
+  "3P app2",
+  key = regdata$client_id[[1]],
+  secret = regdata$client_secret[[1]],
+  redirect_uri = httr::oauth_callback()
+)
+
+endpoint <- httr::oauth_endpoint(
+  authorize = auth_url,
+  access = toke_url
+)
+```
+
+
 Now we can launch the token creation.
 This can only be done interactively
 
 ```{r httr-dance, eval = FALSE}
+token <- httr::oauth2.0_token(
+  endpoint, app
+)
+
+```
+
+## OAuth's httr tools, server with refresh or not
+
+### With refresh
+
+```{r refresh, eval = FALSE}
+rsapp <- local_app_process(
+  oauth2_resource_app(access_duration = 10L),
+  opts = server_opts(num_threads = 3)
+)
+
+rsapp
+
+regi_url <- rsapp$url("/register")
+auth_url <- rsapp$url("/authorize")
+toke_url <- rsapp$url("/token")
+url <- paste0(
+  regi_url,
+  "?name=3P%20app2",
+  "&redirect_uri=", httr::oauth_callback()
+)
+reg_resp <- httr::GET(url)
+reg_resp
+regdata <- httr::content(reg_resp)
+regdata
+app <- httr::oauth_app(
+  "3P app2",
+  key = regdata$client_id[[1]],
+  secret = regdata$client_secret[[1]],
+  redirect_uri = httr::oauth_callback()
+)
+
+endpoint <- httr::oauth_endpoint(
+  authorize = auth_url,
+  access = toke_url
+)
+
+token <- httr::oauth2.0_token(
+  endpoint, app
+)
+httr::GET(rsapp$url("/data"))
+httr::content(httr::GET(rsapp$url("/data"), config = token))
+Sys.sleep(10)
+httr::GET(rsapp$url("/data"), config = token)
+```
+
+### Without refresh
+
+```{r no-refresh, eval = FALSE}
+rsapp <- local_app_process(
+  oauth2_resource_app(access_duration = 10L, refresh = FALSE),
+  opts = server_opts(num_threads = 3)
+)
+
+rsapp
+
+regi_url <- rsapp$url("/register")
+auth_url <- rsapp$url("/authorize")
+toke_url <- rsapp$url("/token")
+url <- paste0(
+  regi_url,
+  "?name=3P%20app2",
+  "&redirect_uri=", httr::oauth_callback()
+)
+reg_resp <- httr::GET(url)
+reg_resp
+regdata <- httr::content(reg_resp)
+regdata
 app <- httr::oauth_app(
   "3P app2",
   key = regdata$client_id[[1]],
@@ -140,15 +231,23 @@ token <- httr::oauth2.0_token(
   endpoint, app
 )
 
+httr::GET(rsapp$url("/data"))
+httr::content(httr::GET(rsapp$url("/data"), config = token))
+Sys.sleep(10)
+httr::GET(rsapp$url("/data"), config = token)
 ```
 
 ## Applications
 
 With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.
-The token can also be used as fake token when you use mocking (with vcr or httptest) in your tests (the fake token could be used on continuous integration for instance).
+The token can also be used as fake token when you use mocking (with vcr or httptest) in your tests (the fake token could be used on continuous integration for instance to fool your package).
 
-## Future work
+## Conclusion
 
-It might be interesting for the server app to
-* have some sort of data endpoint (needing authentication with an access token, and taking the token expiry into account)
-* have a refresh endpoint.
+The webfakes package's two OAuth2.0 apps allow you to imitate an OAuth2.0 simplified workflow.
+You might use both, or only the server one.
+The apps also exemplify the power of webfakes. 
+You could create apps imitating an OAuth1.0 flow, or whatever your tests might warrant.
+Do not hesitate to report your custom use cases via opening an issue.
+
+

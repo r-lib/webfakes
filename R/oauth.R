@@ -15,8 +15,11 @@
 #' @return a `webfakes` app
 #' @rdname oauth2.0
 #' @param access_duration After how many seconds should the access token expire.
-#' @param refresh_duration After how many seconds should the refresh token expire.
-oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L) {
+#' @param refresh_duration After how many seconds should the refresh token expire
+#' (ignored if `refresh` is `FALSE`).
+#' @param refresh Should a refresh token be returned (logical).
+oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
+                                refresh = TRUE) {
   app <- new_app()
   app$use(mw_log())
 
@@ -125,27 +128,54 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
 
   app$post("/token", function(req, res) {
 
+    produce_access_token <- function(access_duration) {
+      token <- paste0("token-", generate_token())
+      app$locals$tokens <- rbind(
+        app$locals$tokens,
+        data.frame(token = token, expiry = Sys.time() + access_duration)
+      )
+      return(token)
+    }
+
+    produce_refresh_token <- function(refresh_duration, refresh) {
+
+      if (!refresh) {
+        return(NA)
+      }
+
+      refresh_token <- paste0("refresh_token-", generate_token())
+      app$locals$refresh_tokens <- rbind(
+        app$locals$refresh_tokens,
+        data.frame(token = refresh_token, expiry = Sys.time() + refresh_duration)
+      )
+      return(refresh_token)
+    }
+
     if (req$form$grant_type == "refresh_token") {
-      app$locals$refresh_tokens <- app$locals$refresh_tokens[app$locals$refresh_tokens$expiry > Sys.time(),]
+
+      app$locals$refresh_tokens <- app$locals$refresh_tokens[
+        app$locals$refresh_tokens$expiry > Sys.time(),
+        ]
+
       if (! (req$form$refresh_token %in% app$locals$refresh_tokens)) {
         res$
           set_status(400L)$
           send("Invalid or expired refresh token")
         return()
       }
-      token <- paste0("token-", generate_token())
-      app$locals$tokens <- rbind(
-        app$locals$tokens,
-        data.frame(token = token, expiry = Sys.time() + access_duration)
-      )
-      refresh_token <- paste0("refresh_token-", generate_token())
-      app$locals$refresh_tokens <- rbind(
-        app$locals$refresh_tokens,
-        data.frame(token = refresh_token, expiry = Sys.time() + refresh_duration)
-      )
+
+      access_token <- produce_access_token(access_duration)
+      refresh_token <- produce_refresh_token(refresh_duration, refresh)
+
+      info <- list(access_token = access_token,
+                   expiry = access_duration,
+                   refresh_token = refresh_token)
+
+      info <- info[!is.null(info)]
+
       res$
         send_json(
-          list(access_token = token, expiry = access_duration, refresh_token = refresh_token),
+          info,
           auto_unbox = TRUE
         )
       return()
@@ -190,25 +220,19 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
       return()
     }
 
-    token <- paste0("token-", generate_token())
-
-    app$locals$tokens <- rbind(
-      app$locals$tokens,
-      data.frame(token = token, expiry = Sys.time() + access_duration)
+    access_token <- produce_access_token(access_duration)
+    refresh_token <- produce_refresh_token(
+      refresh_duration = refresh_duration,
+      refresh = refresh
       )
-
-    refresh_token <- paste0("refresh_token-", generate_token())
-
-    app$locals$refresh_tokens <- rbind(
-      app$locals$refresh_tokens,
-      data.frame(token = refresh_token, expiry = Sys.time() + refresh_duration)
-    )
 
     app$locals$codes <- setdiff(app$locals$codes, req$query$code)
 
     res$
       send_json(
-        list(access_token = token, expiry = access_duration, refresh_token = refresh_token),
+        list(access_token = access_token,
+             expiry = access_duration,
+             refresh_token = refresh_token),
         auto_unbox = TRUE
       )
   })

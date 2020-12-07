@@ -4,21 +4,28 @@
 \alias{oauth2_third_party_app}
 \title{OAuth 2.0}
 \usage{
-oauth2_resource_app(access_duration = 3600L, refresh_duration = 7200L)
+oauth2_resource_app(
+  access_duration = 3600L,
+  refresh_duration = 7200L,
+  refresh = TRUE
+)
 
 oauth2_third_party_app(name = "Third-Party app")
 }
 \arguments{
 \item{access_duration}{After how many seconds should the access token expire.}
 
-\item{refresh_duration}{After how many seconds should the refresh token expire.}
+\item{refresh_duration}{After how many seconds should the refresh token expire
+(ignored if \code{refresh} is \code{FALSE}).}
+
+\item{refresh}{Should a refresh token be returned (logical).}
 }
 \value{
 a \code{webfakes} app
 }
 \description{
-These two apps allow to imitate the simplified OAuth2.0 flow described
-in \href{https://aaronparecki.com/oauth-2-simplified/}{Aaron Parecki’s tutorial}. One app
+The webfakes package comes with two app that allow to imitate the
+simplified OAuth2.0 flow described in \href{https://aaronparecki.com/oauth-2-simplified/}{Aaron Parecki’s tutorial}. One app
 (\code{oauth2_resource_app()}) is the API server (resource/authorization),
 the other plays the role of a third-party app. They are useful when
 testing or demonstrating code handling OAuth2.0 authorization, token
