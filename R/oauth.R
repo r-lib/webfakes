@@ -254,13 +254,11 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
 
     app$locals$codes <- setdiff(app$locals$codes, req$query$code)
 
-    res$
-      send_json(
-        list(access_token = access_token,
-             expiry = access_duration,
-             refresh_token = refresh_token),
-        auto_unbox = TRUE
-      )
+    res$send_json(list(
+      access_token = access_token,
+      expiry = access_duration,
+      refresh_token = refresh_token
+      ), auto_unbox = TRUE, pretty = TRUE)
   })
 
   app$get("/noninteractive", function(req, res) {

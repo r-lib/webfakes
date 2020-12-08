@@ -38,14 +38,15 @@ valid when the app is actually running.}
 a \code{webfakes} app
 }
 \description{
-The webfakes package comes with two apps that allow to imitate the
-simplified OAuth2.0 flow described in \href{https://aaronparecki.com/oauth-2-simplified/}{Aaron Parecki’s tutorial}. One app
-(\code{oauth2_resource_app()}) is the API server (resource/authorization),
-the other plays the role of a third-party app. They are useful when
-testing or demonstrating code handling OAuth2.0 authorization, token
-caching, etc. in a package: The apps can be used in your tests directly,
-or you could adapt one of them / both of them to better mimick a
-particular OAuth2.0 flow.
+The webfakes package comes with two fake apps that allow to imitate the
+OAuth2.0 flow in your test cases. (See \href{https://aaronparecki.com/oauth-2-simplified/}{Aaron Parecki’s tutorial} for a good
+introduction to OAuth2.0.) One app (\code{oauth2_resource_app()}) is the API
+server that serves both as the resource and provides authorization.
+\code{oauth2_third_party_app()} plays the role of the third-party app. They
+are useful when testing or demonstrating code handling OAuth2.0
+authorization, token caching, etc. in a package. The apps can be used in
+your tests directly, or you could adapt one or both of them to better
+mimic a particular OAuth2.0 flow.
 }
 \details{
 For more details see \code{vignette("oauth", package = "webfakes")}.

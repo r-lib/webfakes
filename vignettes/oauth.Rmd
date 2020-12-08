@@ -1,5 +1,5 @@
 ---
-title: "OAuth2.0 webfakes app"
+title: "OAuth2.0 webfakes apps"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{oauth}
@@ -32,20 +32,20 @@ First we need to create the resource server, and we create variables holding its
 
 ```{r resource-server-creation}
 templog <- tempfile()
-rsapp <- local_app_process(
+rsapp <- new_app_process(
   oauth2_resource_app(
-    refresh_duration = 9999999999999999L, 
+    refresh_duration = 99999999L, 
     access_duration = 10L,
     stream = templog
     ),
   opts = server_opts(num_threads = 3)
 )
 
-rsapp
-
 regi_url <- rsapp$url("/register")
 auth_url <- rsapp$url("/authorize")
 toke_url <- rsapp$url("/token")
+
+rsapp
 ```
 
 ## Without httr's OAuth tools
@@ -55,19 +55,21 @@ toke_url <- rsapp$url("/token")
 Then we create the third-party app, and we create variables holding its different URLs.
 
 ```{r third-party-app-creation}
-tpapp <- local_app_process(
+tpapp <- new_app_process(
   oauth2_third_party_app("3P app"),
   opts = server_opts(num_threads = 3)
 )
 
-tpapp
-
 redi_url <- tpapp$url("/login/redirect")
 conf_url <- tpapp$url("/login/config")
+
+tpapp
 ```
 
 We then need to register the third-party app at the resource server.
-In real life this is done by the admin of the third party app
+In real life this is done by the admin of the third party app. 
+Our fake resource server provides an endpoint at `/register` (in `regi_url`) to do this automatically, without user interaction. 
+We need to send the name of our third party app, and its redirect URL, as query parameters.
 
 ```{r register}
 url <- paste0(
@@ -80,10 +82,11 @@ reg_resp
 regdata <- httr::content(reg_resp)
 regdata
 ```
-
-Now we set this data on the third-party app
-In real life this is included in the config of the third party app
+The resource app replies with the client id and the client secret.
+We'll use them to authenticate the third party app.
+In real life they are included in the config of the third party app
 by its admin.
+Our third party app has an API endpoint, `/login/config` (already in `conf_url`) to configure them.
 
 ```{r register-data}
 auth_data <- list(
@@ -98,19 +101,30 @@ httr::POST(
   body = auth_data,
   encode = "json"
 )
-
 ```
 
 ## OAuth2.0 dance
 
-At this state an user can `browseURL(tpapp$url("/login"))` and allow the third-party app access to their account.
-Once they have done that they get a token in the browser.
-You can try that interactively, and refer to the test file `test-oauth.R` to see a programmatic version of the clicking.
+Now a user can go to the login URL of the third party app, `/login` in our fake app, to authenticate. 
+To start the web page from R, you can run 
+```{r eval = FALSE}
+browseURL(tpapp$url("/login"))
+```
 
-Once the OAuth2.0 dance is finished in the browser you see the tokens the resource app produced, returned by the third-party app.
-The third-party app also saved the tokens to its own environment.
-You can change what appears in the browser.
+```{r include = FALSE}
+login <- oauth2_login(tpapp$url("/login"))
+```
 
+The third party app now has a token, that it can use to authenticate to the resource app.
+See the `test-oauth.R` file within webfakes to see how to do this part programmatically, without a browser.
+
+By default our fake third party app saves the token(s) into a local variable, and also returns in JSON, so you can see that in the browser:
+
+```{r echo = FALSE}
+cat(rawToChar(login$token_response$content))
+```
+
+If you want to change this behavior, you can define the `redirect_hook` function in the third party app. For example:
 
 ```{r hook}
 thirdp <- oauth2_third_party_app("3P app")
@@ -120,46 +134,64 @@ thirdp$redirect_hook <- function(res, tokens) {
     send("Authentication complete, return to R!")
 }
 
-tpapp2 <- local_app_process(
+tpapp2 <- new_app_process(
   thirdp,
   opts = server_opts(num_threads = 3)
 )
 
+redi_url2 <- tpapp2$url("/login/redirect")
+conf_url2 <- tpapp2$url("/login/config")
+
 tpapp2
 
-redi_url <- tpapp2$url("/login/redirect")
-conf_url <- tpapp2$url("/login/config")
-url <- paste0(
+url2 <- paste0(
   regi_url,
   "?name=3P%20app2",
-  "&redirect_uri=", redi_url
+  "&redirect_uri=", redi_url2
 )
-reg_resp <- httr::GET(url)
-reg_resp
-regdata <- httr::content(reg_resp)
-regdata
-auth_data <- list(
+reg_resp2 <- httr::GET(url2)
+reg_resp2
+regdata2 <- httr::content(reg_resp2)
+regdata2
+auth_data2 <- list(
   auth_url = auth_url,
   token_url = toke_url,
-  client_id = regdata$client_id[[1]],
-  client_secret = regdata$client_secret[[1]]
+  client_id = regdata2$client_id[[1]],
+  client_secret = regdata2$client_secret[[1]]
 )
 
 httr::POST(
-  conf_url,
-  body = auth_data,
+  conf_url2,
+  body = auth_data2,
   encode = "json"
 )
 ```
 
-Then again `browseURL(tpapp2$url("/login"))` and `httr::content(httr::GET(tpapp2$url("/locals")))` to 
-see the saved tokens.
-Now the third-party app can get data on your behalf (the whole goal of OAuth!) --- it could also post data on your behalf if the resource app had endpoints for that.
-In real life, access by the third-party app might be limited to some scopes, but the apps shipped with webfakes do not handle that.
+Then again you can authenticate at the new app with
+```{r eval = FALSE}
+browseURL(tpapp2$url("/login"))
+```
 
-```{r, eval = FALSE}
+```{r include = FALSE}
+login2 <- oauth2_login(tpapp2$url("/login"))
+```
+
+The fake third party app also has an endpoint to return the saved tokens: 
+```{r}
+httr::content(httr::GET(tpapp2$url("/locals")))
+```
+
+Now the third-party app can get data on your behalf (the whole goal of OAuth!) --- it could also post data on your behalf if the resource app had endpoints for that.
+
+For example the `/data` endpoint of the third party app queries the resource app and needs authentication. 
+If you run the following without the OAuth dance, your access is denied.
+But now it works fine:
+
+```{r}
 httr::content(httr::GET(tpapp2$url("/data")))
 ```
+
+In real life, access by the third-party app might be limited to some scopes, but the fake apps shipped with webfakes do not handle that.
 
 ## With httr's OAuth tools
 
@@ -170,15 +202,15 @@ When you use httr's OAuth tool, there's some gymnastics happening as R is playin
 What's crucial here is setting `httr::oauth_callback()` as redirect URI, which is what you do when creating an app for rtweet for instance.
 
 ``` {r httr}
-url <- paste0(
+url3 <- paste0(
   regi_url,
   "?name=3P%20app2",
   "&redirect_uri=", httr::oauth_callback()
 )
-reg_resp <- httr::GET(url)
-reg_resp
-regdata <- httr::content(reg_resp)
-regdata
+reg_resp3 <- httr::GET(url3)
+reg_resp3
+regdata3 <- httr::content(reg_resp3)
+regdata3
 ```
 
 Now we set the registration data on the third-party app.
@@ -186,8 +218,8 @@ Now we set the registration data on the third-party app.
 ```{r httr-dance}
 app <- httr::oauth_app(
   "3P app2",
-  key = regdata$client_id[[1]],
-  secret = regdata$client_secret[[1]],
+  key = regdata3$client_id[[1]],
+  secret = regdata3$client_secret[[1]],
   redirect_uri = httr::oauth_callback()
 )
 
@@ -199,7 +231,7 @@ endpoint <- httr::oauth_endpoint(
 
 
 Now we can launch the token creation.
-This can only be done interactively
+This can only be done interactively.
 
 ```{r httr-dance2, eval = FALSE}
 file.remove(file.path("vignettes", "token.rds"))
@@ -256,7 +288,7 @@ rsapp2$get("/docs", function(req, res) {
     send("See vignette('oauth', package = 'webfakes')")
 })
 
-rsapp2_process <- local_app_process(
+rsapp2_process <- new_app_process(
   rsapp2,
   opts = server_opts(num_threads = 3)
 )
@@ -292,5 +324,3 @@ You might use both, or only the server one.
 The apps also exemplify the power of webfakes. 
 You could create apps imitating an OAuth1.0 flow, or whatever your tests might warrant.
 Do not hesitate to report your custom use cases via opening an issue.
-
-

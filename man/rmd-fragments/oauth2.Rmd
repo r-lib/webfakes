@@ -1,10 +1,8 @@
-The webfakes package comes with two apps that
-allow to imitate the simplified OAuth2.0 flow described in
-[Aaron Parecki's tutorial](https://aaronparecki.com/oauth-2-simplified/).
-One app (`oauth2_resource_app()`) is the API server (resource/authorization),
-the other plays the role of a third-party app.
-They are useful when testing or demonstrating code handling OAuth2.0
-authorization, token caching, etc. in a package:
+The webfakes package comes with two fake apps that
+allow to imitate the OAuth2.0 flow in your test cases.
+(See [Aaron Parecki's tutorial](https://aaronparecki.com/oauth-2-simplified/) for a good introduction to OAuth2.0.)
+One app (`oauth2_resource_app()`) is the API server that serves both as the resource and provides authorization.
+`oauth2_third_party_app()` plays the role of the third-party app.
+They are useful when testing or demonstrating code handling OAuth2.0 authorization, token caching, etc. in a package.
 The apps can be used in your tests directly,
-or you could adapt one of them / both of them to better mimick a particular
-OAuth2.0 flow.
+or you could adapt one or both of them to better mimic a particular OAuth2.0 flow.
