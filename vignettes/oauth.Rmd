@@ -36,7 +36,7 @@ First we need to create the resource server, and we create variables holding its
 templog <- tempfile()
 rsapp <- new_app_process(
   oauth2_resource_app(
-    refresh_duration = 9999999999L,
+    refresh_duration = .Machine$integer.max,
     access_duration = 10L,
     stream = templog
     ),
@@ -285,7 +285,7 @@ E.g.
 
 ```{r}
 rsapp2 <- oauth2_resource_app(
-    refresh_duration = 9999999999999999L, 
+    refresh_duration = .Machine$integer.max,
     access_duration = 10L,
     stream = templog
     )
