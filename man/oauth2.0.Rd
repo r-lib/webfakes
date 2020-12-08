@@ -60,3 +60,8 @@ App representing the API server (resource/authorization)
 App representing the third-party app
 }
 
+\seealso{
+Other OAuth2.0 functions: 
+\code{\link{oauth2_login}()}
+}
+\concept{OAuth2.0 functions}

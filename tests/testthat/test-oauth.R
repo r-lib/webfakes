@@ -57,38 +57,12 @@ test_that("oauth2_resource_app", {
   # browseURL(tpapp$url("/login"))
 
   # Scripting it is a bit tedious, because we need to parse the HTML and
-  # submit a form
-  login_resp <- curl::curl_fetch_memory(tpapp$url("/login"))
-  expect_equal(login_resp$status_code, 200L)
-  expect_equal(login_resp$type, "text/html")
+  # submit a form. The `oauth2_login()` helper function does this.
+  resp3 <- oauth2_login(tpapp$url("/login"))
+  token <- jsonlite::fromJSON(rawToChar(resp3$token_response$content))
 
-  html <- rawToChar(login_resp$content)
-  xml <- xml2::read_html(html)
-  form <- xml2::xml_find_first(xml, "//form")
-  input <- xml2::xml_find_first(form, "//input")
-
-  actn <- xml2::xml_attr(form, "action")
-  stnm <- xml2::xml_attr(input, "name")
-  stvl <- xml2::xml_attr(input, "value")
-
-  data <- charToRaw(paste0(
-    stnm, "=", stvl, "&",
-    "action=yes"
-  ))
-
-  handle2 <- curl::new_handle()
-  curl::handle_setheaders(
-    handle2,
-    "content-type" = "application/x-www-form-urlencoded"
-  )
-  curl::handle_setopt(
-    handle2,
-    customrequest = "POST",
-    postfieldsize = length(data),
-    postfields = data
-  )
-  token_resp <- curl::curl_fetch_memory(rsapp$url(actn), handle = handle2)
-  expect_equal(token_resp$status_code, 200L)
-  token <- jsonlite::fromJSON(rawToChar(token_resp$content))
+  expect_equal(resp3$login_response$status_code, 200L)
+  expect_equal(resp3$login_response$type, "text/html")
+  expect_equal(resp3$token_response$status_code, 200L)
   expect_match(token$access_token, "^token-[0-9a-f]+$")
 })

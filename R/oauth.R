@@ -19,6 +19,7 @@
 #' @param seed Random seed used when creating tokens.
 #' @inheritParams mw_log
 #' @export
+#' @family OAuth2.0 functions
 #' @rdname oauth2.0
 oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
                                 refresh = TRUE, seed = 42, stream = "stdout") {
@@ -451,4 +452,61 @@ oauth2_third_party_app <- function(name = "Third-Party app", stream = "stdout") 
       send_json(httr::content(resp), auto_unbox = TRUE)
   })
 
+}
+
+#' Helper function to log in to a third party OAuth2.0 app without a
+#' browser
+#'
+#' It works with [oauth2_resource_app()], and any third party app,
+#' including the fake [oauth2_third_party_app()].
+#'
+#' See `test-oauth.R` in webfakes for an example.
+#'
+#' @param login_url The login URL of the third party app.
+#' @return A named list with
+#' * `login_response` The curl HTTP response object for the login
+#'   page.
+#' * `token_response` The curl HTTP response object for submitting
+#'   the login page.
+#'
+#' @family OAuth2.0 functions
+#' @export
+
+oauth2_login <- function(login_url) {
+  login_resp <- curl::curl_fetch_memory(login_url)
+
+  html <- rawToChar(login_resp$content)
+  xml <- xml2::read_html(html)
+  form <- xml2::xml_find_first(xml, "//form")
+  input <- xml2::xml_find_first(form, "//input")
+
+  actn <- xml2::xml_attr(form, "action")
+  stnm <- xml2::xml_attr(input, "name")
+  stvl <- xml2::xml_attr(input, "value")
+
+  data <- charToRaw(paste0(
+    stnm, "=", stvl, "&",
+    "action=yes"
+  ))
+
+  handle2 <- curl::new_handle()
+  curl::handle_setheaders(
+    handle2,
+    "content-type" = "application/x-www-form-urlencoded"
+  )
+  curl::handle_setopt(
+    handle2,
+    customrequest = "POST",
+    postfieldsize = length(data),
+    postfields = data
+  )
+
+  psurl <- parse_url(login_resp$url)
+  actn_url <- paste0(psurl$protocol, "://", psurl$host, actn)
+  token_resp <- curl::curl_fetch_memory(actn_url, handle = handle2)
+
+  list(
+    login_response = login_resp,
+    token_response = token_resp
+  )
 }

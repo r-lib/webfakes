@@ -109,3 +109,14 @@ set_name <- function(x, nm) {
 generate_token <- function() {
   paste0(sample(c(0:9, letters[1:6]), 30, replace = TRUE), collapse = "")
 }
+
+parse_url <- function(url) {
+  re_url <- paste0(
+    "^(?<protocol>[a-zA-Z0-9]+)://",
+    "(?:(?<username>[^@/:]+)(?::(?<password>[^@/]+))?@)?",
+    "(?<host>[^/]+)",
+    "(?<path>.*)$"            # don't worry about query params here...
+  )
+
+  re_match(url, re_url)$groups
+}
