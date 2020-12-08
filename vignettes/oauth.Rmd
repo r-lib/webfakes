@@ -3,8 +3,11 @@ title: "OAuth2.0 webfakes apps"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{oauth}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r, include = FALSE}
@@ -18,7 +21,7 @@ knitr::opts_chunk$set(
 library(webfakes)
 ```
 
-```{r child='../man/rmd-fragments/oauth2.Rmd'} 
+```{r child='../man/rmd-fragments/oauth2.Rmd'}
 ```
 
 In this vignette, we shall look at how to implement a flow using both apps, or the server app together with httr's OAuth tools.
@@ -29,12 +32,11 @@ For an example using the curl package instead, look at the test file `test-oauth
 
 First we need to create the resource server, and we create variables holding its different URLs.
 
-
 ```{r resource-server-creation}
 templog <- tempfile()
 rsapp <- new_app_process(
   oauth2_resource_app(
-    refresh_duration = 99999999L, 
+    refresh_duration = 9999999999L,
     access_duration = 10L,
     stream = templog
     ),
@@ -67,8 +69,8 @@ tpapp
 ```
 
 We then need to register the third-party app at the resource server.
-In real life this is done by the admin of the third party app. 
-Our fake resource server provides an endpoint at `/register` (in `regi_url`) to do this automatically, without user interaction. 
+In real life this is done by the admin of the third party app.
+Our fake resource server provides an endpoint at `/register` (in `regi_url`) to do this automatically, without user interaction.
 We need to send the name of our third party app, and its redirect URL, as query parameters.
 
 ```{r register}
@@ -82,10 +84,10 @@ reg_resp
 regdata <- httr::content(reg_resp)
 regdata
 ```
+
 The resource app replies with the client id and the client secret.
 We'll use them to authenticate the third party app.
-In real life they are included in the config of the third party app
-by its admin.
+In real life they are included in the config of the third party app by its admin.
 Our third party app has an API endpoint, `/login/config` (already in `conf_url`) to configure them.
 
 ```{r register-data}
@@ -105,8 +107,9 @@ httr::POST(
 
 ## OAuth2.0 dance
 
-Now a user can go to the login URL of the third party app, `/login` in our fake app, to authenticate. 
-To start the web page from R, you can run 
+Now a user can go to the login URL of the third party app, `/login` in our fake app, to authenticate.
+To start the web page from R, you can run
+
 ```{r eval = FALSE}
 browseURL(tpapp$url("/login"))
 ```
@@ -124,7 +127,8 @@ By default our fake third party app saves the token(s) into a local variable, an
 cat(rawToChar(login$token_response$content))
 ```
 
-If you want to change this behavior, you can define the `redirect_hook` function in the third party app. For example:
+If you want to change this behavior, you can define the `redirect_hook` function in the third party app.
+For example:
 
 ```{r hook}
 thirdp <- oauth2_third_party_app("3P app")
@@ -168,6 +172,7 @@ httr::POST(
 ```
 
 Then again you can authenticate at the new app with
+
 ```{r eval = FALSE}
 browseURL(tpapp2$url("/login"))
 ```
@@ -176,14 +181,15 @@ browseURL(tpapp2$url("/login"))
 login2 <- oauth2_login(tpapp2$url("/login"))
 ```
 
-The fake third party app also has an endpoint to return the saved tokens: 
+The fake third party app also has an endpoint to return the saved tokens:
+
 ```{r}
 httr::content(httr::GET(tpapp2$url("/locals")))
 ```
 
 Now the third-party app can get data on your behalf (the whole goal of OAuth!) --- it could also post data on your behalf if the resource app had endpoints for that.
 
-For example the `/data` endpoint of the third party app queries the resource app and needs authentication. 
+For example the `/data` endpoint of the third party app queries the resource app and needs authentication.
 If you run the following without the OAuth dance, your access is denied.
 But now it works fine:
 
@@ -201,7 +207,7 @@ When you use httr's OAuth tool, there's some gymnastics happening as R is playin
 
 What's crucial here is setting `httr::oauth_callback()` as redirect URI, which is what you do when creating an app for rtweet for instance.
 
-``` {r httr}
+```{r httr}
 url3 <- paste0(
   regi_url,
   "?name=3P%20app2",
@@ -228,7 +234,6 @@ endpoint <- httr::oauth_endpoint(
   access = toke_url
 )
 ```
-
 
 Now we can launch the token creation.
 This can only be done interactively.
@@ -260,7 +265,6 @@ token <- httr::oauth2.0_token(
 )
 ```
 
-
 ```{r refresh, error = TRUE}
 # Not authorized, since we provide no token
 httr::GET(rsapp$url("/data"))
@@ -274,7 +278,8 @@ httr::content(httr::GET(rsapp$url("/data"), config = token))
 
 With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.
 
-Like all webfakes apps, OAuth2.0 apps are extensible: you can add your own endpoints to it. E.g.
+Like all webfakes apps, OAuth2.0 apps are extensible: you can add your own endpoints to it.
+E.g.
 
 ```{r}
 rsapp2 <- oauth2_resource_app(
@@ -302,14 +307,14 @@ If you want to customize one of the apps or both apps a lot, it might make sense
 
 On top of the [usual debugging advice for webfakes apps](https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-), the apps have (exemplified below for the resource app)
 
-* an argument `stream` letting you write the log to a file. Here we wrote to `templog`.
+-   an argument `stream` letting you write the log to a file. Here we wrote to `templog`.
 
 ```{r log}
 readLines(templog)
 file.remove(templog)
-``` 
+```
 
-* an endpoint `/locals` that lets you see the current access and refresh tokens.
+-   an endpoint `/locals` that lets you see the current access and refresh tokens.
 
 ```{r}
 httr::content(
@@ -321,6 +326,6 @@ httr::content(
 
 The webfakes package's two OAuth2.0 apps allow you to imitate an OAuth2.0 simplified workflow.
 You might use both, or only the server one.
-The apps also exemplify the power of webfakes. 
+The apps also exemplify the power of webfakes.
 You could create apps imitating an OAuth1.0 flow, or whatever your tests might warrant.
 Do not hesitate to report your custom use cases via opening an issue.
