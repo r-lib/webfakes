@@ -205,8 +205,10 @@ This can only be done interactively
 file.remove(file.path("vignettes", "token.rds"))
 token <- httr::oauth2.0_token(
   endpoint, app,
-  cache = file.path("vignettes", "token.rds")
+  cache = FALSE
 )
+
+saveRDS(token, file = file.path("vignettes", "token.rds"), version = 2)
 
 ```
 
@@ -218,7 +220,7 @@ httr::GET(rsapp$url("/noninteractive"))
 
 # reading the credentials of the cached token
 # and creating an httr token whose URLs are those of the app at hand
-token <- readRDS("token.rds")[[1]]
+token <- readRDS("token.rds")
 token <- httr::oauth2.0_token(
   endpoint = endpoint,
   app = app,
