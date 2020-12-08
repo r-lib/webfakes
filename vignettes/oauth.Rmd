@@ -236,17 +236,19 @@ endpoint <- httr::oauth_endpoint(
 ```
 
 Now we can launch the token creation.
-This can only be done interactively.
+For this example we store the token in a temporary file.
+This is what you would typically do in test cases as well.
+(Unlike real tokens, which you would ideally store at a secure place, like the system's credential store via the keyring package.)
 
-```{r httr-dance2, eval = FALSE}
-file.remove(file.path("vignettes", "token.rds"))
-token <- httr::oauth2.0_token(
-  endpoint, app,
-  cache = FALSE
+```{r httr-dance2}
+token <- oauth2_httr_login(
+  httr::oauth2.0_token(endpoint, app, cache = FALSE)
 )
+```
 
-saveRDS(token, file = file.path("vignettes", "token.rds"), version = 2)
-
+```{r}
+token_cache <- tempfile("webfakes-", fileext = ".rds")
+saveRDS(token, file = token_cache)
 ```
 
 Below we use the token that we cached when creating the vignette (and whose refresh token is valid forever).

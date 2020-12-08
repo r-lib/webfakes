@@ -508,3 +508,32 @@ oauth2_login <- function(login_url) {
     token_response = token_resp
   )
 }
+
+#' @export
+
+oauth2_httr_login <- function(expr) {
+  proc <- NULL
+  if (interactive()) {
+    withr::local_options(browser = function(url) {
+      proc <<- callr::r_bg(
+        oauth2_login,
+        list(url),
+        package = "webfakes"
+      )
+    })
+    expr
+  } else {
+    withCallingHandlers(
+      expr,
+      message = function(msg) {
+        if (grepl("^http", msg$message)) {
+          proc <<- callr::r_bg(
+            oauth2_login,
+            list(trimws(msg$message)),
+            package = "webfakes"
+          )
+        }
+      }
+    )
+  }
+}
