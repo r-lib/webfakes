@@ -38,8 +38,7 @@ rsapp <- new_app_process(
   oauth2_resource_app(
     refresh_duration = .Machine$integer.max,
     access_duration = 10L,
-    stream = templog
-    ),
+  ),
   opts = server_opts(num_threads = 3)
 )
 
@@ -205,7 +204,7 @@ When you use httr's OAuth tool, there's some gymnastics happening as R is playin
 
 ### OAuth2.0 app creation & registration
 
-What's crucial here is setting `httr::oauth_callback()` as redirect URI, which is what you do when creating an app for rtweet for instance.
+What's crucial here is setting `httr::oauth_callback()` as redirect URI, which is what you do when creating an app for an R package that uses OAuth2.0 to authenticate to a resource server.
 
 ```{r httr}
 url3 <- paste0(
@@ -280,15 +279,17 @@ httr::content(httr::GET(rsapp$url("/data"), config = token))
 
 With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.
 
-Like all webfakes apps, OAuth2.0 apps are extensible: you can add your own endpoints to it.
-E.g.
+Like all webfakes apps, OAuth2.0 apps are extensible: you can add your own endpoints and middleware to it.
+E.g. here we add logging via `mw_log()` and a new endpoint:
+TODO: add endpoint that requires auth.
 
 ```{r}
 rsapp2 <- oauth2_resource_app(
-    refresh_duration = .Machine$integer.max,
-    access_duration = 10L,
-    stream = templog
-    )
+  refresh_duration = .Machine$integer.max,
+  access_duration = 10L
+)
+logfile <- tempfile("oauth-rs-", fileext = ".log")
+rsapp2$use(mw_log(stream = logfile))
 rsapp2$get("/docs", function(req, res) {
   res$
     set_status(200L)$
@@ -299,24 +300,16 @@ rsapp2_process <- new_app_process(
   rsapp2,
   opts = server_opts(num_threads = 3)
 )
-
-httr::content(httr::GET(rsapp2_process$url("/docs")))
 ```
 
 If you want to customize one of the apps or both apps a lot, it might make sense to use their source code as starting point or inspiration.
 
 ## Debugging
 
-On top of the [usual debugging advice for webfakes apps](https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-), the apps have (exemplified below for the resource app)
+See the [usual debugging advice for webfakes apps](https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-).
+In particular, you can add the `mw_log()` middleware to write the log of the app to a file, like we did above.
 
--   an argument `stream` letting you write the log to a file. Here we wrote to `templog`.
-
-```{r log}
-readLines(templog)
-file.remove(templog)
-```
-
--   an endpoint `/locals` that lets you see the current access and refresh tokens.
+The resource app has a `/locals` endpoint, that returns all data stored in the app, this includes the tokens and the refresh tokens:
 
 ```{r}
 httr::content(

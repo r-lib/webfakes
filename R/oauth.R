@@ -6,9 +6,6 @@
 #' @details
 #' For more details see `vignette("oauth", package = "webfakes")`.
 #'
-#' @name oauth2.0
-#' @aliases oauth2_resource_app, oauth2_third_party_app
-
 #' @section `oauth2_resource_app()`:
 #' App representing the API server (resource/authorization)
 #' @return a `webfakes` app
@@ -17,13 +14,13 @@
 #' (ignored if `refresh` is `FALSE`).
 #' @param refresh Should a refresh token be returned (logical).
 #' @param seed Random seed used when creating tokens.
-#' @inheritParams mw_log
 #' @export
 #' @family OAuth2.0 functions
 #' @rdname oauth2.0
 oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
-                                refresh = TRUE, seed = 42, stream = "stdout") {
+                                refresh = TRUE, seed = NULL) {
 
+  seed <- seed %||% 42
   if (!requireNamespace("withr", quietly = TRUE)) {
     stop("This app requires the withr package, please install it.")
   }
@@ -32,8 +29,6 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
 
   app$locals$access_produced <- 0
   app$locals$refresh_produced <- 0
-
-  app$use(mw_log(stream = stream))
 
   # Parse body for /authorize/decision, /token
   app$use(mw_urlencoded())
@@ -305,10 +300,9 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
 #' @param name Name of the third-party app
 #' @export
 #' @rdname oauth2.0
-oauth2_third_party_app <- function(name = "Third-Party app", stream = "stdout") {
-  app <- new_app()
-  app$use(mw_log(stream = stream))
 
+oauth2_third_party_app <- function(name = "Third-Party app") {
+  app <- new_app()
   app$use(mw_urlencoded())
   app$use(mw_json())
 
@@ -469,6 +463,7 @@ oauth2_third_party_app <- function(name = "Third-Party app", stream = "stdout") 
 #'
 #' @family OAuth2.0 functions
 #' @export
+#' @rdname oauth2.0
 
 oauth2_login <- function(login_url) {
   login_resp <- curl::curl_fetch_memory(login_url)
