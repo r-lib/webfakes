@@ -13,7 +13,7 @@
 #'   app), `client_id`, `client_secret` and `redirect_uri`.
 #' * `GET /authorize` is the endpoint where the user of the third
 #'   party app is sent. You can change the URL of this endpoint with
-#'   the `authorize_ep` argument. It needs to receive the `client_id`
+#'   the `authorize_endpoint` argument. It needs to receive the `client_id`
 #'   of the third party app, and its correct `redirect_uri` as query
 #'   parameters. It may receive a `state` string as well, which can
 #'   be used by a client to identify the request. Otherwise it
@@ -30,7 +30,7 @@
 #' * `POST /token` is the endpoint where the third party app requests
 #'   a temporary access token. It is also uses for refreshing an
 #'   access token with a refresh token. You can change the URL of this
-#'   endpoint with the `token_ep` argument.
+#'   endpoint with the `token_endpoint` argument.
 #'   To request a new token or refresh an existing one, the following
 #'   data must be included in either a JSON or an URL encoded request body:
 #'   - `grant_type`, this must be `authorization_code` for new tokens,
@@ -80,10 +80,10 @@
 #' @param seed Random seed used when creating tokens. If `NULL`,
 #'   we rely on R to provide a seed. The app uses its own RNG stream,
 #'   so it does not affect reproducibility of the tests.
-#' @param authorize_ep The authorization endpoint of the resource
+#' @param authorize_endpoint The authorization endpoint of the resource
 #'   server. Change this from the default if the real app that you
 #'   are faking does not use `/authorize`.
-#' @param token_ep The endpoint to request tokens. Change this if the
+#' @param token_endpoint The endpoint to request tokens. Change this if the
 #'   real app that you are faking does not use `/token`.
 #' @return webfakes app
 #'
@@ -93,15 +93,15 @@
 oauth2_resource_app <- function(access_duration = 3600L,
                                 refresh_duration = 7200L,
                                 refresh = TRUE, seed = NULL,
-                                authorize_ep = "/authorize",
-                                token_ep = "/token") {
+                                authorize_endpoint = "/authorize",
+                                token_endpoint = "/token") {
 
   access_duration
   refresh_duration
   refresh
   seed
-  authorize_ep
-  token_ep
+  authorize_endpoint
+  token_endpoint
 
   app <- new_app()
   app$locals$seed <- seed %||% get_seed()
@@ -139,7 +139,7 @@ oauth2_resource_app <- function(access_duration = 3600L,
     res$send_json(rec)
   })
 
-  app$get(authorize_ep, function(req, res) {
+  app$get(authorize_endpoint, function(req, res) {
 
     # Missing or invalid client id
     client_id <- req$query$client_id
@@ -179,7 +179,7 @@ oauth2_resource_app <- function(access_duration = 3600L,
       send(html)
   })
 
-  app$post(paste0(authorize_ep, "/decision"), function(req, res) {
+  app$post(paste0(authorize_endpoint, "/decision"), function(req, res) {
     state <- req$form$state
     if (is.null(state) || ! state %in% names(app$locals$states)) {
       res$
@@ -277,7 +277,7 @@ oauth2_resource_app <- function(access_duration = 3600L,
   }
 
   # For refresh tokens
-  app$post(token_ep, function(req, res) {
+  app$post(token_endpoint, function(req, res) {
     if (req$form$grant_type != "refresh_token") return("next")
     client_id <- req$form$client_id
     tpapps <- app$locals$tpapps
@@ -311,7 +311,7 @@ oauth2_resource_app <- function(access_duration = 3600L,
   })
 
   # For regular tokens
-  app$post(token_ep, function(req, res) {
+  app$post(token_endpoint, function(req, res) {
     if (req$form$grant_type %||% "" != "authorization_code") {
       res$
         set_status(400L)$

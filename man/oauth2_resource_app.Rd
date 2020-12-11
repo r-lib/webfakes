@@ -9,8 +9,8 @@ oauth2_resource_app(
   refresh_duration = 7200L,
   refresh = TRUE,
   seed = NULL,
-  authorize_ep = "/authorize",
-  token_ep = "/token"
+  authorize_endpoint = "/authorize",
+  token_endpoint = "/token"
 )
 }
 \arguments{
@@ -26,11 +26,11 @@ tokens expire (ignored if \code{refresh} is \code{FALSE}).}
 we rely on R to provide a seed. The app uses its own RNG stream,
 so it does not affect reproducibility of the tests.}
 
-\item{authorize_ep}{The authorization endpoint of the resource
+\item{authorize_endpoint}{The authorization endpoint of the resource
 server. Change this from the default if the real app that you
 are faking does not use \verb{/authorize}.}
 
-\item{token_ep}{The endpoint to request tokens. Change this if the
+\item{token_endpoint}{The endpoint to request tokens. Change this if the
 real app that you are faking does not use \verb{/token}.}
 }
 \value{
@@ -60,7 +60,7 @@ JSON dictionary with entries \code{name} (the name of the third party
 app), \code{client_id}, \code{client_secret} and \code{redirect_uri}.
 \item \code{GET /authorize} is the endpoint where the user of the third
 party app is sent. You can change the URL of this endpoint with
-the \code{authorize_ep} argument. It needs to receive the \code{client_id}
+the \code{authorize_endpoint} argument. It needs to receive the \code{client_id}
 of the third party app, and its correct \code{redirect_uri} as query
 parameters. It may receive a \code{state} string as well, which can
 be used by a client to identify the request. Otherwise it
@@ -77,7 +77,7 @@ Otherwise a simple HTML page is returned.
 \item \code{POST /token} is the endpoint where the third party app requests
 a temporary access token. It is also uses for refreshing an
 access token with a refresh token. You can change the URL of this
-endpoint with the \code{token_ep} argument.
+endpoint with the \code{token_endpoint} argument.
 To request a new token or refresh an existing one, the following
 data must be included in either a JSON or an URL encoded request body:
 \itemize{

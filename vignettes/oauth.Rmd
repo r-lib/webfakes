@@ -417,7 +417,7 @@ We will use `oauth2_repource_app()` to fake GitHub.
 ```{r}
 testthat::test_that("gh_repos", {
   testthat::skip_on_cran()
-  fake_app <- oauth2_resource_app(token_ep = "/access_token")
+  fake_app <- oauth2_resource_app(token_endpoint = "/access_token")
   fake_app$get("/user/repos", function(req, res) {
     if (!app$is_authorized(req, res)) return()
     res$send_json(list(
