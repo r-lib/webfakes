@@ -45,10 +45,7 @@ E.g.
 
 ``` {.r}
 service_url <- function() {
-    if(nzchar(Sys.getenv("GITHUB_URL")) {
-        return(Sys.getenv("GITHUB_URL"))
-    }
-    return("https://api.github.com")
+    Sys.getenv("GITHUB_URL", "https://api.github.com")
 }
 
 # rest of the package code
