@@ -120,3 +120,49 @@ parse_url <- function(url) {
 
   re_match(url, re_url)$groups
 }
+
+modify_path <- function(url, path) {
+  purl <- parse_url(url)
+  has_usr <- nzchar(purl$username)
+  has_pwd <- nzchar(purl$password)
+  paste0(
+    purl$protocol,
+    "://",
+    purl$username,
+    if (has_pwd) ":",
+    purl$password,
+    if (has_usr) "@",
+    purl$host,
+    if (substr(path, 1, 1) != "/") "/",
+    path
+  )
+}
+
+has_seed <- function() {
+  exists(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
+}
+
+get_seed <- function() {
+  if (has_seed()) {
+    get(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
+  }
+}
+
+set_seed <- function(seed) {
+  if (is.null(seed)) {
+    rm(".Random.seed", envir = globalenv())
+  } else {
+    assign(".Random.seed", seed, globalenv())
+  }
+}
+
+local_options <- function(.new = list(), ...,
+                          .local_envir = parent.frame()) {
+  .new <- utils::modifyList(as.list(.new), list(...))
+  old <- do.call(options, .new)
+  defer(do.call(options, old), .local_envir)
+}
+
+map_chr <- function(X, FUN, ...) {
+  vapply(X, FUN, FUN.VALUE = character(1), ...)
+}

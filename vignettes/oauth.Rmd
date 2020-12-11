@@ -1,13 +1,13 @@
 ---
 title: "OAuth2.0 webfakes apps"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{oauth}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  markdown: 
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+editor_options:
+  markdown:
     wrap: sentence
+    canonical: true
 ---
 
 ```{r, include = FALSE}
@@ -28,9 +28,9 @@ In this vignette, we shall look at how to implement a flow using both apps, or t
 In both cases we shall use the httr package as HTTP client.
 For an example using the curl package instead, look at the test file `test-oauth.R` of webfakes instead.
 
-## In all cases: create the resource server
+## The OAuth2.0 resource and authorization server
 
-First we need to create the resource server, and we create variables holding its different URLs.
+First we need to create the resource server, which also performs the authorization, and we create variables holding its different URLs.
 
 ```{r resource-server-creation}
 templog <- tempfile()
@@ -49,7 +49,7 @@ toke_url <- rsapp$url("/token")
 rsapp
 ```
 
-## Without httr's OAuth tools
+## Fake third party application
 
 ### OAuth2.0 app creation & registration
 
@@ -104,7 +104,7 @@ httr::POST(
 )
 ```
 
-## OAuth2.0 dance
+### The OAuth2.0 dance
 
 Now a user can go to the login URL of the third party app, `/login` in our fake app, to authenticate.
 To start the web page from R, you can run
@@ -180,6 +180,10 @@ browseURL(tpapp2$url("/login"))
 login2 <- oauth2_login(tpapp2$url("/login"))
 ```
 
+```{r echo = FALSE}
+cat(rawToChar(login2$token_response$content))
+```
+
 The fake third party app also has an endpoint to return the saved tokens:
 
 ```{r}
@@ -193,12 +197,14 @@ If you run the following without the OAuth dance, your access is denied.
 But now it works fine:
 
 ```{r}
-httr::content(httr::GET(tpapp2$url("/data")))
+resp_data <- httr::GET(tpapp2$url("/data"))
+resp_data
+httr::content(resp_data, as = "text")
 ```
 
 In real life, access by the third-party app might be limited to some scopes, but the fake apps shipped with webfakes do not handle that.
 
-## With httr's OAuth tools
+## The fake resource server and httr
 
 When you use httr's OAuth tool, there's some gymnastics happening as R is playing the role of a third-party app via httr and httpuv (to listen to the redirect URI).
 
@@ -235,9 +241,6 @@ endpoint <- httr::oauth_endpoint(
 ```
 
 Now we can launch the token creation.
-For this example we store the token in a temporary file.
-This is what you would typically do in test cases as well.
-(Unlike real tokens, which you would ideally store at a secure place, like the system's credential store via the keyring package.)
 
 ```{r httr-dance2}
 token <- oauth2_httr_login(
@@ -245,43 +248,34 @@ token <- oauth2_httr_login(
 )
 ```
 
-```{r}
-token_cache <- tempfile("webfakes-", fileext = ".rds")
-saveRDS(token, file = token_cache)
+```{r refresh}
+token
 ```
 
-Below we use the token that we cached when creating the vignette (and whose refresh token is valid forever).
+Without the token, the query to the resource server fails:
 
-```{r get-token, echo = TRUE}
-# to make sure the app has our access and refresh tokens
-httr::GET(rsapp$url("/noninteractive"))
+```{r}
+httr::GET(rsapp$url("/data"))
+```
 
-# reading the credentials of the cached token
-# and creating an httr token whose URLs are those of the app at hand
-token <- readRDS("token.rds")
-token <- httr::oauth2.0_token(
-  endpoint = endpoint,
-  app = app,
-  credentials = token$credentials
+With the token, it is successful.
+httr also automatically refreshes the token if needed.
+
+```{r}
+httr::content(
+  httr::GET(rsapp$url("/data"), config = token),
+  as = "text"
 )
 ```
 
-```{r refresh, error = TRUE}
-# Not authorized, since we provide no token
-httr::GET(rsapp$url("/data"))
+## Advanced topics
 
-# We'll get data, the token will be refreshed automatically
-httr::content(httr::GET(rsapp$url("/data"), config = token))
-
-```
-
-## Applications
+### Applications
 
 With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.
 
 Like all webfakes apps, OAuth2.0 apps are extensible: you can add your own endpoints and middleware to it.
-E.g. here we add logging via `mw_log()` and a new endpoint:
-TODO: add endpoint that requires auth.
+E.g. here we add logging via `mw_log()` and a new endpoint.
 
 ```{r}
 rsapp2 <- oauth2_resource_app(
@@ -289,7 +283,7 @@ rsapp2 <- oauth2_resource_app(
   access_duration = 10L
 )
 logfile <- tempfile("oauth-rs-", fileext = ".log")
-rsapp2$use(mw_log(stream = logfile))
+rsapp2$use(mw_log(stream = logfile), .first = TRUE)
 rsapp2$get("/docs", function(req, res) {
   res$
     set_status(200L)$
@@ -304,7 +298,7 @@ rsapp2_process <- new_app_process(
 
 If you want to customize one of the apps or both apps a lot, it might make sense to use their source code as starting point or inspiration.
 
-## Debugging
+### Debugging
 
 See the [usual debugging advice for webfakes apps](https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-).
 In particular, you can add the `mw_log()` middleware to write the log of the app to a file, like we did above.
@@ -317,10 +311,159 @@ httr::content(
 )
 ```
 
-## Conclusion
+## Case study for OAuth2.0 testing
 
-The webfakes package's two OAuth2.0 apps allow you to imitate an OAuth2.0 simplified workflow.
-You might use both, or only the server one.
-The apps also exemplify the power of webfakes.
-You could create apps imitating an OAuth1.0 flow, or whatever your tests might warrant.
-Do not hesitate to report your custom use cases via opening an issue.
+Consider a package that has a function that uses OAuth2.0 to access GitHub.
+In this section we'll show how you can use webfakes to test this function.
+
+```{r}
+gh_base <- function() {
+  Sys.getenv("FAKE_GH_API_BASE", "https://api.github.com")
+}
+gh_oauth_base <- function() {
+  Sys.getenv(
+    "FAKE_GH_AUTH_BASE",
+    "https://github.com/login/oauth"
+  )
+}
+gh_repos <- function() {
+  ghapp <- httr::oauth_app(
+    "gh_repos",
+    key = Sys.getenv("GH_CLIENT_ID"),
+    secret = Sys.getenv("GH_CLIENT_SECRET")
+  )
+  endpoints <- httr::oauth_endpoint(
+    base_url = gh_oauth_base(),
+    request = NULL,
+    authorize = "authorize",
+    access = "access_token"
+  )
+  gh_token <- httr::oauth2.0_token(
+    endpoints,
+    ghapp,
+    cache = FALSE
+  )
+  httr_token <- httr::config(token = gh_token)
+  response <- httr::GET(
+    paste0(gh_base(), "/user/repos?visibility=public"),
+    httr::add_headers(Accept = "application/vnd.github.v3+json"),
+    config = httr_token
+  )
+  httr::stop_for_status(response)
+  json <- httr::content(response, as = "text")
+  repos <- jsonlite::fromJSON(json, simplifyVector = FALSE)
+  vapply(repos, function(r) r$full_name, character(1))
+}
+```
+
+`gh_repos()` uses an OAuth2.0 app to get a token from GitHub, and then uses that token to authenticate and list the public repositories of the current user.
+In a real package you would probably get the token in a separate function, cache it, and re-use it for multiple queries.
+(Also, you don't actually need authorization for listing public repositories, so this is a somewhat artificial example.)
+
+To run this function, you would need to register an app at <https://github.com/settings/developers>.
+Make sure that you set `http://localhost:1410` as the authorization callback URL.
+You can set the other options as you please.
+Then in R set the `GH_CLIENT_ID` and `GH_CLIENT_SECRET` environment variables to the client id and client secret of the app:
+
+```{r}
+Sys.setenv(GH_CLIENT_ID = "<your client id here>")
+Sys.setenv(GH_CLIENT_SECRET = "<your client secret here>")
+```
+
+```{r echo = FALSE, include = FALSE}
+tryCatch({
+  Sys.setenv(GH_CLIENT_ID = "283f205145036793ba0b")
+  Sys.setenv(
+    GH_CLIENT_SECRET = keyring::key_get("WEBFAKES_CLIENT_SECRET"))
+}, error = function(x) NULL)
+```
+
+When you run this function it opens a Window in your browser, where you can authorize the app to access your public information on GitHub.
+For the subsequent runs that browser window still opens, but the authorization is automatic.
+In a real package you could cache the OAuth2.0 tokens on the machine, e.g. using the keyring package.
+
+```{r eval = FALSE}
+gh_repos()
+```
+
+```{r echo = FALSE, eval = TRUE}
+# Ideally we would only run this when we don't have a real
+# secret, but httr's OAuth does not work well in non-interactive
+# sessions.
+message('Waiting for authentication in browser...')
+message('Press Esc/Ctrl + C to abort')
+message('Authentication complete.')
+print(c(
+  "gaborcsardi/altlist", "gaborcsardi/argufy",
+  "gaborcsardi/async", "gaborcsardi/disposables",
+  "gaborcsardi/dotenv", "gaborcsardi/falsy",
+  "gaborcsardi/franc", "gaborcsardi/ISA",
+  "gaborcsardi/keypress", "gaborcsardi/lpSolve",
+  "gaborcsardi/macBriain", "gaborcsardi/maxygen",
+  "gaborcsardi/MISO", "gaborcsardi/msgtools",
+  "gaborcsardi/notifier", "gaborcsardi/odbc",
+  "gaborcsardi/parr", "gaborcsardi/parsedate",
+  "gaborcsardi/prompt", "gaborcsardi/r-font",
+  "gaborcsardi/r-source", "gaborcsardi/rcorpora",
+  "gaborcsardi/roxygenlabs", "gaborcsardi/sankey",
+  "gaborcsardi/secret", "gaborcsardi/spark",
+  "gaborcsardi/standalones"
+))
+```
+
+Let's write a test case now for `gh_repos()`.
+We will use `oauth2_repource_app()` to fake GitHub.
+
+```{r}
+testthat::test_that("gh_repos", {
+  testthat::skip_on_cran()
+  fake_app <- oauth2_resource_app(token_ep = "/access_token")
+  fake_app$get("/user/repos", function(req, res) {
+    if (!app$is_authorized(req, res)) return()
+    res$send_json(list(
+      list(full_name = "user/repo1"),
+      list(full_name = "user/repo2")
+    ), auto_unbox = TRUE)
+  })
+
+  fake_proc <- local_app_process(
+    fake_app,
+    opts = server_opts(num_threads = 3)
+  )
+
+  # register the app to our fake GH server
+  reg_url <- paste0(
+    fake_proc$url("/register"),
+    "?name=gh_repos&redirect_uri=http://localhost:1410/"
+  )
+  regdata <- httr::content(httr::GET(reg_url))
+  withr::local_envvar(
+    GH_CLIENT_ID = regdata$client_id[[1]],
+    GH_CLIENT_SECRET = regdata$client_secret[[1]],
+    FAKE_GH_API_BASE = fake_proc$url(),
+    FAKE_GH_AUTH_BASE = fake_proc$url()
+  )
+
+  ret <- suppressMessages(webfakes::oauth2_httr_login(
+    gh_repos()
+  ))
+  testthat::expect_equal(ret, c("user/repo1", "user/repo2"))
+})
+```
+
+Some important points about this test case:
+
+-   Since the test case will fail if port 1410 is taken, it is safer to skip it on CRAN.
+-   `fake_app` is a webfakes app, that is almost the same as `oauth2_resource_app()`, with two changes.
+-   The first is the we change the end point for getting a token to `/access_token` because that is what GitHub uses.
+-   The second is that we also add the `/user/repos` endpoint. This endpoint needs authorization, this is why it calls `app$is_authorized()`, which fails without it, and the app returns 401 Access denied.
+-   `fake_proc` is the app process that runs our fake GH app. Always run the fake OAuth2.0 apps with multiple threads.
+-   Out fake GitHub app has an endpoint to register the app we are testing. We need to send the app's name and the correct redirect URI, and `fake_app` will reply with a fake client id and client secret.
+-   We set `GH_CLIENT_ID` and `GH_CLIENT_SECRET` to the fake ones we just got from `fake_app`.
+-   We also redirect `gh_token()` to the fake app, by setting `FAKE_GH_API_BASE` and `FAKE_GH_AUTH_BASE`.
+-   Now if we call `gh_repos()`, it will connect to our fake app. We also need to make sure that httr can log in to the fake app, without a browser interaction. The `webfakes::oauth2_httr_login()` wrapper takes care of that. It runs an HTTP client in a background process, to perform the log in.
+-   If the background process in `webfakes::oauth2_httr_login()` fails to log in for some reason, the test code might freeze. This is another good reason to skip this test on CRAN.
+-   `suppressMessages()` suppresses the (harmless) httr messages about the authorization.
+-   The test case does have a lot of boilerplate to set up and manage the fake apps. Note that you can refactor this code into its own helper function, that starts up the fake app sub-process on demand in a helper file. That way you can reuse it for multiple test files and test cases.
+
+This test case ensures that the OAuth2.0 setup in `gh_repos()` stays correct.

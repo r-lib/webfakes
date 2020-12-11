@@ -1,34 +1,110 @@
 
-#' OAuth 2.0
+#' Fake OAuth 2.0 resource and authorization app
 #'
 #' @includeRmd man/rmd-fragments/oauth2.Rmd description
 #'
 #' @details
+#' The app has the following endpoints:
+#' * `GET /register` is the endpoint that you can use to register
+#'   your third party app. It needs to receive the `name` of the
+#'   third party app, and its `redirect_uri` as query parameters,
+#'   otherwise returns an HTTP 400 error. On success it returns a
+#'   JSON dictionary with entries `name` (the name of the third party
+#'   app), `client_id`, `client_secret` and `redirect_uri`.
+#' * `GET /authorize` is the endpoint where the user of the third
+#'   party app is sent. You can change the URL of this endpoint with
+#'   the `authorize_ep` argument. It needs to receive the `client_id`
+#'   of the third party app, and its correct `redirect_uri` as query
+#'   parameters. It may receive a `state` string as well, which can
+#'   be used by a client to identify the request. Otherwise it
+#'   generates a random `state` string. On error it fails with a HTTP
+#'   400 error. On success it returns a simple HTML login page.
+#' * `POST /authorize/decision` is the endpoint where the HTML login
+#'   page generated at `/authorize` connects back to, either with a
+#'   positive or negative result. The form on the login page will send
+#'   the `state` string and the user's choice in the `action` variable.
+#'   If the user authorized the third party app, then they are
+#'   redirected to the `redirect_uri` of the app, with a temporary
+#'   `code` and the `state` string supplied as query parameters.
+#'   Otherwise a simple HTML page is returned.
+#' * `POST /token` is the endpoint where the third party app requests
+#'   a temporary access token. It is also uses for refreshing an
+#'   access token with a refresh token. You can change the URL of this
+#'   endpoint with the `token_ep` argument.
+#'   To request a new token or refresh an existing one, the following
+#'   data must be included in either a JSON or an URL encoded request body:
+#'   - `grant_type`, this must be `authorization_code` for new tokens,
+#'     and `refresh_token` for refreshing.
+#'   - `code`, this must be the temporary code obtained from the
+#'     `/authorize/decision` redirection, for new tokens. It is not
+#'     needed when refreshing.
+#'   - `client_id` must be the client id of the third party app.
+#'   - `client_secret` must be the client secret of the third party
+#'     app.
+#'   - `redirect_uri` must be the correct redirection URI of the
+#'     third party app. It is not needed when refreshing tokens.
+#'   - `refresh_token` must be the refresh token obtained previously,
+#'     when refreshing a token. It is not needed for new tokens.
+#'   On success a JSON dictionary is returned with entries:
+#'   `access_token`, `expiry` and `refresh_token`. (The latter is
+#'   omitted if the `refresh` argument is `FALSE`).
+#' * `GET /locals` returns a list of current apps, access tokens and
+#'   refresh tokens.
+#' * `GET /data` is an endpoint that returns a simple JSON response,
+#'   and needs authorization.
+#'
+#' ## Notes
+#'
+#' * Using this app in your tests requires the glue package, so you
+#'   need to put it in `Suggests`.
+#' * You can add custom endpoints to the app, as needed.
+#' * If you need authorization in your custom endpoint, call
+#'   `app$is_authorized()` in your handler:
+#'   ```
+#'   if (!app$is_authorized(req, res)) return()
+#'   ```
+#'   `app$is_authorized()` returns an HTTP 401 response if the
+#'   client is not authorized, so you can simply return from your
+#'   handler.
+#'
 #' For more details see `vignette("oauth", package = "webfakes")`.
 #'
 #' @section `oauth2_resource_app()`:
 #' App representing the API server (resource/authorization)
 #' @return a `webfakes` app
-#' @param access_duration After how many seconds should access tokens expire.
-#' @param refresh_duration After how many seconds should refresh tokens expire
-#' (ignored if `refresh` is `FALSE`).
+#' @param access_duration After how many seconds should access tokens
+#'   expire.
+#' @param refresh_duration After how many seconds should refresh
+#'   tokens expire (ignored if `refresh` is `FALSE`).
 #' @param refresh Should a refresh token be returned (logical).
-#' @param seed Random seed used when creating tokens.
+#' @param seed Random seed used when creating tokens. If `NULL`,
+#'   we rely on R to provide a seed. The app uses its own RNG stream,
+#'   so it does not affect reproducibility of the tests.
+#' @param authorize_ep The authorization endpoint of the resource
+#'   server. Change this from the default if the real app that you
+#'   are faking does not use `/authorize`.
+#' @param token_ep The endpoint to request tokens. Change this if the
+#'   real app that you are faking does not use `/token`.
+#' @return webfakes app
+#'
 #' @export
 #' @family OAuth2.0 functions
-#' @rdname oauth2.0
-oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200L,
-                                refresh = TRUE, seed = NULL) {
 
-  seed <- seed %||% 42
-  if (!requireNamespace("withr", quietly = TRUE)) {
-    stop("This app requires the withr package, please install it.")
-  }
+oauth2_resource_app <- function(access_duration = 3600L,
+                                refresh_duration = 7200L,
+                                refresh = TRUE, seed = NULL,
+                                authorize_ep = "/authorize",
+                                token_ep = "/token") {
+
+  access_duration
+  refresh_duration
+  refresh
+  seed
+  authorize_ep
+  token_ep
 
   app <- new_app()
-
-  app$locals$access_produced <- 0
-  app$locals$refresh_produced <- 0
+  app$locals$seed <- seed %||% get_seed()
 
   # Parse body for /authorize/decision, /token
   app$use(mw_urlencoded())
@@ -63,7 +139,7 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
     res$send_json(rec)
   })
 
-  app$get("/authorize", function(req, res) {
+  app$get(authorize_ep, function(req, res) {
 
     # Missing or invalid client id
     client_id <- req$query$client_id
@@ -103,7 +179,7 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
       send(html)
   })
 
-  app$post("/authorize/decision", function(req, res) {
+  app$post(paste0(authorize_ep, "/decision"), function(req, res) {
     state <- req$form$state
     if (is.null(state) || ! state %in% names(app$locals$states)) {
       res$
@@ -133,75 +209,109 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
     }
   })
 
-  produce_access_token <- function(access_duration) {
-
-    app$locals$access_produced <- app$locals$access_produced + 1
-
-    token <- withr::with_seed(
-      app$locals$access_produced + seed,
-      paste0("token-", generate_token())
-    )
-
-    app$locals$tokens <- rbind(
-      app$locals$tokens,
-      data.frame(token = token, expiry = Sys.time() + access_duration)
-    )
-    return(token)
+  local_app_seed <- function(.local_envir = parent.frame()) {
+    old_seed <- get_seed()
+    set_seed(app$locals$seed)
+    defer({
+      app$locals$seed <- get_seed()
+      set_seed(old_seed)
+    }, envir = .local_envir)
   }
 
-  produce_refresh_token <- function(refresh_duration, refresh) {
+  new_access_token <- function(client_id, duration) {
+    local_app_seed()
+    token <- paste0("token-", generate_token())
 
-    if (!refresh) {
-      return(NA)
+    new <- data.frame(
+      stringsAsFactors = FALSE,
+      client_id = client_id,
+      token = token,
+      expiry = Sys.time() + duration
+    )
+
+    app$locals$tokens <- rbind(app$locals$tokens, new)
+    token
+  }
+
+  new_refresh_token <- function(client_id, duration) {
+    local_app_seed()
+    token <- paste0("refresh-token-", generate_token())
+
+    new <- data.frame(
+      stringsAsFactors = FALSE,
+      client_id = client_id,
+      token = token,
+      expiry = Sys.time() + duration
+    )
+
+    app$locals$refresh_tokens <- rbind(app$locals$refresh_tokens, new)
+    token
+  }
+
+  expire_tokens <- function() {
+    if (!is.null(app$locals$tokens)) {
+      app$locals$tokens <- app$locals$tokens[
+        app$locals$tokens$expiry > Sys.time(),,
+        drop = FALSE
+      ]
     }
-
-    app$locals$refresh_produced <- app$locals$refresh_produced + 1
-
-    refresh_token <- withr::with_seed(
-      app$locals$refresh_produced + seed,
-      paste0("refresh_token-", generate_token())
-      )
-
-    app$locals$refresh_tokens <- rbind(
-      app$locals$refresh_tokens,
-      data.frame(token = refresh_token, expiry = Sys.time() + refresh_duration)
-    )
-    return(refresh_token)
+    if (!is.null(app$locals$refresh_tokens)) {
+      app$locals$refresh_tokens <- app$locals$refresh_tokens[
+        app$locals$refresh_tokens$expiry > Sys.time(),,
+        drop = FALSE
+      ]
+    }
   }
 
-  app$post("/token", function(req, res) {
+  is_valid_token <- function(token) {
+    expire_tokens()
+    token %in% app$locals$tokens$token
+  }
 
+  is_valid_refresh_token <- function(client_id, token) {
+    expire_tokens()
+    wh <- match(token, app$locals$refresh_tokens$token)
+    if (is.na(wh)) return(FALSE)
+    # client ID must match as well
+    app$locals$refresh_tokens$client_id == client_id
+  }
 
-    if (req$form$grant_type == "refresh_token") {
-
-      app$locals$refresh_tokens <- app$locals$refresh_tokens[
-        app$locals$refresh_tokens$expiry > Sys.time(),
-        ]
-
-      if (! (req$form$refresh_token %in% app$locals$refresh_tokens$token)) {
-           res$
-          set_status(400L)$
-          send_json(list(error = "invalid_request"), auto_unbox = TRUE)
-        return()
-      }
-
-      access_token <- produce_access_token(access_duration)
-      refresh_token <- produce_refresh_token(refresh_duration, refresh)
-
-      info <- list(access_token = access_token,
-                   expiry = access_duration,
-                   refresh_token = refresh_token)
-
-      info <- info[!is.null(info)]
-
+  # For refresh tokens
+  app$post(token_ep, function(req, res) {
+    if (req$form$grant_type != "refresh_token") return("next")
+    client_id <- req$form$client_id
+    tpapps <- app$locals$tpapps
+    if (! client_id %in% tpapps$client_id) {
       res$
-        send_json(
-          info,
-          auto_unbox = TRUE
-        )
+        set_status(400L)$
+        send("Invalid client id")
+      return()
+    }
+    tprec <- tpapps[match(client_id, tpapps$client_id), ]
+
+    if (req$form$client_secret %||% "" != tprec$client_secret) {
+      res$
+        set_status(400L)$
+        send("Invalid token request, client secret mismatch")
       return()
     }
 
+    if (!is_valid_refresh_token(client_id, req$form$refresh_token)) {
+      res$
+        set_status(400L)$
+        send_json(list(error = "invalid_request"), auto_unbox = TRUE)
+      return()
+    }
+
+    res$send_json(list(
+      access_token = new_access_token(client_id, access_duration),
+      expiry = access_duration,
+      refresh_token = new_refresh_token(client_id, refresh_duration)
+    ), auto_unbox = TRUE)
+  })
+
+  # For regular tokens
+  app$post(token_ep, function(req, res) {
     if (req$form$grant_type %||% "" != "authorization_code") {
       res$
         set_status(400L)$
@@ -218,14 +328,15 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
 
     tpapps <- app$locals$tpapps
 
-    if (! req$form$client_id %in% tpapps$client_id) {
+    client_id <- req$form$client_id
+    if (! client_id %in% tpapps$client_id) {
       res$
         set_status(400L)$
         send("Invalid client id")
       return()
     }
 
-    tprec <- tpapps[match(req$form$client_id, tpapps$client_id), ]
+    tprec <- tpapps[match(client_id, tpapps$client_id), ]
 
     if (req$form$client_secret %||% "" != tprec$client_secret) {
       res$
@@ -241,65 +352,97 @@ oauth2_resource_app <- function(access_duration = 3600L, refresh_duration = 7200
       return()
     }
 
-    access_token <- produce_access_token(access_duration)
-    refresh_token <- produce_refresh_token(
-      refresh_duration = refresh_duration,
-      refresh = refresh
-      )
-
     app$locals$codes <- setdiff(app$locals$codes, req$query$code)
 
     res$send_json(list(
-      access_token = access_token,
+      access_token = new_access_token(client_id, access_duration),
       expiry = access_duration,
-      refresh_token = refresh_token
+      refresh_token =
+        if (refresh) new_refresh_token(client_id, refresh_duration)
       ), auto_unbox = TRUE, pretty = TRUE)
   })
 
-  app$get("/noninteractive", function(req, res) {
-    access_token <- produce_access_token(0L)
-    refresh_token <- produce_refresh_token(
-      refresh_duration = refresh_duration,
-      refresh = refresh
-    )
-    res$
-      send_status(200L)
-  })
-
   app$get("/locals", function(req, res) {
-
     res$
       set_status(200L)$
-      send_json(list(access = app$locals$tokens, refresh = app$locals$refresh_tokens), auto_unbox = TRUE)
+      send_json(list(
+        apps = app$locals$tpapps,
+        access = app$locals$tokens,
+        refresh = app$locals$refresh_tokens
+      ), auto_unbox = TRUE)
   })
 
-  app$get("/data", function(req, res){
-    app$locals$tokens <- app$locals$tokens[app$locals$tokens$expiry > Sys.time(),]
+  app$is_authorized <- function(req, res) {
+    expire_tokens()
     if (!("Authorization" %in% names(req$headers))) {
       res$
         set_status(401L)$
         send("Missing bearer token")
-    } else {
-      token <- gsub("Bearer ", "", req$headers$Authorization[[1]])
-      if (!token %in% app$locals$tokens$token) {
-        res$
-          set_status(401L)$
-          send("Invalid bearer token")
-      } else {
-        res$
-          send_json(list(data = "top secret!"))
-      }
+      return(FALSE)
     }
+
+    token <- gsub("Bearer ", "", req$headers$Authorization[[1]])
+    if (!is_valid_token(token)) {
+      res$
+        set_status(401L)$
+        send("Invalid bearer token")
+      return(FALSE)
+    }
+    TRUE
+  }
+
+  app$get("/data", function(req, res) {
+    if (!app$is_authorized(req, res)) return()
+    res$send_json(list(data = "top secret!"))
   })
 
   app
 }
 
-#' @section `oauth2_third_party_app()`:
 #' App representing the third-party app
+#'
+#' @includeRmd man/rmd-fragments/oauth2.Rmd description
+#'
+#' @details
+#' Endpoints:
+#' * `POST /login/config` Use this endpoint to configure the client ID
+#'   and the client secret of the app, received from
+#'   [oauth2_resource_app()] (or another resource app). You need to
+#'   send in a JSON or URL encoded body:
+#'   - `auth_url`, the authorization URL of the resource app.
+#'   - `token_url`, the token URL of the resource app.
+#'   - `client_id`, the client ID, received from the resource app.
+#'   - `client_secret` the client secret, received from the resource
+#'     app.
+#' * `GET /login` Use this endpoint to start the login process. It
+#'   will redirect to the resource app for authorization and after the
+#'   OAuth2.0 dance to `/login/redirect`.
+#' * `GET /login/redirect`, `POST /login/redirect` This is the
+#'   redirect URI of the third party app. (Some HTTP clients redirect
+#'   a `POST` to a `GET`, others don't, so it has both.) This endpoint
+#'   is used by the resource app, and it received the `code` that can
+#'   be exchanged to an access token and the `state` which was
+#'   generated in `/login`. It contanct the resource app to get an
+#'   access token, and the stores the token in its `app$locals`
+#'   local variables. It fails with HTTP code 500 if it cannot obtain
+#'   an access token. On success it returns a JSON dictionary with
+#'   `access_token`, `expiry` and `refresh_token` (optionally) by
+#'   default. This behavior can be changed by redefining the
+#'   `app$redirect_hook()` function.
+#' * `GET /locals` returns the tokens that were obtained from the
+#'   resource app.
+#' * `GET /data` is an endpoint that uses the obtained token(s) to
+#'   connect to the `/data` endpoint of the resource app. The `/data`
+#'   endpoint of the resource app needs authorization. It responds
+#'   with the response of the resource app. It tries to refresh the
+#'   access token of the app if needed.
+#'
+#' For more details see `vignette("oauth", package = "webfakes")`.
+#'
 #' @param name Name of the third-party app
+#' @return webfakes app
 #' @export
-#' @rdname oauth2.0
+#' @family OAuth2.0 functions
 
 oauth2_third_party_app <- function(name = "Third-Party app") {
   app <- new_app()
@@ -416,34 +559,56 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
       send_json(app$locals$tokens, auto_unbox = TRUE)
   })
 
-  app$get("/data", function(req, res) {
-    resp <- httr::GET(gsub("token", "data", app$locals$token_url),
-                      httr::add_headers(Authorization = paste("Bearer",
-                                                              app$locals$tokens$access_token)))
+  get_data <- function() {
+    auth <- paste("Bearer", app$locals$tokens$access_token)
+    handle <- curl::new_handle()
+    curl::handle_setheaders(handle, Authorization = auth)
+    url <- modify_path(app$locals$token_url, "/data")
+    curl::curl_fetch_memory(url, handle = handle)
+  }
 
+  try_refresh <- function() {
     refresh_token <- app$locals$tokens$refresh_token
+    if (is.null(refresh_token)) return(FALSE)
 
-    if (httr::status_code(resp) == 401 && !is.null(refresh_token)) {
+    data <- charToRaw(paste0(
+      "refresh_token=", refresh_token, "&",
+      "grant_type=refresh_token"
+    ))
+    handle <- curl::new_handle()
+    curl::handle_setheaders(
+      handle,
+      "content-type" = "application/x-www-form-urlencoded"
+    )
+    curl::handle_setopt(
+      handle,
+      customrequest = "POST",
+      postfieldsize = length(data),
+      postfields = data
+    )
 
-      req_params <- list(
-        refresh_token = refresh_token,
-        grant_type = "refresh_token"
-      )
+    resp <- curl::curl_fetch_memory(app$locals$token_url, handle = handle)
 
-      refresh_resp <- httr::POST(app$locals$token_url, body = req_params, encode = "form")
-      httr::stop_for_status(refresh_resp)
-      app$locals$tokens <- httr::content(refresh_resp)
+    if (resp$status_code != 200L) return(FALSE)
 
+    tokens <- rawToChar(resp$content)
+    app$locals$tokens <- jsonlite::fromJSON(tokens)
 
-      resp <- httr::GET(gsub("token", "data", app$locals$token_url),
-                        httr::add_headers(Authorization = paste("Bearer",
-                                                                app$locals$tokens$access_token)))
+    TRUE
+  }
+
+  app$get("/data", function(req, res) {
+    resp <- get_data()
+
+    if (resp$status_code == 401) {
+      if (try_refresh()) resp <- get_data()
     }
 
     res$
-      send_json(httr::content(resp), auto_unbox = TRUE)
+      set_status(resp$status_code)$
+      set_type(resp$type)$
+      send(resp$content)
   })
-
 }
 
 #' Helper function to log in to a third party OAuth2.0 app without a
@@ -463,7 +628,6 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
 #'
 #' @family OAuth2.0 functions
 #' @export
-#' @rdname oauth2.0
 
 oauth2_login <- function(login_url) {
   login_resp <- curl::curl_fetch_memory(login_url)
@@ -504,12 +668,36 @@ oauth2_login <- function(login_url) {
   )
 }
 
+#' Helper function to use httr's OAuth2.0 functions
+#' non-interactively, e.g. in test cases
+#'
+#' To perform an automatic acknowledgement and log in for a
+#' local OAuth2.0 app, run by httr, wrap the expression that
+#' obtains the OAuth2.0 token in `oauth2_httr_login()`.
+#'
+#' In interactive sessions, `oauth2_httr_login()` overrides the
+#' `browser` option, and when httr opens a browser page, it
+#' calls [oauth2_login()] in a subprocess.
+#'
+#' In non-interactive sessions, httr does not open a browser page,
+#' only messages the user to do it manually. `oauth2_httr_login()`
+#' listenes for these messages, and calls [oauth2_login()] in a
+#' subprocess.
+#'
+#' @param expr Expression that calls [httr::oauth2.0_token()],
+#'   either directly, or indirectly.
+#' @return The return value of `expr`.
+#'
+#' @seealso See `?vignette("oauth", package = "webfakes")` for a case
+#' study that uses this function.
+#'
 #' @export
+#' @family OAuth2.0 functions
 
 oauth2_httr_login <- function(expr) {
   proc <- NULL
   if (interactive()) {
-    withr::local_options(browser = function(url) {
+    local_options(browser = function(url) {
       proc <<- callr::r_bg(
         oauth2_login,
         list(url),
@@ -521,12 +709,17 @@ oauth2_httr_login <- function(expr) {
     withCallingHandlers(
       expr,
       message = function(msg) {
+        if (grepl("^Please point your browser to the following url:",
+                  msg$message)) {
+          invokeRestart("muffleMessage")
+        }
         if (grepl("^http", msg$message)) {
           proc <<- callr::r_bg(
             oauth2_login,
             list(trimws(msg$message)),
             package = "webfakes"
           )
+          invokeRestart("muffleMessage")
         }
       }
     )

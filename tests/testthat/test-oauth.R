@@ -1,5 +1,6 @@
 
-test_that("oauth2_resource_app", {
+test_that("oauth2", {
+  skip_on_cran()
 
   # Create the resource server
   rsapp <- local_app_process(
@@ -65,4 +66,78 @@ test_that("oauth2_resource_app", {
   expect_equal(resp3$login_response$type, "text/html")
   expect_equal(resp3$token_response$status_code, 200L)
   expect_match(token$access_token, "^token-[0-9a-f]+$")
+})
+
+test_that("oauth + httr", {
+  skip_on_cran()
+  # Not great, the OS should allocate a port, really...
+  withr::local_envvar(c(
+    HTTP_SERVER = "127.0.0.1",
+    HTTP_SERVER_PORT = httpuv::randomPort()
+  ))
+
+  # Create the resource server
+  rsappex <- oauth2_resource_app(access_duration = 0.1)
+  log <- tempfile("webfakes-log-", fileext = ".log")
+  on.exit(unlink(log, recursive = TRUE), add = TRUE)
+  rsappex$use(logger = mw_log(stream = log), .first = TRUE)
+  rsapp <- local_app_process(
+    rsappex,
+    opts = server_opts(num_threads = 3)
+  )
+  regi_url <- rsapp$url("/register")
+  auth_url <- rsapp$url("/authorize")
+  toke_url <- rsapp$url("/token")
+
+  # Register httr
+  url <- paste0(
+    regi_url,
+    "?name=httr%20local%20app",
+    "&redirect_uri=", httr::oauth_callback()
+  )
+  reg_resp <- httr::GET(url)
+  httr::stop_for_status(reg_resp)
+  regdata <- httr::content(reg_resp)
+
+  app <- httr::oauth_app(
+    regdata$name[[1]],
+    key = regdata$client_id[[1]],
+    secret = regdata$client_secret[[1]],
+    redirect_uri = httr::oauth_callback()
+  )
+
+  endpoint <- httr::oauth_endpoint(
+    authorize = auth_url,
+    access = toke_url
+  )
+
+  token <- suppressMessages(oauth2_httr_login(
+    httr::oauth2.0_token(endpoint, app, cache = FALSE)
+  ))
+
+  # This will refresh the token automatically
+  Sys.sleep(0.1)
+  expect_message(
+    cnt <- httr::content(
+      httr::GET(rsapp$url("/data"), config = token),
+      as = "parsed", type = "application/json"
+    ),
+    "Auto-refreshing stale OAuth"
+  )
+
+  expect_equal(cnt, list(data = list("top secret!")))
+
+  loglines <- readLines(log)
+
+  endpoints <- parse_url(map_chr(strsplit(loglines, " "), "[[", 2))$path
+  expect_equal(
+    endpoints,
+    c("/register", "/authorize", "/authorize/decision",
+      "/token", "/data", "/token", "/data")
+  )
+  status <- map_chr(strsplit(loglines, " "), "[[", 3)
+  expect_equal(
+    as.numeric(status),
+    c(200, 200, 302, 200, 401, 200, 200)
+  )
 })
