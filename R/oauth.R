@@ -422,8 +422,8 @@ oauth2_resource_app <- function(access_duration = 3600L,
 #'   a `POST` to a `GET`, others don't, so it has both.) This endpoint
 #'   is used by the resource app, and it received the `code` that can
 #'   be exchanged to an access token and the `state` which was
-#'   generated in `/login`. It contanct the resource app to get an
-#'   access token, and the stores the token in its `app$locals`
+#'   generated in `/login`. It contacts the resource app to get an
+#'   access token, and then stores the token in its `app$locals`
 #'   local variables. It fails with HTTP code 500 if it cannot obtain
 #'   an access token. On success it returns a JSON dictionary with
 #'   `access_token`, `expiry` and `refresh_token` (optionally) by
