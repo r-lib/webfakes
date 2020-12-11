@@ -91,12 +91,14 @@ pkg_data <- new.env(parent = emptyenv())
 #' * [mw_urlencoded()] parses URL encoded request bodies.
 #'
 #' ```r
-#' app$use(...)
+#' app$use(..., .first = FALSE)
 #' ```
 #'
 #' * `...` is a set of (middleware) handler functions. They are added to
 #' the handler stack, and called for every HTTP request. (Unless an HTTP
 #' response is created before reaching this point in the handler stack.)
+#' * `.first` set to `TRUE` is you want to add the handler function
+#' to the bottom of the stack.
 #'
 #' ## Handler functions
 #'
@@ -486,8 +488,13 @@ new_app <- function() {
       invisible(self)
     },
 
-    use = function(...) {
-      self$.stack <- c(self$.stack, parse_handlers("use", "*", ...))
+    use = function(..., .first = FALSE) {
+      mw <- parse_handlers("use", "*", ...)
+      if (.first) {
+        self$.stack <- c(mw, self$.stack)
+      } else {
+        self$.stack <- c(self$.stack, mw)
+      }
       invisible(self)
     },
 

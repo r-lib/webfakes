@@ -101,12 +101,14 @@ middleware to perform common tasks:
 \item \code{\link[=mw_multipart]{mw_multipart()}} parses multipart request bodies.
 \item \code{\link[=mw_static]{mw_static()}} serves static files from a directory.
 \item \code{\link[=mw_urlencoded]{mw_urlencoded()}} parses URL encoded request bodies.
-}\if{html}{\out{<div class="r">}}\preformatted{app$use(...)
+}\if{html}{\out{<div class="r">}}\preformatted{app$use(..., .first = FALSE)
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{...} is a set of (middleware) handler functions. They are added to
 the handler stack, and called for every HTTP request. (Unless an HTTP
 response is created before reaching this point in the handler stack.)
+\item \code{.first} set to \code{TRUE} is you want to add the handler function
+to the bottom of the stack.
 }
 }
 
