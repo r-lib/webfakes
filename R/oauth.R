@@ -681,7 +681,7 @@ oauth2_login <- function(login_url) {
 #'
 #' In non-interactive sessions, httr does not open a browser page,
 #' only messages the user to do it manually. `oauth2_httr_login()`
-#' listenes for these messages, and calls [oauth2_login()] in a
+#' listens for these messages, and calls [oauth2_login()] in a
 #' subprocess.
 #'
 #' @param expr Expression that calls [httr::oauth2.0_token()],

@@ -26,7 +26,7 @@ calls \code{\link[=oauth2_login]{oauth2_login()}} in a subprocess.
 
 In non-interactive sessions, httr does not open a browser page,
 only messages the user to do it manually. \code{oauth2_httr_login()}
-listenes for these messages, and calls \code{\link[=oauth2_login]{oauth2_login()}} in a
+listens for these messages, and calls \code{\link[=oauth2_login]{oauth2_login()}} in a
 subprocess.
 }
 \seealso{
