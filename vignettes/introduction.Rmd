@@ -71,7 +71,7 @@ The advantages of using your own webfakes server, over mocking:
 ```
 
 You can also create a web server for a test file, or even for a single test case.
-See the How-to for details how.
+See `vignette("how-to")` for details how.
 
 ## Writing apps
 
