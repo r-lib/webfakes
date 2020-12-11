@@ -48,15 +48,13 @@ Imports:
     tools,
     utils
 Suggests:
-    knitr,
     callr,
     curl,
     glue,
     jsonlite,
+    httr,
+    httpuv,
     testthat (>= 3.0.0),
     withr,
-    xml2,
-    rmarkdown,
-    httr
+    xml2
 Encoding: UTF-8
-VignetteBuilder: knitr
