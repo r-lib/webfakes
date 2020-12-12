@@ -415,3 +415,21 @@ This special CI run makes sure that your code works well with the real API.
 You can run all the other tests, locally and in the CI, against the fake local web server.
 
 See the next question for how webfakes helps you setting environment variables that point to your local server.
+
+## How do I simulate a slow internet connection?
+
+You need to use the `throttle` server option when you start your web app.
+This means that you can run the very same app with different connection speed.
+This is how it goes:
+
+```{r}
+library(webfakes)
+slow <- new_app_process(
+  httpbin_app(),
+  opts = server_opts(throttle = 100)
+)
+resp <- curl::curl_fetch_memory(slow$url("/bytes/200"))
+resp$times
+```
+
+`throttle` gives the number of bytes per second, so downloading 200 random bytes from the fake app will take about 2 seconds.
