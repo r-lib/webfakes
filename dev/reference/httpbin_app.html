@@ -40,7 +40,11 @@
 
 
 <meta property="og:title" content="Generic web app for testing HTTP clients — httpbin_app" />
-<meta property="og:description" content="A web app similar to https://httpbin.org." />
+<meta property="og:description" content="A web app similar to https://httpbin.org.
+See its specific docs.
+You can also see these docs locally, by starting the app:httpbin &amp;lt;- new_app_process(httpbin_app())
+browseURL(httpbin$url())
+" />
 
 
 <meta name="robots" content="noindex">
@@ -135,7 +139,11 @@
     </div>
 
     <div class="ref-description">
-    <p>A web app similar to <a href='https://httpbin.org'>https://httpbin.org</a>.</p>
+    <p>A web app similar to <a href='https://httpbin.org'>https://httpbin.org</a>.
+See <a href='https://r-lib.github.io/webfakes/httpbin.html'>its specific docs</a>.
+You can also see these docs locally, by starting the app:<div class="r"></p><pre><span class='va'>httpbin</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app_process.html'>new_app_process</a></span><span class='op'>(</span><span class='fu'>httpbin_app</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/browseURL.html'>browseURL</a></span><span class='op'>(</span><span class='va'>httpbin</span><span class='op'>$</span><span class='fu'>url</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</pre><p></div></p>
     </div>
 
     <pre class="usage"><span class='fu'>httpbin_app</span><span class='op'>(</span>log <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></pre>
@@ -163,7 +171,7 @@
 #&gt; [1] "close"
 #&gt; 
 #&gt; $date
-#&gt; [1] "2020-12-13 09:06:50"
+#&gt; [1] "2020-12-13 09:11:58"
 #&gt; 
 #&gt; $`content-type`
 #&gt; [1] "application/json"
@@ -172,19 +180,19 @@
 #&gt; [1] "308"
 #&gt; 
 #&gt; $etag
-#&gt; [1] "\"614d2f8c\""
+#&gt; [1] "\"fcd6dc6e\""
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='va'>resp</span><span class='op'>$</span><span class='va'>content</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; {
 #&gt;   "args": {},
 #&gt;   "headers": {
-#&gt;     "Host": "127.0.0.1:49567",
+#&gt;     "Host": "127.0.0.1:49539",
 #&gt;     "User-Agent": "R/4.0.3 R (4.0.3 x86_64-apple-darwin17.0 x86_64 darwin17.0) on GitHub Actions",
 #&gt;     "Accept": "*/*",
 #&gt;     "Accept-Encoding": "deflate, gzip"
 #&gt;   },
 #&gt;   "origin": "127.0.0.1",
 #&gt;   "path": "/get",
-#&gt;   "url": "http://127.0.0.1:49567/get"
+#&gt;   "url": "http://127.0.0.1:49539/get"
 #&gt; }</div><div class='input'><span class='va'>proc</span><span class='op'>$</span><span class='kw'>stop</span><span class='op'>(</span><span class='op'>)</span>
 </div></pre>
   </div>
