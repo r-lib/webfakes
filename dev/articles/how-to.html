@@ -155,13 +155,13 @@ Suggests:
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>
 <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49708/"</span></code></pre></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49577/"</span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2020-12-12 22:06:00"</span></code></pre></div>
+<span class="co">#&gt; [1] "2020-12-13 09:07:02"</span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
@@ -226,7 +226,7 @@ Suggests:
   <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
+<span class="co">#&gt; Test passed 😀</span></code></pre></div>
 </div>
 <div id="can-i-use-an-app-for-a-single-testthat-test" class="section level2">
 <h2 class="hasAnchor">
@@ -242,7 +242,7 @@ Suggests:
   <span class="fu">expect_equal</span><span class="op">(</span><span class="va">echo</span>, <span class="st">"hello there"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; Test passed 🥇</span></code></pre></div>
+<span class="co">#&gt; Test passed 😀</span></code></pre></div>
 </div>
 <div id="how-do-i-test-a-sequence-of-requests" class="section level2">
 <h2 class="hasAnchor">
@@ -275,10 +275,10 @@ Suggests:
 <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
 <span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 3.4 seconds...</span>
 <span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49717/unstable]</span>
-<span class="co">#&gt;   Date: 2020-12-12 22:06</span>
+<span class="co">#&gt; Request failed [401]. Retrying in 7.1 seconds...</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49585/unstable]</span>
+<span class="co">#&gt;   Date: 2020-12-13 09:07</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 17 B</span></code></pre></div>
@@ -325,8 +325,8 @@ Suggests:
 <span class="op">)</span>
 <span class="op">}</span>
 <span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49722/packages?name=vcr]</span>
-<span class="co">#&gt;   Date: 2020-12-12 22:06</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49590/packages?name=vcr]</span>
+<span class="co">#&gt;   Date: 2020-12-13 09:07</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 18 B</span>
@@ -339,8 +339,8 @@ Suggests:
 <span class="co">#&gt; [1] "vcr"</span>
 
 <span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49722/packages?name=httptest]</span>
-<span class="co">#&gt;   Date: 2020-12-12 22:06</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49590/packages?name=httptest]</span>
+<span class="co">#&gt;   Date: 2020-12-13 09:07</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 29 B</span>
@@ -450,8 +450,8 @@ Suggests:
 <span class="co">#&gt; one is done</span>
 <span class="co">#&gt; one is done</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.001   1.449 </span>
-<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
+<span class="co">#&gt;   0.002   0.001   1.471 </span>
+<span class="co">#&gt; Test passed 🎉</span></code></pre></div>
 </div>
 <div id="how-to-make-sure-that-my-code-works-with-the-real-api" class="section level2">
 <h2 class="hasAnchor">
@@ -460,7 +460,7 @@ Suggests:
 <p>One practical solution is to write (at least some) flexible tests, that can run against a local fake webserver, or a real one, and you have a quick switch to change their behavior. I have found that environment variables work great for this.</p>
 <p>E.g. if the <code>FAKE_HTTP_TESTS</code> environment variable is not set, the tests run with the real web server, otherwise they use a fake one. Another solution, that works best is the HTTP requests are in the downstream package code, is to introduce one environment variable for each API you need to connect to. These might be set to the real API servers, or to the fake ones.</p>
 <p>Once you have some tests that can use both kinds or servers, you can set up your continuous integration (CI) framework, to run the tests agains the real server (say) once a day. This special CI run makes sure that your code works well with the real API. You can run all the other tests, locally and in the CI, against the fake local web server.</p>
-<p>See the next question for how webfakes helps you setting environment variables that point to your local server.</p>
+<p>See the question on <a href="#how-do-i-make-my-app-connect-to-webfakes-when-the-tests-are-running-">how webfakes helps you setting environment variables that point to your local server</a>.</p>
 </div>
 <div id="how-do-i-simulate-a-slow-internet-connection" class="section level2">
 <h2 class="hasAnchor">
@@ -475,9 +475,9 @@ Suggests:
 <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.cran.dev/curl/reference/curl_fetch.html">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">resp</span><span class="op">$</span><span class="va">times</span>
 <span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer </span>
-<span class="co">#&gt;      0.000000      0.000170      0.000396      0.000442      0.016603 </span>
+<span class="co">#&gt;      0.000000      0.000173      0.000402      0.000462      0.015823 </span>
 <span class="co">#&gt;         total </span>
-<span class="co">#&gt;      2.026802</span></code></pre></div>
+<span class="co">#&gt;      2.087283</span></code></pre></div>
 <p><code>throttle</code> gives the number of bytes per second, so downloading 200 random bytes from the fake app will take about 2 seconds.</p>
 </div>
   </div>
