@@ -26,6 +26,7 @@ library(webfakes)
 
 In this vignette, we shall look at how to implement a flow using both apps, or the server app together with httr's OAuth tools.
 In both cases we shall use the httr package as HTTP client.
+We shall end with a case study for OAuth2.0 testing.
 For an example using the curl package instead, look at the test file `test-oauth.R` of webfakes instead.
 
 ## The OAuth2.0 resource and authorization server
@@ -462,7 +463,7 @@ Some important points about this test case:
 
 -   `fake_proc` is the app process that runs our fake GH app. Always run the fake OAuth2.0 apps with multiple threads.
 
--   Out fake GitHub app has an endpoint to register the app we are testing. We need to send the app's name and the correct redirect URI, and `fake_app` will reply with a fake client id and client secret.
+-   Our fake GitHub app has an endpoint to register the app we are testing. We need to send the app's name and the correct redirect URI, and `fake_app` will reply with a fake client id and client secret.
 
 -   We set `GH_CLIENT_ID` and `GH_CLIENT_SECRET` to the fake ones we just got from `fake_app`.
 
