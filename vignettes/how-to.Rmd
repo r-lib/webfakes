@@ -414,7 +414,7 @@ Once you have some tests that can use both kinds or servers, you can set up your
 This special CI run makes sure that your code works well with the real API.
 You can run all the other tests, locally and in the CI, against the fake local web server.
 
-See the next question for how webfakes helps you setting environment variables that point to your local server.
+See the question on [how webfakes helps you setting environment variables that point to your local server](#how-do-i-make-my-app-connect-to-webfakes-when-the-tests-are-running-).
 
 ## How do I simulate a slow internet connection?
 
