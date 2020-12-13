@@ -68,4 +68,4 @@ reference:
   - oauth2_httr_login
   - oauth2_login
   - oauth2_resource_app
-  - oauth2-third_party_app
+  - oauth2_third_party_app
