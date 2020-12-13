@@ -1,0 +1,13 @@
+<html>
+  <head><title>Webfakes OAuth 2.0 resource server</title></head>
+  <body>
+    <h2>
+      Would you authorize "{app}" to access your account?
+    </h2>
+    <form action="/authorize/decision" method="post">
+      <input type = "hidden" id="state" name="state" value="{state}">
+      <button type="submit" name="action" value = "yes">Yes, allow!</button>
+      <button type="submit" name="action" value = "nah">Nope, sorry.</button>
+    </form>
+  </body>
+</html>

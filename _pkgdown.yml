@@ -62,3 +62,10 @@ reference:
 - title: The httpbin app
   contents:
   - httpbin_app
+
+- title: OAuth2.0 apps
+  contents:
+  - oauth2_httr_login
+  - oauth2_login
+  - oauth2_resource_app
+  - oauth2-third_party_app
