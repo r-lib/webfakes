@@ -14,6 +14,10 @@ A \code{webfakes_app}.
 }
 \description{
 A web app similar to \url{https://httpbin.org}.
+See \href{https://r-lib.github.io/webfakes/httpbin.html}{its specific docs}.
+You can also see these docs locally, by starting the app:\if{html}{\out{<div class="r">}}\preformatted{httpbin <- new_app_process(httpbin_app())
+browseURL(httpbin$url())
+}\if{html}{\out{</div>}}
 }
 \examples{
 app <- httpbin_app()

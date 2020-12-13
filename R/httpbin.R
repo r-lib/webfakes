@@ -1,7 +1,13 @@
 
 #' Generic web app for testing HTTP clients
 #'
-#' A web app similar to <https://httpbin.org>. See [its specific docs](https://r-lib.github.io/webfakes/httpbin.html).
+#' A web app similar to <https://httpbin.org>.
+#' See [its specific docs](https://r-lib.github.io/webfakes/httpbin.html).
+#' You can also see these docs locally, by starting the app:
+#' ```r
+#' httpbin <- new_app_process(httpbin_app())
+#' browseURL(httpbin$url())
+#' ```
 #'
 #' @param log Whether to log requests to the standard output.
 #' @return A `webfakes_app`.
