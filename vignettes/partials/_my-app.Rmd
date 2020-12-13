@@ -39,7 +39,7 @@ This means that the process is automatically cleaned up at the end of a `test_th
 
 You can create your app at the beginning of your test file.
 Or, if you want to use the same app in multiple test files, use a
-testthat helper file.
+[testthat helper file](https://testthat.r-lib.org/reference/test_file.html#special-files).
 Sometimes it useful if your users can create and use your test app,
 for example to create reproducible examples.
 You can include a (possibly internal) function in your package, that
