@@ -226,11 +226,13 @@ middleware to perform common tasks:</p><ul>
 <li><p><code><a href='mw_multipart.html'>mw_multipart()</a></code> parses multipart request bodies.</p></li>
 <li><p><code><a href='mw_static.html'>mw_static()</a></code> serves static files from a directory.</p></li>
 <li><p><code><a href='mw_urlencoded.html'>mw_urlencoded()</a></code> parses URL encoded request bodies.</p></li>
-</ul><p><div class="r"></p><pre><span class='va'>app</span><span class='op'>$</span><span class='fu'>use</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
+</ul><p><div class="r"></p><pre><span class='va'>app</span><span class='op'>$</span><span class='fu'>use</span><span class='op'>(</span><span class='va'>...</span>, .first <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </pre><p></div></p><ul>
 <li><p><code>...</code> is a set of (middleware) handler functions. They are added to
 the handler stack, and called for every HTTP request. (Unless an HTTP
 response is created before reaching this point in the handler stack.)</p></li>
+<li><p><code>.first</code> set to <code>TRUE</code> is you want to add the handler function
+to the bottom of the stack.</p></li>
 </ul>
 
 

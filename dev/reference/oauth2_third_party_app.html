@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Log requests to the standard output or other connection — mw_log • webfakes</title>
+<title>App representing the third-party app — oauth2_third_party_app • webfakes</title>
 
 
 <!-- jquery -->
@@ -39,18 +39,16 @@
 
 
 
-<meta property="og:title" content="Log requests to the standard output or other connection — mw_log" />
-<meta property="og:description" content="A one line log entry for every request. The output looks like this:GET http://127.0.0.1:3000/image 200 3 ms - 4742
-
-
-and contains
-the HTTP method,
-the full request URL,
-the HTTP status code of the response,
-how long it took to process the response, in ms,
-and the size of the response body, in bytes.
-
-" />
+<meta property="og:title" content="App representing the third-party app — oauth2_third_party_app" />
+<meta property="og:description" content="The webfakes package comes with two fake apps that allow to imitate the
+OAuth2.0 flow in your test cases. (See Aaron Parecki’s tutorial for a good
+introduction to OAuth2.0.) One app (oauth2_resource_app()) is the API
+server that serves both as the resource and provides authorization.
+oauth2_third_party_app() plays the role of the third-party app. They
+are useful when testing or demonstrating code handling OAuth2.0
+authorization, token caching, etc. in a package. The apps can be used in
+your tests directly, or you could adapt one or both of them to better
+mimic a particular OAuth2.0 flow." />
 
 
 <meta name="robots" content="noindex">
@@ -139,76 +137,82 @@ and the size of the response body, in bytes.
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Log requests to the standard output or other connection</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/mw-log.R'><code>R/mw-log.R</code></a></small>
-    <div class="hidden name"><code>mw_log.Rd</code></div>
+    <h1>App representing the third-party app</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/oauth.R'><code>R/oauth.R</code></a></small>
+    <div class="hidden name"><code>oauth2_third_party_app.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A one line log entry for every request. The output looks like this:</p><pre>GET http://127.0.0.1:3000/image 200 3 ms - 4742
-</pre>
-
-<p>and contains</p><ul>
-<li><p>the HTTP method,</p></li>
-<li><p>the full request URL,</p></li>
-<li><p>the HTTP status code of the response,</p></li>
-<li><p>how long it took to process the response, in ms,</p></li>
-<li><p>and the size of the response body, in bytes.</p></li>
-</ul>
-
+    <p>The webfakes package comes with two fake apps that allow to imitate the
+OAuth2.0 flow in your test cases. (See <a href='https://aaronparecki.com/oauth-2-simplified/'>Aaron Parecki’s tutorial</a> for a good
+introduction to OAuth2.0.) One app (<code><a href='oauth2_resource_app.html'>oauth2_resource_app()</a></code>) is the API
+server that serves both as the resource and provides authorization.
+<code>oauth2_third_party_app()</code> plays the role of the third-party app. They
+are useful when testing or demonstrating code handling OAuth2.0
+authorization, token caching, etc. in a package. The apps can be used in
+your tests directly, or you could adapt one or both of them to better
+mimic a particular OAuth2.0 flow.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mw_log</span><span class='op'>(</span>format <span class='op'>=</span> <span class='st'>"dev"</span>, stream <span class='op'>=</span> <span class='st'>"stdout"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>oauth2_third_party_app</span><span class='op'>(</span>name <span class='op'>=</span> <span class='st'>"Third-Party app"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>format</th>
-      <td><p>Log format. Not implemented currently.</p></td>
-    </tr>
-    <tr>
-      <th>stream</th>
-      <td><p>R connection to log to. <code>"stdout"</code> means the standard
-output, <code>"stderr"</code> is the standard error. You can also supply a
-connection object, but then you need to be sure that it will be
-valid when the app is actually running.</p></td>
+      <th>name</th>
+      <td><p>Name of the third-party app</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Handler function.</p>
+    <p>webfakes app</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Endpoints:</p><ul>
+<li><p><code>POST /login/config</code> Use this endpoint to configure the client ID
+and the client secret of the app, received from
+<code><a href='oauth2_resource_app.html'>oauth2_resource_app()</a></code> (or another resource app). You need to
+send in a JSON or URL encoded body:</p><ul>
+<li><p><code>auth_url</code>, the authorization URL of the resource app.</p></li>
+<li><p><code>token_url</code>, the token URL of the resource app.</p></li>
+<li><p><code>client_id</code>, the client ID, received from the resource app.</p></li>
+<li><p><code>client_secret</code> the client secret, received from the resource
+app.</p></li>
+</ul></li>
+<li><p><code>GET /login</code> Use this endpoint to start the login process. It
+will redirect to the resource app for authorization and after the
+OAuth2.0 dance to <code>/login/redirect</code>.</p></li>
+<li><p><code>GET /login/redirect</code>, <code>POST /login/redirect</code> This is the
+redirect URI of the third party app. (Some HTTP clients redirect
+a <code>POST</code> to a <code>GET</code>, others don't, so it has both.) This endpoint
+is used by the resource app, and it received the <code>code</code> that can
+be exchanged to an access token and the <code>state</code> which was
+generated in <code>/login</code>. It contacts the resource app to get an
+access token, and then stores the token in its <code>app$locals</code>
+local variables. It fails with HTTP code 500 if it cannot obtain
+an access token. On success it returns a JSON dictionary with
+<code>access_token</code>, <code>expiry</code> and <code>refresh_token</code> (optionally) by
+default. This behavior can be changed by redefining the
+<code>app$redirect_hook()</code> function.</p></li>
+<li><p><code>GET /locals</code> returns the tokens that were obtained from the
+resource app.</p></li>
+<li><p><code>GET /data</code> is an endpoint that uses the obtained token(s) to
+connect to the <code>/data</code> endpoint of the resource app. The <code>/data</code>
+endpoint of the resource app needs authorization. It responds
+with the response of the resource app. It tries to refresh the
+access token of the app if needed.</p></li>
+</ul>
+
+<p>For more details see <code><a href='../articles/oauth.html'>vignette("oauth", package = "webfakes")</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other middleware: 
-<code><a href='mw_etag.html'>mw_etag</a>()</code>,
-<code><a href='mw_json.html'>mw_json</a>()</code>,
-<code><a href='mw_multipart.html'>mw_multipart</a>()</code>,
-<code><a href='mw_raw.html'>mw_raw</a>()</code>,
-<code><a href='mw_static.html'>mw_static</a>()</code>,
-<code><a href='mw_text.html'>mw_text</a>()</code>,
-<code><a href='mw_urlencoded.html'>mw_urlencoded</a>()</code></p></div>
+    <div class='dont-index'><p>Other OAuth2.0 functions: 
+<code><a href='oauth2_httr_login.html'>oauth2_httr_login</a>()</code>,
+<code><a href='oauth2_login.html'>oauth2_login</a>()</code>,
+<code><a href='oauth2_resource_app.html'>oauth2_resource_app</a>()</code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='va'>app</span><span class='op'>$</span><span class='fu'>use</span><span class='op'>(</span><span class='fu'>mw_log</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>app</span>
-</div><div class='output co'>#&gt; &lt;webfakes_app&gt;
-#&gt; routes:
-#&gt;   use *
-#&gt; fields and methods:
-#&gt;   all(path, ...)         # add route for *all* HTTP methods
-#&gt;   delete(path, ...)      # add route for DELETE
-#&gt;   engine(ext, engine)    # add template engine for file extension
-#&gt;   head(path, ...)        # add route for HEAD
-#&gt;   listen(port)           # start web app on port
-#&gt;   patch(path, ...)       # add route for PATCH
-#&gt;   post(path, ...)        # add route for POST
-#&gt;   put(path, ...)         # add route for PUT
-#&gt;   use(...)               # add middleware
-#&gt;   locals                 # app-wide shared data
-#&gt; # see ?webfakes_app for all methods</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

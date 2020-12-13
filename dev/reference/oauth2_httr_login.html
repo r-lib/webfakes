@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Authors • webfakes</title>
+<title>Helper function to use httr's OAuth2.0 functions
+non-interactively, e.g. in test cases — oauth2_httr_login • webfakes</title>
 
 
 <!-- jquery -->
@@ -18,8 +19,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
-<link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script>
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
@@ -33,13 +34,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script>
+<link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script>
 
 
 
 
-<meta property="og:title" content="Authors" />
+<meta property="og:title" content="Helper function to use httr's OAuth2.0 functions
+non-interactively, e.g. in test cases — oauth2_httr_login" />
+<meta property="og:description" content="To perform an automatic acknowledgement and log in for a
+local OAuth2.0 app, run by httr, wrap the expression that
+obtains the OAuth2.0 token in oauth2_httr_login()." />
 
 
 <meta name="robots" content="noindex">
@@ -58,7 +63,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-authors">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -70,7 +75,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">webfakes</a>
+        <a class="navbar-link" href="../index.html">webfakes</a>
         <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
@@ -78,16 +83,16 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="articles/introduction.html">Intro</a>
+  <a href="../articles/introduction.html">Intro</a>
 </li>
 <li>
-  <a href="articles/how-to.html">How-to</a>
+  <a href="../articles/how-to.html">How-to</a>
 </li>
 <li>
-  <a href="articles/glossary.html">Glossary</a>
+  <a href="../articles/glossary.html">Glossary</a>
 </li>
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -97,15 +102,15 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="httpbin.html">The builtin httpbin app's API</a>
+      <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="articles/internals.html">Webfakes internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="news/index.html">News</a>
+  <a href="../news/index.html">News</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -126,50 +131,60 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Authors</h1>
+    <h1>Helper function to use httr's OAuth2.0 functions
+non-interactively, e.g. in test cases</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/oauth.R'><code>R/oauth.R</code></a></small>
+    <div class="hidden name"><code>oauth2_httr_login.Rd</code></div>
     </div>
 
-    <ul class="list-unstyled">
-      <li>
-        <p><strong><a href='https://github.com/gaborcsardi'>Gábor Csárdi</a></strong>. Author, maintainer. 
-        </p>
-      </li>
-      <li>
-        <p><strong> RStudio, Pbc.</strong>. Copyright holder. 
-        </p>
-      </li>
-      <li>
-        <p><strong> Civetweb contributors</strong>. Contributor. 
-        <br /><small>see inst/credits/ciwetweb.md</small></p>
-      </li>
-      <li>
-        <p><strong> Redoc contributors</strong>. Contributor. 
-        <br /><small>see inst/credits/redoc.md</small></p>
-      </li>
-      <li>
-        <p><strong>L. Peter Deutsch</strong>. Contributor. 
-        <br /><small>src/md5.h</small></p>
-      </li>
-      <li>
-        <p><strong>Martin Purschke</strong>. Contributor. 
-        <br /><small>src/md5.h</small></p>
-      </li>
-      <li>
-        <p><strong> Aladdin Enterprises</strong>. Copyright holder. 
-        <br /><small>src/md5.h</small></p>
-      </li>
-      <li>
-        <p><strong>Maëlle Salmon</strong>. Contributor. <a href='https://orcid.org/0000-0002-2815-0399' target='orcid.widget' aria-label='ORCID'><span class='fab fa-orcid orcid' aria-hidden='true'></span></a>
-        </p>
-      </li>
-    </ul>
+    <div class="ref-description">
+    <p>To perform an automatic acknowledgement and log in for a
+local OAuth2.0 app, run by httr, wrap the expression that
+obtains the OAuth2.0 token in <code>oauth2_httr_login()</code>.</p>
+    </div>
+
+    <pre class="usage"><span class='fu'>oauth2_httr_login</span><span class='op'>(</span><span class='va'>expr</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>expr</th>
+      <td><p>Expression that calls <code><a href='https://httr.r-lib.org/reference/oauth2.0_token.html'>httr::oauth2.0_token()</a></code>,
+either directly, or indirectly.</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The return value of <code>expr</code>.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>In interactive sessions, <code>oauth2_httr_login()</code> overrides the
+<code>browser</code> option, and when httr opens a browser page, it
+calls <code><a href='oauth2_login.html'>oauth2_login()</a></code> in a subprocess.</p>
+<p>In non-interactive sessions, httr does not open a browser page,
+only messages the user to do it manually. <code>oauth2_httr_login()</code>
+listens for these messages, and calls <code><a href='oauth2_login.html'>oauth2_login()</a></code> in a
+subprocess.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>See <code>?vignette("oauth", package = "webfakes")</code> for a case
+study that uses this function.</p>
+<p>Other OAuth2.0 functions: 
+<code><a href='oauth2_login.html'>oauth2_login</a>()</code>,
+<code><a href='oauth2_resource_app.html'>oauth2_resource_app</a>()</code>,
+<code><a href='oauth2_third_party_app.html'>oauth2_third_party_app</a>()</code></p></div>
 
   </div>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
+  </div>
 </div>
-
 
 
       <footer>

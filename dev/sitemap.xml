@@ -43,6 +43,18 @@
     <loc>https://r-lib.github.io/webfakes//reference/new_regexp.html</loc>
   </url>
   <url>
+    <loc>https://r-lib.github.io/webfakes//reference/oauth2_httr_login.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes//reference/oauth2_login.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes//reference/oauth2_resource_app.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes//reference/oauth2_third_party_app.html</loc>
+  </url>
+  <url>
     <loc>https://r-lib.github.io/webfakes//reference/server_opts.html</loc>
   </url>
   <url>
@@ -65,5 +77,8 @@
   </url>
   <url>
     <loc>https://r-lib.github.io/webfakes//articles/introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes//articles/oauth.html</loc>
   </url>
 </urlset>
