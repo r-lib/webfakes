@@ -1,5 +1,5 @@
 Package: webfakes
-Title: Lightweight Web Server for Testing
+Title: Fake Web Apps for HTTP testing
 Version: 1.1.0.9000
 Authors@R: 
     c(person(given = "Gábor",
@@ -32,7 +32,7 @@ Authors@R:
              comment = c(ORCID = "0000-0002-2815-0399")))
 Description: Create a web app that makes it easier to test web clients
   without using the internet. It includes a web app framework with path
-  matching and parameters and templates. Can parse various 'HTTP' request
+  matching, parameters and templates. Can parse various 'HTTP' request
   bodies. Can send 'JSON' data or files from the disk. Includes a web app
   that implements the <https://httpbin.org> web service.
 License: MIT + file LICENSE
