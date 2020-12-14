@@ -69,3 +69,11 @@ reference:
   - oauth2_login
   - oauth2_resource_app
   - oauth2_third_party_app
+
+- title: CRAN app
+  contents:
+  - cran_app
+
+- title: Utility functions
+  contents:
+  - ids

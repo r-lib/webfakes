@@ -43,6 +43,7 @@ BugReports: https://github.com/r-lib/webfakes/issues
 RoxygenNote: 7.1.1.9000
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
+Depends: R (>= 3.3.0)
 Imports:
     stats,
     tools,
