@@ -8,7 +8,7 @@
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/gaborcsardi/pressr/workflows/R-CMD-check/badge.svg)](https://github.com/gaborcsardi/pressr/actions)
+status](https://github.com/r-lib/webfakes/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/webfakes/actions)
 
 <!-- badges: end -->
 
