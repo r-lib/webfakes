@@ -1,6 +1,6 @@
 Package: webfakes
 Title: Fake Web Apps for HTTP Testing
-Version: 1.1.1
+Version: 1.1.0.9000
 Authors@R: 
     c(person(given = "Gábor",
              family = "Csárdi",
