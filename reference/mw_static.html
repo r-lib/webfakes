@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Middleware function to serve static files — mw_static • presser</title>
+<title>Middleware function to serve static files — mw_static • webfakes</title>
 
 
 <!-- jquery -->
@@ -75,8 +75,8 @@ the rest of the handlers are still called." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <a class="navbar-link" href="../index.html">webfakes</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -87,6 +87,9 @@ the rest of the handlers are still called." />
 </li>
 <li>
   <a href="../articles/how-to.html">How-to</a>
+</li>
+<li>
+  <a href="../articles/glossary.html">Glossary</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -102,7 +105,7 @@ the rest of the handlers are still called." />
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -112,8 +115,8 @@ the rest of the handlers are still called." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/gaborcsardi/presser/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/r-lib/webfakes/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -131,7 +134,7 @@ the rest of the handlers are still called." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Middleware function to serve static files</h1>
-    <small class="dont-index">Source: <a href='https://github.com/gaborcsardi/presser/blob/master/R/mw-static.R'><code>R/mw-static.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/mw-static.R'><code>R/mw-static.R</code></a></small>
     <div class="hidden name"><code>mw_static.Rd</code></div>
     </div>
 
@@ -143,7 +146,7 @@ functions will not be called. If a file was not found, however,
 the rest of the handlers are still called.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mw_static</span>(<span class='kw'>root</span>, set_headers = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>mw_static</span><span class='op'>(</span><span class='va'>root</span>, set_headers <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,19 +169,20 @@ supports.</p></td>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other middleware: 
-<code>mw_etag()</code>,
-<code>mw_json()</code>,
-<code>mw_log()</code>,
-<code>mw_multipart()</code>,
-<code>mw_raw()</code>,
-<code>mw_text()</code>,
-<code>mw_urlencoded()</code></p></div>
+<code><a href='mw_etag.html'>mw_etag</a>()</code>,
+<code><a href='mw_json.html'>mw_json</a>()</code>,
+<code><a href='mw_log.html'>mw_log</a>()</code>,
+<code><a href='mw_multipart.html'>mw_multipart</a>()</code>,
+<code><a href='mw_raw.html'>mw_raw</a>()</code>,
+<code><a href='mw_text.html'>mw_text</a>()</code>,
+<code><a href='mw_urlencoded.html'>mw_urlencoded</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>root</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(package = <span class='st'>"presser"</span>, <span class='st'>"examples"</span>, <span class='st'>"static"</span>, <span class='st'>"public"</span>)
-<span class='kw'>app</span> <span class='op'>&lt;-</span> <span class='fu'>new_app</span>()
-<span class='kw'>app</span><span class='op'>$</span><span class='fu'>use</span>(<span class='fu'>mw_static</span>(root = <span class='kw'>root</span>))
-<span class='kw'>app</span></div><div class='output co'>#&gt; &lt;presser_app&gt;
+    <pre class="examples"><div class='input'><span class='va'>root</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>package <span class='op'>=</span> <span class='st'>"webfakes"</span>, <span class='st'>"examples"</span>, <span class='st'>"static"</span>, <span class='st'>"public"</span><span class='op'>)</span>
+<span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>app</span><span class='op'>$</span><span class='fu'>use</span><span class='op'>(</span><span class='fu'>mw_static</span><span class='op'>(</span>root <span class='op'>=</span> <span class='va'>root</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>app</span>
+</div><div class='output co'>#&gt; &lt;webfakes_app&gt;
 #&gt; routes:
 #&gt;   use *
 #&gt; fields and methods:
@@ -192,7 +196,7 @@ supports.</p></td>
 #&gt;   put(path, ...)         # add route for PUT
 #&gt;   use(...)               # add middleware
 #&gt;   locals                 # app-wide shared data
-#&gt; # see ?presser_app for all methods</div></pre>
+#&gt; # see ?webfakes_app for all methods</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -208,7 +212,7 @@ supports.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

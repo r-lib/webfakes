@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Run a presser app in another process — new_app_process • presser</title>
+<title>Run a webfakes app in another process — new_app_process • webfakes</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Run a presser app in another process — new_app_process" />
+<meta property="og:title" content="Run a webfakes app in another process — new_app_process" />
 <meta property="og:description" content="Runs an app in a subprocess, using callr::r_session." />
 
 
@@ -71,8 +71,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <a class="navbar-link" href="../index.html">webfakes</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -83,6 +83,9 @@
 </li>
 <li>
   <a href="../articles/how-to.html">How-to</a>
+</li>
+<li>
+  <a href="../articles/glossary.html">Glossary</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -98,7 +101,7 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -108,8 +111,8 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/gaborcsardi/presser/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/r-lib/webfakes/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -126,8 +129,8 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Run a presser app in another process</h1>
-    <small class="dont-index">Source: <a href='https://github.com/gaborcsardi/presser/blob/master/R/app-process.R'><code>R/app-process.R</code></a></small>
+    <h1>Run a webfakes app in another process</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/app-process.R'><code>R/app-process.R</code></a></small>
     <div class="hidden name"><code>new_app_process.Rd</code></div>
     </div>
 
@@ -135,20 +138,22 @@
     <p>Runs an app in a subprocess, using <a href='https://rdrr.io/pkg/callr/man/r_session.html'>callr::r_session</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_app_process</span>(
-  <span class='kw'>app</span>,
-  port = <span class='kw'>NULL</span>,
-  opts = <span class='fu'>server_opts</span>(remote = <span class='fl'>TRUE</span>),
-  process_timeout = <span class='fl'>5000</span>,
-  callr_opts = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>new_app_process</span><span class='op'>(</span>
+  <span class='va'>app</span>,
+  port <span class='op'>=</span> <span class='cn'>NULL</span>,
+  opts <span class='op'>=</span> <span class='fu'><a href='server_opts.html'>server_opts</a></span><span class='op'>(</span>remote <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+  start <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  auto_start <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  process_timeout <span class='op'>=</span> <span class='fl'>5000</span>,
+  callr_opts <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>app</th>
-      <td><p><code>presser_app</code> object, the web app to run.</p></td>
+      <td><p><code>webfakes_app</code> object, the web app to run.</p></td>
     </tr>
     <tr>
       <th>port</th>
@@ -156,7 +161,18 @@
     </tr>
     <tr>
       <th>opts</th>
-      <td><p>Server options. See <code>server_opts()</code> for the defaults.</p></td>
+      <td><p>Server options. See <code><a href='server_opts.html'>server_opts()</a></code> for the defaults.</p></td>
+    </tr>
+    <tr>
+      <th>start</th>
+      <td><p>Whether to start the web server immediately. If this is
+<code>FALSE</code>, and <code>auto_start</code> is <code>TRUE</code>, then it is started as neeed.</p></td>
+    </tr>
+    <tr>
+      <th>auto_start</th>
+      <td><p>Whether to start the web server process automatically.
+If <code>TRUE</code> and the process is not running, then <code>$start()</code>,
+<code>$get_port()</code> and <code>$url()</code> start the process.</p></td>
     </tr>
     <tr>
       <th>process_timeout</th>
@@ -172,16 +188,18 @@ when setting up the subprocess.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>presser_app_process</code> object.</p><h3>Methods</h3>
+    <p>A <code>webfakes_app_process</code> object.</p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Methods</h3>
 
 
-<p>The <code>presser_app_process</code> class has the following methods:<div class="r"></p><pre><span class='fu'>get_app</span>()
-<span class='fu'>get_port</span>()
-<span class='fu'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span>()
-<span class='fu'>get_state</span>()
-<span class='fu'>local_env</span>(<span class='kw'>envvars</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/connections.html'>url</a></span>(path = <span class='st'>"/"</span>, query = <span class='kw'>NULL</span>)</pre><p></div></p><ul>
-<li><p><code>envvars</code>: Named list of environment variables.</p></li>
+<p>The <code>webfakes_app_process</code> class has the following methods:<div class="r"></p><pre><span class='fu'>get_app</span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>get_port</span><span class='op'>(</span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>get_state</span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>local_env</span><span class='op'>(</span><span class='va'>envvars</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/connections.html'>url</a></span><span class='op'>(</span>path <span class='op'>=</span> <span class='st'>"/"</span>, query <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
+</pre><p></div></p><ul>
+<li><p><code>envvars</code>: Named list of environment variables. The <code>{url}</code> substring
+is replaced by the URL of the app.</p></li>
 <li><p><code>path</code>: Path to return the URL for.</p></li>
 <li><p><code>query</code>: Additional query parameters, a named list, to add to the URL.</p></li>
 </ul>
@@ -198,22 +216,30 @@ already).</p></li>
 </ul>
 
 <p><code>local_env()</code> sets the given environment variables for the duration of
-the app process. It resets them in <code>$stop()</code>.</p>
+the app process. It resets them in <code>$stop()</code>. Webfakes replaces <code>{url}</code>
+in the value of the environment variables with the app URL, so you can
+set environment variables that point to the app.</p>
 <p><code><a href='https://rdrr.io/r/base/connections.html'>url()</a></code> returns the URL of the web app. You can use the <code>path</code>
 parameter to return a specific path.</p>
 
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='local_app_process.html'>local_app_process()</a></code> for automatically cleaning up the
+subprocess.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>app</span> <span class='op'>&lt;-</span> <span class='fu'>new_app</span>()
-<span class='kw'>app</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/base/get.html'>get</a></span>(<span class='st'>"/foo"</span>, <span class='fu'>function</span>(<span class='kw'>req</span>, <span class='kw'>res</span>) {
-  <span class='kw'>res</span><span class='op'>$</span><span class='fu'>send</span>(<span class='st'>"Hello world!"</span>)
-})
+    <pre class="examples"><div class='input'><span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>app</span><span class='op'>$</span><span class='fu'>get</span><span class='op'>(</span><span class='st'>"/foo"</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>req</span>, <span class='va'>res</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>res</span><span class='op'>$</span><span class='fu'>send</span><span class='op'>(</span><span class='st'>"Hello world!"</span><span class='op'>)</span>
+<span class='op'>}</span><span class='op'>)</span>
 
-<span class='kw'>proc</span> <span class='op'>&lt;-</span> <span class='fu'>new_app_process</span>(<span class='kw'>app</span>)
-<span class='kw'>url</span> <span class='op'>&lt;-</span> <span class='kw'>proc</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/base/connections.html'>url</a></span>(<span class='st'>"/foo"</span>)
-<span class='kw'>resp</span> <span class='op'>&lt;-</span> <span class='kw'>curl</span>::<span class='fu'><a href='https://jeroen.cran.dev/curl/reference/curl_fetch.html'>curl_fetch_memory</a></span>(<span class='kw'>url</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span>(<span class='kw'>resp</span><span class='op'>$</span><span class='kw'>content</span>))</div><div class='output co'>#&gt; Hello world!</div><div class='input'>
-<span class='kw'>proc</span><span class='op'>$</span><span class='fu'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span>()</div></pre>
+<span class='va'>proc</span> <span class='op'>&lt;-</span> <span class='fu'>new_app_process</span><span class='op'>(</span><span class='va'>app</span><span class='op'>)</span>
+<span class='va'>url</span> <span class='op'>&lt;-</span> <span class='va'>proc</span><span class='op'>$</span><span class='fu'>url</span><span class='op'>(</span><span class='st'>"/foo"</span><span class='op'>)</span>
+<span class='va'>resp</span> <span class='op'>&lt;-</span> <span class='fu'>curl</span><span class='fu'>::</span><span class='fu'><a href='https://jeroen.cran.dev/curl/reference/curl_fetch.html'>curl_fetch_memory</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='va'>resp</span><span class='op'>$</span><span class='va'>content</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Hello world!</div><div class='input'>
+<span class='va'>proc</span><span class='op'>$</span><span class='kw'>stop</span><span class='op'>(</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -229,7 +255,7 @@ parameter to return a specific path.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Middleware that add an Etag header to the response — mw_etag • webfakes</title>
+<title>Helper function to use httr's OAuth2.0 functions
+non-interactively, e.g. in test cases — oauth2_httr_login • webfakes</title>
 
 
 <!-- jquery -->
@@ -39,8 +40,11 @@
 
 
 
-<meta property="og:title" content="Middleware that add an Etag header to the response — mw_etag" />
-<meta property="og:description" content="Middleware that add an Etag header to the response" />
+<meta property="og:title" content="Helper function to use httr's OAuth2.0 functions
+non-interactively, e.g. in test cases — oauth2_httr_login" />
+<meta property="og:description" content="To perform an automatic acknowledgement and log in for a
+local OAuth2.0 app, run by httr, wrap the expression that
+obtains the OAuth2.0 token in oauth2_httr_login()." />
 
 
 
@@ -129,60 +133,51 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Middleware that add an <code>Etag</code> header to the response</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/mw-etag.R'><code>R/mw-etag.R</code></a></small>
-    <div class="hidden name"><code>mw_etag.Rd</code></div>
+    <h1>Helper function to use httr's OAuth2.0 functions
+non-interactively, e.g. in test cases</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/oauth.R'><code>R/oauth.R</code></a></small>
+    <div class="hidden name"><code>oauth2_httr_login.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Middleware that add an <code>Etag</code> header to the response</p>
+    <p>To perform an automatic acknowledgement and log in for a
+local OAuth2.0 app, run by httr, wrap the expression that
+obtains the OAuth2.0 token in <code>oauth2_httr_login()</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mw_etag</span><span class='op'>(</span>algorithm <span class='op'>=</span> <span class='st'>"crc32"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>oauth2_httr_login</span><span class='op'>(</span><span class='va'>expr</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>algorithm</th>
-      <td><p>Checksum algorithm to use. Only <code>"crc32"</code> is
-implemented currently.</p></td>
+      <th>expr</th>
+      <td><p>Expression that calls <code><a href='https://httr.r-lib.org/reference/oauth2.0_token.html'>httr::oauth2.0_token()</a></code>,
+either directly, or indirectly.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Handler function.</p>
+    <p>The return value of <code>expr</code>.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>In interactive sessions, <code>oauth2_httr_login()</code> overrides the
+<code>browser</code> option, and when httr opens a browser page, it
+calls <code><a href='oauth2_login.html'>oauth2_login()</a></code> in a subprocess.</p>
+<p>In non-interactive sessions, httr does not open a browser page,
+only messages the user to do it manually. <code>oauth2_httr_login()</code>
+listens for these messages, and calls <code><a href='oauth2_login.html'>oauth2_login()</a></code> in a
+subprocess.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other middleware: 
-<code><a href='mw_json.html'>mw_json</a>()</code>,
-<code><a href='mw_log.html'>mw_log</a>()</code>,
-<code><a href='mw_multipart.html'>mw_multipart</a>()</code>,
-<code><a href='mw_raw.html'>mw_raw</a>()</code>,
-<code><a href='mw_static.html'>mw_static</a>()</code>,
-<code><a href='mw_text.html'>mw_text</a>()</code>,
-<code><a href='mw_urlencoded.html'>mw_urlencoded</a>()</code></p></div>
+    <div class='dont-index'><p>See <code>?vignette("oauth", package = "webfakes")</code> for a case
+study that uses this function.</p>
+<p>Other OAuth2.0 functions: 
+<code><a href='oauth2_login.html'>oauth2_login</a>()</code>,
+<code><a href='oauth2_resource_app.html'>oauth2_resource_app</a>()</code>,
+<code><a href='oauth2_third_party_app.html'>oauth2_third_party_app</a>()</code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>app</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app.html'>new_app</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='va'>app</span><span class='op'>$</span><span class='fu'>use</span><span class='op'>(</span><span class='fu'>mw_etag</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>app</span>
-</div><div class='output co'>#&gt; &lt;webfakes_app&gt;
-#&gt; routes:
-#&gt;   use *
-#&gt; fields and methods:
-#&gt;   all(path, ...)         # add route for *all* HTTP methods
-#&gt;   delete(path, ...)      # add route for DELETE
-#&gt;   engine(ext, engine)    # add template engine for file extension
-#&gt;   head(path, ...)        # add route for HEAD
-#&gt;   listen(port)           # start web app on port
-#&gt;   patch(path, ...)       # add route for PATCH
-#&gt;   post(path, ...)        # add route for POST
-#&gt;   put(path, ...)         # add route for PUT
-#&gt;   use(...)               # add middleware
-#&gt;   locals                 # app-wide shared data
-#&gt; # see ?webfakes_app for all methods</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

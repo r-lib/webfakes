@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • presser</title>
+<title>Function reference • webfakes</title>
 
 
 <!-- jquery -->
@@ -70,8 +70,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <a class="navbar-link" href="../index.html">webfakes</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -82,6 +82,9 @@
 </li>
 <li>
   <a href="../articles/how-to.html">How-to</a>
+</li>
+<li>
+  <a href="../articles/glossary.html">Glossary</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -97,7 +100,7 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -107,8 +110,8 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/gaborcsardi/presser/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/r-lib/webfakes/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -157,33 +160,39 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="presser_request.html">presser_request</a></code> </p>
+          <p><code><a href="webfakes_request.html">webfakes_request</a></code> </p>
         </td>
-        <td><p>A presser request object</p></td>
+        <td><p>A webfakes request object</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="presser_response.html">presser_response</a></code> </p>
+          <p><code><a href="webfakes_response.html">webfakes_response</a></code> </p>
         </td>
-        <td><p>A presser response object</p></td>
+        <td><p>A webfakes response object</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="new_regexp.html">new_regexp()</a></code> </p>
         </td>
-        <td><p>Create a new regular expression to use in presser routes</p></td>
+        <td><p>Create a new regular expression to use in webfakes routes</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="new_app_process.html">new_app_process()</a></code> </p>
         </td>
-        <td><p>Run a presser app in another process</p></td>
+        <td><p>Run a webfakes app in another process</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="local_app_process.html">local_app_process()</a></code> </p>
+        </td>
+        <td><p>App process that is cleaned up automatically</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="server_opts.html">server_opts()</a></code> </p>
         </td>
-        <td><p>Presser web server options</p></td>
+        <td><p>Webfakes web server options</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -297,6 +306,45 @@
         </td>
         <td><p>Generic web app for testing HTTP clients</p></td>
       </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-oauth-apps" class="hasAnchor"><a href="#section-oauth-apps" class="anchor"></a>OAuth2.0 apps</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="oauth2_httr_login.html">oauth2_httr_login()</a></code> </p>
+        </td>
+        <td><p>Helper function to use httr's OAuth2.0 functions
+non-interactively, e.g. in test cases</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="oauth2_login.html">oauth2_login()</a></code> </p>
+        </td>
+        <td><p>Helper function to log in to a third party OAuth2.0 app without a
+browser</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="oauth2_resource_app.html">oauth2_resource_app()</a></code> </p>
+        </td>
+        <td><p>Fake OAuth 2.0 resource and authorization app</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="oauth2_third_party_app.html">oauth2_third_party_app()</a></code> </p>
+        </td>
+        <td><p>App representing the third-party app</p></td>
+      </tr>
     </tbody>
     </table>
   </div>
@@ -315,7 +363,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Presser web server options — server_opts • presser</title>
+<title>Webfakes web server options — server_opts • webfakes</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Presser web server options — server_opts" />
-<meta property="og:description" content="Presser web server options" />
+<meta property="og:title" content="Webfakes web server options — server_opts" />
+<meta property="og:description" content="Webfakes web server options" />
 
 
 
@@ -71,8 +71,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">presser</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <a class="navbar-link" href="../index.html">webfakes</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -83,6 +83,9 @@
 </li>
 <li>
   <a href="../articles/how-to.html">How-to</a>
+</li>
+<li>
+  <a href="../articles/glossary.html">Glossary</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -98,7 +101,7 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
-      <a href="../articles/internals.html">Presser internals</a>
+      <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
 </li>
@@ -108,8 +111,8 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/gaborcsardi/presser/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/r-lib/webfakes/">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -126,33 +129,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Presser web server options</h1>
-    <small class="dont-index">Source: <a href='https://github.com/gaborcsardi/presser/blob/master/R/server.R'><code>R/server.R</code></a></small>
+    <h1>Webfakes web server options</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/webfakes/blob/master/R/server.R'><code>R/server.R</code></a></small>
     <div class="hidden name"><code>server_opts.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Presser web server options</p>
+    <p>Webfakes web server options</p>
     </div>
 
-    <pre class="usage"><span class='fu'>server_opts</span>(
-  remote = <span class='fl'>FALSE</span>,
-  port = <span class='kw'>NULL</span>,
-  num_threads = <span class='fl'>1</span>,
-  interfaces = <span class='st'>"127.0.0.1"</span>,
-  enable_keep_alive = <span class='fl'>FALSE</span>,
-  access_log_file = <span class='kw'>remote</span>,
-  error_log_file = <span class='fl'>TRUE</span>,
-  tcp_nodelay = <span class='fl'>FALSE</span>,
-  throttle = <span class='fl'>Inf</span>
-)</pre>
+    <pre class="usage"><span class='fu'>server_opts</span><span class='op'>(</span>
+  remote <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  port <span class='op'>=</span> <span class='cn'>NULL</span>,
+  num_threads <span class='op'>=</span> <span class='fl'>1</span>,
+  interfaces <span class='op'>=</span> <span class='st'>"127.0.0.1"</span>,
+  enable_keep_alive <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  access_log_file <span class='op'>=</span> <span class='va'>remote</span>,
+  error_log_file <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  tcp_nodelay <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  throttle <span class='op'>=</span> <span class='cn'>Inf</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>remote</th>
-      <td><p>Meta-option. If set to <code>TRUE</code>, presser uses slightly
+      <td><p>Meta-option. If set to <code>TRUE</code>, webfakes uses slightly
 different defaults, that are more appropriate for a background
 server process.</p></td>
     </tr>
@@ -171,7 +174,7 @@ parallel or you make concurrent HTTP requests.</p></td>
       <th>interfaces</th>
       <td><p>The network interfaces to listen on. Being a test
 web server, it defaults to the localhost. Only bind to a public
-interface if you know what you are doing. presser was not designed
+interface if you know what you are doing. webfakes was not designed
 to serve public web pages.</p></td>
     </tr>
     <tr>
@@ -203,8 +206,8 @@ as connection.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>List of options that can be passed to <code>presser_app$listen()</code>
-(see <code>new_app()</code>), and <code>new_app_process()</code>.</p>
+    <p>List of options that can be passed to <code>webfakes_app$listen()</code>
+(see <code><a href='new_app.html'>new_app()</a></code>), and <code><a href='new_app_process.html'>new_app_process()</a></code>.</p>
     <h2 class="hasAnchor" id="logging"><a class="anchor" href="#logging"></a>Logging</h2>
 
     
@@ -214,16 +217,17 @@ as connection.</p></td>
 <li><p>For <code>error_log_file</code>, <code>TRUE</code> means <code>&lt;log-dir&gt;/error.log</code>.</p></li>
 </ul>
 
-<p><code>&lt;log-dir&gt;</code> is set to the contents of the <code>PRESSER_LOG_DIR</code>
+<p><code>&lt;log-dir&gt;</code> is set to the contents of the <code>WEBFAKES_LOG_DIR</code>
 environment variable, if it is set. Otherwise it is set to
-<code>&lt;tmpdir&gt;/presser</code> for local apps and <code>&lt;tmpdir&gt;/&lt;pid&gt;/presser</code> for
+<code>&lt;tmpdir&gt;/webfakes</code> for local apps and <code>&lt;tmpdir&gt;/&lt;pid&gt;/webfakes</code> for
 remote apps (started with <code>new_app_procss()</code>).</p>
 <p><code>&lt;tmpdir&gt;</code> is the session temporary directory of the <em>main process</em>.</p>
 <p><code>&lt;pid&gt;</code> is the process id of the subprocess.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># See the defaults</span>
-<span class='fu'>server_opts</span>()</div><div class='output co'>#&gt; $remote
+<span class='fu'>server_opts</span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $remote
 #&gt; [1] FALSE
 #&gt; 
 #&gt; $port
@@ -242,7 +246,7 @@ remote apps (started with <code>new_app_procss()</code>).</p>
 #&gt; [1] NA
 #&gt; 
 #&gt; $error_log_file
-#&gt; [1] "/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//RtmpVIKRne/presser/error.log"
+#&gt; [1] "/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T//Rtmpf1cwmd/webfakes/error.log"
 #&gt; 
 #&gt; $tcp_nodelay
 #&gt; [1] FALSE
@@ -265,7 +269,7 @@ remote apps (started with <code>new_app_procss()</code>).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
