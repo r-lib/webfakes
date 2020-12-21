@@ -11,4 +11,11 @@ test_that("cran_app", {
   expect_silent(
     cnt <- read.dcf(rc <- rawConnection(resp$content))
   )
+
+  expect_silent(
+    ap <- utils::available.packages(
+      repos = c(CRAN = cran$url("/CRAN")),
+      ignore_repo_cache = TRUE
+    )
+  )
 })
