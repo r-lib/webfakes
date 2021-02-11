@@ -77,21 +77,25 @@ new_app_process <- function(app, port = NULL,
                             opts = server_opts(remote = TRUE),
                             start = FALSE, auto_start = TRUE,
                             process_timeout = 5000,
-                            callr_opts = NULL) {
+                            callr_opts = NULL, app_name = NULL) {
 
-  app; port; opts; start; auto_start; process_timeout; callr_opts
+  app; port; opts; start; auto_start; process_timeout; callr_opts; app_name
 
   self <- new_object(
     "webfakes_app_process",
+    app_name = app_name,
 
     start = function() {
       self$.app <- app
       callr_opts <- do.call(callr::r_session_options, as.list(callr_opts))
+      r_opts <- options("fixtures.update")
       self$.process <- callr::r_session$new(callr_opts, wait = TRUE)
       self$.process$call(
-        args = list(app, port, opts),
-        function(app, port, opts) {
+        args = list(app, port, opts, r_opts),
+        function(app, port, opts, r_opts) {
           library(webfakes)
+          options(webfakes = TRUE)
+          options(r_opts)
           .GlobalEnv$app <- app
           app$listen(port = port, opts = opts)
         }
