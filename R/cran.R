@@ -45,7 +45,6 @@ random_license <- function(n = 1) {
 # TODO:
 # * R versions, platforms and binaries
 # * serve the actual package files
-# * configure which of `PACKAGES*` is served
 
 cran_app <- function() {
 
@@ -67,7 +66,8 @@ cran_app <- function() {
     License = random_license,
     fields = c(
       "Package", "Version", "Depends", "Imports", "Suggests", "Enhances",
-      "License", "MD5sum", "NeedsCompilation")
+      "License", "MD5sum", "NeedsCompilation"),
+    packages_files = c("PACKAGES", "PACKAGES.gz", "PACKAGES.rds")
   )
 
   temp <- NULL
@@ -82,10 +82,24 @@ cran_app <- function() {
   get_meta_file <- function(repo, file) {
     temp <- temp %||% make_temp()
     path <- file.path(temp, repo, file)
-    if (!file.exists(path)) {
-      mkdirp(dirname(path))
-      fields <- intersect(config$fields, colnames(repos[[repo]]$packages))
-      write.dcf(repos[[repo]]$packages[, fields], file = path)
+    types <- config$packages_files
+
+    if (! basename(file) %in% types) return(NA_character_)
+    if (file.exists(path)) return(path)
+
+    mkdirp(dirname(path))
+    fields <- intersect(config$fields, colnames(repos[[repo]]$packages))
+    db <- repos[[repo]]$packages[, fields]
+    if (basename(file) == "PACKAGES") {
+      write.dcf(db, file = path)
+    } else if (basename(file) == "PACKAGES.gz") {
+      con <- gzfile(path, "wt")
+      on.exit(close(con), add = TRUE)
+      write.dcf(db, con)
+    } else if (basename(file) == "PACKAGES.rds") {
+      db <- as.matrix(db)
+      rownames(db) <- db[, "Package"]
+      saveRDS(db, path, compress = "xz")
     }
 
     path
@@ -99,7 +113,7 @@ cran_app <- function() {
 
   app$get_config <- function(key) config[[key]]
 
-  app$set_config <- function(key, value) config[[key]] <- value
+  app$set_config <- function(key, value) config[[key]] <<- value
 
   app$add_repo <- function(
       name = "CRAN",
@@ -134,7 +148,11 @@ cran_app <- function() {
     paste0("/:repo/src/contrib/PACKAGES", c("", ".gz", ".rds")),
     function(req, res) {
       path <- get_meta_file(req$params$repo, basename(req$url))
-      res$send_file(path, root = "/")
+      if (is.na(path)) {
+        res$send_status(404)
+      } else {
+        res$send_file(path, root = "/")
+      }
   })
 
   app$get(
