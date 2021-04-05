@@ -110,6 +110,8 @@ static int webfakes_clock_gettime(int clk_id, struct timespec *t) {
   }
   return -1; /* EINVAL - Clock ID is unknown */
 }
+#else
+#define webfakes_clock_gettime(a,b) clock_gettime(a,b)
 #endif
 
 /* --------------------------------------------------------------------- */
