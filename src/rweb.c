@@ -65,6 +65,54 @@ void R_init_webfakes(DllInfo *dll) {
 }
 
 /* --------------------------------------------------------------------- */
+/* for older macOS versions                                              */
+/* --------------------------------------------------------------------- */
+
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#include <mach/mach_time.h>
+#include <sys/time.h>
+static int webfakes_clock_gettime(int clk_id, struct timespec *t) {
+  memset(t, 0, sizeof(*t));
+  if (clk_id == CLOCK_REALTIME) {
+    struct timeval now;
+    int rv = gettimeofday(&now, NULL);
+    if (rv) {
+      return rv;
+    }
+    t->tv_sec = now.tv_sec;
+    t->tv_nsec = now.tv_usec * 1000;
+    return 0;
+
+  } else if (clk_id == CLOCK_MONOTONIC) {
+    static uint64_t clock_start_time = 0;
+    static mach_timebase_info_data_t timebase_ifo = {0, 0};
+
+    uint64_t now = mach_absolute_time();
+
+    if (clock_start_time == 0) {
+      kern_return_t mach_status = mach_timebase_info(&timebase_ifo);
+
+      /* appease "unused variable" warning for release builds */
+      (void)mach_status;
+
+      clock_start_time = now;
+    }
+
+    now = (uint64_t)((double)(now - clock_start_time)
+                     * (double)timebase_ifo.numer
+                     / (double)timebase_ifo.denom);
+
+    t->tv_sec = now / 1000000000;
+    t->tv_nsec = now % 1000000000;
+    return 0;
+  }
+  return -1; /* EINVAL - Clock ID is unknown */
+}
+#endif
+
+/* --------------------------------------------------------------------- */
 /* internals                                                             */
 /* --------------------------------------------------------------------- */
 
@@ -454,7 +502,7 @@ SEXP server_poll(SEXP server, SEXP clean) {
 
   struct timespec limit;
   while (srv_data->nextconn == NULL) {
-    clock_gettime(CLOCK_REALTIME, &limit);
+    webfakes_clock_gettime(CLOCK_REALTIME, &limit);
     limit.tv_nsec += 50 * 1000 * 1000;
     if (limit.tv_nsec >= 1000 * 1000 * 1000) {
       limit.tv_sec += 1;
