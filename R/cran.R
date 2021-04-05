@@ -35,6 +35,22 @@ random_license <- function(n = 1) {
   sample(names(license_hist), n, replace = TRUE, prob = license_hist)
 }
 
+random_depends <- function(old, new) {
+  browser()
+}
+
+random_imports <- function(old, new) {
+  NULL
+}
+
+random_suggests <- function(old, new) {
+  NULL
+}
+
+random_enhances <- function(old, new) {
+  NULL
+}
+
 #' Fake app for CRAN
 #'
 #' @return webfakes app that fakes the web servers of one or more
@@ -43,6 +59,7 @@ random_license <- function(n = 1) {
 #' @export
 
 # TODO:
+# * Dependencies
 # * R versions, platforms and binaries
 # * serve the actual package files
 
@@ -64,6 +81,10 @@ cran_app <- function() {
     `Authors@R` = random_authors_at_r,
     Description = random_description,
     License = random_license,
+    Depends = random_depends,
+    Imports = random_imports,
+    Suggests = random_suggests,
+    Enhances = random_enhances,
     fields = c(
       "Package", "Version", "Depends", "Imports", "Suggests", "Enhances",
       "License", "MD5sum", "NeedsCompilation"),
@@ -138,6 +159,13 @@ cran_app <- function() {
     fds$Description  <- fds$Description  %||% config$Description(num_pkgs)
     fds$License      <- fds$License      %||% config$License(num_pkgs)
     meta <- data.frame(stringsAsFactors = FALSE, fds)
+
+    pkgs <- repos[[repo]]$packages
+    meta$Depends     <- fds$Depends      %||% config$Depends(pkgs, meta)
+    meta$Imports     <- fds$Imports      %||% config$Imports(pkgs, meta)
+    meta$Suggests    <- fds$Suggests     %||% config$Suggests(pkgs, meta)
+    meta$Enhances    <- fds$Enhances     %||% config$Enhances(pkgs, meta)
+
     repos[[repo]]$packages <<- rbind(repos[[repo]]$packages, meta)
   }
 
