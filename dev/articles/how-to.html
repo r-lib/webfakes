@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">webfakes</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.2.9000</span>
       </span>
     </div>
 
@@ -160,13 +160,13 @@ Suggests:
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>
 <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49608/"</span></code></pre></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49519/"</span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2021-04-05 10:23:36"</span></code></pre></div>
+<span class="co">#&gt; [1] "2021-04-05 11:15:59"</span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
@@ -196,7 +196,7 @@ Suggests:
     class <span class="op">=</span> <span class="st">"http_404"</span>
   <span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
+<span class="co">#&gt; Test passed 😸</span></code></pre></div>
 <p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> your <code>setup-http.R</code> file for this. Alternatively, you can start the app process in a helper file. See “How do I start the app when writing the tests?” just below.</p>
 </div>
 <div id="how-do-i-start-the-app-when-writing-the-tests" class="section level2">
@@ -231,7 +231,7 @@ Suggests:
   <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; Test passed 🎉</span></code></pre></div>
+<span class="co">#&gt; Test passed 😸</span></code></pre></div>
 </div>
 <div id="can-i-use-an-app-for-a-single-testthat-test" class="section level2">
 <h2 class="hasAnchor">
@@ -279,11 +279,11 @@ Suggests:
 <code class="sourceCode R"><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">flaky</span><span class="op">)</span>
 <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html" class="external-link">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 1.9 seconds...</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 1.8 seconds...</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 4.5 seconds...</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49618/unstable]</span>
-<span class="co">#&gt;   Date: 2021-04-05 10:23</span>
+<span class="co">#&gt; Request failed [401]. Retrying in 1.1 seconds...</span>
+<span class="co">#&gt; Request failed [401]. Retrying in 2.9 seconds...</span>
+<span class="co">#&gt; Request failed [401]. Retrying in 7.2 seconds...</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49527/unstable]</span>
+<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 17 B</span></code></pre></div>
@@ -330,8 +330,8 @@ Suggests:
 <span class="op">)</span>
 <span class="op">}</span>
 <span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49625/packages?name=vcr]</span>
-<span class="co">#&gt;   Date: 2021-04-05 10:23</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49532/packages?name=vcr]</span>
+<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 18 B</span>
@@ -344,8 +344,8 @@ Suggests:
 <span class="co">#&gt; [1] "vcr"</span>
 
 <span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49625/packages?name=httptest]</span>
-<span class="co">#&gt;   Date: 2021-04-05 10:23</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49532/packages?name=httptest]</span>
+<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 29 B</span>
@@ -455,8 +455,8 @@ Suggests:
 <span class="co">#&gt; one is done</span>
 <span class="co">#&gt; one is done</span>
 <span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.002   0.000   1.306 </span>
-<span class="co">#&gt; Test passed 🥇</span></code></pre></div>
+<span class="co">#&gt;   0.002   0.001   1.739 </span>
+<span class="co">#&gt; Test passed 😀</span></code></pre></div>
 </div>
 <div id="how-to-make-sure-that-my-code-works-with-the-real-api" class="section level2">
 <h2 class="hasAnchor">
@@ -480,9 +480,9 @@ Suggests:
 <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.cran.dev/curl/reference/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">resp</span><span class="op">$</span><span class="va">times</span>
 <span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer </span>
-<span class="co">#&gt;      0.000000      0.000133      0.000334      0.000373      0.010749 </span>
+<span class="co">#&gt;      0.000000      0.000143      0.000341      0.000383      0.010233 </span>
 <span class="co">#&gt;         total </span>
-<span class="co">#&gt;      2.101311</span></code></pre></div>
+<span class="co">#&gt;      2.135624</span></code></pre></div>
 <p><code>throttle</code> gives the number of bytes per second, so downloading 200 random bytes from the fake app will take about 2 seconds.</p>
 </div>
   </div>
