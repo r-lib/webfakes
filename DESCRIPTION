@@ -36,10 +36,11 @@ Description: Create a web app that makes it easier to test web clients
   bodies. Can send 'JSON' data or files from the disk. Includes a web app
   that implements the <https://httpbin.org> web service.
 License: MIT + file LICENSE
-URL: https://r-lib.github.io/webfakes/,
+URL:
+    https://webfakes.r-lib.org/,
     https://github.com/r-lib/webfakes#readme
 BugReports: https://github.com/r-lib/webfakes/issues
-RoxygenNote: 7.1.1.9000
+RoxygenNote: 7.1.1.9001
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 Imports:

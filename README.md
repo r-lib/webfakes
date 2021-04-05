@@ -99,7 +99,7 @@ test_that("HTTP errors are caught", {
 
 ## Documentation
 
-See <https://r-lib.github.io/webfakes/>
+See <https://webfakes.r-lib.org>
 
 ## Links
 
