@@ -25,6 +25,8 @@ navbar:
     menu:
     - text: The builtin httpbin app's API
       href: httpbin.html
+    - text: OAuth2.0 webfakes apps
+      href: articles/oauth.html
     - text: Webfakes internals
       href: articles/internals.html
   - text: News
