@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">webfakes</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -60,6 +62,9 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
+      <a href="../articles/oauth.html">OAuth2.0 webfakes apps</a>
+    </li>
+    <li>
       <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
@@ -70,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/webfakes/">
+  <a href="https://github.com/r-lib/webfakes/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -91,7 +96,7 @@
       <h1 data-toc-skip>Webfakes internals</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/webfakes/blob/master/vignettes/internals.Rmd"><code>vignettes/internals.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/webfakes/blob/master/vignettes/internals.Rmd" class="external-link"><code>vignettes/internals.Rmd</code></a></small>
       <div class="hidden name"><code>internals.Rmd</code></div>
 
     </div>
@@ -129,7 +134,7 @@
 <li>Web server worker threads.</li>
 </ol>
 <p>The main rule here is that only the main R thread can call a function from the R API. The civetweb callbacks run on the civetweb threads, so they cannot call any R API. Currently we only use the <code>begin_request()</code> callback, and this is called from the request threads. So we need to synchronize between the request threads and the main R thread.</p>
-<p>We essentially have a producer-consumer problem, with a single consumer, the main R thread, and multiple producers, the request threads. Having a single consumer means that the queue to store the jobs is of length one. This is a good guide on how to solve such a problem: <a href="https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html" class="uri">https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html</a></p>
+<p>We essentially have a producer-consumer problem, with a single consumer, the main R thread, and multiple producers, the request threads. Having a single consumer means that the queue to store the jobs is of length one. This is a good guide on how to solve such a problem: <a href="https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html" class="external-link uri">https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html</a></p>
 <p>We need two conditions, to signal that 1) there is something to work on, and that 2) new work may come in. We also need a mutex to be able to wait on these conditions. These are stored in the <code>user_data</code> of the civetweb server instance:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">struct</span> server_user_data {</span>
 <span id="cb1-2"><a href="#cb1-2"></a>  ...</span>
@@ -174,11 +179,11 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">while</span> <span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">req</span> <span class="op">&lt;-</span> <span class="fu">server_poll</span><span class="op">(</span><span class="va">srv</span><span class="op">)</span>
-  <span class="kw"><a href="https://rdrr.io/r/base/conditions.html">tryCatch</a></span><span class="op">(</span>
+  <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span>
     <span class="va">self</span><span class="op">$</span><span class="fu">.process_request</span><span class="op">(</span><span class="va">req</span><span class="op">)</span>,
     error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">err</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">err</span><span class="op">)</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/showConnections.html">stderr</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-      <span class="fu">response_send_error</span><span class="op">(</span><span class="va">req</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">err</span><span class="op">)</span>, <span class="fl">500L</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">err</span><span class="op">)</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/showConnections.html" class="external-link">stderr</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+      <span class="fu">response_send_error</span><span class="op">(</span><span class="va">req</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">err</span><span class="op">)</span>, <span class="fl">500L</span><span class="op">)</span>
     <span class="op">}</span>
   <span class="op">)</span>
 <span class="op">}</span></code></pre></div>
@@ -206,7 +211,7 @@
 <p>We need to make sure that the server can be interrupted while waiting for new requests (i.e. the main R thread waiting on the <code>process_more</code> condition, see ‘Multithreading’ above). <code>pthread_cond_wait()</code> is interrupted by <code>SIGINT</code> on Unix, seemingly, but not on Windows, so we need to use <code>pthread_cond_timedwait()</code>. We currently check for interrupts every 50ms. If the server is interrupted at this point, no cleanup is needed needed, as it does not hold any resources. In fact the functions in <code>server.R</code> will keep the server intact, with all delayed responses, and it is possible to call <code>server_poll()</code> again. But the <code>app$listen()</code> method does clean up the server in this case. Maybe this will change in the future.</p>
 <p>In theory the C code cannot be interrupted at any other points. On the other hand the R API functions might error any time, so we do need proper cleanup everywhere, see the ‘Resource cleanup’ section below.</p>
 <p>If the R code is interrupted, the <code>server.R</code> functions do not need any cleanup. (In theory some error messages might get lost if the timing is extremely unfortunate and a <code>server.R</code> function is handling an error when the interrupt happens.)</p>
-<p>The <code>app$listen()</code> method cleans up the server in <code><a href="https://rdrr.io/r/base/on.exit.html">on.exit()</a></code>.</p>
+<p>The <code>app$listen()</code> method cleans up the server in <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code>.</p>
 </div>
 <div id="resource-cleanup" class="section level2">
 <h2 class="hasAnchor">
@@ -220,7 +225,7 @@
 <li>Signaling the <code>process_less</code> condition, to let other threads know that we are again ready to process requests.</li>
 </ul>
 <p>Other functions that need cleanup are the C functions that work on the response: <code>response_delay()</code>, <code>response_send_headers()</code>, <code>response_send()</code> and <code>response_write()</code>. These cleanups are very similar to the one for <code>server_poll()</code>.</p>
-<p>The finalizer of the server object takes care of cleaning up all resources associated with a server, including all request objects and request threads. This is also called by the <code>server_stop()</code> R function, which is in turn called by the <code><a href="https://rdrr.io/r/base/on.exit.html">on.exit()</a></code> on the <code>listen()</code> method. The finalizer uses the list of requests in the tag of the xptr object to walk over all requests, and finish all request threads.</p>
+<p>The finalizer of the server object takes care of cleaning up all resources associated with a server, including all request objects and request threads. This is also called by the <code>server_stop()</code> R function, which is in turn called by the <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code> on the <code>listen()</code> method. The finalizer uses the list of requests in the tag of the xptr object to walk over all requests, and finish all request threads.</p>
 <p>Thread that are sleeping because of a delayed response frequently check a server-wide shutdown flag, which the finalizer also sets, so these threads quit as well. Then the finalizer calls the civetweb function <code>mg_stop()</code>. <code>mg_stop()</code> has its own shutdown flag and waits for all request and worker threads to quit. Given that we just cleaned up all of them, there shouldn’t be too many, and if there were any just coming in, they’ll also observe out shutdown flag and quit quickly.</p>
 </div>
   </div>
@@ -236,11 +241,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://github.com/gaborcsardi">Gábor Csárdi</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://github.com/gaborcsardi" class="external-link external-link">Gábor Csárdi</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -248,6 +255,8 @@
 
   
 
+
+  
 
   </body>
 </html>

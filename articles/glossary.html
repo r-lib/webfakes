@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">webfakes</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -60,6 +62,9 @@
       <a href="../httpbin.html">The builtin httpbin app's API</a>
     </li>
     <li>
+      <a href="../articles/oauth.html">OAuth2.0 webfakes apps</a>
+    </li>
+    <li>
       <a href="../articles/internals.html">Webfakes internals</a>
     </li>
   </ul>
@@ -70,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/webfakes/">
+  <a href="https://github.com/r-lib/webfakes/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -91,7 +96,7 @@
       <h1 data-toc-skip>webfakes glossary</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/webfakes/blob/master/vignettes/glossary.Rmd"><code>vignettes/glossary.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/webfakes/blob/master/vignettes/glossary.Rmd" class="external-link"><code>vignettes/glossary.Rmd</code></a></small>
       <div class="hidden name"><code>glossary.Rmd</code></div>
 
     </div>
@@ -103,7 +108,7 @@
 <h2 class="hasAnchor">
 <a href="#app" class="anchor"></a>app</h2>
 <p>(Also: fake web app, webfakes app.) A web application that can be served by webfakes’s web server, typically in another process, an <em>app process</em>. Sometimes we call it a <em>fake</em> web app, to emphasize that we use it for testing real web apps and APIs.</p>
-<p>You can create a webfakes app with the <code><a href="../reference/new_app.html">new_app()</a></code> function. A webfakes app is an R object that you can save to disk with <code><a href="https://rdrr.io/r/base/readRDS.html">saveRDS()</a></code> , and you can also include it in your package.</p>
+<p>You can create a webfakes app with the <code><a href="../reference/new_app.html">new_app()</a></code> function. A webfakes app is an R object that you can save to disk with <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS()</a></code> , and you can also include it in your package.</p>
 <p>You can start an with its <code>$listen()</code> method. Since the main R process runs that test suite code, you usually run them in a subprocess, see <code><a href="../reference/new_app_process.html">new_app_process()</a></code> or <code><a href="../reference/local_app_process.html">local_app_process()</a></code>.</p>
 </div>
 <div id="app-process" class="section level2">
@@ -133,7 +138,7 @@
 <div id="httpbin-app" class="section level2">
 <h2 class="hasAnchor">
 <a href="#httpbin-app" class="anchor"></a>httpbin app</h2>
-<p>This is an example app, which implements the excellent <a href="https://httpbin.org/" class="uri">https://httpbin.org/</a> web service. You can use it to simulate certain HTTP responses. It is most handy for HTTP clients, but potentially useful for other tools as well.</p>
+<p>This is an example app, which implements the excellent <a href="https://httpbin.org/" class="external-link uri">https://httpbin.org/</a> web service. You can use it to simulate certain HTTP responses. It is most handy for HTTP clients, but potentially useful for other tools as well.</p>
 <p>Use <code><a href="../reference/httpbin_app.html">httpbin_app()</a></code> to create an instance of this app.</p>
 </div>
 <div id="middleware" class="section level2">
@@ -178,11 +183,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://github.com/gaborcsardi">Gábor Csárdi</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://github.com/gaborcsardi" class="external-link external-link">Gábor Csárdi</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
@@ -190,6 +197,8 @@
 
   
 
+
+  
 
   </body>
 </html>

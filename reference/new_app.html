@@ -45,6 +45,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -56,9 +58,18 @@
 
 
 
+<!-- dependencies from examples -->
+
+
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -72,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">webfakes</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -99,6 +110,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../httpbin.html">The builtin httpbin app's API</a>
+    </li>
+    <li>
+      <a href="../articles/oauth.html">OAuth2.0 webfakes apps</a>
     </li>
     <li>
       <a href="../articles/internals.html">Webfakes internals</a>
@@ -165,14 +179,14 @@ process, with the <code>$stop()</code> method of <code><a href='new_app_process.
 </ul>
 
 <p>The webfakes API is very much influenced by the
-<a href='http://expressjs.com/'>express.js</a> project.</p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Create web app objects</h3>
+<a href='http://expressjs.com/'>express.js</a> project.</p><h3 class='hasAnchor' id='create-web-app-objects'><a class='anchor' href='#create-web-app-objects'></a>Create web app objects</h3>
 <p><div class="r"></p><pre><span class='fu'>new_app</span><span class='op'>(</span><span class='op'>)</span>
 </pre><p></div></p>
 <p><code>new_app()</code> returns a <code>webfakes_app</code> object the has the methods listed
 on this page.</p>
 <p>An app is an environment with S3 class <code>webfakes_app</code>.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The handler stack</h3>
+<h3 class='hasAnchor' id='the-handler-stack'><a class='anchor' href='#the-handler-stack'></a>The handler stack</h3>
 
 
 <p>An app has a stack of handlers. Each handler can be a route or
@@ -186,7 +200,7 @@ or the response, and then the next handler in the stack is invoked.</p></li>
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Routes</h3>
+<h3 class='hasAnchor' id='routes'><a class='anchor' href='#routes'></a>Routes</h3>
 
 
 <p>The following methods define routes. Each method corresponds to the
@@ -212,7 +226,7 @@ names are always in lowercase.)</p>
 <p>If a request is not handled by any routes (or handler functions in
 general), then webfakes will send a simple HTTP 404 response.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Middleware</h3>
+<h3 class='hasAnchor' id='middleware'><a class='anchor' href='#middleware'></a>Middleware</h3>
 
 
 <p><code>app$use()</code> adds a middleware to the handler stack. A middleware is
@@ -236,7 +250,7 @@ to the bottom of the stack.</p></li>
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Handler functions</h3>
+<h3 class='hasAnchor' id='handler-functions'><a class='anchor' href='#handler-functions'></a>Handler functions</h3>
 
 
 <p>A handler function is a route or middleware. A handler function is
@@ -280,20 +294,20 @@ returns webfakes will look for the next handler in the stack.</p></li>
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Errors</h3>
+<h3 class='hasAnchor' id='errors'><a class='anchor' href='#errors'></a>Errors</h3>
 
 
 <p>If a handler function throws an error, then the web server will return
 a HTTP 500 <code>text/plain</code> response, with the error message as the
 response body.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Request and response objects</h3>
+<h3 class='hasAnchor' id='request-and-response-objects'><a class='anchor' href='#request-and-response-objects'></a>Request and response objects</h3>
 
 
 <p>See <a href='webfakes_request.html'>webfakes_request</a> and <a href='webfakes_response.html'>webfakes_response</a> for the methods of the
 request and response objects.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Path specification</h3>
+<h3 class='hasAnchor' id='path-specification'><a class='anchor' href='#path-specification'></a>Path specification</h3>
 
 
 <p>Routes are associated with one or more API paths. A path specification
@@ -306,7 +320,7 @@ must be in a list.)</p></li>
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Path parameters</h3>
+<h3 class='hasAnchor' id='path-parameters'><a class='anchor' href='#path-parameters'></a>Path parameters</h3>
 
 
 <p>Paths that are specified as parameterized strings or regular expressions
@@ -324,7 +338,7 @@ a named list.</p>
 regular expressions, the parameters are set according to the first
 matching one.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Templates</h3>
+<h3 class='hasAnchor' id='templates'><a class='anchor' href='#templates'></a>Templates</h3>
 
 
 <p>webfakes supports templates, using any template engine. It comes with
@@ -360,7 +374,7 @@ parameter, see the <code>$set_config()</code> method below.</p>
 response local variables (see <code>locals</code> in <a href='webfakes_response.html'>webfakes_response</a>), are
 available.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Starting and stopping</h3>
+<h3 class='hasAnchor' id='starting-and-stopping'><a class='anchor' href='#starting-and-stopping'></a>Starting and stopping</h3>
 <p><div class="r"></p><pre><span class='va'>app</span><span class='op'>$</span><span class='fu'>listen</span><span class='op'>(</span>port <span class='op'>=</span> <span class='cn'>NULL</span>, opts <span class='op'>=</span> <span class='fu'><a href='server_opts.html'>server_opts</a></span><span class='op'>(</span><span class='op'>)</span>, cleanup <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </pre><p></div></p><ul>
 <li><p><code>port</code>: port to listen on. When <code>NULL</code>, the operating system will
@@ -369,7 +383,7 @@ automatically select a free port.</p></li>
 list of options and their default values.</p></li>
 <li><p><code>cleanup</code>: stop the server (with an error) if the standard input
 of the process is closed. This is handy when the app runs in a
-<code><a href='https://rdrr.io/pkg/callr/man/r_session.html'>callr::r_session</a></code> subprocess, because it stops the app (and the
+<code><a href='https://callr.r-lib.org/reference/r_session.html'>callr::r_session</a></code> subprocess, because it stops the app (and the
 subprocess) if the main process has terminated.</p></li>
 </ul>
 
@@ -387,7 +401,7 @@ the webfakes web app is never reachable from the network.<div class="r"></p><pre
 <span class='op'>)</span>
 </pre><p></div></p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Logging</h3>
+<h3 class='hasAnchor' id='logging'><a class='anchor' href='#logging'></a>Logging</h3>
 
 
 <p>webfakes can write an access log that contains an entry for all incoming
@@ -409,7 +423,7 @@ where <code>&lt;tmpdir&gt;</code> is the session temporary directory of the
 
 <p>See <code><a href='server_opts.html'>server_opts()</a></code> for changing the default logging behavior.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Shared app data</h3>
+<h3 class='hasAnchor' id='shared-app-data'><a class='anchor' href='#shared-app-data'></a>Shared app data</h3>
 <p><div class="r"></p><pre><span class='va'>app</span><span class='op'>$</span><span class='va'>locals</span>
 </pre><p></div></p>
 <p>It is often useful to share data between handlers and requests in an
@@ -425,7 +439,7 @@ middleware that counts the number of requests can be implemented as:</p><pre><sp
 <p><a href='webfakes_response.html'>webfakes_response</a> objects also have a <code>locals</code> environment, that is
 initially populated as a copy of <code>app$locals</code>.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Configuration</h3>
+<h3 class='hasAnchor' id='configuration'><a class='anchor' href='#configuration'></a>Configuration</h3>
 <p><div class="r"></p><pre><span class='va'>app</span><span class='op'>$</span><span class='fu'>get_config</span><span class='op'>(</span><span class='va'>key</span><span class='op'>)</span>
 <span class='va'>app</span><span class='op'>$</span><span class='fu'>set_config</span><span class='op'>(</span><span class='va'>key</span>, <span class='va'>value</span><span class='op'>)</span>
 </pre><p></div></p><ul>
@@ -495,11 +509,11 @@ response objects.</p></div>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://github.com/gaborcsardi'>Gábor Csárdi</a>.</p>
+  <p><p>Developed by <a href="https://github.com/gaborcsardi" class="external-link">Gábor Csárdi</a>.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -507,6 +521,8 @@ response objects.</p></div>
 
   
 
+
+  
 
   </body>
 </html>

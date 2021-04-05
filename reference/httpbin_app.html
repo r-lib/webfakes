@@ -49,6 +49,8 @@ browseURL(httpbin$url())
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -60,9 +62,18 @@ browseURL(httpbin$url())
 
 
 
+<!-- dependencies from examples -->
+
+
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -76,7 +87,7 @@ browseURL(httpbin$url())
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">webfakes</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -103,6 +114,9 @@ browseURL(httpbin$url())
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../httpbin.html">The builtin httpbin app's API</a>
+    </li>
+    <li>
+      <a href="../articles/oauth.html">OAuth2.0 webfakes apps</a>
     </li>
     <li>
       <a href="../articles/internals.html">Webfakes internals</a>
@@ -140,7 +154,7 @@ browseURL(httpbin$url())
 
     <div class="ref-description">
     <p>A web app similar to <a href='https://httpbin.org'>https://httpbin.org</a>.
-See <a href='https://r-lib.github.io/webfakes/httpbin.html'>its specific docs</a>.
+See <a href='https://webfakes.r-lib.org/httpbin.html'>its specific docs</a>.
 You can also see these docs locally, by starting the app:<div class="r"></p><pre><span class='va'>httpbin</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_app_process.html'>new_app_process</a></span><span class='op'>(</span><span class='fu'>httpbin_app</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/browseURL.html'>browseURL</a></span><span class='op'>(</span><span class='va'>httpbin</span><span class='op'>$</span><span class='fu'>url</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </pre><p></div></p>
@@ -171,7 +185,7 @@ You can also see these docs locally, by starting the app:<div class="r"></p><pre
 #&gt; [1] "close"
 #&gt; 
 #&gt; $date
-#&gt; [1] "2020-12-16 12:32:39"
+#&gt; [1] "2021-04-05 11:12:30"
 #&gt; 
 #&gt; $`content-type`
 #&gt; [1] "application/json"
@@ -180,19 +194,19 @@ You can also see these docs locally, by starting the app:<div class="r"></p><pre
 #&gt; [1] "308"
 #&gt; 
 #&gt; $etag
-#&gt; [1] "\"e7869e2a\""
+#&gt; [1] "\"ec3f2ffb\""
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='va'>resp</span><span class='op'>$</span><span class='va'>content</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; {
 #&gt;   "args": {},
 #&gt;   "headers": {
-#&gt;     "Host": "127.0.0.1:49399",
-#&gt;     "User-Agent": "R/4.0.3 R (4.0.3 x86_64-apple-darwin17.0 x86_64 darwin17.0) on GitHub Actions",
+#&gt;     "Host": "127.0.0.1:49797",
+#&gt;     "User-Agent": "R/4.0.5 R (4.0.5 x86_64-apple-darwin17.0 x86_64 darwin17.0) on GitHub Actions",
 #&gt;     "Accept": "*/*",
 #&gt;     "Accept-Encoding": "deflate, gzip"
 #&gt;   },
 #&gt;   "origin": "127.0.0.1",
 #&gt;   "path": "/get",
-#&gt;   "url": "http://127.0.0.1:49399/get"
+#&gt;   "url": "http://127.0.0.1:49797/get"
 #&gt; }</div><div class='input'><span class='va'>proc</span><span class='op'>$</span><span class='kw'>stop</span><span class='op'>(</span><span class='op'>)</span>
 </div></pre>
   </div>
@@ -206,11 +220,11 @@ You can also see these docs locally, by starting the app:<div class="r"></p><pre
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://github.com/gaborcsardi'>Gábor Csárdi</a>.</p>
+  <p><p>Developed by <a href="https://github.com/gaborcsardi" class="external-link">Gábor Csárdi</a>.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -218,6 +232,8 @@ You can also see these docs locally, by starting the app:<div class="r"></p><pre
 
   
 
+
+  
 
   </body>
 </html>
