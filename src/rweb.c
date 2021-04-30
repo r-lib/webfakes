@@ -258,7 +258,7 @@ static int ms_sleep(struct server_user_data* srv_data, int ms) {
 static int begin_request(struct mg_connection *conn) {
 
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: starting\n", conn);
+  fprintf(stderr, "conn %p: starting\n", (void*) conn);
 #endif
 
   struct mg_context *ctx = mg_get_context(conn);
@@ -275,14 +275,14 @@ static int begin_request(struct mg_connection *conn) {
   while (1) {
     if (pthread_mutex_lock(&srv_data->process_lock)) goto exit;
 #ifndef NDEBUG
-    fprintf(stderr, "conn %p: waiting for slot\n", conn);
+    fprintf(stderr, "conn %p: waiting for slot\n", (void*) conn);
 #endif
     while (srv_data->nextconn != NULL) {
       pthread_cond_wait(&srv_data->process_less, &srv_data->process_lock);
     }
 
 #ifndef NDEBUG
-    fprintf(stderr, "conn %p: scheduled\n", conn);
+    fprintf(stderr, "conn %p: scheduled\n", (void*) conn);
 #endif
     srv_data->nextconn = conn;  /* only used to pass it to the main thread */
 
@@ -293,7 +293,7 @@ static int begin_request(struct mg_connection *conn) {
 
     /* Need to wait for the response... */
 #ifndef NDEBUG
-    fprintf(stderr, "conn %p: waiting for order\n", conn);
+    fprintf(stderr, "conn %p: waiting for order\n", (void*) conn);
 #endif
     while (conn_data.req_todo == WEBFAKES_NOTHING) {
       if (pthread_cond_wait(&conn_data.finish_cond,
@@ -302,18 +302,18 @@ static int begin_request(struct mg_connection *conn) {
       }
     }
 #ifndef NDEBUG
-    fprintf(stderr, "conn %p: got order: %d\n", conn, conn_data.req_todo);
+    fprintf(stderr, "conn %p: got order: %d\n", (void*) conn, conn_data.req_todo);
 #endif
     if (conn_data.req_todo == WEBFAKES_DONE) goto exit;
     if (conn_data.req_todo == WEBFAKES_WAIT) {
 #ifndef NDEBUG
-      fprintf(stderr, "conn %p: sleeping\n", conn);
+      fprintf(stderr, "conn %p: sleeping\n", (void*) conn);
 #endif
 
     if (ms_sleep(srv_data, conn_data.secs * 1000)) goto exit;
 
 #ifndef NDEBUG
-      fprintf(stderr, "conn %p: sleeping done\n", conn);
+    fprintf(stderr, "conn %p: sleeping done\n", (void*) conn);
 #endif
     }
     if (srv_data->shutdown) goto exit;
@@ -323,7 +323,7 @@ static int begin_request(struct mg_connection *conn) {
 
  exit:
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: good bye all\n", conn);
+  fprintf(stderr, "conn %p: good bye all\n", (void*) conn);
 #endif
   mg_set_user_connection_data(conn, NULL);
   pthread_mutex_unlock(&conn_data.finish_lock);
@@ -370,7 +370,7 @@ static void release_all_requests(SEXP requests) {
       struct mg_connection *conn = R_ExternalPtrAddr(xconn);
       if (conn) {
 #ifndef NDEBUG
-        fprintf(stderr, "conn %p: emergency cleanup\n", conn);
+        fprintf(stderr, "conn %p: emergency cleanup\n", (void*) conn);
 #endif
         struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
         struct mg_context *ctx = mg_get_context(conn);
@@ -393,14 +393,14 @@ static void webfakes_server_finalizer(SEXP server) {
   struct mg_context *ctx = R_ExternalPtrAddr(server);
   if (ctx == NULL) return;
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: cleaning up\n", ctx);
+  fprintf(stderr, "serv %p: cleaning up\n", (void*) ctx);
 #endif
   R_ClearExternalPtr(server);
   struct server_user_data* srv_data = mg_get_user_data(ctx);
   srv_data->shutdown = 1;
   release_all_requests(srv_data->requests);
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: waiting for worker threads\n", ctx);
+  fprintf(stderr, "serv %p: waiting for worker threads\n", (void*) ctx);
   void *ctx_addr = ctx;
 #endif
   mg_stop(ctx);
@@ -411,7 +411,7 @@ static void webfakes_server_finalizer(SEXP server) {
   ret += pthread_cond_destroy(&srv_data->process_less);
   free(srv_data);
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: that would be all for today\n", ctx_addr);
+  fprintf(stderr, "serv %p: that would be all for today\n", (void*) ctx_addr);
 #endif
 }
 
@@ -452,7 +452,7 @@ SEXP server_start(SEXP options) {
   R_RegisterCFinalizer(server, webfakes_server_finalizer);
 
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: hi everyone, ready to serve\n", ctx);
+  fprintf(stderr, "serv %p: hi everyone, ready to serve\n", (void*) ctx);
 #endif
 
   memset(srv_data->ports, 0, sizeof(srv_data->ports));
@@ -468,7 +468,7 @@ SEXP server_start(SEXP options) {
 
  cleanup:
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: failed to start new server\n", ctx);
+  fprintf(stderr, "serv %p: failed to start new server\n", (void*) ctx);
 #endif
   /* This is unlocked in the finalizer, but that might be much later... */
   if (ctx) mg_stop(ctx);
@@ -485,7 +485,7 @@ SEXP server_start(SEXP options) {
 
 static void server_poll_cleanup(void *ptr) {
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: oh-oh, forced cleanup\n", ptr);
+  fprintf(stderr, "conn %p: oh-oh, forced cleanup\n", (void*) ptr);
 #endif
   struct mg_connection *conn = (struct mg_connection*) ptr;
   struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
@@ -505,7 +505,7 @@ SEXP server_poll(SEXP server, SEXP clean) {
   struct mg_context *ctx = R_ExternalPtrAddr(server);
   int cclean = LOGICAL(clean)[0];
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: polling\n", ctx);
+  fprintf(stderr, "serv %p: polling\n", (void*) ctx);
 #endif
   if (ctx == NULL) R_THROW_ERROR("webfakes server has stopped already");
   struct server_user_data *srv_data = mg_get_user_data(ctx);
@@ -529,7 +529,7 @@ SEXP server_poll(SEXP server, SEXP clean) {
   struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
 
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: processing conn %p\n", ctx, conn);
+  fprintf(stderr, "serv %p: processing conn %p\n", (void*) ctx, (void*) conn);
 #endif
 
   SEXP req = R_NilValue;
@@ -546,7 +546,7 @@ SEXP server_poll(SEXP server, SEXP clean) {
   }
 
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: returning request from conn %p\n", ctx, conn);
+  fprintf(stderr, "serv %p: returning request from conn %p\n", (void*) ctx, (void*) conn);
 #endif
 
   return req;
@@ -596,7 +596,7 @@ SEXP webfakes_create_request(struct mg_connection *conn) {
   SEXP x;
 
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: creating an R request object\n", conn);
+  fprintf(stderr, "conn %p: creating an R request object\n", (void*) conn);
 #endif
 
   const struct mg_request_info *req_info = mg_get_request_info(conn);
@@ -686,10 +686,10 @@ static void response_cleanup(void *ptr) {
   struct server_user_data *srv_data = mg_get_user_data(ctx);
   if (conn_data) {
 #ifndef NDEBUG
-    fprintf(stderr, "conn %p: oh-oh, emergency cleanup\n", ptr);
+    fprintf(stderr, "conn %p: oh-oh, emergency cleanup\n", (void*) ptr);
 #endif
     mg_set_user_connection_data(conn, NULL);
-    mg_cry(conn, "Cleaning up broken connection %p at %s:%d", conn,
+    mg_cry(conn, "Cleaning up broken connection %p at %s:%d", (void*) conn,
            __FILE__, __LINE__);
     pthread_mutex_lock(&conn_data->finish_lock);
     conn_data->req_todo = WEBFAKES_DONE;
@@ -715,7 +715,7 @@ SEXP response_delay(SEXP req, SEXP secs) {
   }
   struct mg_context *ctx = mg_get_context(conn);
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: telling conn %p to delay\n", ctx, conn);
+  fprintf(stderr, "serv %p: telling conn %p to delay\n", (void*) ctx, (void*) conn);
 #endif
   struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
   int ret;
@@ -732,7 +732,7 @@ SEXP response_delay(SEXP req, SEXP secs) {
   struct server_user_data *srv_data = mg_get_user_data(ctx);
 
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: inviting request threads\n", ctx);
+  fprintf(stderr, "serv %p: inviting request threads\n", (void*) ctx);
 #endif
 
   PTHCHK(pthread_cond_signal(&srv_data->process_less));
@@ -750,7 +750,7 @@ SEXP response_send_headers(SEXP req) {
 #endif
   }
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: sending response headers\n", conn);
+  fprintf(stderr, "conn %p: sending response headers\n", (void*) conn);
 #endif
 
   r_call_on_early_exit(response_cleanup, conn);
@@ -773,7 +773,7 @@ SEXP response_send_headers(SEXP req) {
   CHK(mg_printf(conn, "\r\n"));
 
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: response headers sent\n", conn);
+  fprintf(stderr, "conn %p: response headers sent\n", (void*) conn);
 #endif
 
   UNPROTECT(5);
@@ -790,7 +790,7 @@ SEXP response_send(SEXP req) {
 #endif
   }
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: sending response body\n", conn);
+  fprintf(stderr, "conn %p: sending response body\n", (void*) conn);
 #endif
   SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
   SEXP headers_sent = Rf_findVar(Rf_install("headers_sent"), res);
@@ -812,7 +812,7 @@ SEXP response_send(SEXP req) {
   struct server_user_data *srv_data = mg_get_user_data(ctx);
 
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: response body sent\n", conn);
+  fprintf(stderr, "conn %p: response body sent\n", (void*) conn);
 #endif
 
   pthread_mutex_lock(&conn_data->finish_lock);
@@ -822,14 +822,14 @@ SEXP response_send(SEXP req) {
   conn_data->req = R_NilValue;
 
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: telling conn %p to quit\n", ctx, conn);
+  fprintf(stderr, "serv %p: telling conn %p to quit\n", (void*) ctx, (void*) conn);
 #endif
 
   PTHCHK(pthread_cond_signal(&conn_data->finish_cond));
   PTHCHK(pthread_mutex_unlock(&conn_data->finish_lock));
 
 #ifndef NDEBUG
-  fprintf(stderr, "serv %p: inviting request threads\n", ctx);
+  fprintf(stderr, "serv %p: inviting request threads\n", (void*) ctx);
 #endif
 
   PTHCHK(pthread_cond_signal(&srv_data->process_less));
@@ -858,7 +858,7 @@ SEXP response_write(SEXP req, SEXP data) {
   int len = LENGTH(data);
 
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: writing %d bytes\n", conn, len);
+  fprintf(stderr, "conn %p: writing %d bytes\n", (void*) conn, len);
 #endif
   CHK(mg_write(conn, RAW(data), len));
 
@@ -886,7 +886,7 @@ SEXP response_send_chunk(SEXP req, SEXP data) {
   int len = LENGTH(data);
 
 #ifndef NDEBUG
-  fprintf(stderr, "conn %p: sending chunk of %d bytes\n", conn, len);
+  fprintf(stderr, "conn %p: sending chunk of %d bytes\n", (void*) conn, len);
 #endif
   CHK(mg_send_chunk(conn, (const char*) RAW(data), len));
 
