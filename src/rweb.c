@@ -73,6 +73,14 @@ void R_init_webfakes(DllInfo *dll) {
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <sys/time.h>
+/* It doesn't really matter what these are defined to, as long as they
+   are defined */
+#ifndef CLOCK_REALTIME
+#define CLOCK_REALTIME 0
+#endif
+#ifndef CLOCK_MONOTONIC
+#define CLOCK_MONOTONIC 1
+#endif
 static int webfakes_clock_gettime(int clk_id, struct timespec *t) {
   memset(t, 0, sizeof(*t));
   if (clk_id == CLOCK_REALTIME) {
