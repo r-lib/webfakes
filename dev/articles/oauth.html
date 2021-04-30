@@ -110,7 +110,7 @@
 <p>In this vignette, we shall look at how to implement a flow using both apps, or the server app together with httr’s OAuth tools. In both cases we shall use the httr package as HTTP client. We shall end with a case study for OAuth2.0 testing. For an example using the curl package instead, look at the test file <code>test-oauth.R</code> of webfakes instead.</p>
 <div id="the-oauth2-0-resource-and-authorization-server" class="section level2">
 <h2 class="hasAnchor">
-<a href="#the-oauth2-0-resource-and-authorization-server" class="anchor"></a>The OAuth2.0 resource and authorization server</h2>
+<a href="#the-oauth2-0-resource-and-authorization-server" class="anchor" aria-hidden="true"></a>The OAuth2.0 resource and authorization server</h2>
 <p>First we need to create the resource server, which also performs the authorization, and we create variables holding its different URLs.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">templog</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
@@ -133,9 +133,9 @@
 <span class="co">#&gt; auto_start:</span>
 <span class="co">#&gt;   TRUE</span>
 <span class="co">#&gt; process id:</span>
-<span class="co">#&gt;   3394</span>
+<span class="co">#&gt;   3544</span>
 <span class="co">#&gt; http url:</span>
-<span class="co">#&gt;   http://127.0.0.1:49551/</span>
+<span class="co">#&gt;   http://127.0.0.1:49741/</span>
 <span class="co">#&gt; fields and methods:</span>
 <span class="co">#&gt;   get_app()              # get the app object</span>
 <span class="co">#&gt;   get_port()             # query port of the app</span>
@@ -148,10 +148,10 @@
 </div>
 <div id="fake-third-party-application" class="section level2">
 <h2 class="hasAnchor">
-<a href="#fake-third-party-application" class="anchor"></a>Fake third party application</h2>
+<a href="#fake-third-party-application" class="anchor" aria-hidden="true"></a>Fake third party application</h2>
 <div id="oauth2-0-app-creation-registration" class="section level3">
 <h3 class="hasAnchor">
-<a href="#oauth2-0-app-creation-registration" class="anchor"></a>OAuth2.0 app creation &amp; registration</h3>
+<a href="#oauth2-0-app-creation-registration" class="anchor" aria-hidden="true"></a>OAuth2.0 app creation &amp; registration</h3>
 <p>Then we create the third-party app, and we create variables holding its different URLs.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tpapp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span>
@@ -169,9 +169,9 @@
 <span class="co">#&gt; auto_start:</span>
 <span class="co">#&gt;   TRUE</span>
 <span class="co">#&gt; process id:</span>
-<span class="co">#&gt;   3398</span>
+<span class="co">#&gt;   3548</span>
 <span class="co">#&gt; http url:</span>
-<span class="co">#&gt;   http://127.0.0.1:49552/</span>
+<span class="co">#&gt;   http://127.0.0.1:49742/</span>
 <span class="co">#&gt; fields and methods:</span>
 <span class="co">#&gt;   get_app()              # get the app object</span>
 <span class="co">#&gt;   get_port()             # query port of the app</span>
@@ -190,8 +190,8 @@
 <span class="op">)</span>
 <span class="va">reg_resp</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
 <span class="va">reg_resp</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49551/register?name=3P%20app&amp;redirect_uri=http://127.0.0.1:49552/login/redirect]</span>
-<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49741/register?name=3P%20app&amp;redirect_uri=http://127.0.0.1:49742/login/redirect]</span>
+<span class="co">#&gt;   Date: 2021-04-30 08:46</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 184 B</span>
@@ -204,17 +204,17 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $client_id</span>
 <span class="co">#&gt; $client_id[[1]]</span>
-<span class="co">#&gt; [1] "id-b85e4ab0ea458bb8a580fded46e222"</span>
+<span class="co">#&gt; [1] "id-8340c8d6441a8a7ead2ac5115b91cd"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $client_secret</span>
 <span class="co">#&gt; $client_secret[[1]]</span>
-<span class="co">#&gt; [1] "secret-4b9fc695e49e01689ec27b2a503191"</span>
+<span class="co">#&gt; [1] "secret-d0e820f12870d4451c3ce9fd65cc54"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $redirect_uri</span>
 <span class="co">#&gt; $redirect_uri[[1]]</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49552/login/redirect"</span></code></pre></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49742/login/redirect"</span></code></pre></div>
 <p>The resource app replies with the client id and the client secret. We’ll use them to authenticate the third party app. In real life they are included in the config of the third party app by its admin. Our third party app has an API endpoint, <code>/login/config</code> (already in <code>conf_url</code>) to configure them.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">auth_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
@@ -229,24 +229,24 @@
   body <span class="op">=</span> <span class="va">auth_data</span>,
   encode <span class="op">=</span> <span class="st">"json"</span>
 <span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49552/login/config]</span>
-<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49742/login/config]</span>
+<span class="co">#&gt;   Date: 2021-04-30 08:46</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 41 B</span></code></pre></div>
 </div>
 <div id="the-oauth2-0-dance" class="section level3">
 <h3 class="hasAnchor">
-<a href="#the-oauth2-0-dance" class="anchor"></a>The OAuth2.0 dance</h3>
+<a href="#the-oauth2-0-dance" class="anchor" aria-hidden="true"></a>The OAuth2.0 dance</h3>
 <p>Now a user can go to the login URL of the third party app, <code>/login</code> in our fake app, to authenticate. To start the web page from R, you can run</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/browseURL.html" class="external-link">browseURL</a></span><span class="op">(</span><span class="va">tpapp</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/login"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>The third party app now has a token, that it can use to authenticate to the resource app. See the <code>test-oauth.R</code> file within webfakes to see how to do this part programmatically, without a browser.</p>
 <p>By default our fake third party app saves the token(s) into a local variable, and also returns in JSON, so you can see that in the browser:</p>
 <pre><code>#&gt; {
-#&gt;   "access_token": "token-34cbbc76c001dfa6a724276ee6ea98",
+#&gt;   "access_token": "token-c63bb5c756848b350356bf2f339581",
 #&gt;   "expiry": 10,
-#&gt;   "refresh_token": "refresh-token-646b42d348790ecc1e35a72824f552"
+#&gt;   "refresh_token": "refresh-token-c3c3f140a19cd0bf60cbef216219b3"
 #&gt; }</code></pre>
 <p>If you want to change this behavior, you can define the <code>redirect_hook</code> function in the third party app. For example:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -272,9 +272,9 @@
 <span class="co">#&gt; auto_start:</span>
 <span class="co">#&gt;   TRUE</span>
 <span class="co">#&gt; process id:</span>
-<span class="co">#&gt;   3402</span>
+<span class="co">#&gt;   3552</span>
 <span class="co">#&gt; http url:</span>
-<span class="co">#&gt;   http://127.0.0.1:49560/</span>
+<span class="co">#&gt;   http://127.0.0.1:49751/</span>
 <span class="co">#&gt; fields and methods:</span>
 <span class="co">#&gt;   get_app()              # get the app object</span>
 <span class="co">#&gt;   get_port()             # query port of the app</span>
@@ -292,8 +292,8 @@
 <span class="op">)</span>
 <span class="va">reg_resp2</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url2</span><span class="op">)</span>
 <span class="va">reg_resp2</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49551/register?name=3P%20app2&amp;redirect_uri=http://127.0.0.1:49560/login/redirect]</span>
-<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49741/register?name=3P%20app2&amp;redirect_uri=http://127.0.0.1:49751/login/redirect]</span>
+<span class="co">#&gt;   Date: 2021-04-30 08:46</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 185 B</span>
@@ -306,17 +306,17 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $client_id</span>
 <span class="co">#&gt; $client_id[[1]]</span>
-<span class="co">#&gt; [1] "id-25d2bcd516d938057e5fc2a692e764"</span>
+<span class="co">#&gt; [1] "id-62f3bf8f096e8425027ed732a906b6"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $client_secret</span>
 <span class="co">#&gt; $client_secret[[1]]</span>
-<span class="co">#&gt; [1] "secret-99835d243b97bd007dfcde726ae4ba"</span>
+<span class="co">#&gt; [1] "secret-d11b83d0aa5a18a3d728aec88f3844"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $redirect_uri</span>
 <span class="co">#&gt; $redirect_uri[[1]]</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49560/login/redirect"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49751/login/redirect"</span>
 <span class="va">auth_data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
   auth_url <span class="op">=</span> <span class="va">auth_url</span>,
   token_url <span class="op">=</span> <span class="va">toke_url</span>,
@@ -329,8 +329,8 @@
   body <span class="op">=</span> <span class="va">auth_data2</span>,
   encode <span class="op">=</span> <span class="st">"json"</span>
 <span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49560/login/config]</span>
-<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49751/login/config]</span>
+<span class="co">#&gt;   Date: 2021-04-30 08:46</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 41 B</span></code></pre></div>
@@ -342,20 +342,20 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">tpapp2</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/locals"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $access_token</span>
-<span class="co">#&gt; [1] "token-255b90680f22fcb998294d109232e3"</span>
+<span class="co">#&gt; [1] "token-81ed861b1d59eae389c3bbd5d39384"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $expiry</span>
 <span class="co">#&gt; [1] 10</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh_token</span>
-<span class="co">#&gt; [1] "refresh-token-44fc8233a95d7b6df311a4ce49b184"</span></code></pre></div>
+<span class="co">#&gt; [1] "refresh-token-555b3479872a224711f66dd53b924c"</span></code></pre></div>
 <p>Now the third-party app can get data on your behalf (the whole goal of OAuth!) — it could also post data on your behalf if the resource app had endpoints for that.</p>
 <p>For example the <code>/data</code> endpoint of the third party app queries the resource app and needs authentication. If you run the following without the OAuth dance, your access is denied. But now it works fine:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">resp_data</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">tpapp2</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/data"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">resp_data</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49560/data]</span>
-<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49751/data]</span>
+<span class="co">#&gt;   Date: 2021-04-30 08:46</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 24 B</span>
@@ -367,11 +367,11 @@
 </div>
 <div id="the-fake-resource-server-and-httr" class="section level2">
 <h2 class="hasAnchor">
-<a href="#the-fake-resource-server-and-httr" class="anchor"></a>The fake resource server and httr</h2>
+<a href="#the-fake-resource-server-and-httr" class="anchor" aria-hidden="true"></a>The fake resource server and httr</h2>
 <p>When you use httr’s OAuth tool, there’s some gymnastics happening as R is playing the role of a third-party app via httr and httpuv (to listen to the redirect URI).</p>
 <div id="oauth2-0-app-creation-registration-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#oauth2-0-app-creation-registration-1" class="anchor"></a>OAuth2.0 app creation &amp; registration</h3>
+<a href="#oauth2-0-app-creation-registration-1" class="anchor" aria-hidden="true"></a>OAuth2.0 app creation &amp; registration</h3>
 <p>What’s crucial here is setting <code><a href="https://httr.r-lib.org/reference/oauth_callback.html" class="external-link">httr::oauth_callback()</a></code> as redirect URI, which is what you do when creating an app for an R package that uses OAuth2.0 to authenticate to a resource server.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>
@@ -381,8 +381,8 @@
 <span class="op">)</span>
 <span class="va">reg_resp3</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url3</span><span class="op">)</span>
 <span class="va">reg_resp3</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49551/register?name=3P%20app2&amp;redirect_uri=http://localhost:1410/]</span>
-<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49741/register?name=3P%20app2&amp;redirect_uri=http://localhost:1410/]</span>
+<span class="co">#&gt;   Date: 2021-04-30 08:46</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json</span>
 <span class="co">#&gt;   Size: 170 B</span>
@@ -395,12 +395,12 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $client_id</span>
 <span class="co">#&gt; $client_id[[1]]</span>
-<span class="co">#&gt; [1] "id-a3d5fe6d40a5e485cf1953cace224b"</span>
+<span class="co">#&gt; [1] "id-c0040805dc5972b0f14e00556ae76e"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $client_secret</span>
 <span class="co">#&gt; $client_secret[[1]]</span>
-<span class="co">#&gt; [1] "secret-e0604062ae73135d7efaa3c5b80aea"</span>
+<span class="co">#&gt; [1] "secret-a7da0947beb8c9cf9acf70036fe972"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $redirect_uri</span>
@@ -431,18 +431,18 @@
 <code class="sourceCode R"><span class="va">token</span>
 <span class="co">#&gt; &lt;Token&gt;</span>
 <span class="co">#&gt; &lt;oauth_endpoint&gt;</span>
-<span class="co">#&gt;  authorize: http://127.0.0.1:49551/authorize</span>
-<span class="co">#&gt;  access:    http://127.0.0.1:49551/token</span>
+<span class="co">#&gt;  authorize: http://127.0.0.1:49741/authorize</span>
+<span class="co">#&gt;  access:    http://127.0.0.1:49741/token</span>
 <span class="co">#&gt; &lt;oauth_app&gt; 3P app2</span>
-<span class="co">#&gt;   key:    id-a3d5fe6d40a5e485cf1953cace224b</span>
+<span class="co">#&gt;   key:    id-c0040805dc5972b0f14e00556ae76e</span>
 <span class="co">#&gt;   secret: &lt;hidden&gt;</span>
 <span class="co">#&gt; &lt;credentials&gt; access_token, expiry, refresh_token</span>
 <span class="co">#&gt; ---</span></code></pre></div>
 <p>Without the token, the query to the resource server fails:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">rsapp</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/data"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:49551/data]</span>
-<span class="co">#&gt;   Date: 2021-04-05 11:16</span>
+<span class="co">#&gt; Response [http://127.0.0.1:49741/data]</span>
+<span class="co">#&gt;   Date: 2021-04-30 08:46</span>
 <span class="co">#&gt;   Status: 401</span>
 <span class="co">#&gt;   Content-Type: text/plain</span>
 <span class="co">#&gt;   Size: 20 B</span></code></pre></div>
@@ -458,10 +458,10 @@
 </div>
 <div id="advanced-topics" class="section level2">
 <h2 class="hasAnchor">
-<a href="#advanced-topics" class="anchor"></a>Advanced topics</h2>
+<a href="#advanced-topics" class="anchor" aria-hidden="true"></a>Advanced topics</h2>
 <div id="applications" class="section level3">
 <h3 class="hasAnchor">
-<a href="#applications" class="anchor"></a>Applications</h3>
+<a href="#applications" class="anchor" aria-hidden="true"></a>Applications</h3>
 <p>With these apps, or only the resource server app, you can now test your code that helps users create and store an OAuth2.0 token.</p>
 <p>Like all webfakes apps, OAuth2.0 apps are extensible: you can add your own endpoints and middleware to it. E.g. here we add logging via <code><a href="../reference/mw_log.html">mw_log()</a></code> and a new endpoint.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
@@ -485,7 +485,7 @@
 </div>
 <div id="debugging" class="section level3">
 <h3 class="hasAnchor">
-<a href="#debugging" class="anchor"></a>Debugging</h3>
+<a href="#debugging" class="anchor" aria-hidden="true"></a>Debugging</h3>
 <p>See the <a href="https://r-lib.github.io/webfakes/dev/articles/how-to.html#how-can-i-debug-an-app-">usual debugging advice for webfakes apps</a>. In particular, you can add the <code><a href="../reference/mw_log.html">mw_log()</a></code> middleware to write the log of the app to a file, like we did above.</p>
 <p>The resource app has a <code>/locals</code> endpoint, that returns all data stored in the app, this includes the tokens and the refresh tokens:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -498,13 +498,13 @@
 <span class="co">#&gt; [1] "3P app"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[1]]$client_id</span>
-<span class="co">#&gt; [1] "id-b85e4ab0ea458bb8a580fded46e222"</span>
+<span class="co">#&gt; [1] "id-8340c8d6441a8a7ead2ac5115b91cd"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[1]]$client_secret</span>
-<span class="co">#&gt; [1] "secret-4b9fc695e49e01689ec27b2a503191"</span>
+<span class="co">#&gt; [1] "secret-d0e820f12870d4451c3ce9fd65cc54"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[1]]$redirect_uri</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49552/login/redirect"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49742/login/redirect"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[2]]</span>
@@ -512,13 +512,13 @@
 <span class="co">#&gt; [1] "3P app2"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[2]]$client_id</span>
-<span class="co">#&gt; [1] "id-25d2bcd516d938057e5fc2a692e764"</span>
+<span class="co">#&gt; [1] "id-62f3bf8f096e8425027ed732a906b6"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[2]]$client_secret</span>
-<span class="co">#&gt; [1] "secret-99835d243b97bd007dfcde726ae4ba"</span>
+<span class="co">#&gt; [1] "secret-d11b83d0aa5a18a3d728aec88f3844"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[2]]$redirect_uri</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49560/login/redirect"</span>
+<span class="co">#&gt; [1] "http://127.0.0.1:49751/login/redirect"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[3]]</span>
@@ -526,10 +526,10 @@
 <span class="co">#&gt; [1] "3P app2"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[3]]$client_id</span>
-<span class="co">#&gt; [1] "id-a3d5fe6d40a5e485cf1953cace224b"</span>
+<span class="co">#&gt; [1] "id-c0040805dc5972b0f14e00556ae76e"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[3]]$client_secret</span>
-<span class="co">#&gt; [1] "secret-e0604062ae73135d7efaa3c5b80aea"</span>
+<span class="co">#&gt; [1] "secret-a7da0947beb8c9cf9acf70036fe972"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $apps[[3]]$redirect_uri</span>
 <span class="co">#&gt; [1] "http://localhost:1410/"</span>
@@ -539,75 +539,75 @@
 <span class="co">#&gt; $access</span>
 <span class="co">#&gt; $access[[1]]</span>
 <span class="co">#&gt; $access[[1]]$client_id</span>
-<span class="co">#&gt; [1] "id-b85e4ab0ea458bb8a580fded46e222"</span>
+<span class="co">#&gt; [1] "id-8340c8d6441a8a7ead2ac5115b91cd"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $access[[1]]$token</span>
-<span class="co">#&gt; [1] "token-34cbbc76c001dfa6a724276ee6ea98"</span>
+<span class="co">#&gt; [1] "token-c63bb5c756848b350356bf2f339581"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $access[[1]]$expiry</span>
-<span class="co">#&gt; [1] "2021-04-05 11:16:48"</span>
+<span class="co">#&gt; [1] "2021-04-30 08:46:20"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $access[[2]]</span>
 <span class="co">#&gt; $access[[2]]$client_id</span>
-<span class="co">#&gt; [1] "id-25d2bcd516d938057e5fc2a692e764"</span>
+<span class="co">#&gt; [1] "id-62f3bf8f096e8425027ed732a906b6"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $access[[2]]$token</span>
-<span class="co">#&gt; [1] "token-255b90680f22fcb998294d109232e3"</span>
+<span class="co">#&gt; [1] "token-81ed861b1d59eae389c3bbd5d39384"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $access[[2]]$expiry</span>
-<span class="co">#&gt; [1] "2021-04-05 11:16:49"</span>
+<span class="co">#&gt; [1] "2021-04-30 08:46:20"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $access[[3]]</span>
 <span class="co">#&gt; $access[[3]]$client_id</span>
-<span class="co">#&gt; [1] "id-a3d5fe6d40a5e485cf1953cace224b"</span>
+<span class="co">#&gt; [1] "id-c0040805dc5972b0f14e00556ae76e"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $access[[3]]$token</span>
-<span class="co">#&gt; [1] "token-3b0565dad830116059299db743d9f1"</span>
+<span class="co">#&gt; [1] "token-9c9ee3b21a9d16cbee6c04b8ea82ea"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $access[[3]]$expiry</span>
-<span class="co">#&gt; [1] "2021-04-05 11:16:51"</span>
+<span class="co">#&gt; [1] "2021-04-30 08:46:22"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh</span>
 <span class="co">#&gt; $refresh[[1]]</span>
 <span class="co">#&gt; $refresh[[1]]$client_id</span>
-<span class="co">#&gt; [1] "id-b85e4ab0ea458bb8a580fded46e222"</span>
+<span class="co">#&gt; [1] "id-8340c8d6441a8a7ead2ac5115b91cd"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh[[1]]$token</span>
-<span class="co">#&gt; [1] "refresh-token-646b42d348790ecc1e35a72824f552"</span>
+<span class="co">#&gt; [1] "refresh-token-c3c3f140a19cd0bf60cbef216219b3"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh[[1]]$expiry</span>
-<span class="co">#&gt; [1] "2089-04-23 14:30:45"</span>
+<span class="co">#&gt; [1] "2089-05-18 12:00:17"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh[[2]]</span>
 <span class="co">#&gt; $refresh[[2]]$client_id</span>
-<span class="co">#&gt; [1] "id-25d2bcd516d938057e5fc2a692e764"</span>
+<span class="co">#&gt; [1] "id-62f3bf8f096e8425027ed732a906b6"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh[[2]]$token</span>
-<span class="co">#&gt; [1] "refresh-token-44fc8233a95d7b6df311a4ce49b184"</span>
+<span class="co">#&gt; [1] "refresh-token-555b3479872a224711f66dd53b924c"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh[[2]]$expiry</span>
-<span class="co">#&gt; [1] "2089-04-23 14:30:46"</span>
+<span class="co">#&gt; [1] "2089-05-18 12:00:17"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh[[3]]</span>
 <span class="co">#&gt; $refresh[[3]]$client_id</span>
-<span class="co">#&gt; [1] "id-a3d5fe6d40a5e485cf1953cace224b"</span>
+<span class="co">#&gt; [1] "id-c0040805dc5972b0f14e00556ae76e"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh[[3]]$token</span>
-<span class="co">#&gt; [1] "refresh-token-59ada3e4bea406e2563a52ee5b8ecd"</span>
+<span class="co">#&gt; [1] "refresh-token-68c9706e6110d9ca304496d8a0ae1a"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $refresh[[3]]$expiry</span>
-<span class="co">#&gt; [1] "2089-04-23 14:30:48"</span></code></pre></div>
+<span class="co">#&gt; [1] "2089-05-18 12:00:19"</span></code></pre></div>
 </div>
 </div>
 <div id="case-study-for-oauth2-0-testing" class="section level2">
 <h2 class="hasAnchor">
-<a href="#case-study-for-oauth2-0-testing" class="anchor"></a>Case study for OAuth2.0 testing</h2>
+<a href="#case-study-for-oauth2-0-testing" class="anchor" aria-hidden="true"></a>Case study for OAuth2.0 testing</h2>
 <p>Consider a package that has a function that uses OAuth2.0 to access GitHub. In this section we’ll show how you can use webfakes to test this function.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gh_base</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
@@ -708,7 +708,7 @@
   <span class="op">)</span><span class="op">)</span>
   <span class="fu">testthat</span><span class="fu">::</span><span class="fu"><a href="https://testthat.r-lib.org/reference/equality-expectations.html" class="external-link">expect_equal</a></span><span class="op">(</span><span class="va">ret</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"user/repo1"</span>, <span class="st">"user/repo2"</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; Test passed 🥳</span></code></pre></div>
+<span class="co">#&gt; Test passed 😸</span></code></pre></div>
 <p>Some important points about this test case:</p>
 <ul>
 <li><p>Since the test case will fail if port 1410 is taken, it is safer to skip it on CRAN.</p></li>

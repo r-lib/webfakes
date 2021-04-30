@@ -106,7 +106,7 @@
     
 <div id="what-is-webfakes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#what-is-webfakes" class="anchor"></a>What is webfakes?</h2>
+<a href="#what-is-webfakes" class="anchor" aria-hidden="true"></a>What is webfakes?</h2>
 <p>Webfakes is an R package that can spin up web servers on your machine to facilitate testing R code. R code that needs an HTTP connection is not trivial to test:</p>
 <ul>
 <li>Connectivity problems might prevent the tests from accessing the web server.</li>
@@ -124,7 +124,7 @@
 </div>
 <div id="webfakes-vs-mocking" class="section level2">
 <h2 class="hasAnchor">
-<a href="#webfakes-vs-mocking" class="anchor"></a>Webfakes vs mocking</h2>
+<a href="#webfakes-vs-mocking" class="anchor" aria-hidden="true"></a>Webfakes vs mocking</h2>
 <p>Mocking is a general technique to mimic the behavior of a function or object that is needed in test case. In the case of HTTP requests, this typically means that both the request and its response are recorded when the tests run the first time, and saved to disk. Subsequent test runs intercept the HTTP requests, match them against the recorded requests and then replay the corresponding recorded response. See for example the <a href="https://docs.ropensci.org/vcr/" class="external-link">vcr</a> and <a href="https://enpiar.com/r/httptest/" class="external-link">httptest</a> R packages.</p>
 <p>The advantages of using your own webfakes server, over mocking:</p>
 <ul>
@@ -141,7 +141,7 @@
 </div>
 <div id="webfakes-vs-the-real-api" class="section level2">
 <h2 class="hasAnchor">
-<a href="#webfakes-vs-the-real-api" class="anchor"></a>Webfakes vs the real API</h2>
+<a href="#webfakes-vs-the-real-api" class="anchor" aria-hidden="true"></a>Webfakes vs the real API</h2>
 <ul>
 <li>No network needed. No more <code>skip_if_offline()</code>.</li>
 <li>Much faster.</li>
@@ -152,7 +152,7 @@
 </div>
 <div id="webfakes-vs-httpbin-org" class="section level2">
 <h2 class="hasAnchor">
-<a href="#webfakes-vs-httpbin-org" class="anchor"></a>Webfakes vs httpbin.org</h2>
+<a href="#webfakes-vs-httpbin-org" class="anchor" aria-hidden="true"></a>Webfakes vs httpbin.org</h2>
 <ul>
 <li>No network needed. No more <code>skip_if_offline()</code>.</li>
 <li>Much faster.</li>
@@ -162,7 +162,7 @@
 </div>
 <div id="using-webfakeshttpbin_app-with-testthat" class="section level2">
 <h2 class="hasAnchor">
-<a href="#using-webfakeshttpbin_app-with-testthat" class="anchor"></a>Using <code>webfakes::httpbin_app()</code> with testthat</h2>
+<a href="#using-webfakeshttpbin_app-with-testthat" class="anchor" aria-hidden="true"></a>Using <code>webfakes::httpbin_app()</code> with testthat</h2>
 <p>You can use testthat’s setup files. You start the app in a setup file and also register a teardown expression for it. <code><a href="../reference/local_app_process.html">local_app_process()</a></code> can do both in one go. Your <code>tests/testthat/setup-http.R</code> may look like this:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span>
@@ -186,7 +186,7 @@
 </div>
 <div id="writing-apps" class="section level2">
 <h2 class="hasAnchor">
-<a href="#writing-apps" class="anchor"></a>Writing apps</h2>
+<a href="#writing-apps" class="anchor" aria-hidden="true"></a>Writing apps</h2>
 <p>If the builtin <code><a href="../reference/httpbin_app.html">httpbin_app()</a></code> is not appropriate for your tests, you can write your own app. You can also extend the <code><a href="../reference/httpbin_app.html">httpbin_app()</a></code> app, if you don’t want to start from scratch.</p>
 <p>You create a new app with <code><a href="../reference/new_app.html">new_app()</a></code>. This returns an object with methods to add middleware and API endpoints to it. For example, a simple app that returns the current time in JSON would look like this:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -198,13 +198,13 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>
 <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:49549/"</span></code></pre></div>
+<span class="co">#&gt; [1] "http://127.0.0.1:49738/"</span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span>
 <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2021-04-05 11:16:33"</span></code></pre></div>
+<span class="co">#&gt; [1] "2021-04-30 08:46:04"</span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>

@@ -107,14 +107,14 @@
 <p>The webfakes package uses vocabulary that is standard for web apps, especially those developed with Express.js, but not necessarily well known to all R package developers.</p>
 <div id="app" class="section level2">
 <h2 class="hasAnchor">
-<a href="#app" class="anchor"></a>app</h2>
+<a href="#app" class="anchor" aria-hidden="true"></a>app</h2>
 <p>(Also: fake web app, webfakes app.) A web application that can be served by webfakes’s web server, typically in another process, an <em>app process</em>. Sometimes we call it a <em>fake</em> web app, to emphasize that we use it for testing real web apps and APIs.</p>
 <p>You can create a webfakes app with the <code><a href="../reference/new_app.html">new_app()</a></code> function. A webfakes app is an R object that you can save to disk with <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS()</a></code> , and you can also include it in your package.</p>
 <p>You can start an with its <code>$listen()</code> method. Since the main R process runs that test suite code, you usually run them in a subprocess, see <code><a href="../reference/new_app_process.html">new_app_process()</a></code> or <code><a href="../reference/local_app_process.html">local_app_process()</a></code>.</p>
 </div>
 <div id="app-process" class="section level2">
 <h2 class="hasAnchor">
-<a href="#app-process" class="anchor"></a>app process</h2>
+<a href="#app-process" class="anchor" aria-hidden="true"></a>app process</h2>
 <p>(Also: web server process, webfakes subprocess.) An app process is an R subprocess, started from the main R process, to serve a webfakes <em>app</em>.</p>
 <p>You can create an app process object with <code><a href="../reference/new_app_process.html">new_app_process()</a></code> or <code><a href="../reference/local_app_process.html">local_app_process()</a></code>. By default the actual process does not start yet, when you create it. You can start it explicitly with the <code>$start</code> method of the app process object, or by querying its URL with <code>$url()</code> or its port with <code>$get_port()</code>.</p>
 <p>For test cases, you typically start app processes at these places:</p>
@@ -128,23 +128,23 @@
 </div>
 <div id="handler" class="section level2">
 <h2 class="hasAnchor">
-<a href="#handler" class="anchor"></a>handler</h2>
+<a href="#handler" class="anchor" aria-hidden="true"></a>handler</h2>
 <p>(Or handler function.) A handler is a <em>route</em> or a <em>middleware</em>.</p>
 </div>
 <div id="handler-stack" class="section level2">
 <h2 class="hasAnchor">
-<a href="#handler-stack" class="anchor"></a>handler stack</h2>
+<a href="#handler-stack" class="anchor" aria-hidden="true"></a>handler stack</h2>
 <p>This is a stack of handler functions, which are called by the app one after the other, passing the request and response objects to them. Handlers typically manipulate the request and/or response objects. A terminal handler instructs the app to return the response to the HTTP client. A non-terminal handler tells the app to keep calling handlers, by returning the string <code>"next"</code>.</p>
 </div>
 <div id="httpbin-app" class="section level2">
 <h2 class="hasAnchor">
-<a href="#httpbin-app" class="anchor"></a>httpbin app</h2>
+<a href="#httpbin-app" class="anchor" aria-hidden="true"></a>httpbin app</h2>
 <p>This is an example app, which implements the excellent <a href="https://httpbin.org/" class="external-link uri">https://httpbin.org/</a> web service. You can use it to simulate certain HTTP responses. It is most handy for HTTP clients, but potentially useful for other tools as well.</p>
 <p>Use <code><a href="../reference/httpbin_app.html">httpbin_app()</a></code> to create an instance of this app.</p>
 </div>
 <div id="middleware" class="section level2">
 <h2 class="hasAnchor">
-<a href="#middleware" class="anchor"></a>middleware</h2>
+<a href="#middleware" class="anchor" aria-hidden="true"></a>middleware</h2>
 <p>A middleware is a handler function that is not bound to a path. It is called by the router, like other handler functions. It may manipulate the request or the response, or can have a side effect. Some example built-in middleware functions in webfakes:</p>
 <ul>
 <li>
@@ -158,17 +158,17 @@
 </div>
 <div id="path-matching" class="section level2">
 <h2 class="hasAnchor">
-<a href="#path-matching" class="anchor"></a>path matching</h2>
+<a href="#path-matching" class="anchor" aria-hidden="true"></a>path matching</h2>
 <p>The router performs path matching when it goes over the handler stack. If the HTTP method and path of a <em>route</em> match the HTTP method and URL of the request, then the handler is called, otherwise it is not. Paths can have parameters and be regular expressions. See <code>?new_regexp()</code> for regular expressions and “Path parameters” in <code>?new_app()</code> for parameters.</p>
 </div>
 <div id="route" class="section level2">
 <h2 class="hasAnchor">
-<a href="#route" class="anchor"></a>route</h2>
+<a href="#route" class="anchor" aria-hidden="true"></a>route</h2>
 <p>A route is a handler function that is bound to certain paths of you web app. If the request URL matches the path of the route, then the handler function is called, to give it a chance to send the appropriate response. Route paths may have parameters or they can be regular expressions in webfakes.</p>
 </div>
 <div id="routing" class="section level2">
 <h2 class="hasAnchor">
-<a href="#routing" class="anchor"></a>routing</h2>
+<a href="#routing" class="anchor" aria-hidden="true"></a>routing</h2>
 <p>Routing is the process of going over the handlers stack, and calling handler functions, one after the other, until one handles the request. If a handler function is a <em>route</em>, then the router only calls it if its path matches the request URL.</p>
 </div>
   </div>

@@ -168,7 +168,7 @@ can modify it.</p>
 <li><p><code>headers_sent</code>: Whether the response headers were already sent out.</p></li>
 <li><p><code>locals</code>: Local variables, the are shared between the handler
 functions. This is for the end user, and not for the middlewares.</p></li>
-<li><p><code><a href='https://rdrr.io/r/base/base-defunct.html'>delay(secs)</a></code>: delay the response for a number of seconds. If a
+<li><p><code>delay(secs)</code>: delay the response for a number of seconds. If a
 handler calls <code><a href='https://rdrr.io/r/base/base-defunct.html'>delay()</a></code>, the same handler will be called again,
 after the specified number of seconds have passed. Use the <code>locals</code>
 environment to distinguish between the calls. If you are using
@@ -208,11 +208,11 @@ Webfakes will automatically send a final zero-lengh chunk, unless
 been sent out already, then it throws a warning, and does nothing.</p></li>
 <li><p><code>set_status(status)</code>: Set the response status code. If the headers
 have been sent out already, then it throws a warning, and does nothing.</p></li>
-<li><p><code>set_type(type)</code>: Set the response content type. If it contains a <code><a href='https://rdrr.io/r/base/Arithmetic.html'>/</a></code>
+<li><p><code>set_type(type)</code>: Set the response content type. If it contains a <code>/</code>
 character then it is set as is, otherwise it is assumed to be a file
 extension, and the corresponding MIME type is set. If the headers have
 been sent out already, then it throws a warning, and does nothing.</p></li>
-<li><p><code><a href='https://rdrr.io/r/base/write.html'>write(data)</a></code>: writes (part of) the body of the response. It also
+<li><p><code>write(data)</code>: writes (part of) the body of the response. It also
 sends out the response headers, if they haven't been sent out before.</p></li>
 </ul>
 
@@ -231,7 +231,7 @@ response in one go, first the headers, then the body.</p>
   <span class='va'>res</span><span class='op'>$</span><span class='fu'>send</span><span class='op'>(</span><span class='st'>"done"</span><span class='op'>)</span>
 <span class='op'>}</span><span class='op'>)</span>
 <span class='va'>app</span>
-</div><div class='output co'>#&gt; &lt;webfakes_app&gt;
+</div><div class='co'>#&gt; &lt;webfakes_app&gt;
 #&gt; routes:
 #&gt;   get /
 #&gt; fields and methods:

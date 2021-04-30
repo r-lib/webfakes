@@ -106,7 +106,7 @@
     
 <div id="why-civetwet" class="section level2">
 <h2 class="hasAnchor">
-<a href="#why-civetwet" class="anchor"></a>Why civetwet?</h2>
+<a href="#why-civetwet" class="anchor" aria-hidden="true"></a>Why civetwet?</h2>
 <ul>
 <li>Civetweb is small and simple. C code only. Embedding it is trivial.</li>
 <li>The main developer is nice and very responsive. The project is active.</li>
@@ -116,7 +116,7 @@
 </div>
 <div id="why-not-x" class="section level2">
 <h2 class="hasAnchor">
-<a href="#why-not-x" class="anchor"></a>Why not x?</h2>
+<a href="#why-not-x" class="anchor" aria-hidden="true"></a>Why not x?</h2>
 <ul>
 <li>httpuv is an alternative. It is heavier, contains all of libuv, and it also needs 7 non-core packages. AFAICT it does not have an easy way to delay a response.</li>
 <li>We could also use libuv directly. This would be more difficult, we would probably need to deal more with the internals. I.e. IOCPs, polls, etc. Libuv also does not have HTTP, so we would need to implement that or use another library.</li>
@@ -126,7 +126,7 @@
 </div>
 <div id="multithreading" class="section level2">
 <h2 class="hasAnchor">
-<a href="#multithreading" class="anchor"></a>Multithreading</h2>
+<a href="#multithreading" class="anchor" aria-hidden="true"></a>Multithreading</h2>
 <p>Threads:</p>
 <ol style="list-style-type: decimal">
 <li>The main R thread.</li>
@@ -166,16 +166,16 @@
 </div>
 <div id="error-handling" class="section level2">
 <h2 class="hasAnchor">
-<a href="#error-handling" class="anchor"></a>Error handling</h2>
+<a href="#error-handling" class="anchor" aria-hidden="true"></a>Error handling</h2>
 <p>While the server is running, all errors must be handled and the server must keep running.</p>
 <div id="errors-while-starting-up" class="section level3">
 <h3 class="hasAnchor">
-<a href="#errors-while-starting-up" class="anchor"></a>Errors while starting up</h3>
+<a href="#errors-while-starting-up" class="anchor" aria-hidden="true"></a>Errors while starting up</h3>
 <p>They are caught and re-thrown, with the civetweb error log added. The error log typically contains more information. E.g. the most common failure is that the specified port is not free and the error log has a meaningful error message in this case.</p>
 </div>
 <div id="errors-in-request-handlers" class="section level3">
 <h3 class="hasAnchor">
-<a href="#errors-in-request-handlers" class="anchor"></a>Errors in request handlers</h3>
+<a href="#errors-in-request-handlers" class="anchor" aria-hidden="true"></a>Errors in request handlers</h3>
 <p>Errors that happen in the R request handler functions are caught and the server will send an HTTP 500 response, with the R error message:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">while</span> <span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span>
@@ -192,14 +192,14 @@
 </div>
 <div id="errors-in-the-c-code-while-processing-the-request-or-response-" class="section level3">
 <h3 class="hasAnchor">
-<a href="#errors-in-the-c-code-while-processing-the-request-or-response-" class="anchor"></a>Errors in the C code while processing the request or response.</h3>
+<a href="#errors-in-the-c-code-while-processing-the-request-or-response-" class="anchor" aria-hidden="true"></a>Errors in the C code while processing the request or response.</h3>
 <p>Errors that happen in the C code while processing the request or the response are different, because most probably we cannot send anything meaningful to the client. E.g. the most frequent such error happens when the connection breaks or the client closes the connection. These errors are caught in the <code>server_poll()</code> and <code>response_*()</code> R functions, and printed to the screen (see <code>server.R</code>). If they originate from civetweb, then they are also logged in the civetweb error log. These errors invalidate the request, and finish the processing callback. This is implemented by the <code>server.R</code> functions (re)throwing a <code>webfakes_error</code>, which is caught and then silently ignored by the processing loop.</p>
 <p>See ‘Resource cleanup’ below for how resources are cleaned up on error.</p>
 </div>
 </div>
 <div id="delayed-responses" class="section level2">
 <h2 class="hasAnchor">
-<a href="#delayed-responses" class="anchor"></a>Delayed responses</h2>
+<a href="#delayed-responses" class="anchor" aria-hidden="true"></a>Delayed responses</h2>
 <p>See the ‘Multithreading’ section above as well.</p>
 <p>We create a <code>req</code> object for an incoming request, before passing it to R from C. This object is an environment and it is kept until the response to the request is completely sent out. (Or the connection is closed for some reason.) The <code>req</code> object is also added to the connection user data of civetweb. Additionally, the server keeps an list (environment) of all request objects. The latter makes sure that the request object is not garbage collected, so we don’t need to worry about that.</p>
 <p>When a response is delayed, the app makes a note about the position of the handler function in the handler stack (in <code>.stackptr</code>), so that this handler function can be called again, after the delay.</p>
@@ -207,7 +207,7 @@
 </div>
 <div id="interruption" class="section level2">
 <h2 class="hasAnchor">
-<a href="#interruption" class="anchor"></a>Interruption</h2>
+<a href="#interruption" class="anchor" aria-hidden="true"></a>Interruption</h2>
 <p>The server runs until it is interrupted. (From the console or remotely via <code>processx::process$interrupt()</code>.)</p>
 <p>We need to make sure that the server can be interrupted while waiting for new requests (i.e. the main R thread waiting on the <code>process_more</code> condition, see ‘Multithreading’ above). <code>pthread_cond_wait()</code> is interrupted by <code>SIGINT</code> on Unix, seemingly, but not on Windows, so we need to use <code>pthread_cond_timedwait()</code>. We currently check for interrupts every 50ms. If the server is interrupted at this point, no cleanup is needed needed, as it does not hold any resources. In fact the functions in <code>server.R</code> will keep the server intact, with all delayed responses, and it is possible to call <code>server_poll()</code> again. But the <code>app$listen()</code> method does clean up the server in this case. Maybe this will change in the future.</p>
 <p>In theory the C code cannot be interrupted at any other points. On the other hand the R API functions might error any time, so we do need proper cleanup everywhere, see the ‘Resource cleanup’ section below.</p>
@@ -216,7 +216,7 @@
 </div>
 <div id="resource-cleanup" class="section level2">
 <h2 class="hasAnchor">
-<a href="#resource-cleanup" class="anchor"></a>Resource cleanup</h2>
+<a href="#resource-cleanup" class="anchor" aria-hidden="true"></a>Resource cleanup</h2>
 <p>See also ‘Interruption’ just above.</p>
 <p>There are some points in the C code where R errors happen while the code is holding resources. We use (a copy of) the cleancall package to take care of resource cleanup here.</p>
 <p>The first such place is the <code>server_poll()</code> C function, after a request is in from the request thread. Creating an R object for the request involves a lot of R API calls, and if one of them fails, we need to clean up the resources associated with this connection. (The error will be logged and the R <code>server_poll()</code> function will continue polling.) The cleanup in this case involves:</p>
