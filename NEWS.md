@@ -1,4 +1,5 @@
-# webfakes (development version)
+
+# webfakes 1.1.3
 
 * webfakes now compiles on older macOS versions, hopefully really.
 
