@@ -1,7 +1,7 @@
 
 #' @title webfakes glossary
 #' @name glossary
-#' @section Wevfakes glossary:
+#' @section Webfakes glossary:
 #'
 #' ```{r child = "vignettes/glossary.Rmd"}
 #' ```
