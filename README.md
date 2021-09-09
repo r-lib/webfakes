@@ -10,6 +10,9 @@
 [![R build
 status](https://github.com/r-lib/webfakes/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/webfakes/actions)
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/webfakes)](https://CRAN.R-project.org/package=webfakes)
+
 <!-- badges: end -->
 
 Lightweight fake web apps for testing. Built using the
@@ -51,7 +54,7 @@ Lightweight fake web apps for testing. Built using the
 
 ## Installation
 
-Once on CRAN, install the package as usual:
+Install the release version from CRAN:
 
 ``` r
 install.packages("webfakes")
