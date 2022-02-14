@@ -91,22 +91,22 @@
 
       
 
-      </header><script src="internals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Webfakes internals</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/webfakes/blob/master/vignettes/internals.Rmd" class="external-link"><code>vignettes/internals.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/webfakes/blob/HEAD/vignettes/internals.Rmd" class="external-link"><code>vignettes/internals.Rmd</code></a></small>
       <div class="hidden name"><code>internals.Rmd</code></div>
 
     </div>
 
     
     
-<div id="why-civetwet" class="section level2">
-<h2 class="hasAnchor">
-<a href="#why-civetwet" class="anchor" aria-hidden="true"></a>Why civetwet?</h2>
+<div class="section level2">
+<h2 id="why-civetwet">Why civetwet?<a class="anchor" aria-label="anchor" href="#why-civetwet"></a>
+</h2>
 <ul>
 <li>Civetweb is small and simple. C code only. Embedding it is trivial.</li>
 <li>The main developer is nice and very responsive. The project is active.</li>
@@ -114,9 +114,9 @@
 <li>It has some nice features built in, e.g. limiting the download speed.</li>
 </ul>
 </div>
-<div id="why-not-x" class="section level2">
-<h2 class="hasAnchor">
-<a href="#why-not-x" class="anchor" aria-hidden="true"></a>Why not x?</h2>
+<div class="section level2">
+<h2 id="why-not-x">Why not x?<a class="anchor" aria-label="anchor" href="#why-not-x"></a>
+</h2>
 <ul>
 <li>httpuv is an alternative. It is heavier, contains all of libuv, and it also needs 7 non-core packages. AFAICT it does not have an easy way to delay a response.</li>
 <li>We could also use libuv directly. This would be more difficult, we would probably need to deal more with the internals. I.e. IOCPs, polls, etc. Libuv also does not have HTTP, so we would need to implement that or use another library.</li>
@@ -124,9 +124,9 @@
 <li>Mongoose is am embedded web server, that civetweb was forked from originally. Its license is GPL-2, so it is more restrictive.</li>
 </ul>
 </div>
-<div id="multithreading" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multithreading" class="anchor" aria-hidden="true"></a>Multithreading</h2>
+<div class="section level2">
+<h2 id="multithreading">Multithreading<a class="anchor" aria-label="anchor" href="#multithreading"></a>
+</h2>
 <p>Threads:</p>
 <ol style="list-style-type: decimal">
 <li>The main R thread.</li>
@@ -137,24 +137,24 @@
 <p>The main rule here is that only the main R thread can call a function from the R API. The civetweb callbacks run on the civetweb threads, so they cannot call any R API. Currently we only use the <code>begin_request()</code> callback, and this is called from the request threads. So we need to synchronize between the request threads and the main R thread.</p>
 <p>We essentially have a producer-consumer problem, with a single consumer, the main R thread, and multiple producers, the request threads. Having a single consumer means that the queue to store the jobs is of length one. This is a good guide on how to solve such a problem: <a href="https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html" class="external-link uri">https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html</a></p>
 <p>We need two conditions, to signal that 1) there is something to work on, and that 2) new work may come in. We also need a mutex to be able to wait on these conditions. These are stored in the <code>user_data</code> of the civetweb server instance:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">struct</span> server_user_data {</span>
-<span id="cb1-2"><a href="#cb1-2"></a>  ...</span>
-<span id="cb1-3"><a href="#cb1-3"></a>  pthread_cond_t process_more;  <span class="co">/* there is something to process */</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>  pthread_cond_t process_less;  <span class="co">/* we can process something */</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a>  pthread_mutex_t process_lock;</span>
-<span id="cb1-6"><a href="#cb1-6"></a>  <span class="kw">struct</span> mg_connection *nextconn;</span>
-<span id="cb1-7"><a href="#cb1-7"></a>  ...</span>
-<span id="cb1-8"><a href="#cb1-8"></a>};</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> server_user_data <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  pthread_cond_t process_more<span class="op">;</span>  <span class="co">/* there is something to process */</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  pthread_cond_t process_less<span class="op">;</span>  <span class="co">/* we can process something */</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  pthread_mutex_t process_lock<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> mg_connection <span class="op">*</span>nextconn<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
 <p><code>nextconn</code> is the queue, it is used to pass the request from a request thread to the main R thread. When a request thread comes in, it has to make sure that <code>nextconn</code> is <code>NULL</code>, so waits on <code>process_less</code>. Once given the green light, it sets <code>nextconn</code> to the civetweb connection object, and then wait on its own <code>finish_cond</code> condition, which is stored in the connection specific user data:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">struct</span> connection_user_data {</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  pthread_cond_t finish_cond;   <span class="co">/* can finish callback? */</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a>  pthread_mutex_t finish_lock;</span>
-<span id="cb2-4"><a href="#cb2-4"></a>  <span class="dt">int</span> main_todo;                <span class="co">/* what should the main thread do? */</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a>  <span class="dt">int</span> req_todo;                 <span class="co">/* what shoudl the request thread do? */</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a>  <span class="dt">double</span> secs;                  <span class="co">/* how much should we wait? */</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a>  SEXP req;</span>
-<span id="cb2-8"><a href="#cb2-8"></a>  ...</span>
-<span id="cb2-9"><a href="#cb2-9"></a>};</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> connection_user_data <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  pthread_cond_t finish_cond<span class="op">;</span>   <span class="co">/* can finish callback? */</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  pthread_mutex_t finish_lock<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> main_todo<span class="op">;</span>                <span class="co">/* what should the main thread do? */</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> req_todo<span class="op">;</span>                 <span class="co">/* what shoudl the request thread do? */</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> secs<span class="op">;</span>                  <span class="co">/* how much should we wait? */</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  SEXP req<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
 <p>The main R thread can use the <code>user_data</code> of <code>next_conn</code> to access all information about the connection and the request. Once the main R thread is done with processing the request, it sets the connection’s <code>req_todo</code> field to non-zero, and signals the connection’s <code>finish_cond</code> condition to allow the request thread to continue. Then it also signals the <code>process_less</code> condition of the server, to let other request threads in.</p>
 <p>Currently the main R thread can set <code>req_todo</code> to two different values.</p>
 <ul>
@@ -164,18 +164,18 @@
 <code>WEBFAKES_WAIT</code> means that the request thread still needs to stay around and sleep for the specified number of <code>secs</code>. After sleeping for the specified amount of time, the request thread will signal <code>process_more</code> again, notifying the main R thread, but it also sets <code>main_todo</code> to <code>WEBFAKES_WAIT</code>, so the main R thread knows that this is not a new request. The main R thread can just take the stored request from the <code>req</code> field of the connection user data in this case.</li>
 </ul>
 </div>
-<div id="error-handling" class="section level2">
-<h2 class="hasAnchor">
-<a href="#error-handling" class="anchor" aria-hidden="true"></a>Error handling</h2>
+<div class="section level2">
+<h2 id="error-handling">Error handling<a class="anchor" aria-label="anchor" href="#error-handling"></a>
+</h2>
 <p>While the server is running, all errors must be handled and the server must keep running.</p>
-<div id="errors-while-starting-up" class="section level3">
-<h3 class="hasAnchor">
-<a href="#errors-while-starting-up" class="anchor" aria-hidden="true"></a>Errors while starting up</h3>
+<div class="section level3">
+<h3 id="errors-while-starting-up">Errors while starting up<a class="anchor" aria-label="anchor" href="#errors-while-starting-up"></a>
+</h3>
 <p>They are caught and re-thrown, with the civetweb error log added. The error log typically contains more information. E.g. the most common failure is that the specified port is not free and the error log has a meaningful error message in this case.</p>
 </div>
-<div id="errors-in-request-handlers" class="section level3">
-<h3 class="hasAnchor">
-<a href="#errors-in-request-handlers" class="anchor" aria-hidden="true"></a>Errors in request handlers</h3>
+<div class="section level3">
+<h3 id="errors-in-request-handlers">Errors in request handlers<a class="anchor" aria-label="anchor" href="#errors-in-request-handlers"></a>
+</h3>
 <p>Errors that happen in the R request handler functions are caught and the server will send an HTTP 500 response, with the R error message:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">while</span> <span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span>
@@ -190,33 +190,33 @@
 <span class="op">}</span></code></pre></div>
 <p>For a response that is sent out in multiple pieces, this is not possible if the status code and the headers have been sent out already. In this case we just send out the R error message.</p>
 </div>
-<div id="errors-in-the-c-code-while-processing-the-request-or-response-" class="section level3">
-<h3 class="hasAnchor">
-<a href="#errors-in-the-c-code-while-processing-the-request-or-response-" class="anchor" aria-hidden="true"></a>Errors in the C code while processing the request or response.</h3>
+<div class="section level3">
+<h3 id="errors-in-the-c-code-while-processing-the-request-or-response-">Errors in the C code while processing the request or response.<a class="anchor" aria-label="anchor" href="#errors-in-the-c-code-while-processing-the-request-or-response-"></a>
+</h3>
 <p>Errors that happen in the C code while processing the request or the response are different, because most probably we cannot send anything meaningful to the client. E.g. the most frequent such error happens when the connection breaks or the client closes the connection. These errors are caught in the <code>server_poll()</code> and <code>response_*()</code> R functions, and printed to the screen (see <code>server.R</code>). If they originate from civetweb, then they are also logged in the civetweb error log. These errors invalidate the request, and finish the processing callback. This is implemented by the <code>server.R</code> functions (re)throwing a <code>webfakes_error</code>, which is caught and then silently ignored by the processing loop.</p>
 <p>See ‘Resource cleanup’ below for how resources are cleaned up on error.</p>
 </div>
 </div>
-<div id="delayed-responses" class="section level2">
-<h2 class="hasAnchor">
-<a href="#delayed-responses" class="anchor" aria-hidden="true"></a>Delayed responses</h2>
+<div class="section level2">
+<h2 id="delayed-responses">Delayed responses<a class="anchor" aria-label="anchor" href="#delayed-responses"></a>
+</h2>
 <p>See the ‘Multithreading’ section above as well.</p>
 <p>We create a <code>req</code> object for an incoming request, before passing it to R from C. This object is an environment and it is kept until the response to the request is completely sent out. (Or the connection is closed for some reason.) The <code>req</code> object is also added to the connection user data of civetweb. Additionally, the server keeps an list (environment) of all request objects. The latter makes sure that the request object is not garbage collected, so we don’t need to worry about that.</p>
 <p>When a response is delayed, the app makes a note about the position of the handler function in the handler stack (in <code>.stackptr</code>), so that this handler function can be called again, after the delay.</p>
 <p>Then it calls <code>response_write()</code> which sends a <code>WEBFAKES_WAIT</code> message to the request thread. Then the main R thread can continue processing and potentially serving other requests, assuming the server has been started with at least two threads. After the wait, the request thread sends a message to the main R thread again, and the app’s poll call will get the same request object for the second (etc.) time. The app starts calling the handler functions from the recorded <code>.stackptr</code> position.</p>
 </div>
-<div id="interruption" class="section level2">
-<h2 class="hasAnchor">
-<a href="#interruption" class="anchor" aria-hidden="true"></a>Interruption</h2>
+<div class="section level2">
+<h2 id="interruption">Interruption<a class="anchor" aria-label="anchor" href="#interruption"></a>
+</h2>
 <p>The server runs until it is interrupted. (From the console or remotely via <code>processx::process$interrupt()</code>.)</p>
 <p>We need to make sure that the server can be interrupted while waiting for new requests (i.e. the main R thread waiting on the <code>process_more</code> condition, see ‘Multithreading’ above). <code>pthread_cond_wait()</code> is interrupted by <code>SIGINT</code> on Unix, seemingly, but not on Windows, so we need to use <code>pthread_cond_timedwait()</code>. We currently check for interrupts every 50ms. If the server is interrupted at this point, no cleanup is needed needed, as it does not hold any resources. In fact the functions in <code>server.R</code> will keep the server intact, with all delayed responses, and it is possible to call <code>server_poll()</code> again. But the <code>app$listen()</code> method does clean up the server in this case. Maybe this will change in the future.</p>
 <p>In theory the C code cannot be interrupted at any other points. On the other hand the R API functions might error any time, so we do need proper cleanup everywhere, see the ‘Resource cleanup’ section below.</p>
 <p>If the R code is interrupted, the <code>server.R</code> functions do not need any cleanup. (In theory some error messages might get lost if the timing is extremely unfortunate and a <code>server.R</code> function is handling an error when the interrupt happens.)</p>
 <p>The <code>app$listen()</code> method cleans up the server in <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code>.</p>
 </div>
-<div id="resource-cleanup" class="section level2">
-<h2 class="hasAnchor">
-<a href="#resource-cleanup" class="anchor" aria-hidden="true"></a>Resource cleanup</h2>
+<div class="section level2">
+<h2 id="resource-cleanup">Resource cleanup<a class="anchor" aria-label="anchor" href="#resource-cleanup"></a>
+</h2>
 <p>See also ‘Interruption’ just above.</p>
 <p>There are some points in the C code where R errors happen while the code is holding resources. We use (a copy of) the cleancall package to take care of resource cleanup here.</p>
 <p>The first such place is the <code>server_poll()</code> C function, after a request is in from the request thread. Creating an R object for the request involves a lot of R API calls, and if one of them fails, we need to clean up the resources associated with this connection. (The error will be logged and the R <code>server_poll()</code> function will continue polling.) The cleanup in this case involves:</p>
@@ -243,12 +243,12 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://github.com/gaborcsardi" class="external-link external-link">Gábor Csárdi</a>.</p>
+<p>Developed by <a href="https://github.com/gaborcsardi" class="external-link">Gábor Csárdi</a>.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>

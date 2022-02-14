@@ -1,13 +1,13 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1.9001
-pkgdown_sha: f972bbe6001b4d367e0a5ccff45121b2b040fdc7
+pandoc: 2.14.2
+pkgdown: 2.0.2
+pkgdown_sha: ~
 articles:
   glossary: glossary.html
   how-to: how-to.html
   internals: internals.html
   introduction: introduction.html
   oauth: oauth.html
-last_built: 2021-04-30T11:29Z
+last_built: 2022-02-14T13:40Z
 urls:
   reference: https://r-lib.github.io/webfakes/reference
   article: https://r-lib.github.io/webfakes/articles

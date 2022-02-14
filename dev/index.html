@@ -80,7 +80,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/webfakes/">
+  <a href="https://github.com/r-lib/webfakes/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -97,9 +97,9 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="webfakes" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#webfakes" class="anchor" aria-hidden="true"></a>webfakes</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="webfakes">webfakes<a class="anchor" aria-label="anchor" href="#webfakes"></a>
+</h1></div>
 <blockquote>
 <p>Your own web server for happy HTTP testing</p>
 </blockquote>
@@ -107,9 +107,9 @@
 
 <!-- badges: end -->
 <p>Lightweight fake web apps for testing. Built using the <a href="https://github.com/civetweb/civetweb" class="external-link">civetweb</a> embedded web server.</p>
-<div id="features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#features" class="anchor" aria-hidden="true"></a>Features</h2>
+<div class="section level2">
+<h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
+</h2>
 <ul>
 <li>Complete web app framework, define handlers for HTTP requests in R.</li>
 <li>Write your own app for your custom test cases; our use app similar to the <a href="https://httpbin.org" class="external-link uri">https://httpbin.org</a> API, so often you don’t need to write your own web app (e.g. if you are writing an HTTP client (httr, curl, crul).</li>
@@ -127,25 +127,25 @@
 <li>Limit download speed to simulate low bandwidth.</li>
 </ul>
 </div>
-<div id="optional-dependencies" class="section level2">
-<h2 class="hasAnchor">
-<a href="#optional-dependencies" class="anchor" aria-hidden="true"></a>Optional dependencies</h2>
+<div class="section level2">
+<h2 id="optional-dependencies">Optional dependencies<a class="anchor" aria-label="anchor" href="#optional-dependencies"></a>
+</h2>
 <ul>
 <li>The jsonlite package is needed for the <code><a href="reference/mw_json.html">mw_json()</a></code> middleware, the <code>response$send_json()</code> method and the <code><a href="reference/httpbin_app.html">httpbin_app()</a></code> app.</li>
 <li>The glue package is needed for the <code><a href="reference/tmpl_glue.html">tmpl_glue()</a></code> template engine.</li>
 <li>The callr package is needed for <code><a href="reference/new_app_process.html">new_app_process()</a></code> and <code>local_app_process</code> to work.</li>
 </ul>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>Once on CRAN, install the package as usual:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"webfakes"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="usage" class="section level2">
-<h2 class="hasAnchor">
-<a href="#usage" class="anchor" aria-hidden="true"></a>Usage</h2>
+<div class="section level2">
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h2>
 <p>Start a web app at the beginning of your tests or test file, and stop it after. Here is an example with the testthat package. Suppose you want to test that your <code>get_hello()</code> function can query an API:</p>
 <p><code><a href="reference/local_app_process.html">local_app_process()</a></code> helps you clean up the web server process after the test block, or test file. It is similar to the <code>withr::local_*</code> functions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -168,27 +168,27 @@
   <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
   <span class="fu">expect_error</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html" class="external-link">stop_for_status</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"http_404"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#&gt; Test passed 😸</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test passed 😸</span></span></code></pre></div>
 </div>
-<div id="documentation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#documentation" class="anchor" aria-hidden="true"></a>Documentation</h2>
+<div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h2>
 <p>See <a href="https://webfakes.r-lib.org" class="external-link uri">https://webfakes.r-lib.org</a></p>
 </div>
-<div id="links" class="section level2">
-<h2 class="hasAnchor">
-<a href="#links" class="anchor" aria-hidden="true"></a>Links</h2>
-<div id="other-solutions-for-http-testing-in-r" class="section level3">
-<h3 class="hasAnchor">
-<a href="#other-solutions-for-http-testing-in-r" class="anchor" aria-hidden="true"></a>Other solutions for HTTP testing in R:</h3>
+<div class="section level2">
+<h2 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
+</h2>
+<div class="section level3">
+<h3 id="other-solutions-for-http-testing-in-r">Other solutions for HTTP testing in R:<a class="anchor" aria-label="anchor" href="#other-solutions-for-http-testing-in-r"></a>
+</h3>
 <ul>
 <li><a href="https://github.com/ropensci/vcr" class="external-link">vcr</a></li>
 <li><a href="https://github.com/nealrichardson/httptest" class="external-link">httptest</a></li>
 </ul>
 </div>
-<div id="r-web-application-frameworks" class="section level3">
-<h3 class="hasAnchor">
-<a href="#r-web-application-frameworks" class="anchor" aria-hidden="true"></a>R web application frameworks</h3>
+<div class="section level3">
+<h3 id="r-web-application-frameworks">R web application frameworks<a class="anchor" aria-label="anchor" href="#r-web-application-frameworks"></a>
+</h3>
 <p>webfakes focuses on testing, these packages are for writing real web apps:</p>
 <ul>
 <li><a href="https://github.com/rstudio/shiny" class="external-link">shiny</a></li>
@@ -199,9 +199,9 @@
 </ul>
 </div>
 </div>
-<div id="license" class="section level2">
-<h2 class="hasAnchor">
-<a href="#license" class="anchor" aria-hidden="true"></a>License</h2>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
 <p>MIT © RStudio</p>
 </div>
 </div>
@@ -211,12 +211,9 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=webfakes">https://​cloud.r-project.org/​package=webfakes</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/r-lib/webfakes/">https://​github.com/​r-lib/​webfakes/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/r-lib/webfakes/issues">https://​github.com/​r-lib/​webfakes/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=webfakes" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/r-lib/webfakes/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/r-lib/webfakes/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -224,18 +221,25 @@
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
 
 
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing webfakes</a></li>
+</ul>
+</div>
+
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://github.com/gaborcsardi">Gábor Csárdi</a> <br><small class="roles"> Author, maintainer </small>  </li>
-<li><a href="authors.html">More on authors...</a></li>
+<a href="https://github.com/gaborcsardi" class="external-link">Gábor Csárdi</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
@@ -257,7 +261,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
