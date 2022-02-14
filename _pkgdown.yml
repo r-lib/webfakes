@@ -71,3 +71,6 @@ reference:
   - oauth2_login
   - oauth2_resource_app
   - oauth2_third_party_app
+
+- title: internal
+  contents: glossary
