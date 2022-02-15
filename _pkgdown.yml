@@ -12,26 +12,27 @@ authors:
     href: https://github.com/gaborcsardi
 
 navbar:
-  type: default
-  left:
-  - text: Intro
-    href: articles/introduction.html
-  - text: How-to
-    href: articles/how-to.html
-  - text: Glossary
-    href: articles/glossary.html
-  - text: Reference
-    href: reference/index.html
-  - text: Articles
-    menu:
-    - text: The builtin httpbin app's API
-      href: httpbin.html
-    - text: OAuth2.0 webfakes apps
-      href: articles/oauth.html
-    - text: Webfakes internals
-      href: articles/internals.html
-  - text: News
-    href: news/index.html
+  structure:
+    left: [intro, howto, glossary, reference, articles, news]
+  components:
+    intro:
+      text: Intro
+      href: articles/introduction.html
+    howto:
+      text: How-to
+      href: articles/how-to.html
+    glossary:
+      text: Glossary
+      href: articles/glossary.html
+    articles:
+      text: Articles
+      menu:
+      - text: The builtin httpbin app's API
+        href: httpbin.html
+      - text: OAuth2.0 webfakes apps
+        href: articles/oauth.html
+      - text: Webfakes internals
+        href: articles/internals.html
 
 reference:
 - title: Create and run web apps
