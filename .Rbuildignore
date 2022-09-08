@@ -14,3 +14,5 @@
 ^docs$
 ^pkgdown$
 ^vignettes$
+^revdep$
+^CRAN-SUBMISSION$
