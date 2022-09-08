@@ -6,7 +6,7 @@
 \description{
 webfakes glossary
 }
-\section{Wevfakes glossary}{
+\section{Webfakes glossary}{
 
 
 The webfakes package uses vocabulary that is standard for web apps, especially those developed with Express.js, but not necessarily well known to all R package developers.

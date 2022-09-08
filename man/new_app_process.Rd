@@ -39,7 +39,9 @@ when setting up the subprocess.}
 A \code{webfakes_app_process} object.
 \subsection{Methods}{
 
-The \code{webfakes_app_process} class has the following methods:\if{html}{\out{<div class="r">}}\preformatted{get_app()
+The \code{webfakes_app_process} class has the following methods:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{get_app()
 get_port()
 stop()
 get_state()

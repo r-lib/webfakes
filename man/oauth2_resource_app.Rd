@@ -108,8 +108,10 @@ and needs authorization.
 need to put it in \code{Suggests}.
 \item You can add custom endpoints to the app, as needed.
 \item If you need authorization in your custom endpoint, call
-\code{app$is_authorized()} in your handler:\preformatted{if (!app$is_authorized(req, res)) return()
-}
+\code{app$is_authorized()} in your handler:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{if (!app$is_authorized(req, res)) return()
+}\if{html}{\out{</div>}}
 
 \code{app$is_authorized()} returns an HTTP 401 response if the
 client is not authorized, so you can simply return from your

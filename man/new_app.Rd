@@ -36,7 +36,9 @@ A web application can be
 
 The webfakes API is very much influenced by the
 \href{http://expressjs.com/}{express.js} project.
-\subsection{Create web app objects}{\if{html}{\out{<div class="r">}}\preformatted{new_app()
+\subsection{Create web app objects}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{new_app()
 }\if{html}{\out{</div>}}
 
 \code{new_app()} returns a \code{webfakes_app} object the has the methods listed
@@ -63,7 +65,9 @@ or the response, and then the next handler in the stack is invoked.
 
 The following methods define routes. Each method corresponds to the
 HTTP verb with the same name, except for \code{app$all()}, which creates a
-route for all HTTP methods.\if{html}{\out{<div class="r">}}\preformatted{app$all(path, ...)
+route for all HTTP methods.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$all(path, ...)
 app$delete(path, ...)
 app$get(path, ...)
 app$head(path, ...)
@@ -101,7 +105,9 @@ middleware to perform common tasks:
 \item \code{\link[=mw_multipart]{mw_multipart()}} parses multipart request bodies.
 \item \code{\link[=mw_static]{mw_static()}} serves static files from a directory.
 \item \code{\link[=mw_urlencoded]{mw_urlencoded()}} parses URL encoded request bodies.
-}\if{html}{\out{<div class="r">}}\preformatted{app$use(..., .first = FALSE)
+}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$use(..., .first = FALSE)
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{...} is a set of (middleware) handler functions. They are added to
@@ -122,7 +128,9 @@ object. If it returns the string \code{"next"}, then it is \emph{not} a terminal
 handler, and once it returns, webfakes will move on to call the next
 handler in the stack.
 
-A typical route:\if{html}{\out{<div class="r">}}\preformatted{app$get("/user/:id", function(req, res) \{
+A typical route:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$get("/user/:id", function(req, res) \{
   id <- req$params$id
   ...
   res$
@@ -145,7 +153,9 @@ Once this handler function returns, webfakes will send out the HTTP
 response.
 }
 
-A typical middleware:\if{html}{\out{<div class="r">}}\preformatted{app$use(function(req, res) \{
+A typical middleware:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$use(function(req, res) \{
   ...
   "next"
 \})
@@ -213,7 +223,9 @@ a template engine that uses the glue package, see \code{\link[=tmpl_glue]{tmpl_g
 \code{app$engine()} registers a template engine, for a certain file
 extension. The \verb{$render()} method of \link{webfakes_response}
 can be called from the handler function to evaluate a template from a
-file.\if{html}{\out{<div class="r">}}\preformatted{app$engine(ext, engine)
+file.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$engine(ext, engine)
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{ext}: the file extension for which the template engine is added.
@@ -223,7 +235,9 @@ It should not contain the dot. E.g. \verb{"html"', }"brew"`.
 that can be used in the template. It should return the result.
 }
 
-An example template engine that uses glue might look like this:\if{html}{\out{<div class="r">}}\preformatted{app$engine("txt", function(path, locals) \{
+An example template engine that uses glue might look like this:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$engine("txt", function(path, locals) \{
   txt <- readChar(path, nchars = file.size(path), useBytes = TRUE)
   glue::glue_data(locals, txt)
 \})
@@ -231,7 +245,9 @@ An example template engine that uses glue might look like this:\if{html}{\out{<d
 
 (The built-in \code{\link[=tmpl_glue]{tmpl_glue()}} engine has more features.)
 
-This template engine can be used in a handler:\if{html}{\out{<div class="r">}}\preformatted{app$get("/view", function(req, res) \{
+This template engine can be used in a handler:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$get("/view", function(req, res) \{
  txt <- res$render("test")
  res$
    set_type("text/plain")$
@@ -247,7 +263,9 @@ response local variables (see \code{locals} in \link{webfakes_response}), are
 available.
 }
 
-\subsection{Starting and stopping}{\if{html}{\out{<div class="r">}}\preformatted{app$listen(port = NULL, opts = server_opts(), cleanup = TRUE)
+\subsection{Starting and stopping}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$listen(port = NULL, opts = server_opts(), cleanup = TRUE)
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{port}: port to listen on. When \code{NULL}, the operating system will
@@ -270,7 +288,9 @@ before the listen method blocks, it advertises the selected port in a
 \code{webfakes_port} condition, so one can catch it:
 
 webfakes by default binds only to the loopback interface at 127.0.0.1, so
-the webfakes web app is never reachable from the network.\if{html}{\out{<div class="r">}}\preformatted{withCallingHandlers(
+the webfakes web app is never reachable from the network.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{withCallingHandlers(
   app$listen(),
   "webfakes_port" = function(msg) print(msg$port)
 )
@@ -300,24 +320,30 @@ where \verb{<tmpdir>} is the session temporary directory of the
 See \code{\link[=server_opts]{server_opts()}} for changing the default logging behavior.
 }
 
-\subsection{Shared app data}{\if{html}{\out{<div class="r">}}\preformatted{app$locals
+\subsection{Shared app data}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$locals
 }\if{html}{\out{</div>}}
 
 It is often useful to share data between handlers and requests in an
 app. \code{app$locals} is an environment that supports this. E.g. a
-middleware that counts the number of requests can be implemented as:\preformatted{app$use(function(req, res) \{
+middleware that counts the number of requests can be implemented as:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{app$use(function(req, res) \{
   locals <- req$app$locals
   if (is.null(locals$num)) locals$num <- 0L
   locals$num <- locals$num + 1L
   "next"
 \})
-}
+}\if{html}{\out{</div>}}
 
 \link{webfakes_response} objects also have a \code{locals} environment, that is
 initially populated as a copy of \code{app$locals}.
 }
 
-\subsection{Configuration}{\if{html}{\out{<div class="r">}}\preformatted{app$get_config(key)
+\subsection{Configuration}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{app$get_config(key)
 app$set_config(key, value)
 }\if{html}{\out{</div>}}
 \itemize{

@@ -18,8 +18,10 @@ valid when the app is actually running.}
 Handler function.
 }
 \description{
-A one line log entry for every request. The output looks like this:\preformatted{GET http://127.0.0.1:3000/image 200 3 ms - 4742
-}
+A one line log entry for every request. The output looks like this:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{GET http://127.0.0.1:3000/image 200 3 ms - 4742
+}\if{html}{\out{</div>}}
 
 and contains
 \itemize{
