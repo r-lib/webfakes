@@ -8,8 +8,8 @@
 <meta name="description" content="webfakes">
 <title>How to use webfakes in your tests • webfakes</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="How to use webfakes in your tests">
 <meta property="og:description" content="webfakes">
@@ -82,7 +82,7 @@
 
 
 <div class="row">
-  <main id="main"><div class="page-header">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>How to use webfakes in your tests</h1>
             
       
@@ -111,56 +111,52 @@ Suggests:
 <p>In the typical scenario, you want your package to connect to the test app only when running the tests. If the URL to the web service is not an argument of the functions, one way to achieve this is to allow specifying the web server URL(s) via environment variables. E.g. when writing a GitHub API client, your package can check use <code>GITHUB_URL</code> environment variable.</p>
 <p>E.g.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">service_url</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_URL"</span>, <span class="st">"https://api.github.com"</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="co"># rest of the package code</span>
-
-<span class="va">foobar</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="fu">service_url</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">service_url</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_URL"</span>, <span class="st">"https://api.github.com"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># rest of the package code</span></span>
+<span></span>
+<span><span class="va">foobar</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="fu">service_url</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>When this is not set, the package connects to the proper GitHub API. When testing, you can point it to your test app.</p>
 <p><code><a href="../reference/new_app_process.html">new_app_process()</a></code> helps you setting up temporary environment variables. These are active while the process is running, and they are removed or reset in <code>$stop()</code>. For example:</p>
 <p>In <code>$local_env()</code> environment variables, webfakes replaces <code>{url}</code> with the actual app URL. This is needed by default, because the web server process starts up only later, so the URL is not known yet.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; Setting deferred event(s) on global environment.</span>
-<span class="co">#&gt;   * Will be run automatically when session ends</span>
-<span class="co">#&gt;   * Execute (and clear) with `withr::deferred_run()`.</span>
-<span class="co">#&gt;   * Clear (without executing) with `withr::deferred_clear()`.</span>
-<span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="st">"{url}"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span>
-<span class="co">#&gt; [1] ""</span>
-<span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span>
-<span class="co">#&gt; [1] ""</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="st">"{url}"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:43675/"</span></span>
+<span><span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] ""</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="how-can-i-write-my-own-app">How can I write my own app?<a class="anchor" aria-label="anchor" href="#how-can-i-write-my-own-app"></a>
 </h2>
 <p>You create a new app with <code><a href="../reference/new_app.html">new_app()</a></code>. This returns an object with methods to add middleware and API endpoints to it. For example, a simple app that returns the current time in JSON would look like this:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">time</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">time</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/time"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">time</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">time</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/time"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>
-<span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "http://127.0.0.1:37445/"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
+<span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:37891/"</span></span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span>
-<span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; $time</span>
-<span class="co">#&gt; [1] "2022-02-15 10:29:22"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
+<span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $time</span></span>
+<span><span class="co">#&gt; [1] "2022-09-08 09:38:32"</span></span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>
-<span class="va">web</span><span class="op">$</span><span class="fu">get_state</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "not running"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">web</span><span class="op">$</span><span class="fu">get_state</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "not running"</span></span></code></pre></div>
 <p><code><a href="../reference/local_app_process.html">local_app_process()</a></code> is similar to <code><a href="../reference/new_app_process.html">new_app_process()</a></code>, but it stops the server process at the end of the calling block. This means that the process is automatically cleaned up at the end of a <code>test_that()</code> block or at the end of the test file.</p>
 <p>You can create your app at the beginning of your test file. Or, if you want to use the same app in multiple test files, use a <a href="https://testthat.r-lib.org/reference/test_file.html#special-files" class="external-link">testthat helper file</a>. Sometimes it useful if your users can create and use your test app, for example to create reproducible examples. You can include a (possibly internal) function in your package, that creates the app.</p>
 <p>See <code>?new_app()</code>, <code>?new_app_process()</code> and <code><a href="../reference/local_app_process.html">?local_app_process</a></code> for more details.</p>
@@ -170,22 +166,22 @@ Suggests:
 </h2>
 <p>You can use testthat’s setup files. You start the app in a setup file and also register a teardown expression for it. <code><a href="../reference/local_app_process.html">local_app_process()</a></code> can do both in one go. Your <code>tests/testthat/setup-http.R</code> may look like this:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span>
-  <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,
-  .local_envir <span class="op">=</span> <span class="fu">testthat</span><span class="fu">::</span><span class="fu"><a href="https://testthat.r-lib.org/reference/teardown_env.html" class="external-link">teardown_env</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span></span>
+<span>  <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  .local_envir <span class="op">=</span> <span class="fu">testthat</span><span class="fu">::</span><span class="fu"><a href="https://testthat.r-lib.org/reference/teardown_env.html" class="external-link">teardown_env</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>(Before testthat 3.0.0, you had to write the teardown expression in a <code>tests/testthat/teardown-http.R</code> file. That still works, but a single setup file is considered to be better practice, see <a href="https://testthat.r-lib.org/articles/test-fixtures.html" class="external-link">this testthat vignette</a>.)</p>
 <p>In the test cases you can query the <code>http</code> app process to get the URLs you need to connect to:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">test_that</span><span class="op">(</span><span class="st">"fails on 404"</span>, <span class="op">{</span>
-  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/status/404"</span><span class="op">)</span>
-  <span class="va">response</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-  <span class="fu">expect_error</span><span class="op">(</span>
-    <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html" class="external-link">stop_for_status</a></span><span class="op">(</span><span class="va">response</span><span class="op">)</span>,
-    class <span class="op">=</span> <span class="st">"http_404"</span>
-  <span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 😸</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">test_that</span><span class="op">(</span><span class="st">"fails on 404"</span>, <span class="op">{</span></span>
+<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/status/404"</span><span class="op">)</span></span>
+<span>  <span class="va">response</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>  <span class="fu">expect_error</span><span class="op">(</span></span>
+<span>    <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html" class="external-link">stop_for_status</a></span><span class="op">(</span><span class="va">response</span><span class="op">)</span>,</span>
+<span>    class <span class="op">=</span> <span class="st">"http_404"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 😀</span></span></code></pre></div>
 <p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> your <code>setup-http.R</code> file for this. Alternatively, you can start the app process in a helper file. See “How do I start the app when writing the tests?” just below.</p>
 </div>
 <div class="section level2">
@@ -194,11 +190,11 @@ Suggests:
 <p>It is convenient to start the webfakes server process(es) when working on the tests interactively, e.g. when using <code>devtools::load_all()</code>. With <code><a href="../reference/local_app_process.html">local_app_process()</a></code> in the testthat <code>setup*.R</code> file this is not automatic, because <code>devtools::load_all()</code> does not run these files. So you would need to source the <code>setup*.R</code> files manually, which is error prone.</p>
 <p>One solution is to create server processes in the testthat <code>helper*.R</code> files. <code>load_all()</code> executes the helper files by default. So instead of using a setup file, you can simply do this in the <code>helper-http.R</code> file:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">httpbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">httpbin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>If the app process is created in the helper file, then it is ready use after <code>load_all()</code>, and (by default) the actual process will be started at the first <code>$url()</code> or <code>$get_port()</code> call. You can also start it manually with <code>$start()</code>.</p>
 <p>Processes created in helper files are not cleaned up automatically at the end of the test suite, unless you clean them up by registering a <code>$stop()</code> call in a setup file, like this:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/defer.html" class="external-link">defer</a></span><span class="op">(</span><span class="va">httpbin</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>, <span class="fu">testthat</span><span class="fu">::</span><span class="fu"><a href="https://testthat.r-lib.org/reference/teardown_env.html" class="external-link">teardown_env</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/defer.html" class="external-link">defer</a></span><span class="op">(</span><span class="va">httpbin</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span>, <span class="fu">testthat</span><span class="fu">::</span><span class="fu"><a href="https://testthat.r-lib.org/reference/teardown_env.html" class="external-link">teardown_env</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>In practice this is not necessary, because <code>R CMD check</code> runs the tests in a separate process, and when that finishes, the webfakes processes are cleaned up as well.</p>
 <p>When running <code>devtools::test()</code>, <code><a href="https://testthat.r-lib.org/reference/test_package.html" class="external-link">testthat::test_local()</a></code> or another testthat function to run (part of) the test suite in the current session, the <code>helper*.R</code> files are (re)loaded first. This will terminate the currently running app processes, if any, and create new app process objects. Should the test suite auto-start some of the test processes from <code>helper*.R</code>, these will not be cleaned up at the end of the test suite, but only at the next <code>load_all()</code> or <code>test()</code> call, or at the end of the R session. This lets you run your test code interactively, either via <code>test()</code> or manually, without thinking too much about the webfakes processes.</p>
 </div>
@@ -207,207 +203,207 @@ Suggests:
 </h2>
 <p>To run a web app for a single test file, start it with <code><a href="../reference/new_app_process.html">new_app_process()</a></code> at the beginning of the file, and register its cleanup using <code><a href="https://withr.r-lib.org/reference/defer.html" class="external-link">withr::defer()</a></code>. Even simpler, use <code><a href="../reference/local_app_process.html">local_app_process()</a></code> which is the same as <code><a href="../reference/new_app_process.html">new_app_process()</a></code> but it automatically stops the web server process, at the end of the test file:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/hello/:user"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Hello "</span>, <span class="va">req</span><span class="op">$</span><span class="va">params</span><span class="op">$</span><span class="va">user</span>, <span class="st">"!"</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/hello/:user"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Hello "</span>, <span class="va">req</span><span class="op">$</span><span class="va">params</span><span class="op">$</span><span class="va">user</span>, <span class="st">"!"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span></span></code></pre></div>
 <p>Then in the test cases, use <code>web$url()</code> to get the URL to connect to.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">test_that</span><span class="op">(</span><span class="st">"can use hello API"</span>, <span class="op">{</span>
-  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello/Gabor"</span><span class="op">)</span>
-  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 😸</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">test_that</span><span class="op">(</span><span class="st">"can use hello API"</span>, <span class="op">{</span></span>
+<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello/Gabor"</span><span class="op">)</span></span>
+<span>  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 😸</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="can-i-use-an-app-for-a-single-testthat-test">Can I use an app for a single testthat test?<a class="anchor" aria-label="anchor" href="#can-i-use-an-app-for-a-single-testthat-test"></a>
 </h2>
 <p>Sure. For this you need to create the app process within the <code><a href="https://testthat.r-lib.org/reference/test_that.html" class="external-link">testthat::test_that()</a></code> test case. <code><a href="../reference/local_app_process.html">local_app_process()</a></code> automatically cleans it up at the end of the block. It goes like this:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">test_that</span><span class="op">(</span><span class="st">"query works"</span>, <span class="op">{</span>
-  <span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
-  <span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/hello"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="st">"hello there"</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span>
-
-  <span class="va">echo</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu">expect_equal</span><span class="op">(</span><span class="va">echo</span>, <span class="st">"hello there"</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 😀</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">test_that</span><span class="op">(</span><span class="st">"query works"</span>, <span class="op">{</span></span>
+<span>  <span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/hello"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="st">"hello there"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">echo</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">expect_equal</span><span class="op">(</span><span class="va">echo</span>, <span class="st">"hello there"</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🎊</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="how-do-i-test-a-sequence-of-requests">How do I test a sequence of requests?<a class="anchor" aria-label="anchor" href="#how-do-i-test-a-sequence-of-requests"></a>
 </h2>
 <p>To test a sequence of requests, the app needs state information that is kept between requests. <code>app$locals</code> is an environment that belongs to the app, and it can be used to record information and then retrieve it in future requests. You could store anything in <code>app$locals</code>, something simple like a counter variable, something fancier like a sqlite database. You can add something to <code>app$locals</code> via methods or directly after creating the app.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">store</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"webfakes"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span><span class="va">store</span><span class="op">$</span><span class="va">locals</span><span class="op">)</span>
-<span class="co">#&gt; [1] "packages"</span>
-<span class="va">store</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; [1] "webfakes"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">store</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"webfakes"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span><span class="va">store</span><span class="op">$</span><span class="va">locals</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "packages"</span></span>
+<span><span class="va">store</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [1] "webfakes"</span></span></code></pre></div>
 <p>E.g. here is an end point that fails three times, then succeeds once, fails again three times, etc.</p>
 <p>Note that the <code>counter</code> created by the code below starts at 0, not 1.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flaky</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">flaky</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/unstable"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
-  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">counter</span>, <span class="fl">3L</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">counter</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
-    <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span>object <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>result <span class="op">=</span> <span class="st">"ok"</span><span class="op">)</span><span class="op">)</span>
-  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-    <span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">counter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">counter</span>, <span class="fl">0L</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1L</span>
-    <span class="va">res</span><span class="op">$</span><span class="fu">send_status</span><span class="op">(</span><span class="fl">401</span><span class="op">)</span>
-  <span class="op">}</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">flaky</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">flaky</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/unstable"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">counter</span>, <span class="fl">3L</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">counter</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span>    <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span>object <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>result <span class="op">=</span> <span class="st">"ok"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">counter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">counter</span>, <span class="fl">0L</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1L</span></span>
+<span>    <span class="va">res</span><span class="op">$</span><span class="fu">send_status</span><span class="op">(</span><span class="fl">401</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s run this app in another process and connect to it:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">flaky</span><span class="op">)</span>
-<span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span>
-<span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html" class="external-link">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 1.7 seconds...</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span>
-<span class="co">#&gt; Request failed [401]. Retrying in 6.7 seconds...</span>
-<span class="co">#&gt; Response [http://127.0.0.1:35475/unstable]</span>
-<span class="co">#&gt;   Date: 2022-02-15 10:29</span>
-<span class="co">#&gt;   Status: 200</span>
-<span class="co">#&gt;   Content-Type: application/json</span>
-<span class="co">#&gt;   Size: 17 B</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">flaky</span><span class="op">)</span></span>
+<span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span></span>
+<span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html" class="external-link">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 1.9 seconds...</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 1.7 seconds...</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 2.8 seconds...</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:41215/unstable]</span></span>
+<span><span class="co">#&gt;   Date: 2022-09-08 09:38</span></span>
+<span><span class="co">#&gt;   Status: 200</span></span>
+<span><span class="co">#&gt;   Content-Type: application/json</span></span>
+<span><span class="co">#&gt;   Size: 17 B</span></span></code></pre></div>
 <p>Another example where we send information to an app and then retrieve it. On a POST request we store the <code>name</code> query parameter in <code>app$locals$packages</code>, which can be queried with a GET request.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co"># Initial "data" for the app</span>
-<span class="va">store</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"webfakes"</span><span class="op">)</span>
-<span class="co"># Get method</span>
-<span class="va">store</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/packages"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-<span class="co"># Post method, store information from the query</span>
-<span class="va">store</span><span class="op">$</span><span class="fu">post</span><span class="op">(</span><span class="st">"/packages"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span>, <span class="va">req</span><span class="op">$</span><span class="va">query</span><span class="op">$</span><span class="va">name</span><span class="op">)</span>
-  <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># Initial "data" for the app</span></span>
+<span><span class="va">store</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"webfakes"</span><span class="op">)</span></span>
+<span><span class="co"># Get method</span></span>
+<span><span class="va">store</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/packages"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co"># Post method, store information from the query</span></span>
+<span><span class="va">store</span><span class="op">$</span><span class="fu">post</span><span class="op">(</span><span class="st">"/packages"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span>, <span class="va">req</span><span class="op">$</span><span class="va">query</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
+<span>  <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">app</span><span class="op">$</span><span class="va">locals</span><span class="op">$</span><span class="va">packages</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>Now we start the app in a subprocess, and run a GET query against it.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">store</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co"># Get current information</span>
-<span class="va">get_packages</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span>
-    <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span>
-      <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/modify_url.html" class="external-link">modify_url</a></span><span class="op">(</span>
-        <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>, 
-        path <span class="op">=</span> <span class="st">"packages"</span>
-        <span class="op">)</span>
-      <span class="op">)</span>
-    <span class="op">)</span>
-<span class="op">}</span>
-<span class="fu">get_packages</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; [1] "webfakes"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">store</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co"># Get current information</span></span>
+<span><span class="va">get_packages</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span></span>
+<span>    <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span></span>
+<span>      <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/modify_url.html" class="external-link">modify_url</a></span><span class="op">(</span></span>
+<span>        <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>        path <span class="op">=</span> <span class="st">"packages"</span></span>
+<span>        <span class="op">)</span></span>
+<span>      <span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">get_packages</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [1] "webfakes"</span></span></code></pre></div>
 <p>Let’s POST some new information.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">post_package</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/POST.html" class="external-link">POST</a></span><span class="op">(</span>
-  <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/modify_url.html" class="external-link">modify_url</a></span><span class="op">(</span>
-    <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>,  
-    path <span class="op">=</span> <span class="st">"packages"</span>,
-    query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="va">name</span><span class="op">)</span>
-  <span class="op">)</span>
-<span class="op">)</span>
-<span class="op">}</span>
-<span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:36841/packages?name=vcr]</span>
-<span class="co">#&gt;   Date: 2022-02-15 10:29</span>
-<span class="co">#&gt;   Status: 200</span>
-<span class="co">#&gt;   Content-Type: application/json</span>
-<span class="co">#&gt;   Size: 18 B</span>
-<span class="co"># Get current information</span>
-<span class="fu">get_packages</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; [1] "webfakes"</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt; [1] "vcr"</span>
-
-<span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span>
-<span class="co">#&gt; Response [http://127.0.0.1:36841/packages?name=httptest]</span>
-<span class="co">#&gt;   Date: 2022-02-15 10:29</span>
-<span class="co">#&gt;   Status: 200</span>
-<span class="co">#&gt;   Content-Type: application/json</span>
-<span class="co">#&gt;   Size: 29 B</span>
-<span class="co"># Get current information</span>
-<span class="fu">get_packages</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; [1] "webfakes"</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt; [1] "vcr"</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; [[3]]</span>
-<span class="co">#&gt; [1] "httptest"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">post_package</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/POST.html" class="external-link">POST</a></span><span class="op">(</span></span>
+<span>  <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/modify_url.html" class="external-link">modify_url</a></span><span class="op">(</span></span>
+<span>    <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span>,  </span>
+<span>    path <span class="op">=</span> <span class="st">"packages"</span>,</span>
+<span>    query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="va">name</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:39403/packages?name=vcr]</span></span>
+<span><span class="co">#&gt;   Date: 2022-09-08 09:38</span></span>
+<span><span class="co">#&gt;   Status: 200</span></span>
+<span><span class="co">#&gt;   Content-Type: application/json</span></span>
+<span><span class="co">#&gt;   Size: 18 B</span></span>
+<span><span class="co"># Get current information</span></span>
+<span><span class="fu">get_packages</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [1] "webfakes"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; [1] "vcr"</span></span>
+<span></span>
+<span><span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:39403/packages?name=httptest]</span></span>
+<span><span class="co">#&gt;   Date: 2022-09-08 09:38</span></span>
+<span><span class="co">#&gt;   Status: 200</span></span>
+<span><span class="co">#&gt;   Content-Type: application/json</span></span>
+<span><span class="co">#&gt;   Size: 29 B</span></span>
+<span><span class="co"># Get current information</span></span>
+<span><span class="fu">get_packages</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [1] "webfakes"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; [1] "vcr"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[3]]</span></span>
+<span><span class="co">#&gt; [1] "httptest"</span></span></code></pre></div>
 <p>Stop the app process:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="how-can-i-debug-an-app">How can I debug an app?<a class="anchor" aria-label="anchor" href="#how-can-i-debug-an-app"></a>
 </h2>
 <p>To debug an app, it is best to run it in the main R process, i.e. <em>not</em> via <code><a href="../reference/new_app_process.html">new_app_process()</a></code>. You can add breakpoints, or <code><a href="https://rdrr.io/r/base/browser.html" class="external-link">browser()</a></code> calls to your handler functions, and then invoke your app from another process. You might find the <code>curl</code> command line tool to send HTTP requests to the app, or you can just use another R process. Here is an example. We will simply print the incoming request object to the screen now. For a real debugging session you probably want to place a <code><a href="https://rdrr.io/r/base/browser.html" class="external-link">browser()</a></code> command there.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/debug"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">req</span><span class="op">)</span>
-  <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="st">"Got your back"</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/debug"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">req</span><span class="op">)</span></span>
+<span>  <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="st">"Got your back"</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>Now start the app on port 3000:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">app</span><span class="op">$</span><span class="fu">listen</span><span class="op">(</span>port <span class="op">=</span> <span class="fl">3000</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">#&gt; Running webfakes web app on port 3000</span></code></pre>
+<code class="sourceCode R"><span><span class="va">app</span><span class="op">$</span><span class="fu">listen</span><span class="op">(</span>port <span class="op">=</span> <span class="fl">3000</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; Running webfakes web app on port 3000</span></span></code></pre>
 <p>Connect to the app from another R or <code>curl</code> process:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-v</span> http://127.0.0.1:3000/debug</span></code></pre></div>
-<pre><code><span class="co">#&gt; *   Trying 127.0.0.1...</span>
-<span class="co">#&gt; * TCP_NODELAY set</span>
-<span class="co">#&gt; * Connected to 127.0.0.1 (127.0.0.1) port 3000 (#0)</span>
-<span class="co">#&gt; &gt; GET /debug HTTP/1.1</span>
-<span class="co">#&gt; &gt; Host: 127.0.0.1:3000</span>
-<span class="co">#&gt; &gt; User-Agent: curl/7.54.0</span>
-<span class="co">#&gt; &gt; Accept: */*</span>
-<span class="co">#&gt; &gt;</span>
-<span class="co">#&gt; &lt; HTTP/1.1 200 OK</span>
-<span class="co">#&gt; &lt; Content-Type: text/plain</span>
-<span class="co">#&gt; &lt; Content-Length: 13</span>
-<span class="co">#&gt; &lt;</span>
-<span class="co">#&gt; * Connection #0 to host 127.0.0.1 left intact</span>
-<span class="co">#&gt; Got your back</span></code></pre>
+<pre><code><span><span class="co">#&gt; *   Trying 127.0.0.1...</span></span>
+<span><span class="co">#&gt; * TCP_NODELAY set</span></span>
+<span><span class="co">#&gt; * Connected to 127.0.0.1 (127.0.0.1) port 3000 (#0)</span></span>
+<span><span class="co">#&gt; &gt; GET /debug HTTP/1.1</span></span>
+<span><span class="co">#&gt; &gt; Host: 127.0.0.1:3000</span></span>
+<span><span class="co">#&gt; &gt; User-Agent: curl/7.54.0</span></span>
+<span><span class="co">#&gt; &gt; Accept: */*</span></span>
+<span><span class="co">#&gt; &gt;</span></span>
+<span><span class="co">#&gt; &lt; HTTP/1.1 200 OK</span></span>
+<span><span class="co">#&gt; &lt; Content-Type: text/plain</span></span>
+<span><span class="co">#&gt; &lt; Content-Length: 13</span></span>
+<span><span class="co">#&gt; &lt;</span></span>
+<span><span class="co">#&gt; * Connection #0 to host 127.0.0.1 left intact</span></span>
+<span><span class="co">#&gt; Got your back</span></span></code></pre>
 <p>Your main R session will print the incoming request:</p>
-<pre><code><span class="co">#&gt; &lt;webfakes_request&gt;</span>
-<span class="co">#&gt; method:</span>
-<span class="co">#&gt;   get</span>
-<span class="co">#&gt; url:</span>
-<span class="co">#&gt;   http://127.0.0.1:3000/debug</span>
-<span class="co">#&gt; client:</span>
-<span class="co">#&gt;   127.0.0.1</span>
-<span class="co">#&gt; query:</span>
-<span class="co">#&gt; headers:</span>
-<span class="co">#&gt;   Host: 127.0.0.1:3000</span>
-<span class="co">#&gt;   User-Agent: curl/7.54.0</span>
-<span class="co">#&gt;   Accept: */*</span>
-<span class="co">#&gt; fields and methods:</span>
-<span class="co">#&gt;   app                    # the webfakes_app the request belongs to</span>
-<span class="co">#&gt;   headers                # HTTP request headers</span>
-<span class="co">#&gt;   hostname               # server hostname, the Host header</span>
-<span class="co">#&gt;   method                 # HTTP method of request (lowercase)</span>
-<span class="co">#&gt;   path                   # server path</span>
-<span class="co">#&gt;   protocol               # http or https</span>
-<span class="co">#&gt;   query_string           # raw query string without '?'</span>
-<span class="co">#&gt;   query                  # named list of query parameters</span>
-<span class="co">#&gt;   remote_addr            # IP address of the client</span>
-<span class="co">#&gt;   url                    # full URL of the request</span>
-<span class="co">#&gt;   get_header(field)      # get a request header</span>
-<span class="co">#&gt;  # see ?webfakes_request for details</span></code></pre>
+<pre><code><span><span class="co">#&gt; &lt;webfakes_request&gt;</span></span>
+<span><span class="co">#&gt; method:</span></span>
+<span><span class="co">#&gt;   get</span></span>
+<span><span class="co">#&gt; url:</span></span>
+<span><span class="co">#&gt;   http://127.0.0.1:3000/debug</span></span>
+<span><span class="co">#&gt; client:</span></span>
+<span><span class="co">#&gt;   127.0.0.1</span></span>
+<span><span class="co">#&gt; query:</span></span>
+<span><span class="co">#&gt; headers:</span></span>
+<span><span class="co">#&gt;   Host: 127.0.0.1:3000</span></span>
+<span><span class="co">#&gt;   User-Agent: curl/7.54.0</span></span>
+<span><span class="co">#&gt;   Accept: */*</span></span>
+<span><span class="co">#&gt; fields and methods:</span></span>
+<span><span class="co">#&gt;   app                    # the webfakes_app the request belongs to</span></span>
+<span><span class="co">#&gt;   headers                # HTTP request headers</span></span>
+<span><span class="co">#&gt;   hostname               # server hostname, the Host header</span></span>
+<span><span class="co">#&gt;   method                 # HTTP method of request (lowercase)</span></span>
+<span><span class="co">#&gt;   path                   # server path</span></span>
+<span><span class="co">#&gt;   protocol               # http or https</span></span>
+<span><span class="co">#&gt;   query_string           # raw query string without '?'</span></span>
+<span><span class="co">#&gt;   query                  # named list of query parameters</span></span>
+<span><span class="co">#&gt;   remote_addr            # IP address of the client</span></span>
+<span><span class="co">#&gt;   url                    # full URL of the request</span></span>
+<span><span class="co">#&gt;   get_header(field)      # get a request header</span></span>
+<span><span class="co">#&gt;  # see ?webfakes_request for details</span></span></code></pre>
 <p>Press <code>CTRL+C</code> or <code>ESC</code> to interrupt the app in the main session.</p>
 </div>
 <div class="section level2">
@@ -418,34 +414,34 @@ Suggests:
 <p>However, the request thread of the web server is still busy while on hold, so to take advantage of this, you need to allow multiple threads. The <code>num_threads</code> argument of the <code>$listen()</code> method of <code>webfakes_app</code> lets you specify the number of request threads the web server will use. Similarly, the <code>num_threads</code> argument of <code><a href="../reference/local_app_process.html">local_app_process()</a></code> lets you modify the number of threads.</p>
 <p>When testing asynchronous or parallel code, that might invoke multiple, possibly delayed requests, it is best to increase the number of threads. The code below calls the same API request concurrently, three times. Each request takes 1 second to answer, but if the web server has more than three threads, together they’ll still take about 1 second.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span>
-  <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,
-  opts <span class="op">=</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/server_opts.html">server_opts</a></span><span class="op">(</span>num_threads <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span></span>
+<span>  <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  opts <span class="op">=</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/server_opts.html">server_opts</a></span><span class="op">(</span>num_threads <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">test_that</span><span class="op">(</span><span class="st">""</span>, <span class="op">{</span>
-  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/delay/1"</span><span class="op">)</span>
-  <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/multi.html" class="external-link">new_pool</a></span><span class="op">(</span><span class="op">)</span>
-  <span class="va">handles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/handle.html" class="external-link">new_handle</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">resps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>
-  <span class="kw">for</span> <span class="op">(</span><span class="va">handle</span> <span class="kw">in</span> <span class="va">handles</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/multi.html" class="external-link">multi_add</a></span><span class="op">(</span>
-      <span class="va">handle</span>,
-      done <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"one is done"</span><span class="op">)</span>,
-      fail <span class="op">=</span> <span class="va">stop</span>,
-      pool <span class="op">=</span> <span class="va">p</span>
-    <span class="op">)</span>
-  <span class="op">}</span>
-  <span class="va">st</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/multi.html" class="external-link">multi_run</a></span><span class="op">(</span>timeout <span class="op">=</span> <span class="fl">5</span>, pool <span class="op">=</span> <span class="va">p</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">st</span><span class="op">)</span>
-  <span class="fu">expect_true</span><span class="op">(</span><span class="va">st</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;</span> <span class="fl">3.0</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-<span class="co">#&gt; one is done</span>
-<span class="co">#&gt; one is done</span>
-<span class="co">#&gt; one is done</span>
-<span class="co">#&gt;    user  system elapsed </span>
-<span class="co">#&gt;   0.001   0.002   1.050 </span>
-<span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🥇</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">test_that</span><span class="op">(</span><span class="st">""</span>, <span class="op">{</span></span>
+<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/delay/1"</span><span class="op">)</span></span>
+<span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/multi.html" class="external-link">new_pool</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">handles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/handle.html" class="external-link">new_handle</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">resps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">handle</span> <span class="kw">in</span> <span class="va">handles</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/multi.html" class="external-link">multi_add</a></span><span class="op">(</span></span>
+<span>      <span class="va">handle</span>,</span>
+<span>      done <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"one is done"</span><span class="op">)</span>,</span>
+<span>      fail <span class="op">=</span> <span class="va">stop</span>,</span>
+<span>      pool <span class="op">=</span> <span class="va">p</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">st</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/multi.html" class="external-link">multi_run</a></span><span class="op">(</span>timeout <span class="op">=</span> <span class="fl">5</span>, pool <span class="op">=</span> <span class="va">p</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">st</span><span class="op">)</span></span>
+<span>  <span class="fu">expect_true</span><span class="op">(</span><span class="va">st</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;</span> <span class="fl">3.0</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; one is done</span></span>
+<span><span class="co">#&gt; one is done</span></span>
+<span><span class="co">#&gt; one is done</span></span>
+<span><span class="co">#&gt;    user  system elapsed </span></span>
+<span><span class="co">#&gt;   0.000   0.002   1.042 </span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🥳</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="how-to-make-sure-that-my-code-works-with-the-real-api">How to make sure that my code works with the <em>real</em> API?<a class="anchor" aria-label="anchor" href="#how-to-make-sure-that-my-code-works-with-the-real-api"></a>
@@ -461,17 +457,17 @@ Suggests:
 </h2>
 <p>You need to use the <code>throttle</code> server option when you start your web app. This means that you can run the very same app with different connection speed. This is how it goes:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://webfakes.r-lib.org/" class="external-link">webfakes</a></span><span class="op">)</span>
-<span class="va">slow</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,
-  opts <span class="op">=</span> <span class="fu"><a href="../reference/server_opts.html">server_opts</a></span><span class="op">(</span>throttle <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span>
-<span class="va">resp</span><span class="op">$</span><span class="va">times</span>
-<span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer </span>
-<span class="co">#&gt;      0.000000      0.000109      0.000281      0.000335      0.011319 </span>
-<span class="co">#&gt;         total </span>
-<span class="co">#&gt;      2.012034</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://webfakes.r-lib.org/" class="external-link">webfakes</a></span><span class="op">)</span></span>
+<span><span class="va">slow</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  opts <span class="op">=</span> <span class="fu"><a href="../reference/server_opts.html">server_opts</a></span><span class="op">(</span>throttle <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">resp</span><span class="op">$</span><span class="va">times</span></span>
+<span><span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer </span></span>
+<span><span class="co">#&gt;      0.000000      0.000055      0.000179      0.000219      0.008557 </span></span>
+<span><span class="co">#&gt;         total </span></span>
+<span><span class="co">#&gt;      2.009215</span></span></code></pre></div>
 <p><code>throttle</code> gives the number of bytes per second, so downloading 200 random bytes from the fake app will take about 2 seconds.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -487,7 +483,7 @@ Suggests:
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer>
