@@ -1,5 +1,6 @@
+# webfakes 1.1.4
 
-# webfakes (development version)
+* No user visible changes.
 
 # webfakes 1.1.3
 
