@@ -4,14 +4,18 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Create a web app that makes it easier to test web clients
+  without using the internet. It includes a web app framework with path
+  matching, parameters and templates. Can parse various HTTP request
+  bodies. Can send JSON data or files from the disk. Includes a web app
+  that implements the &lt;https://httpbin.org&gt; web service.">
 <title>Fake Web Apps for HTTP Testing • webfakes</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Fake Web Apps for HTTP Testing">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Fake Web Apps for HTTP Testing">
 <meta property="og:description" content="Create a web app that makes it easier to test web clients
   without using the internet. It includes a web app framework with path
   matching, parameters and templates. Can parse various HTTP request
@@ -22,93 +26,75 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <div class="container template-home">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">webfakes</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
-      </span>
-    </div>
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    
+    <a class="navbar-brand me-2" href="index.html">webfakes</a>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="articles/introduction.html">Intro</a>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.4</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="articles/introduction.html">Intro</a>
 </li>
-<li>
-  <a href="articles/how-to.html">How-to</a>
+<li class="nav-item">
+  <a class="nav-link" href="articles/how-to.html">How-to</a>
 </li>
-<li>
-  <a href="articles/glossary.html">Glossary</a>
+<li class="nav-item">
+  <a class="nav-link" href="articles/glossary.html">Glossary</a>
 </li>
-<li>
-  <a href="reference/index.html">Reference</a>
+<li class="nav-item">
+  <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="httpbin.html">The builtin httpbin app's API</a>
-    </li>
-    <li>
-      <a href="articles/oauth.html">OAuth2.0 webfakes apps</a>
-    </li>
-    <li>
-      <a href="articles/internals.html">Webfakes internals</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="news/index.html">News</a>
-</li>
-      </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/r-lib/webfakes/">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
-</div>
-<!--/.nav-collapse -->
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="httpbin.html">The builtin httpbin app's API</a>
+    <a class="dropdown-item" href="articles/oauth.html">OAuth2.0 webfakes apps</a>
+    <a class="dropdown-item" href="articles/internals.html">Webfakes internals</a>
   </div>
-<!--/.container -->
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="news/index.html">Changelog</a>
+</li>
+      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/r-lib/webfakes/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
-<!--/.navbar -->
 
-      
-
-      </header><div class="row">
-  <div class="contents col-md-9">
-<div id="webfakes" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#webfakes" class="anchor"></a>webfakes</h1></div>
-<blockquote>
-<p>Your own web server for happy HTTP testing</p>
-</blockquote>
+    
+  </div>
+</nav><div class="container template-home">
+<div class="row">
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header"><h1 id="webfakes">webfakes<a class="anchor" aria-label="anchor" href="#webfakes"></a>
+</h1></div>
+<blockquote><p>Your own web server for happy HTTP testing</p></blockquote>
 <!-- badges: start -->
 
-<!-- badges: end -->
-<p>Lightweight fake web apps for testing. Built using the <a href="https://github.com/civetweb/civetweb" class="external-link">civetweb</a> embedded web server.</p>
-<div id="features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#features" class="anchor"></a>Features</h2>
+<!-- badges: end --><p>Lightweight fake web apps for testing. Built using the <a href="https://github.com/civetweb/civetweb" class="external-link">civetweb</a> embedded web server.</p>
+<div class="section level2">
+<h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
+</h2>
 <ul>
 <li>Complete web app framework, define handlers for HTTP requests in R.</li>
 <li>Write your own app for your custom test cases; our use app similar to the <a href="https://httpbin.org" class="external-link uri">https://httpbin.org</a> API, so often you don’t need to write your own web app (e.g. if you are writing an HTTP client (httr, curl, crul).</li>
@@ -126,68 +112,68 @@
 <li>Limit download speed to simulate low bandwidth.</li>
 </ul>
 </div>
-<div id="optional-dependencies" class="section level2">
-<h2 class="hasAnchor">
-<a href="#optional-dependencies" class="anchor"></a>Optional dependencies</h2>
+<div class="section level2">
+<h2 id="optional-dependencies">Optional dependencies<a class="anchor" aria-label="anchor" href="#optional-dependencies"></a>
+</h2>
 <ul>
 <li>The jsonlite package is needed for the <code><a href="reference/mw_json.html">mw_json()</a></code> middleware, the <code>response$send_json()</code> method and the <code><a href="reference/httpbin_app.html">httpbin_app()</a></code> app.</li>
 <li>The glue package is needed for the <code><a href="reference/tmpl_glue.html">tmpl_glue()</a></code> template engine.</li>
 <li>The callr package is needed for <code><a href="reference/new_app_process.html">new_app_process()</a></code> and <code>local_app_process</code> to work.</li>
 </ul>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>Once on CRAN, install the package as usual:</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Install the release version from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"webfakes"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"webfakes"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="usage" class="section level2">
-<h2 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h2>
+<div class="section level2">
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h2>
 <p>Start a web app at the beginning of your tests or test file, and stop it after. Here is an example with the testthat package. Suppose you want to test that your <code>get_hello()</code> function can query an API:</p>
 <p><code><a href="reference/local_app_process.html">local_app_process()</a></code> helps you clean up the web server process after the test block, or test file. It is similar to the <code>withr::local_*</code> functions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/hello/:user"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Hello "</span>, <span class="va">req</span><span class="op">$</span><span class="va">params</span><span class="op">$</span><span class="va">user</span>, <span class="st">"!"</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span>
-<span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span>
-
-<span class="fu">test_that</span><span class="op">(</span><span class="st">"can use hello API"</span>, <span class="op">{</span>
-  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello/Gabor"</span><span class="op">)</span>
-  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">get_hello</span><span class="op">(</span><span class="va">url</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">app</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">app</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/hello/:user"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">res</span><span class="op">$</span><span class="fu">send</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Hello "</span>, <span class="va">req</span><span class="op">$</span><span class="va">params</span><span class="op">$</span><span class="va">user</span>, <span class="st">"!"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="va">app</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">test_that</span><span class="op">(</span><span class="st">"can use hello API"</span>, <span class="op">{</span></span>
+<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello/Gabor"</span><span class="op">)</span></span>
+<span>  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">get_hello</span><span class="op">(</span><span class="va">url</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p>When testing HTTP clients you can often use the built in <code><a href="reference/httpbin_app.html">httpbin_app()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">httpbin</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">httpbin</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">test_that</span><span class="op">(</span><span class="st">"HTTP errors are caught"</span>, <span class="op">{</span>
-  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">httpbin</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/status/404"</span><span class="op">)</span>
-  <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span>
-  <span class="fu">expect_error</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html" class="external-link">stop_for_status</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"http_404"</span><span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#&gt; Test passed 😸</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">test_that</span><span class="op">(</span><span class="st">"HTTP errors are caught"</span>, <span class="op">{</span></span>
+<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">httpbin</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/status/404"</span><span class="op">)</span></span>
+<span>  <span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>  <span class="fu">expect_error</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/stop_for_status.html" class="external-link">stop_for_status</a></span><span class="op">(</span><span class="va">resp</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"http_404"</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Test passed 🎉</span></span></code></pre></div>
 </div>
-<div id="documentation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#documentation" class="anchor"></a>Documentation</h2>
+<div class="section level2">
+<h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h2>
 <p>See <a href="https://webfakes.r-lib.org" class="external-link uri">https://webfakes.r-lib.org</a></p>
 </div>
-<div id="links" class="section level2">
-<h2 class="hasAnchor">
-<a href="#links" class="anchor"></a>Links</h2>
-<div id="other-solutions-for-http-testing-in-r" class="section level3">
-<h3 class="hasAnchor">
-<a href="#other-solutions-for-http-testing-in-r" class="anchor"></a>Other solutions for HTTP testing in R:</h3>
+<div class="section level2">
+<h2 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
+</h2>
+<div class="section level3">
+<h3 id="other-solutions-for-http-testing-in-r">Other solutions for HTTP testing in R:<a class="anchor" aria-label="anchor" href="#other-solutions-for-http-testing-in-r"></a>
+</h3>
 <ul>
 <li><a href="https://github.com/ropensci/vcr" class="external-link">vcr</a></li>
 <li><a href="https://github.com/nealrichardson/httptest" class="external-link">httptest</a></li>
 </ul>
 </div>
-<div id="r-web-application-frameworks" class="section level3">
-<h3 class="hasAnchor">
-<a href="#r-web-application-frameworks" class="anchor"></a>R web application frameworks</h3>
+<div class="section level3">
+<h3 id="r-web-application-frameworks">R web application frameworks<a class="anchor" aria-label="anchor" href="#r-web-application-frameworks"></a>
+</h3>
 <p>webfakes focuses on testing, these packages are for writing real web apps:</p>
 <ul>
 <li><a href="https://github.com/rstudio/shiny" class="external-link">shiny</a></li>
@@ -198,24 +184,18 @@
 </ul>
 </div>
 </div>
-<div id="license" class="section level2">
-<h2 class="hasAnchor">
-<a href="#license" class="anchor"></a>License</h2>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
 <p>MIT © RStudio</p>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="links">
+  </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=webfakes">https://​cloud.r-project.org/​package=webfakes</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/r-lib/webfakes/">https://​github.com/​r-lib/​webfakes/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/r-lib/webfakes/issues">https://​github.com/​r-lib/​webfakes/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=webfakes" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/r-lib/webfakes/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/r-lib/webfakes/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -223,47 +203,48 @@
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
 
 
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing webfakes</a></li>
+</ul>
+</div>
+
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://github.com/gaborcsardi">Gábor Csárdi</a> <br><small class="roles"> Author, maintainer </small>  </li>
-<li><a href="authors.html">More on authors...</a></li>
+<a href="https://github.com/gaborcsardi" class="external-link">Gábor Csárdi</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/r-lib/webfakes/actions" class="external-link"><img src="https://github.com/r-lib/webfakes/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-</ul>
-</div>
 
-  </div>
+
+  </aside>
 </div>
 
 
-      <footer><div class="copyright">
+    <footer><div class="pkgdown-footer-left">
   <p></p>
 <p>Developed by <a href="https://github.com/gaborcsardi" class="external-link">Gábor Csárdi</a>.</p>
 </div>
 
-<div class="pkgdown">
+<div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
   
-
 
   
 

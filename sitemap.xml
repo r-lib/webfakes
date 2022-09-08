@@ -1,10 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://r-lib.github.io/webfakes/404.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/articles/glossary.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/articles/how-to.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/articles/internals.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/articles/introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/articles/oauth.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/authors.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/httpbin.html</loc>
+  </url>
+  <url>
     <loc>https://r-lib.github.io/webfakes/index.html</loc>
   </url>
   <url>
+    <loc>https://r-lib.github.io/webfakes/news/index.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/reference/glossary.html</loc>
+  </url>
+  <url>
     <loc>https://r-lib.github.io/webfakes/reference/httpbin_app.html</loc>
+  </url>
+  <url>
+    <loc>https://r-lib.github.io/webfakes/reference/index.html</loc>
   </url>
   <url>
     <loc>https://r-lib.github.io/webfakes/reference/local_app_process.html</loc>
@@ -65,20 +104,5 @@
   </url>
   <url>
     <loc>https://r-lib.github.io/webfakes/reference/webfakes_response.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/webfakes/articles/glossary.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/webfakes/articles/how-to.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/webfakes/articles/internals.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/webfakes/articles/introduction.html</loc>
-  </url>
-  <url>
-    <loc>https://r-lib.github.io/webfakes/articles/oauth.html</loc>
   </url>
 </urlset>
