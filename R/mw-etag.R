@@ -1,6 +1,10 @@
 
 #' Middleware that add an `Etag` header to the response
 #'
+#' This middleware handles the `If-None-Match` headers, and it sets the
+#' status code of the response to 304 if `If-None-Match` matches the
+#' `Etag`. It also removes the response body in this case.
+#'
 #' @param algorithm Checksum algorithm to use. Only `"crc32"` is
 #' implemented currently.
 #'
@@ -21,6 +25,11 @@ mw_etag <- function(algorithm = "crc32") {
     do <- function(req, res) {
       etag <- paste0("\"", crc32(res$.body), "\"")
       res$set_header("Etag", etag)
+      req_etag <- req$get_header("If-None-Match")
+      if (!is.null(req_etag) && req_etag == etag) {
+        res$.body <- NULL
+        res$set_status(304)
+      }
     }
     res$on_response(do)
 

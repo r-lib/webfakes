@@ -1,5 +1,6 @@
 
 app <- new_app()
+app$use(mw_etag())
 app$use(mw_static(root = test_path("fixtures", "static")))
 set_headers <- function(req, res) {
   res$set_header("foo", "bar")
@@ -72,4 +73,17 @@ test_that("set_headers callback", {
     resp$content,
     read_bin(test_path("fixtures", "static2", "static.tar.gz"))
   )
+})
+
+test_that("if-none-match is respected", {
+  url <- web$url("/static.html")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 200L)
+  etag <- curl::parse_headers_list(resp$headers)$etag
+
+  h <- curl::new_handle()
+  curl::handle_setheaders(h, "If-None-Match" = etag)
+  resp2 <- curl::curl_fetch_memory(url, handle = h)
+  expect_equal(resp2$status_code, 304L)
+  expect_equal(resp2$content, raw(0))
 })

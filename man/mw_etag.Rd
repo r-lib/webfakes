@@ -14,7 +14,9 @@ implemented currently.}
 Handler function.
 }
 \description{
-Middleware that add an \code{Etag} header to the response
+This middleware handles the \code{If-None-Match} headers, and it sets the
+status code of the response to 304 if \code{If-None-Match} matches the
+\code{Etag}. It also removes the response body in this case.
 }
 \examples{
 app <- new_app()
