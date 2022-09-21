@@ -11,7 +11,7 @@ new_app_process(
   opts = server_opts(remote = TRUE),
   start = FALSE,
   auto_start = TRUE,
-  process_timeout = 5000,
+  process_timeout = NULL,
   callr_opts = NULL
 )
 }
