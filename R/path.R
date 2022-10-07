@@ -55,6 +55,6 @@ path_to_regexp <- function(path) {
   tokens <- strsplit(path, "/")[[1]]
   keys <- grep("^:", tokens)
   reg <- tokens
-  reg[keys] <- paste0("(?<", substring(tokens[keys], 2), ">[A-Za-z0-9_]+)")
+  reg[keys] <- paste0("(?<", substring(tokens[keys], 2), ">[-A-Za-z0-9_]+)")
   new_regexp(paste0("^", paste(reg, collapse = "/"), "$"))
 }
