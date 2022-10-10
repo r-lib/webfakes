@@ -127,7 +127,7 @@ Suggests:
 <code class="sourceCode R"><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="st">"{url}"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:38287/"</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:34969/"</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] ""</span></span></code></pre></div>
@@ -145,13 +145,13 @@ Suggests:
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:40593/"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:43383/"</span></span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $time</span></span>
-<span><span class="co">#&gt; [1] "2022-10-10 08:36:46"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2022-10-10 08:46:19"</span></span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
@@ -181,7 +181,7 @@ Suggests:
 <span>    class <span class="op">=</span> <span class="st">"http_404"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🥇</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🎊</span></span></code></pre></div>
 <p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> your <code>setup-http.R</code> file for this. Alternatively, you can start the app process in a helper file. See “How do I start the app when writing the tests?” just below.</p>
 </div>
 <div class="section level2">
@@ -216,7 +216,7 @@ Suggests:
 <span>  <span class="fu">expect_equal</span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span>, <span class="st">"Hello Gabor!"</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🎉</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🥳</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="can-i-use-an-app-for-a-single-testthat-test">Can I use an app for a single testthat test?<a class="anchor" aria-label="anchor" href="#can-i-use-an-app-for-a-single-testthat-test"></a>
@@ -232,7 +232,7 @@ Suggests:
 <span>  <span class="fu">expect_equal</span><span class="op">(</span><span class="va">echo</span>, <span class="st">"hello there"</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🌈</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🥳</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="how-do-i-test-a-sequence-of-requests">How do I test a sequence of requests?<a class="anchor" aria-label="anchor" href="#how-do-i-test-a-sequence-of-requests"></a>
@@ -264,11 +264,11 @@ Suggests:
 <code class="sourceCode R"><span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">flaky</span><span class="op">)</span></span>
 <span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html" class="external-link">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Request failed [401]. Retrying in 1.6 seconds...</span></span>
-<span><span class="co">#&gt; Request failed [401]. Retrying in 1.4 seconds...</span></span>
-<span><span class="co">#&gt; Request failed [401]. Retrying in 3.1 seconds...</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:43177/unstable]</span></span>
-<span><span class="co">#&gt;   Date: 2022-10-10 08:36</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 1.7 seconds...</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:34477/unstable]</span></span>
+<span><span class="co">#&gt;   Date: 2022-10-10 08:46</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 17 B</span></span></code></pre></div>
@@ -315,8 +315,8 @@ Suggests:
 <span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:43681/packages?name=vcr]</span></span>
-<span><span class="co">#&gt;   Date: 2022-10-10 08:36</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:37519/packages?name=vcr]</span></span>
+<span><span class="co">#&gt;   Date: 2022-10-10 08:46</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 18 B</span></span>
@@ -329,8 +329,8 @@ Suggests:
 <span><span class="co">#&gt; [1] "vcr"</span></span>
 <span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:43681/packages?name=httptest]</span></span>
-<span><span class="co">#&gt;   Date: 2022-10-10 08:36</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:37519/packages?name=httptest]</span></span>
+<span><span class="co">#&gt;   Date: 2022-10-10 08:46</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 29 B</span></span>
@@ -440,8 +440,8 @@ Suggests:
 <span><span class="co">#&gt; one is done</span></span>
 <span><span class="co">#&gt; one is done</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.002   0.000   1.044 </span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🌈</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.001   0.000   1.040 </span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🥇</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="how-to-make-sure-that-my-code-works-with-the-real-api">How to make sure that my code works with the <em>real</em> API?<a class="anchor" aria-label="anchor" href="#how-to-make-sure-that-my-code-works-with-the-real-api"></a>
@@ -465,9 +465,9 @@ Suggests:
 <span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">resp</span><span class="op">$</span><span class="va">times</span></span>
 <span><span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer </span></span>
-<span><span class="co">#&gt;      0.000000      0.000058      0.000186      0.000225      0.008419 </span></span>
+<span><span class="co">#&gt;      0.000000      0.000048      0.000173      0.000210      0.008146 </span></span>
 <span><span class="co">#&gt;         total </span></span>
-<span><span class="co">#&gt;      2.008996</span></span></code></pre></div>
+<span><span class="co">#&gt;      2.008922</span></span></code></pre></div>
 <p><code>throttle</code> gives the number of bytes per second, so downloading 200 random bytes from the fake app will take about 2 seconds.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
