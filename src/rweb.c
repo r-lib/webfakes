@@ -150,7 +150,7 @@ int check_stdin() {
 }
 
 #else
-int check_stdin() {
+int check_stdin(void) {
   static char buffer[4096];
   struct pollfd pfd;
   pfd.fd = 0;
@@ -211,7 +211,7 @@ SEXP webfakes_create_request(struct mg_connection *conn);
   R_THROW_ERROR("Cannot process webfakes web server requests");          \
 }
 
-static R_INLINE SEXP new_env() {
+static R_INLINE SEXP new_env(void) {
   SEXP env;
   PROTECT(env = allocSExp(ENVSXP));
   SET_FRAME(env, R_NilValue);
