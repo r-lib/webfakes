@@ -1,3 +1,5 @@
+# webfakes (development version)
+
 # webfakes 1.1.5
 
 * `mw_etag()` now handles the `If-None-Match` header properly, and sets
