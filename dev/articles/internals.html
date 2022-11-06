@@ -96,20 +96,34 @@
 <h2 id="why-civetwet">Why civetwet?<a class="anchor" aria-label="anchor" href="#why-civetwet"></a>
 </h2>
 <ul>
-<li>Civetweb is small and simple. C code only. Embedding it is trivial.</li>
-<li>The main developer is nice and very responsive. The project is active.</li>
+<li>Civetweb is small and simple. C code only. Embedding it is
+trivial.</li>
+<li>The main developer is nice and very responsive. The project is
+active.</li>
 <li>The code is portable and works OOB on all OSes I tried.</li>
-<li>It has some nice features built in, e.g. limiting the download speed.</li>
+<li>It has some nice features built in, e.g. limiting the download
+speed.</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="why-not-x">Why not x?<a class="anchor" aria-label="anchor" href="#why-not-x"></a>
 </h2>
 <ul>
-<li>httpuv is an alternative. It is heavier, contains all of libuv, and it also needs 7 non-core packages. AFAICT it does not have an easy way to delay a response.</li>
-<li>We could also use libuv directly. This would be more difficult, we would probably need to deal more with the internals. I.e. IOCPs, polls, etc. Libuv also does not have HTTP, so we would need to implement that or use another library.</li>
-<li>We could also use R’s internal web server. This means redefining the default handlers for the help, but that is fine, because we would only do this temporarily. But the internal web server is very limited, it only handles GET and POST requests, and does not give you enough information about the requests. It also does not support delaying a response.</li>
-<li>Mongoose is am embedded web server, that civetweb was forked from originally. Its license is GPL-2, so it is more restrictive.</li>
+<li>httpuv is an alternative. It is heavier, contains all of libuv, and
+it also needs 7 non-core packages. AFAICT it does not have an easy way
+to delay a response.</li>
+<li>We could also use libuv directly. This would be more difficult, we
+would probably need to deal more with the internals. I.e. IOCPs, polls,
+etc. Libuv also does not have HTTP, so we would need to implement that
+or use another library.</li>
+<li>We could also use R’s internal web server. This means redefining the
+default handlers for the help, but that is fine, because we would only
+do this temporarily. But the internal web server is very limited, it
+only handles GET and POST requests, and does not give you enough
+information about the requests. It also does not support delaying a
+response.</li>
+<li>Mongoose is am embedded web server, that civetweb was forked from
+originally. Its license is GPL-2, so it is more restrictive.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -122,9 +136,21 @@
 <li>Request threads, they are created for new connections.</li>
 <li>Web server worker threads.</li>
 </ol>
-<p>The main rule here is that only the main R thread can call a function from the R API. The civetweb callbacks run on the civetweb threads, so they cannot call any R API. Currently we only use the <code>begin_request()</code> callback, and this is called from the request threads. So we need to synchronize between the request threads and the main R thread.</p>
-<p>We essentially have a producer-consumer problem, with a single consumer, the main R thread, and multiple producers, the request threads. Having a single consumer means that the queue to store the jobs is of length one. This is a good guide on how to solve such a problem: <a href="https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html" class="external-link uri">https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html</a></p>
-<p>We need two conditions, to signal that 1) there is something to work on, and that 2) new work may come in. We also need a mutex to be able to wait on these conditions. These are stored in the <code>user_data</code> of the civetweb server instance:</p>
+<p>The main rule here is that only the main R thread can call a function
+from the R API. The civetweb callbacks run on the civetweb threads, so
+they cannot call any R API. Currently we only use the
+<code>begin_request()</code> callback, and this is called from the
+request threads. So we need to synchronize between the request threads
+and the main R thread.</p>
+<p>We essentially have a producer-consumer problem, with a single
+consumer, the main R thread, and multiple producers, the request
+threads. Having a single consumer means that the queue to store the jobs
+is of length one. This is a good guide on how to solve such a problem:
+<a href="https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html" class="external-link uri">https://docs.oracle.com/cd/E36784_01/html/E36868/sync-31.html</a></p>
+<p>We need two conditions, to signal that 1) there is something to work
+on, and that 2) new work may come in. We also need a mutex to be able to
+wait on these conditions. These are stored in the <code>user_data</code>
+of the civetweb server instance:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> server_user_data <span class="op">{</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  pthread_cond_t process_more<span class="op">;</span>  <span class="co">/* there is something to process */</span></span>
@@ -133,7 +159,13 @@
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">struct</span> mg_connection <span class="op">*</span>nextconn<span class="op">;</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
-<p><code>nextconn</code> is the queue, it is used to pass the request from a request thread to the main R thread. When a request thread comes in, it has to make sure that <code>nextconn</code> is <code>NULL</code>, so waits on <code>process_less</code>. Once given the green light, it sets <code>nextconn</code> to the civetweb connection object, and then wait on its own <code>finish_cond</code> condition, which is stored in the connection specific user data:</p>
+<p><code>nextconn</code> is the queue, it is used to pass the request
+from a request thread to the main R thread. When a request thread comes
+in, it has to make sure that <code>nextconn</code> is <code>NULL</code>,
+so waits on <code>process_less</code>. Once given the green light, it
+sets <code>nextconn</code> to the civetweb connection object, and then
+wait on its own <code>finish_cond</code> condition, which is stored in
+the connection specific user data:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> connection_user_data <span class="op">{</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  pthread_cond_t finish_cond<span class="op">;</span>   <span class="co">/* can finish callback? */</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  pthread_mutex_t finish_lock<span class="op">;</span></span>
@@ -143,28 +175,49 @@
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  SEXP req<span class="op">;</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
-<p>The main R thread can use the <code>user_data</code> of <code>next_conn</code> to access all information about the connection and the request. Once the main R thread is done with processing the request, it sets the connection’s <code>req_todo</code> field to non-zero, and signals the connection’s <code>finish_cond</code> condition to allow the request thread to continue. Then it also signals the <code>process_less</code> condition of the server, to let other request threads in.</p>
-<p>Currently the main R thread can set <code>req_todo</code> to two different values.</p>
+<p>The main R thread can use the <code>user_data</code> of
+<code>next_conn</code> to access all information about the connection
+and the request. Once the main R thread is done with processing the
+request, it sets the connection’s <code>req_todo</code> field to
+non-zero, and signals the connection’s <code>finish_cond</code>
+condition to allow the request thread to continue. Then it also signals
+the <code>process_less</code> condition of the server, to let other
+request threads in.</p>
+<p>Currently the main R thread can set <code>req_todo</code> to two
+different values.</p>
 <ul>
 <li>
-<code>WEBFAKES_DONE</code> means that the request was processed, and the request thread can quit. Most requests are like this.</li>
+<code>WEBFAKES_DONE</code> means that the request was processed, and
+the request thread can quit. Most requests are like this.</li>
 <li>
-<code>WEBFAKES_WAIT</code> means that the request thread still needs to stay around and sleep for the specified number of <code>secs</code>. After sleeping for the specified amount of time, the request thread will signal <code>process_more</code> again, notifying the main R thread, but it also sets <code>main_todo</code> to <code>WEBFAKES_WAIT</code>, so the main R thread knows that this is not a new request. The main R thread can just take the stored request from the <code>req</code> field of the connection user data in this case.</li>
+<code>WEBFAKES_WAIT</code> means that the request thread still needs
+to stay around and sleep for the specified number of <code>secs</code>.
+After sleeping for the specified amount of time, the request thread will
+signal <code>process_more</code> again, notifying the main R thread, but
+it also sets <code>main_todo</code> to <code>WEBFAKES_WAIT</code>, so
+the main R thread knows that this is not a new request. The main R
+thread can just take the stored request from the <code>req</code> field
+of the connection user data in this case.</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="error-handling">Error handling<a class="anchor" aria-label="anchor" href="#error-handling"></a>
 </h2>
-<p>While the server is running, all errors must be handled and the server must keep running.</p>
+<p>While the server is running, all errors must be handled and the
+server must keep running.</p>
 <div class="section level3">
 <h3 id="errors-while-starting-up">Errors while starting up<a class="anchor" aria-label="anchor" href="#errors-while-starting-up"></a>
 </h3>
-<p>They are caught and re-thrown, with the civetweb error log added. The error log typically contains more information. E.g. the most common failure is that the specified port is not free and the error log has a meaningful error message in this case.</p>
+<p>They are caught and re-thrown, with the civetweb error log added. The
+error log typically contains more information. E.g. the most common
+failure is that the specified port is not free and the error log has a
+meaningful error message in this case.</p>
 </div>
 <div class="section level3">
 <h3 id="errors-in-request-handlers">Errors in request handlers<a class="anchor" aria-label="anchor" href="#errors-in-request-handlers"></a>
 </h3>
-<p>Errors that happen in the R request handler functions are caught and the server will send an HTTP 500 response, with the R error message:</p>
+<p>Errors that happen in the R request handler functions are caught and
+the server will send an HTTP 500 response, with the R error message:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">while</span> <span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">req</span> <span class="op">&lt;-</span> <span class="fu">server_poll</span><span class="op">(</span><span class="va">srv</span><span class="op">)</span></span>
@@ -176,46 +229,122 @@
 <span>    <span class="op">}</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>For a response that is sent out in multiple pieces, this is not possible if the status code and the headers have been sent out already. In this case we just send out the R error message.</p>
+<p>For a response that is sent out in multiple pieces, this is not
+possible if the status code and the headers have been sent out already.
+In this case we just send out the R error message.</p>
 </div>
 <div class="section level3">
 <h3 id="errors-in-the-c-code-while-processing-the-request-or-response-">Errors in the C code while processing the request or response.<a class="anchor" aria-label="anchor" href="#errors-in-the-c-code-while-processing-the-request-or-response-"></a>
 </h3>
-<p>Errors that happen in the C code while processing the request or the response are different, because most probably we cannot send anything meaningful to the client. E.g. the most frequent such error happens when the connection breaks or the client closes the connection. These errors are caught in the <code>server_poll()</code> and <code>response_*()</code> R functions, and printed to the screen (see <code>server.R</code>). If they originate from civetweb, then they are also logged in the civetweb error log. These errors invalidate the request, and finish the processing callback. This is implemented by the <code>server.R</code> functions (re)throwing a <code>webfakes_error</code>, which is caught and then silently ignored by the processing loop.</p>
-<p>See ‘Resource cleanup’ below for how resources are cleaned up on error.</p>
+<p>Errors that happen in the C code while processing the request or the
+response are different, because most probably we cannot send anything
+meaningful to the client. E.g. the most frequent such error happens when
+the connection breaks or the client closes the connection. These errors
+are caught in the <code>server_poll()</code> and
+<code>response_*()</code> R functions, and printed to the screen (see
+<code>server.R</code>). If they originate from civetweb, then they are
+also logged in the civetweb error log. These errors invalidate the
+request, and finish the processing callback. This is implemented by the
+<code>server.R</code> functions (re)throwing a
+<code>webfakes_error</code>, which is caught and then silently ignored
+by the processing loop.</p>
+<p>See ‘Resource cleanup’ below for how resources are cleaned up on
+error.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="delayed-responses">Delayed responses<a class="anchor" aria-label="anchor" href="#delayed-responses"></a>
 </h2>
 <p>See the ‘Multithreading’ section above as well.</p>
-<p>We create a <code>req</code> object for an incoming request, before passing it to R from C. This object is an environment and it is kept until the response to the request is completely sent out. (Or the connection is closed for some reason.) The <code>req</code> object is also added to the connection user data of civetweb. Additionally, the server keeps an list (environment) of all request objects. The latter makes sure that the request object is not garbage collected, so we don’t need to worry about that.</p>
-<p>When a response is delayed, the app makes a note about the position of the handler function in the handler stack (in <code>.stackptr</code>), so that this handler function can be called again, after the delay.</p>
-<p>Then it calls <code>response_write()</code> which sends a <code>WEBFAKES_WAIT</code> message to the request thread. Then the main R thread can continue processing and potentially serving other requests, assuming the server has been started with at least two threads. After the wait, the request thread sends a message to the main R thread again, and the app’s poll call will get the same request object for the second (etc.) time. The app starts calling the handler functions from the recorded <code>.stackptr</code> position.</p>
+<p>We create a <code>req</code> object for an incoming request, before
+passing it to R from C. This object is an environment and it is kept
+until the response to the request is completely sent out. (Or the
+connection is closed for some reason.) The <code>req</code> object is
+also added to the connection user data of civetweb. Additionally, the
+server keeps an list (environment) of all request objects. The latter
+makes sure that the request object is not garbage collected, so we don’t
+need to worry about that.</p>
+<p>When a response is delayed, the app makes a note about the position
+of the handler function in the handler stack (in
+<code>.stackptr</code>), so that this handler function can be called
+again, after the delay.</p>
+<p>Then it calls <code>response_write()</code> which sends a
+<code>WEBFAKES_WAIT</code> message to the request thread. Then the main
+R thread can continue processing and potentially serving other requests,
+assuming the server has been started with at least two threads. After
+the wait, the request thread sends a message to the main R thread again,
+and the app’s poll call will get the same request object for the second
+(etc.) time. The app starts calling the handler functions from the
+recorded <code>.stackptr</code> position.</p>
 </div>
 <div class="section level2">
 <h2 id="interruption">Interruption<a class="anchor" aria-label="anchor" href="#interruption"></a>
 </h2>
-<p>The server runs until it is interrupted. (From the console or remotely via <code>processx::process$interrupt()</code>.)</p>
-<p>We need to make sure that the server can be interrupted while waiting for new requests (i.e. the main R thread waiting on the <code>process_more</code> condition, see ‘Multithreading’ above). <code>pthread_cond_wait()</code> is interrupted by <code>SIGINT</code> on Unix, seemingly, but not on Windows, so we need to use <code>pthread_cond_timedwait()</code>. We currently check for interrupts every 50ms. If the server is interrupted at this point, no cleanup is needed needed, as it does not hold any resources. In fact the functions in <code>server.R</code> will keep the server intact, with all delayed responses, and it is possible to call <code>server_poll()</code> again. But the <code>app$listen()</code> method does clean up the server in this case. Maybe this will change in the future.</p>
-<p>In theory the C code cannot be interrupted at any other points. On the other hand the R API functions might error any time, so we do need proper cleanup everywhere, see the ‘Resource cleanup’ section below.</p>
-<p>If the R code is interrupted, the <code>server.R</code> functions do not need any cleanup. (In theory some error messages might get lost if the timing is extremely unfortunate and a <code>server.R</code> function is handling an error when the interrupt happens.)</p>
-<p>The <code>app$listen()</code> method cleans up the server in <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code>.</p>
+<p>The server runs until it is interrupted. (From the console or
+remotely via <code>processx::process$interrupt()</code>.)</p>
+<p>We need to make sure that the server can be interrupted while waiting
+for new requests (i.e. the main R thread waiting on the
+<code>process_more</code> condition, see ‘Multithreading’ above).
+<code>pthread_cond_wait()</code> is interrupted by <code>SIGINT</code>
+on Unix, seemingly, but not on Windows, so we need to use
+<code>pthread_cond_timedwait()</code>. We currently check for interrupts
+every 50ms. If the server is interrupted at this point, no cleanup is
+needed needed, as it does not hold any resources. In fact the functions
+in <code>server.R</code> will keep the server intact, with all delayed
+responses, and it is possible to call <code>server_poll()</code> again.
+But the <code>app$listen()</code> method does clean up the server in
+this case. Maybe this will change in the future.</p>
+<p>In theory the C code cannot be interrupted at any other points. On
+the other hand the R API functions might error any time, so we do need
+proper cleanup everywhere, see the ‘Resource cleanup’ section below.</p>
+<p>If the R code is interrupted, the <code>server.R</code> functions do
+not need any cleanup. (In theory some error messages might get lost if
+the timing is extremely unfortunate and a <code>server.R</code> function
+is handling an error when the interrupt happens.)</p>
+<p>The <code>app$listen()</code> method cleans up the server in
+<code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="resource-cleanup">Resource cleanup<a class="anchor" aria-label="anchor" href="#resource-cleanup"></a>
 </h2>
 <p>See also ‘Interruption’ just above.</p>
-<p>There are some points in the C code where R errors happen while the code is holding resources. We use (a copy of) the cleancall package to take care of resource cleanup here.</p>
-<p>The first such place is the <code>server_poll()</code> C function, after a request is in from the request thread. Creating an R object for the request involves a lot of R API calls, and if one of them fails, we need to clean up the resources associated with this connection. (The error will be logged and the R <code>server_poll()</code> function will continue polling.) The cleanup in this case involves:</p>
+<p>There are some points in the C code where R errors happen while the
+code is holding resources. We use (a copy of) the cleancall package to
+take care of resource cleanup here.</p>
+<p>The first such place is the <code>server_poll()</code> C function,
+after a request is in from the request thread. Creating an R object for
+the request involves a lot of R API calls, and if one of them fails, we
+need to clean up the resources associated with this connection. (The
+error will be logged and the R <code>server_poll()</code> function will
+continue polling.) The cleanup in this case involves:</p>
 <ul>
-<li>Sending a <code>WEBFAKES_DONE</code> message to the request thread, so it will quit.</li>
-<li>Removing the request from the server’s list of current requests.</li>
-<li>Signaling the <code>process_less</code> condition, to let other threads know that we are again ready to process requests.</li>
+<li>Sending a <code>WEBFAKES_DONE</code> message to the request thread,
+so it will quit.</li>
+<li>Removing the request from the server’s list of current
+requests.</li>
+<li>Signaling the <code>process_less</code> condition, to let other
+threads know that we are again ready to process requests.</li>
 </ul>
-<p>Other functions that need cleanup are the C functions that work on the response: <code>response_delay()</code>, <code>response_send_headers()</code>, <code>response_send()</code> and <code>response_write()</code>. These cleanups are very similar to the one for <code>server_poll()</code>.</p>
-<p>The finalizer of the server object takes care of cleaning up all resources associated with a server, including all request objects and request threads. This is also called by the <code>server_stop()</code> R function, which is in turn called by the <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code> on the <code>listen()</code> method. The finalizer uses the list of requests in the tag of the xptr object to walk over all requests, and finish all request threads.</p>
-<p>Thread that are sleeping because of a delayed response frequently check a server-wide shutdown flag, which the finalizer also sets, so these threads quit as well. Then the finalizer calls the civetweb function <code>mg_stop()</code>. <code>mg_stop()</code> has its own shutdown flag and waits for all request and worker threads to quit. Given that we just cleaned up all of them, there shouldn’t be too many, and if there were any just coming in, they’ll also observe out shutdown flag and quit quickly.</p>
+<p>Other functions that need cleanup are the C functions that work on
+the response: <code>response_delay()</code>,
+<code>response_send_headers()</code>, <code>response_send()</code> and
+<code>response_write()</code>. These cleanups are very similar to the
+one for <code>server_poll()</code>.</p>
+<p>The finalizer of the server object takes care of cleaning up all
+resources associated with a server, including all request objects and
+request threads. This is also called by the <code>server_stop()</code> R
+function, which is in turn called by the <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code> on the
+<code>listen()</code> method. The finalizer uses the list of requests in
+the tag of the xptr object to walk over all requests, and finish all
+request threads.</p>
+<p>Thread that are sleeping because of a delayed response frequently
+check a server-wide shutdown flag, which the finalizer also sets, so
+these threads quit as well. Then the finalizer calls the civetweb
+function <code>mg_stop()</code>. <code>mg_stop()</code> has its own
+shutdown flag and waits for all request and worker threads to quit.
+Given that we just cleaned up all of them, there shouldn’t be too many,
+and if there were any just coming in, they’ll also observe out shutdown
+flag and quit quickly.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
