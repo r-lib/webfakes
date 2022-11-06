@@ -81,6 +81,11 @@ new_app_process <- function(app, port = NULL,
 
   app; port; opts; start; auto_start; process_timeout; callr_opts
 
+  # WTF
+  tmp <- tempfile()
+  sink(tmp); print(app$.stack); sink(NULL)
+  unlink(tmp)
+
   process_timeout <- process_timeout %||%
     as.integer(Sys.getenv("R_WEBFAKES_PROCESS_TIMEOUT", 5000))
 
