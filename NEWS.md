@@ -1,5 +1,8 @@
 # webfakes (development version)
 
+* `response$send_file()` now handles `root = "/"` and absolute paths
+  better on Windows.
+
 * `new_app_process()` and `local_app_process()` are now faster,
   because the app object they need to copy to the subprocess is smaller.
 

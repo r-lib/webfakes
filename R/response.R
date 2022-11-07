@@ -199,7 +199,14 @@ new_response <- function(app, req) {
         }
       }
 
-      self$send(read_bin(normalizePath(file.path(root, path))))
+      if (root == "/" && .Platform$OS.type == "windows" &&
+          grepl("^[a-zA-Z]:", path)) {
+        abs_path <- path
+      } else {
+        abs_path <- file.path(root, path)
+      }
+
+      self$send(read_bin(normalizePath(abs_path)))
     },
 
     send_status = function(status) {
