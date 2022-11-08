@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">webfakes</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,17 +94,26 @@
 <div class="section level2">
 <h2 id="what-is-webfakes">What is webfakes?<a class="anchor" aria-label="anchor" href="#what-is-webfakes"></a>
 </h2>
-<p>Webfakes is an R package that can spin up web servers on your machine to facilitate testing R code. R code that needs an HTTP connection is not trivial to test:</p>
+<p>Webfakes is an R package that can spin up web servers on your machine
+to facilitate testing R code. R code that needs an HTTP connection is
+not trivial to test:</p>
 <ul>
-<li>Connectivity problems might prevent the tests from accessing the web server.</li>
-<li>The web server might need authentication, and it is not easy to convey login information to the test suite in a secure way.</li>
-<li>The web server might have rate limits, i.e, it limits the number of queries per hour or day, causing some spurious test failures.</li>
-<li>You might want to test in non-normal conditions, e.g. with low bandwidth, or when the client is rate limited. These conditions don’t normally happen on the web server and they are hard to trigger.</li>
+<li>Connectivity problems might prevent the tests from accessing the web
+server.</li>
+<li>The web server might need authentication, and it is not easy to
+convey login information to the test suite in a secure way.</li>
+<li>The web server might have rate limits, i.e, it limits the number of
+queries per hour or day, causing some spurious test failures.</li>
+<li>You might want to test in non-normal conditions, e.g. with low
+bandwidth, or when the client is rate limited. These conditions don’t
+normally happen on the web server and they are hard to trigger.</li>
 </ul>
-<p>With webfakes you can easily start a custom web app, that is running on the local machine.</p>
+<p>With webfakes you can easily start a custom web app, that is running
+on the local machine.</p>
 <ul>
 <li>Webfakes does not need a network connection.</li>
-<li>Webfakes does not need authentication. Well, unless you want it to.</li>
+<li>Webfakes does not need authentication. Well, unless you want it
+to.</li>
 <li>Webfakes does not have rate limits.</li>
 <li>Webfakes can simulate low bandwidth, or a broken connection.</li>
 </ul>
@@ -112,18 +121,34 @@
 <div class="section level2">
 <h2 id="webfakes-vs-mocking">Webfakes vs mocking<a class="anchor" aria-label="anchor" href="#webfakes-vs-mocking"></a>
 </h2>
-<p>Mocking is a general technique to mimic the behavior of a function or object that is needed in test case. In the case of HTTP requests, this typically means that both the request and its response are recorded when the tests run the first time, and saved to disk. Subsequent test runs intercept the HTTP requests, match them against the recorded requests and then replay the corresponding recorded response. See for example the <a href="https://docs.ropensci.org/vcr/" class="external-link">vcr</a> and <a href="https://enpiar.com/r/httptest/" class="external-link">httptest</a> R packages.</p>
+<p>Mocking is a general technique to mimic the behavior of a function or
+object that is needed in test case. In the case of HTTP requests, this
+typically means that both the request and its response are recorded when
+the tests run the first time, and saved to disk. Subsequent test runs
+intercept the HTTP requests, match them against the recorded requests
+and then replay the corresponding recorded response. See for example the
+<a href="https://docs.ropensci.org/vcr/" class="external-link">vcr</a> and <a href="https://enpiar.com/r/httptest/" class="external-link">httptest</a> R packages.</p>
 <p>The advantages of using your own webfakes server, over mocking:</p>
 <ul>
-<li>Simpler infrastructure. No separate recording and replaying phases, no recorded files. No request matching.</li>
-<li>You can use any web client you want. E.g. curl and base R’s HTTP functions do not explicitly support mocking currently.</li>
-<li>No need to worry about sensitive information in recorded requests or responses.</li>
-<li>Often easier to use when testing non-normal conditions, e.g. errors that are hard to trigger, low bandwidth, or rate limits.</li>
-<li>Works if you stream data from a HTTP connection, instead of reading the whole response at once.</li>
-<li>You can reuse the same app for multiple tests, in multiple packages.</li>
-<li>Easier to use for tests that require multiple rounds of requests.</li>
-<li>Comes with a built-in <a href="https://httpbin.org" class="external-link uri">https://httpbin.org</a> compatible app, chances are, you don’t even need to write your testing app, just start writing tests right away.</li>
-<li>Better test writing experience. This is subjective, and your mileage may vary.</li>
+<li>Simpler infrastructure. No separate recording and replaying phases,
+no recorded files. No request matching.</li>
+<li>You can use any web client you want. E.g. curl and base R’s HTTP
+functions do not explicitly support mocking currently.</li>
+<li>No need to worry about sensitive information in recorded requests or
+responses.</li>
+<li>Often easier to use when testing non-normal conditions, e.g. errors
+that are hard to trigger, low bandwidth, or rate limits.</li>
+<li>Works if you stream data from a HTTP connection, instead of reading
+the whole response at once.</li>
+<li>You can reuse the same app for multiple tests, in multiple
+packages.</li>
+<li>Easier to use for tests that require multiple rounds of
+requests.</li>
+<li>Comes with a built-in <a href="https://httpbin.org" class="external-link uri">https://httpbin.org</a> compatible app, chances are, you
+don’t even need to write your testing app, just start writing tests
+right away.</li>
+<li>Better test writing experience. This is subjective, and your mileage
+may vary.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -143,21 +168,30 @@
 <ul>
 <li>No network needed. No more <code>skip_if_offline()</code>.</li>
 <li>Much faster.</li>
-<li>You can use the built-in <code><a href="../reference/httpbin_app.html">webfakes::httpbin_app()</a></code> app, so it is easy to switch from httpbin.org.</li>
-<li>You can write your custom app, httpbin.org might not have what you need.</li>
+<li>You can use the built-in <code><a href="../reference/httpbin_app.html">webfakes::httpbin_app()</a></code> app,
+so it is easy to switch from httpbin.org.</li>
+<li>You can write your custom app, httpbin.org might not have what you
+need.</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="using-webfakeshttpbin_app-with-testthat">Using <code>webfakes::httpbin_app()</code> with testthat<a class="anchor" aria-label="anchor" href="#using-webfakeshttpbin_app-with-testthat"></a>
 </h2>
-<p>You can use testthat’s setup files. You start the app in a setup file and also register a teardown expression for it. <code><a href="../reference/local_app_process.html">local_app_process()</a></code> can do both in one go. Your <code>tests/testthat/setup-http.R</code> may look like this:</p>
+<p>You can use testthat’s setup files. You start the app in a setup file
+and also register a teardown expression for it.
+<code><a href="../reference/local_app_process.html">local_app_process()</a></code> can do both in one go. Your
+<code>tests/testthat/setup-http.R</code> may look like this:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span></span>
 <span>  <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  .local_envir <span class="op">=</span> <span class="fu">testthat</span><span class="fu">::</span><span class="fu"><a href="https://testthat.r-lib.org/reference/teardown_env.html" class="external-link">teardown_env</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>(Before testthat 3.0.0, you had to write the teardown expression in a <code>tests/testthat/teardown-http.R</code> file. That still works, but a single setup file is considered to be better practice, see <a href="https://testthat.r-lib.org/articles/test-fixtures.html" class="external-link">this testthat vignette</a>.)</p>
-<p>In the test cases you can query the <code>http</code> app process to get the URLs you need to connect to:</p>
+<p>(Before testthat 3.0.0, you had to write the teardown expression in a
+<code>tests/testthat/teardown-http.R</code> file. That still works, but
+a single setup file is considered to be better practice, see <a href="https://testthat.r-lib.org/articles/test-fixtures.html" class="external-link">this
+testthat vignette</a>.)</p>
+<p>In the test cases you can query the <code>http</code> app process to
+get the URLs you need to connect to:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">test_that</span><span class="op">(</span><span class="st">"fails on 404"</span>, <span class="op">{</span></span>
 <span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/status/404"</span><span class="op">)</span></span>
@@ -167,39 +201,65 @@
 <span>    class <span class="op">=</span> <span class="st">"http_404"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🥳</span></span></code></pre></div>
-<p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> your <code>setup-http.R</code> file for this. Alternatively, you can start the app process in a helper file. See “How do I start the app when writing the tests?” just below.</p>
-<p>You can also create a web server for a test file, or even for a single test case. See <code><a href="../articles/how-to.html">vignette("how-to")</a></code> for details how.</p>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🎉</span></span></code></pre></div>
+<p>When writing your tests interactively, you may create a
+<code>http</code> app process in the global environment, for
+convenience. You can <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> your
+<code>setup-http.R</code> file for this. Alternatively, you can start
+the app process in a helper file. See “How do I start the app when
+writing the tests?” just below.</p>
+<p>You can also create a web server for a test file, or even for a
+single test case. See <code><a href="../articles/how-to.html">vignette("how-to")</a></code> for details
+how.</p>
 </div>
 <div class="section level2">
 <h2 id="writing-apps">Writing apps<a class="anchor" aria-label="anchor" href="#writing-apps"></a>
 </h2>
-<p>If the builtin <code><a href="../reference/httpbin_app.html">httpbin_app()</a></code> is not appropriate for your tests, you can write your own app. You can also extend the <code><a href="../reference/httpbin_app.html">httpbin_app()</a></code> app, if you don’t want to start from scratch.</p>
-<p>You create a new app with <code><a href="../reference/new_app.html">new_app()</a></code>. This returns an object with methods to add middleware and API endpoints to it. For example, a simple app that returns the current time in JSON would look like this:</p>
+<p>If the builtin <code><a href="../reference/httpbin_app.html">httpbin_app()</a></code> is not appropriate for your
+tests, you can write your own app. You can also extend the
+<code><a href="../reference/httpbin_app.html">httpbin_app()</a></code> app, if you don’t want to start from
+scratch.</p>
+<p>You create a new app with <code><a href="../reference/new_app.html">new_app()</a></code>. This returns an
+object with methods to add middleware and API endpoints to it. For
+example, a simple app that returns the current time in JSON would look
+like this:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">time</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app.html">new_app</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">time</span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="st">"/time"</span>, <span class="kw">function</span><span class="op">(</span><span class="va">req</span>, <span class="va">res</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">res</span><span class="op">$</span><span class="fu">send_json</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, auto_unbox <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<p>Now you can start this app on a random port using <code>web$listen()</code>. Alternatively, you can start it in a subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
+<p>Now you can start this app on a random port using
+<code>web$listen()</code>. Alternatively, you can start it in a
+subprocess with <code><a href="../reference/new_app_process.html">new_app_process()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:35819/"</span></span></code></pre></div>
-<p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:44907/"</span></span></code></pre></div>
+<p>Use <code>web$url()</code> to query the URL of the app. For
+example:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $time</span></span>
-<span><span class="co">#&gt; [1] "2022-10-26 07:38:50"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2022-11-08 14:09:19"</span></span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">get_state</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "not running"</span></span></code></pre></div>
-<p><code><a href="../reference/local_app_process.html">local_app_process()</a></code> is similar to <code><a href="../reference/new_app_process.html">new_app_process()</a></code>, but it stops the server process at the end of the calling block. This means that the process is automatically cleaned up at the end of a <code>test_that()</code> block or at the end of the test file.</p>
-<p>You can create your app at the beginning of your test file. Or, if you want to use the same app in multiple test files, use a <a href="https://testthat.r-lib.org/reference/test_file.html#special-files" class="external-link">testthat helper file</a>. Sometimes it useful if your users can create and use your test app, for example to create reproducible examples. You can include a (possibly internal) function in your package, that creates the app.</p>
-<p>See <code>?new_app()</code>, <code>?new_app_process()</code> and <code><a href="../reference/local_app_process.html">?local_app_process</a></code> for more details.</p>
+<p><code><a href="../reference/local_app_process.html">local_app_process()</a></code> is similar to
+<code><a href="../reference/new_app_process.html">new_app_process()</a></code>, but it stops the server process at the
+end of the calling block. This means that the process is automatically
+cleaned up at the end of a <code>test_that()</code> block or at the end
+of the test file.</p>
+<p>You can create your app at the beginning of your test file. Or, if
+you want to use the same app in multiple test files, use a <a href="https://testthat.r-lib.org/reference/test_file.html#special-files" class="external-link">testthat
+helper file</a>. Sometimes it useful if your users can create and use
+your test app, for example to create reproducible examples. You can
+include a (possibly internal) function in your package, that creates the
+app.</p>
+<p>See <code>?new_app()</code>, <code>?new_app_process()</code> and
+<code><a href="../reference/local_app_process.html">?local_app_process</a></code> for more details.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
