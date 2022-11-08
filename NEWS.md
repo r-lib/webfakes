@@ -1,4 +1,4 @@
-# webfakes (development version)
+# webfakes 1.1.6
 
 * `response$send_file()` now handles `root = "/"` and absolute paths
   better on Windows.
