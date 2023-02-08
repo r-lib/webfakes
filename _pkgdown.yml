@@ -5,9 +5,9 @@ template:
   
   includes:
     in_header: |
-      <script defer data-domain="r-lib.github.io/webfakes/,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>  
+      <script defer data-domain="webfakes.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 
-url: https://r-lib.github.io/webfakes/
+url: https://webfakes.r-lib.org
 
 development:
   mode: auto
