@@ -3,7 +3,7 @@ Title: Fake Web Apps for HTTP Testing
 Version: 1.1.6.9000
 Authors@R: c(
     person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = c("aut", "cre")),
-    person(, "RStudio, Pbc.", role = "cph"),
+    person(, "RStudio, Pbc.", role = c("cph", "fnd")),
     person(, "Civetweb contributors", role = "ctb",
            comment = "see inst/credits/ciwetweb.md"),
     person(, "Redoc contributors", role = "ctb",
