@@ -7,8 +7,8 @@ articles:
   internals: internals.html
   introduction: introduction.html
   oauth: oauth.html
-last_built: 2023-02-08T12:01Z
+last_built: 2023-02-08T14:21Z
 urls:
-  reference: https://r-lib.github.io/webfakes/reference
-  article: https://r-lib.github.io/webfakes/articles
+  reference: https://webfakes.r-lib.org/reference
+  article: https://webfakes.r-lib.org/articles
 
