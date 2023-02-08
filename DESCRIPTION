@@ -23,7 +23,7 @@ Description: Create a web app that makes it easier to test web clients
     bodies. Can send 'JSON' data or files from the disk. Includes a web
     app that implements the <https://httpbin.org> web service.
 License: MIT + file LICENSE
-URL:https://webfakes.r-lib.org/, https://github.com/r-lib/webfakes#readme
+URL: https://webfakes.r-lib.org/, https://github.com/r-lib/webfakes#readme
 BugReports: https://github.com/r-lib/webfakes/issues
 Imports:
     stats,
@@ -31,6 +31,7 @@ Imports:
     utils
 Suggests:
     callr,
+    covr,
     curl,
     glue,
     httpuv,
