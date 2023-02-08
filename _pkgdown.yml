@@ -1,15 +1,16 @@
+template:
+  package: tidytemplate
+  bootstrap: 5
+  assets: inst/examples/httpbin/assets
+  
+  includes:
+    in_header: |
+      <script defer data-domain="r-lib.github.io/webfakes/,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>  
+
 url: https://r-lib.github.io/webfakes/
 
 development:
   mode: auto
-
-template:
-  bootstrap: 5
-  assets: inst/examples/httpbin/assets
-
-authors:
-  "Gábor Csárdi":
-    href: https://github.com/gaborcsardi
 
 navbar:
   structure:
