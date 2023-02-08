@@ -1362,14 +1362,15 @@ mg_malloc_ex(size_t size,
 	}
 
 #if defined(MEMORY_DEBUGGING)
-	sprintf(mallocStr,
-	        "MEM: %p %5lu alloc   %7lu %4lu --- %s:%u\n",
-	        memory,
-	        (unsigned long)size,
-	        (unsigned long)mstat->totalMemUsed,
-	        (unsigned long)mstat->blockCount,
-	        file,
-	        line);
+	snprintf(mallocStr,
+                 sizeof(mallocStr),
+                 "MEM: %p %5lu alloc   %7lu %4lu --- %s:%u\n",
+                 memory,
+                 (unsigned long)size,
+                 (unsigned long)mstat->totalMemUsed,
+                 (unsigned long)mstat->blockCount,
+                 file,
+                 line);
 #if defined(_WIN32)
 	OutputDebugStringA(mallocStr);
 #else
@@ -1417,14 +1418,15 @@ mg_free_ex(void *memory, const char *file, unsigned line)
 		mg_atomic_add(&mstat->totalMemUsed, -(int64_t)size);
 		mg_atomic_dec(&mstat->blockCount);
 #if defined(MEMORY_DEBUGGING)
-		sprintf(mallocStr,
-		        "MEM: %p %5lu free    %7lu %4lu --- %s:%u\n",
-		        memory,
-		        (unsigned long)size,
-		        (unsigned long)mstat->totalMemUsed,
-		        (unsigned long)mstat->blockCount,
-		        file,
-		        line);
+		snprintf(mallocStr,
+                         sizeof(mallocStr),
+                         "MEM: %p %5lu free    %7lu %4lu --- %s:%u\n",
+                         memory,
+                         (unsigned long)size,
+                         (unsigned long)mstat->totalMemUsed,
+                         (unsigned long)mstat->blockCount,
+                         file,
+                         line);
 #if defined(_WIN32)
 		OutputDebugStringA(mallocStr);
 #else
@@ -1466,14 +1468,15 @@ mg_realloc_ex(void *memory,
 				data = _realloc;
 				mg_atomic_add(&mstat->totalMemUsed, -(int64_t)oldsize);
 #if defined(MEMORY_DEBUGGING)
-				sprintf(mallocStr,
-				        "MEM: %p %5lu r-free  %7lu %4lu --- %s:%u\n",
-				        memory,
-				        (unsigned long)oldsize,
-				        (unsigned long)mstat->totalMemUsed,
-				        (unsigned long)mstat->blockCount,
-				        file,
-				        line);
+				snprintf(mallocStr,
+                                         sizeof(mallocStr),
+                                         "MEM: %p %5lu r-free  %7lu %4lu --- %s:%u\n",
+                                         memory,
+                                         (unsigned long)oldsize,
+                                         (unsigned long)mstat->totalMemUsed,
+                                         (unsigned long)mstat->blockCount,
+                                         file,
+                                         line);
 #if defined(_WIN32)
 				OutputDebugStringA(mallocStr);
 #else
@@ -1482,14 +1485,15 @@ mg_realloc_ex(void *memory,
 #endif
 				mg_atomic_add(&mstat->totalMemUsed, (int64_t)newsize);
 #if defined(MEMORY_DEBUGGING)
-				sprintf(mallocStr,
-				        "MEM: %p %5lu r-alloc %7lu %4lu --- %s:%u\n",
-				        memory,
-				        (unsigned long)newsize,
-				        (unsigned long)mstat->totalMemUsed,
-				        (unsigned long)mstat->blockCount,
-				        file,
-				        line);
+				snprintf(mallocStr,
+                                         sizeof(mallocStr),
+                                         "MEM: %p %5lu r-alloc %7lu %4lu --- %s:%u\n",
+                                         memory,
+                                         (unsigned long)newsize,
+                                         (unsigned long)mstat->totalMemUsed,
+                                         (unsigned long)mstat->blockCount,
+                                         file,
+                                         line);
 #if defined(_WIN32)
 				OutputDebugStringA(mallocStr);
 #else
@@ -1602,7 +1606,7 @@ static void mg_snprintf(const struct mg_connection *conn,
 #define calloc DO_NOT_USE_THIS_FUNCTION__USE_mg_calloc
 #define realloc DO_NOT_USE_THIS_FUNCTION__USE_mg_realloc
 #define free DO_NOT_USE_THIS_FUNCTION__USE_mg_free
-#define snprintf DO_NOT_USE_THIS_FUNCTION__USE_mg_snprintf
+/* #define snprintf DO_NOT_USE_THIS_FUNCTION__USE_mg_snprintf */
 #if defined(_WIN32)
 /* vsnprintf must not be used in any system,
  * but this define only works well for Windows. */
@@ -3917,7 +3921,7 @@ mg_get_request_info(const struct mg_connection *conn)
 		struct mg_workerTLS *tls =
 		    (struct mg_workerTLS *)pthread_getspecific(sTlsKey);
 
-		sprintf(txt, "%03i", conn->response_info.status_code);
+		snprintf(txt, sizeof(txt), "%03i", conn->response_info.status_code);
 		if (strlen(txt) == 3) {
 			memcpy(tls->txtbuf, txt, 4);
 		} else {
@@ -4039,7 +4043,7 @@ mg_get_request_link(const struct mg_connection *conn, char *buf, size_t buflen)
 			char server_ip[48];
 
 			if (port != def_port) {
-				sprintf(portstr, ":%u", (unsigned)port);
+                                (snprintf)(portstr, sizeof(portstr), ":%u", (unsigned)port);
 			} else {
 				portstr[0] = 0;
 			}
@@ -6964,7 +6968,7 @@ mg_send_chunk(struct mg_connection *conn,
 	int t;
 
 	/* First store the length information in a text buffer. */
-	sprintf(lenbuf, "%x\r\n", chunk_len);
+	snprintf(lenbuf, sizeof(lenbuf), "%x\r\n", chunk_len);
 	lenbuf_len = strlen(lenbuf);
 
 	/* Then send length information, chunk and terminating \r\n. */
@@ -18895,11 +18899,12 @@ get_system_name(char **sysName)
 
 	wowRet = IsWow64Process(GetCurrentProcess(), &isWoW);
 
-	sprintf(name,
-	        "Windows %u.%u%s",
-	        (unsigned)dwMajorVersion,
-	        (unsigned)dwMinorVersion,
-	        (wowRet ? (isWoW ? " (WoW64)" : "") : " (?)"));
+	snprintf(name,
+                 sizeof(name),
+                 "Windows %u.%u%s",
+                 (unsigned)dwMajorVersion,
+                 (unsigned)dwMinorVersion,
+                 (wowRet ? (isWoW ? " (WoW64)" : "") : " (?)"));
 
 	*sysName = mg_strdup(name);
 #endif
