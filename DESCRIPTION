@@ -1,48 +1,30 @@
 Package: webfakes
 Title: Fake Web Apps for HTTP Testing
 Version: 1.1.6.9000
-Authors@R: 
-    c(person(given = "Gábor",
-             family = "Csárdi",
-             role = c("aut", "cre"),
-             email = "csardi.gabor@gmail.com"),
-      person(family = "RStudio, Pbc.",
-             role = "cph"),
-      person(family = "Civetweb contributors",
-             role = "ctb",
-             comment = "see inst/credits/ciwetweb.md"),
-      person(family = "Redoc contributors",
-             role = "ctb",
-             comment = "see inst/credits/redoc.md"),
-      person(given = "L. Peter",
-             family = "Deutsch",
-             role = "ctb",
-             comment = "src/md5.h"),
-      person(given = "Martin",
-             family = "Purschke",
-             role = "ctb",
-             comment = "src/md5.h"),
-      person(family = "Aladdin Enterprises",
-             role = "cph",
-             comment = "src/md5.h"),
-      person(given = "Maëlle",
-             family = "Salmon",
-             role = "ctb",
-             email = "maelle.salmon@yahoo.se",
-             comment = c(ORCID = "0000-0002-2815-0399")))
+Authors@R: c(
+    person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = c("aut", "cre")),
+    person(, "RStudio, Pbc.", role = "cph"),
+    person(, "Civetweb contributors", role = "ctb",
+           comment = "see inst/credits/ciwetweb.md"),
+    person(, "Redoc contributors", role = "ctb",
+           comment = "see inst/credits/redoc.md"),
+    person("L. Peter", "Deutsch", role = "ctb",
+           comment = "src/md5.h"),
+    person("Martin", "Purschke", role = "ctb",
+           comment = "src/md5.h"),
+    person(, "Aladdin Enterprises", role = "cph",
+           comment = "src/md5.h"),
+    person("Maëlle", "Salmon", , "maelle.salmon@yahoo.se", role = "ctb",
+           comment = c(ORCID = "0000-0002-2815-0399"))
+  )
 Description: Create a web app that makes it easier to test web clients
-  without using the internet. It includes a web app framework with path
-  matching, parameters and templates. Can parse various 'HTTP' request
-  bodies. Can send 'JSON' data or files from the disk. Includes a web app
-  that implements the <https://httpbin.org> web service.
+    without using the internet. It includes a web app framework with path
+    matching, parameters and templates. Can parse various 'HTTP' request
+    bodies. Can send 'JSON' data or files from the disk. Includes a web
+    app that implements the <https://httpbin.org> web service.
 License: MIT + file LICENSE
-URL:
-    https://webfakes.r-lib.org/,
-    https://github.com/r-lib/webfakes#readme
+URL:https://webfakes.r-lib.org/, https://github.com/r-lib/webfakes#readme
 BugReports: https://github.com/r-lib/webfakes/issues
-RoxygenNote: 7.2.1.9000
-Config/testthat/edition: 3
-Roxygen: list(markdown = TRUE)
 Imports:
     stats,
     tools,
@@ -51,10 +33,13 @@ Suggests:
     callr,
     curl,
     glue,
-    jsonlite,
-    httr,
     httpuv,
+    httr,
+    jsonlite,
     testthat (>= 3.0.0),
     withr,
     xml2
+Config/testthat/edition: 3
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1.9000
