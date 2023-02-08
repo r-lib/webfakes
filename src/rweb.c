@@ -68,7 +68,7 @@ void R_init_webfakes(DllInfo *dll) {
 /* for older macOS versions                                              */
 /* --------------------------------------------------------------------- */
 
-#ifdef __MACH__
+#if defined(__MACH__) && defined(__APPLE__)
 #include <mach/clock.h>
 #include <mach/mach.h>
 #include <mach/mach_time.h>
