@@ -122,6 +122,12 @@ apps:
 -   [fiery](https://github.com/thomasp85/fiery)
 -   [RestRserve](https://github.com/rexyai/RestRserve)
 
+## Code of Conduct
+
+Please note that the fs project is released with a
+[Contributor Code of Conduct](https://r-lib.github.io/webfakes/dev/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
+
 ## License
 
 MIT © RStudio
