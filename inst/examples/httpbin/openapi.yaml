@@ -325,6 +325,48 @@ paths:
                   'user-agent':
                     type: string
 
+  '/cache':
+    parameters:
+    - name: If-Modified-Since
+      in: header
+    - name: If-None-Match
+      in: header
+    get:
+      tags:
+      - Response inspection
+      summary: Caching
+      description: |
+        Returns a 304 if an `If-Modified-Since` header or `If-None-Match` is present.
+        Returns the same as a GET otherwise.
+      responses:
+        '200':
+          description: Cached response.
+          content:
+            application/json:
+                $ref: '#/components/schemas/get'
+        '304':
+          description: Modified.
+
+
+  '/cache/:value':
+    parameters:
+    - name: value
+      in: path
+      schema:
+        type: integer
+    get:
+      tags:
+      - Response inspection
+      summary: Cache control.
+      description: |
+        Sets a `Cache-Control` header for n seconds.
+      responses:
+        '200':
+          description: Cache control set.
+          content:
+            application/json:
+                $ref: '#/components/schemas/get'
+
   '/etag/:etag':
     parameters:
     - name: etag
@@ -408,6 +450,7 @@ paths:
             application/json:
               schema:
                 type: object
+
 
   '/deny':
     get:

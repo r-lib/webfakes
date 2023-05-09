@@ -34,6 +34,10 @@ httpbin_app <- function(log = interactive()) {
     files
   }
 
+  time_stamp <- function() {
+    strftime(Sys.time(), "%a, %d %b %Y %H:%M:%S %z")
+  }
+
   app <- new_app()
 
   # Log requests by default
@@ -236,7 +240,29 @@ httpbin_app <- function(log = interactive()) {
   app$get("/response-headers", rsp_hdrs)
   app$post("/response-headers", rsp_hdrs)
 
-  # TODO: /cache * /cache/{value}
+  app$get("/cache", function(req, res) {
+    if (is.null(req$get_header("If-Modified-Since")) &&
+        is.null(req$get_header("If-None-Match"))) {
+      res$set_header("Last-Modified", time_stamp())
+      # etag is added by default
+      common_response(req, res)
+    } else {
+      res$send_status(304)
+    }
+  })
+
+  app$get("/cache/:value", function(req, res) {
+    value <- suppressWarnings(as.integer(req$params$value))
+    if (is.na(value)) {
+      "next"
+    } else {
+      res$set_header(
+            "Cache-Control",
+            sprintf("public, max-age=%d", value)
+          )
+      common_response(req, res)
+    }
+  })
 
   # Response formats =====================================================
 

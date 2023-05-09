@@ -286,6 +286,41 @@ test_that("/response-headers", {
   )
 })
 
+test_that("/cache", {
+  url <- httpbin$url("/cache")
+  resp <- curl::curl_fetch_memory(url)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_true("last-modified" %in% tolower(names(headers)))
+
+  handle <- curl::new_handle()
+  curl::handle_setheaders(
+    handle,
+    "If-Modified-Since" =
+      time_stamp(Sys.time() - as.difftime(5, units = "mins"))
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 304L)
+
+
+  handle <- curl::new_handle()
+  curl::handle_setheaders(
+    handle,
+    "If-None-Match" = "some-etag"
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 304L)
+})
+
+test_that("/cache/:value", {
+  url <- httpbin$url("/cache/10")
+  resp <- curl::curl_fetch_memory(url)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(
+    headers[["cache-control"]],
+    "public, max-age=10"
+  )
+})
+
 # Response formats =====================================================
 
 test_that("/deny", {

@@ -166,3 +166,7 @@ local_options <- function(.new = list(), ...,
 map_chr <- function(X, FUN, ...) {
   vapply(X, FUN, FUN.VALUE = character(1), ...)
 }
+
+time_stamp <- function(t = Sys.time()) {
+  strftime(t, "%a, %d %b %Y %H:%M:%S %z")
+}

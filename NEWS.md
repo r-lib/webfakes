@@ -1,5 +1,7 @@
 # webfakes (development version)
 
+* The httpbin app now implements the `/cache` and `/cache/:value` endpoints.
+
 # webfakes 1.1.7
 
 * No user visible changes.
