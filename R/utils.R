@@ -168,5 +168,6 @@ map_chr <- function(X, FUN, ...) {
 }
 
 time_stamp <- function(t = Sys.time()) {
-  strftime(t, "%a, %d %b %Y %H:%M:%S %z")
+  t <- as.POSIXlt(t, tz = "UTC")
+  strftime(t, "%a, %d %b %Y %H:%M:%S GMT")
 }

@@ -34,8 +34,9 @@ httpbin_app <- function(log = interactive()) {
     files
   }
 
-  time_stamp <- function() {
-    strftime(Sys.time(), "%a, %d %b %Y %H:%M:%S %z")
+  time_stamp <- function(t = Sys.time()) {
+    t <- as.POSIXlt(t, tz = "UTC")
+    strftime(t, "%a, %d %b %Y %H:%M:%S GMT")
   }
 
   app <- new_app()
