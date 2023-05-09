@@ -54,7 +54,7 @@ httpbin_app <- function(log = interactive()) {
 
   # Add date by default
   app$use("add date" = function(req, res) {
-    res$set_header("Date", as.character(Sys.time()))
+    res$set_header("Date", time_stamp())
     "next"
   })
 

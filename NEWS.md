@@ -2,6 +2,8 @@
 
 * The httpbin app now implements the `/cache` and `/cache/:value` endpoints.
 
+* The httpbin app now sends the `Date` header in the correct format.
+
 # webfakes 1.1.7
 
 * No user visible changes.
