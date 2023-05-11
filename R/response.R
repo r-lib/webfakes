@@ -264,7 +264,7 @@ new_response <- function(app, req) {
         stop("Cookie name must be a string.")
       }
       if (grepl("[=;]", name)) {
-        stop("Cookie value cannot contain ';' and '=' characters.")
+        stop("Cookie name cannot contain ';' and '=' characters.")
       }
       if (!is_string(value)) {
         stop("Cookie value must be a string.")
@@ -275,7 +275,7 @@ new_response <- function(app, req) {
 
       ck <- paste0(
         name, "=", value,
-        ";",
+        "; ",
         format_cookie_options(options)
       )
       self$add_header("Set-Cookie", ck)
