@@ -285,6 +285,18 @@ httpbin_app <- function(log = interactive()) {
       )
   })
 
+  app$get("/brotli", function(req, res) {
+    ret <- make_common_response(req, res)
+    ret$brotli <- TRUE
+    json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
+    data <- charToRaw(json)
+    datax <- brotli::brotli_compress(data)
+    res$
+      set_type("application/json")$
+      set_header("Content-Encoding", "brotli")$
+      send(datax)
+  })
+
   app$get("/gzip", function(req, res) {
     ret <- make_common_response(req, res)
     ret$gzipped <- TRUE

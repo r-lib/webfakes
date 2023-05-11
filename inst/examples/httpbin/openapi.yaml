@@ -553,6 +553,24 @@ paths:
                 type: string
                 pattern: '^deflate$'
 
+  '/brotli':
+    get:
+      tags:
+      - Response formats
+      summary: brotli compression
+      description: |
+        Returns brotli-encoded data. This needs the brotli R package.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/common'
+          headers:
+            'Content-Encoding':
+              description: Set to `brotli`.
+              schema:
+                type: string
+                pattern: '^brotli'
+
   '/encoding/utf8':
     get:
       tags:

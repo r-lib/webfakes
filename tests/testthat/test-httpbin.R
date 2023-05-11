@@ -391,6 +391,15 @@ test_that("/deflate", {
   expect_true(data$deflated)
 })
 
+test_that("/brotli", {
+  url <- httpbin$url("/brotli")
+  con <- url(url, open = "rb")
+  on.exit(close(con), add = TRUE)
+  echo <- readBin(con, "raw", 10000)
+  data <- jsonlite::fromJSON(rawToChar(brotli::brotli_decompress(echo)))
+  expect_true(data$brotli)
+})
+
 test_that("/encoding/utf8", {
   url <- httpbin$url("/encoding/utf8")
   resp <- curl::curl_fetch_memory(url)
