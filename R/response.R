@@ -69,6 +69,8 @@
 #'    * `same_site`: The 'SameSite' cookie attribute. Possible values are
 #'      "strict", "lax" and "none".
 #'    * `secure`: if TRUE, then it sets the 'Secure' attribute.
+#' * `clear_cookie(name, options = list())`: clears a cookie. Typically,
+#'    web browsers will only clear a cookie if the options also match.
 #' * `write(data)`: writes (part of) the body of the response. It also
 #'   sends out the response headers, if they haven't been sent out before.
 #'
@@ -278,6 +280,21 @@ new_response <- function(app, req) {
         "; ",
         format_cookie_options(options)
       )
+      self$add_header("Set-Cookie", ck)
+      invisible(self)
+    },
+
+    clear_cookie = function(name, options = list()) {
+      if (!is_string(name)) {
+        stop("Cookie name must be a string.")
+      }
+      if (grepl("[=;]", name)) {
+        stop("Cookie name cannot contain ';' and '=' characters.")
+      }
+
+      options$expires <- .POSIXct(0)
+      options$max_age <- 0L
+      ck <- paste0(name, "=; ", format_cookie_options(options))
       self$add_header("Set-Cookie", ck)
       invisible(self)
     },

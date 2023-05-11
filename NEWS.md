@@ -1,7 +1,8 @@
 # webfakes (development version)
 
 * New middleware `mw_cookie_parser()` to parse a `Cookie` header. Relatedly,
-  new `response$add_cookie()` method to add a cookie to a response.
+  new `response$add_cookie()` and `response$clear_cookie()` methods to add a
+  cookie to a response and to add a header that clears a cookie.
 
 * Parsing query parametes without a value now does not fail.
 

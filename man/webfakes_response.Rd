@@ -75,6 +75,8 @@ Javasctipt cannot access the cookie.
 "strict", "lax" and "none".
 \item \code{secure}: if TRUE, then it sets the 'Secure' attribute.
 }
+\item \code{clear_cookie(name, options = list())}: clears a cookie. Typically,
+web browsers will only clear a cookie if the options also match.
 \item \code{write(data)}: writes (part of) the body of the response. It also
 sends out the response headers, if they haven't been sent out before.
 }
