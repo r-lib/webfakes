@@ -776,7 +776,29 @@ paths:
           content:
             text/html
 
-  '/stream-bytes':
+  '/stream/:n':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of JSON chunks to send.
+      schema:
+        type: integer
+    get:
+      tags:
+      - Dynamic data
+      summary: Stream JSON chunks.
+      description: |
+        Stream `n` JSON responses, each terminated by a newline character.
+      responses:
+        '200':
+          description: |
+            Streamed JSON responses. Each JSON chunk contains an `id` field, from
+            zero, up to `n-1`.
+          content:
+            application/json
+
+  '/stream-bytes/:n':
     parameters:
     - name: n
       in: path

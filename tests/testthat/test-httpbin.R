@@ -527,6 +527,17 @@ test_that("/uuid", {
   expect_equal(nchar(echo$uuid), 36)
 })
 
+test_that("/stream", {
+  url <- httpbin$url("/stream/10")
+  resp <- curl::curl_fetch_memory(url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200)
+  expect_equal(headers[["transfer-encoding"]], "chunked")
+  lines <- strsplit(rawToChar(resp$content), "\n", fixed = TRUE)[[1]]
+  json <- lapply(lines, jsonlite::fromJSON, simplifyVector = TRUE)
+  expect_equal(vapply(json, "[[", integer(1), "id"), 0:9)
+})
+
 # Cookies ==============================================================
 
 test_that("/cookies", {

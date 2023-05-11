@@ -443,6 +443,21 @@ httpbin_app <- function(log = interactive()) {
     }
   })
 
+  app$get(new_regexp("^/stream/(?<n>[0-9]+)$"), function(req, res) {
+    n <- suppressWarnings(as.integer(req$params$n))
+    n <- min(n, 100)
+    if (length(n) == 0 || is.na(n)) return("next")
+    msg <- make_common_response(req, res)[c("url", "args", "headers", "origin")]
+
+    res$set_type("application/json")
+
+    for (i in seq_len(n)) {
+      msg$id <- i - 1L
+      txt <- paste0(jsonlite::toJSON(msg, auto_unbox = TRUE), "\n")
+      res$send_chunk(charToRaw(txt))
+    }
+  })
+
   app$get(new_regexp("^/stream-bytes/(?<n>[0-9]+)$"), function(req, res) {
     n <- suppressWarnings(as.integer(req$params$n))
     n <- min(n, 100 * 1024)
