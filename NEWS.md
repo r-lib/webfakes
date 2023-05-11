@@ -14,6 +14,9 @@
 
 * The httpbin app now sends the `Date` header in the correct format.
 
+* The `offset` parameter is now optional in the `/links` endpoint of the
+  httpbin app.
+
 # webfakes 1.1.7
 
 * No user visible changes.

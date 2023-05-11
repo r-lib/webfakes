@@ -429,11 +429,12 @@ httpbin_app <- function(log = interactive()) {
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
-  app$get(new_regexp("^/links/(?<n>[0-9]+)/(?<offset>[0-9]+)$"),
+  app$get(new_regexp("^/links/(?<n>[0-9]+)(/(?<offset>[0-9]+))?$"),
           function(req, res) {
     n <- suppressWarnings(as.integer(req$params$n))
     o <- suppressWarnings(as.integer(req$params$offset))
-    if (length(n) == 0 || length(o) == 0 || is.na(n) || is.na(o)) return("next")
+    if (length(o) == 0 || is.na(o)) o <- 1
+    if (length(n) == 0 || is.na(n)) return("next")
     n <- min(max(1, n), 200)
     o <- min(max(1, o), n)
     links <- sprintf("<a href = \"/links/%d/%d\">%d</a>", n, 1:n, 1:n)

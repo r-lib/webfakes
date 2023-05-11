@@ -667,6 +667,32 @@ paths:
               schema:
                 type: string
 
+  '/links/:n/:offset':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of links.
+      schema:
+        type: integer
+    - name: offset
+      in: path
+      required: false
+      description: Id of the page to return, out of `n`.
+      schema:
+        type: integer
+    get:
+      tags:
+      - Dynamic data
+      summary: Links
+      description: |
+        Generate a page containing n links to other pages which do the same.
+      responses:
+        '200':
+          description: |
+            HTML links.
+          content:
+            text/html
 
   '/stream-bytes':
     parameters:
