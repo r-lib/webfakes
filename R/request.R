@@ -81,6 +81,8 @@ parse_query <- function(query) {
   argstr <- strsplit(query, "&", fixed = TRUE)[[1]]
   argstr <- strsplit(argstr, "=", fixed = TRUE)
   keys <- vapply(argstr, function(x) utils::URLdecode(x[[1]]), character(1))
-  vals <- lapply(argstr, function(x) utils::URLdecode(x[[2]]))
+  vals <- lapply(argstr, function(x) {
+    if (length(x) == 2) utils::URLdecode(x[[2]]) else ""
+  })
   structure(vals, names = keys)
 }
