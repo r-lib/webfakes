@@ -5,5 +5,8 @@
 /src/*.so
 /src/*.o
 /src/*.dll
+/src/*.gcda
+/src/*.gcno
 /docs
 /README.html
+/dev-lib

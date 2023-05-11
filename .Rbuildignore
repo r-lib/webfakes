@@ -8,6 +8,8 @@
 ^src/.*\.so$
 ^src/.*\.o$
 ^src/.*\.dll$
+^src/.*\.gcda$
+^src/.*\.gcno$
 ^\.covrignore$
 ^\.github$
 ^_pkgdown\.yml$
@@ -17,3 +19,4 @@
 ^revdep$
 ^CRAN-SUBMISSION$
 ^codecov\.yml$
+^dev\-lib$
