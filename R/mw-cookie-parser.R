@@ -20,7 +20,7 @@ mw_cookie_parser <- function() {
 }
 
 parse_cookies <- function(x) {
-  parts <- strsplit(x, ";", fixed = TRUE, useBytes)[[1]]
+  parts <- strsplit(x, ";", fixed = TRUE)[[1]]
   dict <- structure(list(), names = character())
   lapply(parts, function(ck) {
     ck <- trimws(ck)
