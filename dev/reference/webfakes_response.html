@@ -139,6 +139,8 @@ Javasctipt cannot access the cookie.</p></li>
 "strict", "lax" and "none".</p></li>
 <li><p><code>secure</code>: if TRUE, then it sets the 'Secure' attribute.</p></li>
 </ul></li>
+<li><p><code>clear_cookie(name, options = list())</code>: clears a cookie. Typically,
+web browsers will only clear a cookie if the options also match.</p></li>
 <li><p><code>write(data)</code>: writes (part of) the body of the response. It also
 sends out the response headers, if they haven't been sent out before.</p></li>
 </ul><p>Usually you need one of the <code>send()</code> methods, to send out the HTTP
