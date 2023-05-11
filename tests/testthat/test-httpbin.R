@@ -496,7 +496,7 @@ test_that("/cookies/set/:name/:value", {
   expect_equal(resp$status_code, 200L)
   data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
   expect_equal(data, list(cookies = list(foo = "bar")))
-  expect_snapshot(curl::handle_cookies(handle))
+  expect_snapshot(curl::handle_cookies(handle), variant = r_variant())
 })
 
 test_that("/cookies/set", {
@@ -511,7 +511,7 @@ test_that("/cookies/set", {
   expect_equal(resp$status_code, 200L)
   data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
   expect_equal(data, list(cookies = list(bar="baz", foo = "bar")))
-  expect_snapshot(curl::handle_cookies(handle))
+  expect_snapshot(curl::handle_cookies(handle), variant = r_variant())
 })
 
 test_that("/cookies/delete", {
@@ -529,7 +529,7 @@ test_that("/cookies/delete", {
   expect_equal(resp$status_code, 200L)
   data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
   expect_equal(data, list(cookies = list(bar = "baz")))
-  expect_snapshot(curl::handle_cookies(handle))
+  expect_snapshot(curl::handle_cookies(handle), variant = r_variant())
 })
 
 # Images ===============================================================
