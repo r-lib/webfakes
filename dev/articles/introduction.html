@@ -204,7 +204,7 @@ get the URLs you need to connect to:</p>
 <span>    class <span class="op">=</span> <span class="st">"http_404"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🥳</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 😸</span></span></code></pre></div>
 <p>When writing your tests interactively, you may create a
 <code>http</code> app process in the global environment, for
 convenience. You can <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> your
@@ -237,14 +237,14 @@ subprocess with <code><a href="../reference/new_app_process.html">new_app_proces
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:38001/"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:35403/"</span></span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For
 example:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $time</span></span>
-<span><span class="co">#&gt; [1] "2023-05-11 12:52:09"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2023-05-11 13:28:14"</span></span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
