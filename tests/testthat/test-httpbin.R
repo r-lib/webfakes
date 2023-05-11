@@ -113,6 +113,42 @@ test_that("/basic-auth", {
   expect_equal(headers$`www-authenticate`, "Basic realm=\"Fake Realm\"")
 })
 
+test_that("/hidden-basic-auth", {
+  # no auth supplied
+  url <- httpbin$url("/hidden-basic-auth/Aladdin/OpenSesame")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 404L)
+  expect_equal(resp$type, "text/plain")
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers$`www-authenticate`, NULL)
+
+  # correct auth
+  handle <- curl::new_handle()
+  curl::handle_setheaders(
+    handle,
+    "Authorization"= "Basic QWxhZGRpbjpPcGVuU2VzYW1l"
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(resp$type, "application/json")
+  expect_equal(
+    jsonlite::fromJSON(rawToChar(resp$content)),
+    list(authenticated = TRUE, user = "Aladdin")
+  )
+
+  # wrong auth
+  handle <- curl::new_handle()
+  curl::handle_setheaders(
+    handle,
+    "Authorization"= "Basic NOLUCK"
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 404L)
+  expect_equal(resp$type, "text/plain")
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers$`www-authenticate`, NULL)
+})
+
 test_that("/bearer", {
   # no auth
   url <- httpbin$url("/bearer")

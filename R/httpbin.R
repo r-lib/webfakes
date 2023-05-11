@@ -106,7 +106,7 @@ httpbin_app <- function(log = interactive()) {
 
   # Auth =================================================================
 
-  app$get("/basic-auth/:user/:passwd", function(req, res) {
+  basic_auth <- function(req, res, error_status = 401L) {
     exp <- paste(
       "Basic",
       base64_encode(paste0(req$params$user, ":", req$params$passwd))
@@ -118,10 +118,23 @@ httpbin_app <- function(log = interactive()) {
         user = jsonlite::unbox(req$params$user)
       ))
     } else {
-      res$
-        set_header("WWW-Authenticate", "Basic realm=\"Fake Realm\"")$
-        send_status(401)
+      if (error_status == 401L) {
+        res$
+          set_header("WWW-Authenticate", "Basic realm=\"Fake Realm\"")$
+          send_status(error_status)
+      } else {
+        res$
+          send_status(error_status)
+      }
     }
+  }
+
+  app$get("/basic-auth/:user/:passwd", function(req, res) {
+    basic_auth(req, res, error_status = 401L)
+  })
+
+  app$get("/hidden-basic-auth/:user/:passwd", function(req, res) {
+    basic_auth(req, res, error_status = 404L)
   })
 
   app$get("/bearer", function(req, res) {

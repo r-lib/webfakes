@@ -132,6 +132,52 @@ paths:
                 type: string
                 pattern: '^Basic realm=".*"'
 
+  '/hidden-basic-auth/:user/:password':
+    parameters:
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: password
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Base64 encoded user name and password.
+        See <https://en.wikipedia.org/wiki/Basic_access_authentication#Client_side>
+        for the protocol.
+    get:
+      tags:
+      - Auth
+      summary: Basic authentication.
+      description: |
+        Basic authentication with specified user and password. This is the same
+        as `/basic-auth`, but it returns a 404 if no authentication is supplied or
+        the authentication fails.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '404':
+          description: Failed authentication.
+
   '/bearer':
     parameters:
     - name: Authorization
