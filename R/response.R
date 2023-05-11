@@ -57,6 +57,18 @@
 #'   character then it is set as is, otherwise it is assumed to be a file
 #'   extension, and the corresponding MIME type is set. If the headers have
 #'   been sent out already, then it throws a warning, and does nothing.
+#' * `add_cookie(name, value, options)`: Adds a cookie to the response.
+#'   `options` is a named list, and may contain:
+#'    * `domain`: Domain name for the cookie, not set by default.
+#'    * `expires`: Expiry date in GMT. It must be a POSIXct object, and
+#'       will be formatted correctly.
+#'    * 'http_only': if TRUE, then it sets the 'HttpOnly' attribute, so
+#'      Javasctipt cannot access the cookie.
+#'    * `max_age`: Maximum age, in number of seconds.
+#'    * `path`: Path for the cookie, defaults to "/".
+#'    * `same_site`: The 'SameSite' cookie attribute. Possible values are
+#'      "strict", "lax" and "none".
+#'    * `secure`: if TRUE, then it sets the 'Secure' attribute.
 #' * `write(data)`: writes (part of) the body of the response. It also
 #'   sends out the response headers, if they haven't been sent out before.
 #'
@@ -247,6 +259,29 @@ new_response <- function(app, req) {
       invisible(self)
     },
 
+    add_cookie = function(name, value, options = list()) {
+      if (!is_string(name)) {
+        stop("Cookie name must be a string.")
+      }
+      if (grepl("[=;]", name)) {
+        stop("Cookie value cannot contain ';' and '=' characters.")
+      }
+      if (!is_string(value)) {
+        stop("Cookie value must be a string.")
+      }
+      if (grepl("[=;]", value)) {
+        stop("Cookie value cannot contain ';' and '=' characters.")
+      }
+
+      ck <- paste0(
+        name, "=", value,
+        ";",
+        format_cookie_options(options)
+      )
+      self$add_header("Set-Cookie", ck)
+      invisible(self)
+    },
+
     write = function(data) {
       if (is.null(self$get_header("content-length"))) {
         warning("response$write() without a Content-Length header")
@@ -317,4 +352,62 @@ new_response <- function(app, req) {
   )
 
   self
+}
+
+format_cookie_options <- function(options) {
+  options$path <- options$path %||% "/"
+
+  bad <- unique(setdiff(
+    names(options),
+    c("domain", "expires", "http_only", "max_age", "path", "same_site",
+      "secure")
+  ))
+  if (length(bad)) {
+    stop(
+      "Unknown or unsupported cookie attribute(s): ",
+      paste0("\"", bad, "\"", collapse = ", "),
+      "."
+    )
+  }
+
+  parts <- c(
+
+    if (!is.null(options$domain)) {
+      paste0("Domain=", options$domain)
+    },
+
+    if (!is.null(options$expires)) {
+      if (!inherits(options$expires, "POSIXct")) {
+        stop("The 'expires' cookie attribute must be a POSIXct object")
+      }
+      paste0("Expires=", http_time_stamp(options$expires))
+    },
+
+    if (isTRUE(options$http_only)) {
+      "HttpOnly"
+    },
+
+    if (!is.null(options$max_age)) {
+      paste0("Max-Age=", options$max_age)
+    },
+
+    paste0("Path=", options$path),
+
+    if (!is.null(options$same_site)) {
+      if (tolower(!options$same_site) %in% c("strict", "lax", "none")) {
+        stop(
+          "Invalid value for 'SameSite' cookie atrribute: ",
+          options$same_site,
+          ", must be \"strict\", \"lax\" or \"none\"."
+        )
+      }
+      paste0("SameSite=", capitalize(options$same_site))
+    },
+
+    if (isTRUE(options$secure)) {
+      "Secure"
+    }
+  )
+
+  paste(parts, collapse = "; ")
 }

@@ -296,7 +296,7 @@ test_that("/cache", {
   curl::handle_setheaders(
     handle,
     "If-Modified-Since" =
-      time_stamp(Sys.time() - as.difftime(5, units = "mins"))
+      http_time_stamp(Sys.time() - as.difftime(5, units = "mins"))
   )
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 304L)

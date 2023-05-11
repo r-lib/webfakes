@@ -61,6 +61,20 @@ have been sent out already, then it throws a warning, and does nothing.
 character then it is set as is, otherwise it is assumed to be a file
 extension, and the corresponding MIME type is set. If the headers have
 been sent out already, then it throws a warning, and does nothing.
+\item \code{add_cookie(name, value, options)}: Adds a cookie to the response.
+\code{options} is a named list, and may contain:
+\itemize{
+\item \code{domain}: Domain name for the cookie, not set by default.
+\item \code{expires}: Expiry date in GMT. It must be a POSIXct object, and
+will be formatted correctly.
+\item 'http_only': if TRUE, then it sets the 'HttpOnly' attribute, so
+Javasctipt cannot access the cookie.
+\item \code{max_age}: Maximum age, in number of seconds.
+\item \code{path}: Path for the cookie, defaults to "/".
+\item \code{same_site}: The 'SameSite' cookie attribute. Possible values are
+"strict", "lax" and "none".
+\item \code{secure}: if TRUE, then it sets the 'Secure' attribute.
+}
 \item \code{write(data)}: writes (part of) the body of the response. It also
 sends out the response headers, if they haven't been sent out before.
 }

@@ -1,5 +1,10 @@
 # webfakes (development version)
 
+* New middleware `mw_cookie_parser()` to parse a `Cookie` header. Relatedly,
+  new `response$add_cookie()` method to add a cookie to a response.
+
+* New utility function `http_time_stamp()` to format a time stamp for HTTP.
+
 * The httpbin app now implements the `/cache` and `/cache/:value` endpoints.
 
 * The httpbin app now sends the `Date` header in the correct format.

@@ -34,11 +34,6 @@ httpbin_app <- function(log = interactive()) {
     files
   }
 
-  time_stamp <- function(t = Sys.time()) {
-    t <- as.POSIXlt(t, tz = "UTC")
-    strftime(t, "%a, %d %b %Y %H:%M:%S GMT")
-  }
-
   app <- new_app()
 
   # Log requests by default
@@ -55,7 +50,7 @@ httpbin_app <- function(log = interactive()) {
 
   # Add date by default
   app$use("add date" = function(req, res) {
-    res$set_header("Date", time_stamp())
+    res$set_header("Date", http_time_stamp())
     "next"
   })
 
@@ -244,7 +239,7 @@ httpbin_app <- function(log = interactive()) {
   app$get("/cache", function(req, res) {
     if (is.null(req$get_header("If-Modified-Since")) &&
         is.null(req$get_header("If-None-Match"))) {
-      res$set_header("Last-Modified", time_stamp())
+      res$set_header("Last-Modified", http_time_stamp())
       # etag is added by default
       common_response(req, res)
     } else {

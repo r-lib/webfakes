@@ -25,6 +25,7 @@ app
 }
 \seealso{
 Other middleware: 
+\code{\link{mw_cookie_parser}()},
 \code{\link{mw_json}()},
 \code{\link{mw_log}()},
 \code{\link{mw_multipart}()},

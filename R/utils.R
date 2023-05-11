@@ -167,7 +167,14 @@ map_chr <- function(X, FUN, ...) {
   vapply(X, FUN, FUN.VALUE = character(1), ...)
 }
 
-time_stamp <- function(t = Sys.time()) {
+#' Format a time stamp for HTTP
+#'
+#' @param t Date-time value to format, defaults to the current date and
+#'   time. It must be a POSIXct object.
+#' @return Character vector, formatted date-time.
+#' @export
+
+http_time_stamp <- function(t = Sys.time()) {
   t <- as.POSIXlt(t, tz = "UTC")
   strftime(t, "%a, %d %b %Y %H:%M:%S GMT")
 }

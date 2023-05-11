@@ -2,7 +2,7 @@ template:
   package: tidytemplate
   bootstrap: 5
   assets: inst/examples/httpbin/assets
-  
+
   includes:
     in_header: |
       <script defer data-domain="webfakes.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
@@ -48,6 +48,7 @@ reference:
 
 - title: Middleware to parse requests
   contents:
+  - mw_cookie_parser
   - mw_raw
   - mw_text
   - mw_json
@@ -74,6 +75,10 @@ reference:
   - oauth2_login
   - oauth2_resource_app
   - oauth2_third_party_app
+
+- title: Misc Utilities
+  contents:
+  - http_time_stamp
 
 - title: internal
   contents: glossary
