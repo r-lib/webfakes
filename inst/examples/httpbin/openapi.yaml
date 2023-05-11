@@ -724,6 +724,77 @@ paths:
                     type: string
                     example: "ee4610df-3b7b-4624-8ce9-da6975b3e9f1"
 
+  '/cookies':
+    get:
+      tags:
+      - Cookies
+      summary: Cookie data.
+      description: Returns cookie data.
+      responses:
+        '200':
+          description: Set cookies.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cookies:
+                    type: object
+
+  '/cookies/delete':
+    parameters:
+    - name: freeform
+      in: query
+      style: "form"
+    get:
+      tags:
+      - Cookies
+      summary: Delete cookies.
+      description: |
+        Deletes cookie(s) as provided by the query string and redirects
+        to cookie list.
+      responses:
+        '302':
+          description: Redirect to the cookie list.
+
+  '/cookies/set':
+    parameters:
+    - name: freeform
+      in: query
+      style: "form"
+    get:
+      tags:
+      - Cookies
+      summary: Set cookies.
+      description: |
+        Sets cookie(s) as provided by the query string and redirects
+        to cookie list.
+      responses:
+        '302':
+          description: Redirect to the cookie list.
+
+  '/cookies/set/:name/:value':
+    parameters:
+    - name: name
+      in: path
+      description: Cookie name.
+      schema:
+        type: string
+    - name: value
+      in: path
+      description: Cookie value.
+      schema:
+        type: string
+    get:
+      tags:
+      - Cookies
+      summary: Set one cookie.
+      description: |
+        Sets a cookie and redirects to cookie list.
+      responses:
+        '302':
+          description: Redirect to the cookie list.
+
   '/image':
     parameters:
     - name: Accept

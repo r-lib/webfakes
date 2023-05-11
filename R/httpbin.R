@@ -44,6 +44,7 @@ httpbin_app <- function(log = interactive()) {
   app$use("text body parser" = mw_text(type = c("text/plain", "application/json")))
   app$use("multipart body parser" = mw_multipart())
   app$use("URL encoded body parser" = mw_urlencoded())
+  app$use("cookie parser" = mw_cookie_parser())
 
   # Add etags by default
   app$use("add etag" = mw_etag())
@@ -451,8 +452,33 @@ httpbin_app <- function(log = interactive()) {
 
   # Cookies ==============================================================
 
-  # TODO: /cookies * /cookies/delete * /cookies/set *
-  # /cookies/set/{name}/{value}
+  app$get("/cookies", function(req, res) {
+    cks <- req$cookies
+    res$send_json(
+      object = list(cookies = cks),
+      auto_unbox = TRUE,
+      pretty = TRUE
+    )
+  })
+
+  app$get("/cookies/set/:name/:value", function(req, res) {
+    res$add_cookie(req$params$name, req$params$value)
+    res$redirect("/cookies", 302L)
+  })
+
+  app$get("/cookies/set", function(req, res) {
+    for (n in names(req$query)) {
+      res$add_cookie(n, req$query[[n]])
+    }
+    res$redirect("/cookies", 302L)
+  })
+
+  app$get("/cookies/delete", function(req, res) {
+    for (n in names(req$query)) {
+      res$clear_cookie(n)
+    }
+    res$redirect("/cookies", 302L)
+  })
 
   # Images ===============================================================
 

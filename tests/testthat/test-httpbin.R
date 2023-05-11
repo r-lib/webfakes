@@ -475,6 +475,63 @@ test_that("/uuid", {
 
 # Cookies ==============================================================
 
+test_that("/cookies", {
+  url <- httpbin$url("/cookies")
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, Cookie = "foo=bar; bar=baz")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+  expect_equal(data, list(cookies = list(foo = "bar", bar = "baz")))
+})
+
+test_that("/cookies/set/:name/:value", {
+  url <- httpbin$url("/cookies/set/foo/bar")
+  handle <- curl::new_handle()
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers(resp$headers, multiple = TRUE)
+  expect_true("HTTP/1.1 302 Found" %in% headers[[1]])
+  expect_true("Set-Cookie: foo=bar; Path=/" %in% headers[[1]])
+  expect_true("HTTP/1.1 200 OK" %in% headers[[2]])
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+  expect_equal(data, list(cookies = list(foo = "bar")))
+  expect_snapshot(curl::handle_cookies(handle))
+})
+
+test_that("/cookies/set", {
+  url <- httpbin$url("/cookies/set?foo=bar&bar=baz")
+  handle <- curl::new_handle()
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers(resp$headers, multiple = TRUE)
+  expect_true("HTTP/1.1 302 Found" %in% headers[[1]])
+  expect_true("Set-Cookie: foo=bar; Path=/" %in% headers[[1]])
+  expect_true("Set-Cookie: bar=baz; Path=/" %in% headers[[1]])
+  expect_true("HTTP/1.1 200 OK" %in% headers[[2]])
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+  expect_equal(data, list(cookies = list(bar="baz", foo = "bar")))
+  expect_snapshot(curl::handle_cookies(handle))
+})
+
+test_that("/cookies/delete", {
+  handle <- curl::new_handle()
+
+  url1 <- httpbin$url("/cookies/set?foo=bar&bar=baz")
+  resp1 <- curl::curl_fetch_memory(url1, handle = handle)
+
+  url <- httpbin$url("/cookies/delete?foo")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers(resp$headers, multiple = TRUE)
+  expect_true("HTTP/1.1 302 Found" %in% headers[[1]])
+  expect_true("Set-Cookie: foo=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/" %in% headers[[1]])
+  expect_true("HTTP/1.1 200 OK" %in% headers[[2]])
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+  expect_equal(data, list(cookies = list(bar = "baz")))
+  expect_snapshot(curl::handle_cookies(handle))
+})
+
 # Images ===============================================================
 
 test_that("/image", {

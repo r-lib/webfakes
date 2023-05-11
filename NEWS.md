@@ -2,13 +2,15 @@
 
 * New middleware `mw_cookie_parser()` to parse a `Cookie` header. Relatedly,
   new `response$add_cookie()` and `response$clear_cookie()` methods to add a
-  cookie to a response and to add a header that clears a cookie.
+  cookie to a response and to add a header that clears a cookie (#2).
 
 * Parsing query parametes without a value now does not fail.
 
 * New utility function `http_time_stamp()` to format a time stamp for HTTP.
 
 * The httpbin app now implements the `/cache` and `/cache/:value` endpoints.
+
+* The httpbin app now implements the endpoints related to cookies (#3).
 
 * The httpbin app now sends the `Date` header in the correct format.
 
