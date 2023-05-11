@@ -40,7 +40,8 @@ Suggests:
     jsonlite,
     testthat (>= 3.0.0),
     withr,
-    xml2
+    xml2,
+    zip (>= 2.3.0)
 Config/testthat/edition: 3
 Config/Needs/website: tidyverse/tidytemplate
 Encoding: UTF-8

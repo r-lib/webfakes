@@ -346,6 +346,15 @@ test_that("/gzip", {
   expect_equal(obj$path, "/gzip")
 })
 
+test_that("/deflate", {
+  url <- httpbin$url("/deflate")
+  con <- url(url, open = "rb")
+  on.exit(close(con), add = TRUE)
+  echo <- readBin(con, "raw", 10000)
+  data <- jsonlite::fromJSON(rawToChar(zip::inflate(echo)$output))
+  expect_true(data$deflated)
+})
+
 test_that("/encoding/utf8", {
   url <- httpbin$url("/encoding/utf8")
   resp <- curl::curl_fetch_memory(url)

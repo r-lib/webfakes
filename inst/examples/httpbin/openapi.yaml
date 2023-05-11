@@ -489,6 +489,24 @@ paths:
                 type: string
                 pattern: '^gzip$'
 
+  '/deflate':
+    get:
+      tags:
+      - Response formats
+      summary: Deflated data.
+      description: |
+        Returns Deflate-encoded data. This needs the zip R package.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/common'
+          headers:
+            'Content-Encoding':
+              description: Set to `deflate`.
+              schema:
+                type: string
+                pattern: '^deflate$'
+
   '/encoding/utf8':
     get:
       tags:

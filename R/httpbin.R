@@ -274,6 +274,7 @@ httpbin_app <- function(log = interactive()) {
 
   app$get("/gzip", function(req, res) {
     ret <- make_common_response(req, res)
+    ret$gzipped <- TRUE
     json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
     tmp <- tempfile()
     on.exit(unlink(tmp), add = TRUE)
@@ -287,6 +288,18 @@ httpbin_app <- function(log = interactive()) {
       set_type("application/json")$
       set_header("Content-Encoding", "gzip")$
       send(gzipped)
+  })
+
+  app$get("/deflate", function(req, res) {
+    ret <- make_common_response(req, res)
+    ret$deflated <- TRUE
+    json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
+    data <- charToRaw(json)
+    datax <- zip::deflate(data)
+    res$
+      set_type("application/json")$
+      set_header("Content-Encoding", "deflate")$
+      send(datax$output)
   })
 
   app$get("/encoding/utf8", function(req, res) {

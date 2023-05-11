@@ -51,6 +51,7 @@ Lightweight fake web apps for testing. Built using the
 -   The glue package is needed for the `tmpl_glue()` template engine.
 -   The callr package is needed for `new_app_process()` and
     `local_app_process` to work.
+-   The `/deflate` endpoint of the `httpbin_app()` needs the zip package.
 
 ## Installation
 
