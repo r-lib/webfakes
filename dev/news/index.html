@@ -63,7 +63,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="webfakes-development-version">webfakes (development version)<a class="anchor" aria-label="anchor" href="#webfakes-development-version"></a></h2>
-<ul><li><p>The httpbin app now implements the <code>/cache</code> and <code>/cache/:value</code> endpoints.</p></li>
+<ul><li><p>New middleware <code><a href="../reference/mw_cookie_parser.html">mw_cookie_parser()</a></code> to parse a <code>Cookie</code> header. Relatedly, new <code>response$add_cookie()</code> method to add a cookie to a response.</p></li>
+<li><p>New utility function <code><a href="../reference/http_time_stamp.html">http_time_stamp()</a></code> to format a time stamp for HTTP.</p></li>
+<li><p>The httpbin app now implements the <code>/cache</code> and <code>/cache/:value</code> endpoints.</p></li>
 <li><p>The httpbin app now sends the <code>Date</code> header in the correct format.</p></li>
 </ul></div>
     <div class="section level2">

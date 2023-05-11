@@ -40,6 +40,9 @@
     <loc>https://webfakes.r-lib.org/dev/reference/glossary.html</loc>
   </url>
   <url>
+    <loc>https://webfakes.r-lib.org/dev/reference/http_time_stamp.html</loc>
+  </url>
+  <url>
     <loc>https://webfakes.r-lib.org/dev/reference/httpbin_app.html</loc>
   </url>
   <url>
@@ -47,6 +50,9 @@
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/dev/reference/local_app_process.html</loc>
+  </url>
+  <url>
+    <loc>https://webfakes.r-lib.org/dev/reference/mw_cookie_parser.html</loc>
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/dev/reference/mw_etag.html</loc>
