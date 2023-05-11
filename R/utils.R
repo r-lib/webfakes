@@ -178,3 +178,8 @@ http_time_stamp <- function(t = Sys.time()) {
   t <- as.POSIXlt(t, tz = "UTC")
   strftime(t, "%a, %d %b %Y %H:%M:%S GMT")
 }
+
+capitalize <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  x
+}
