@@ -836,6 +836,57 @@ paths:
                 type:
                   string
 
+  '/range/:n':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of bytes, maximum 102400.
+      schema:
+        type: integer
+    - name: chunk_size
+      in: query
+      required: false
+      description: Chunk size, if `duration` is not 0.
+      schema:
+        type: number
+        default: 10240
+    - name: duration
+      in: query
+      required: false
+      description: |
+        Duration for the total response. It applies to the full response size
+        without ranges.
+      schema:
+        type: number
+        default: 0
+    get:
+      tags:
+      - Dynamic data
+      summary: Range requests.
+      description: |
+        Send only part of the response, after a `Range` header.
+      responses:
+        '200':
+          description: |
+            Full response, if there was no `Range` header, or the `Range` header
+            was invalid.
+          content:
+            text/plain
+        '206':
+          description: |
+            Partial response, containing the requested range.
+    head:
+      tags:
+      - Dynamic data
+      summary: Range requests..
+      desciption: |
+        HEAD request to an endpoint that supports ranges.
+      responses:
+        '200':
+          description: |
+            Response with an `Accept-Ranges: bytes` header.
+                  
   '/uuid':
     get:
       tags:

@@ -519,6 +519,65 @@ test_that("/stream-bytes", {
   expect_equal(length(resp$content), 100)
 })
 
+test_that("/range", {
+  url <- httpbin$url("/range/100")
+
+  # HEAD
+  handle <- curl::new_handle()
+  curl::handle_setopt(handle, customrequest = "HEAD")
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+
+  abc <- function(n) {
+    l <- paste(letters, collapse = "")
+    substr(strrep(l, n / nchar(l) + 1), 1, n)
+  }
+
+  # No range header
+  handle <- curl::new_handle()
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+  expect_equal(resp$content, charToRaw(abc(100)))
+
+  # Illegal range headers
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, Range = "bytes=20-30, 25-35")
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+  expect_equal(resp$content, charToRaw(abc(100)))
+
+  # Legal header
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, Range = "bytes=20-29")
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 206L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+  expect_equal(resp$content, charToRaw(substr(abc(30), 21, 30)))
+
+  # In pieces, duration is for the full response
+  url <- httpbin$url("/range/100?chunk_size=1&duration=10")
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, Range = "bytes=20-29")
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 206L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+  expect_equal(resp$content, charToRaw(substr(abc(30), 21, 30)))
+  expect_true(resp$times[["total"]] > 0.5)
+})
+
 test_that("/uuid", {
   url <- httpbin$url("/uuid")
   resp <- curl::curl_fetch_memory(url)

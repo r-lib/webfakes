@@ -153,7 +153,7 @@ httpbin_app <- function(log = interactive()) {
     }
   })
 
-  # TODO: /digest-auth * /hidden-basic-auth
+  # TODO: /digest-auth
 
   # Status codes =========================================================
 
@@ -208,7 +208,7 @@ httpbin_app <- function(log = interactive()) {
     # The mw_etag() middleware is active, so we need to do this after that
     res_etag <- NULL
     res$on_response(function(req, res) {
-      if (!is.null(res_etag)) res$set_header("Etag", res_etag)
+      if (!is.null(res_etag)) res$set_header("ETag", res_etag)
     })
 
     parse <- function(x) {
@@ -364,8 +364,6 @@ httpbin_app <- function(log = interactive()) {
     )
   })
 
-  # TODO: /brotli * /deflate
-
   # Dynamic data =========================================================
 
   app$get(list("/base64", new_regexp("/base64/(?<value>[\\+/=a-zA-Z0-9]*)")),
@@ -477,6 +475,139 @@ httpbin_app <- function(log = interactive()) {
     }
   })
 
+  re_range <- new_regexp("^/range/(?<numbytes>[0-9]+)$")
+
+  # This is not in httpbin, but it is handy to get the size of the
+  # response, and to see whether the server supports ranges
+
+  app$head(re_range, function(req, res) {
+    numbytes <- suppressWarnings(as.integer(req$params$n))
+    if (length(numbytes) == 0 || is.na(numbytes)) {
+      return("next")
+    }
+
+    res$
+      set_header("ETag", paste0("range", numbytes))$
+      set_header("Accept-Ranges", "bytes")$
+      set_header("Content-Length", numbytes)$
+      send_status(200L)
+  })
+
+  app$get(re_range, function(req, res) {
+    if (is.null(res$locals$range)) {
+      numbytes <- suppressWarnings(as.integer(req$params$n))
+      if (length(numbytes) == 0 || is.na(numbytes)) {
+        return("next")
+      }
+
+      if (numbytes < 0 || numbytes > 100 * 1024) {
+        res$
+          set_header("ETag", paste0("range", numbytes))$
+          set_header("Accept-Ranges", "bytes")
+          set_status(404L)$
+          send("number of bytes must be in the range (0, 102400].")
+        return()
+      }
+
+      chunk_size <- max(1, as.integer(req$query$chunk_size %||% (10 * 1024)))
+      duration <- as.integer(req$query$duration %||% 0)
+      pause_per_byte <- duration / numbytes
+      if (duration == 0) {
+        chunk_size <- numbytes
+      }
+
+      ranges <- parse_range(req$get_header("Range"))
+
+      # just like httpbin, we do not support multiple ranges
+      if (NROW(ranges) != 1) {
+        ranges <- NULL
+      }
+
+      # This is not exactly the same as httpbin, but rather follows
+      # https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
+      # and also how web servers seem to behave.
+      #
+      # In particular, in these cases we return the full response:
+      # - no Range header,
+      # - invalid Range header syntax,
+      # - overlapping Range header ranges
+      #
+      # Otherwise, if a range is outside of the size of the response, we
+      # return a 416 response.
+
+      if (!is.null(ranges)) {
+        ranges[ranges == Inf] <- numbytes
+        if (any(ranges[,2] >= numbytes)) {
+          res$
+          set_header("ETag", paste0("range", numbytes))$
+          set_header("Accept-Ranges", "bytes")$
+          set_header("Content-Range", paste0("bytes */", numbytes))$
+          set_header("Content-Length", 0L)$
+          send_status(416L)
+          return()
+        }
+      }
+
+      # we need the response for sure
+      abc <- paste(letters, collapse = "")
+      bytes <- substr(strrep(abc, numbytes / nchar(abc) + 1), 1, numbytes)
+
+      res$locals$range <- list(
+        bytes = bytes,
+        chunk_size = chunk_size,
+        pause_per_byte = pause_per_byte
+      )
+
+      # First part, so send status and headers
+      if (is.null(ranges)) {
+        res$
+          set_header("ETag", paste0("range", numbytes))$
+          set_header("Accept-Ranges", "bytes")$
+          set_header("Content-Length", numbytes)$
+          set_status(200L)
+
+      } else if (nrow(ranges) == 1) {
+        # A single range
+        res$
+          set_header("ETag", paste0("range", numbytes))$
+          set_header("Accept-Ranges", "bytes")$
+          set_header(
+            "Content-Range",
+            sprintf("bytes=%d-%d/%d", ranges[1, 1], ranges[1, 2], numbytes)
+          )$
+          set_header("Content-Length", ranges[1, 2] - ranges[1, 1] + 1L)$
+          set_status(206L)
+
+        # This is all we need to send
+        res$locals$range$bytes <- substr(
+          bytes,
+          ranges[1, 1] + 1,
+          ranges[1, 2] + 1L
+        )
+
+      } else {
+        # This cannot happen now, we do not support multiple ranges
+        # Maybe later
+      }
+    }
+
+    # send a part
+    chunk_size <- res$locals$range$chunk_size
+    todo <- nchar(res$locals$range$bytes)
+    pause <- res$locals$range$pause_per_byte
+
+    tosend <- substr(res$locals$range$bytes, 1, chunk_size)
+    res$locals$range$bytes <- substr(
+      res$locals$range$bytes,
+      chunk_size + 1L,
+      nchar(res$locals$range$bytes)
+    )
+    res$write(tosend)
+    if (pause * nchar(tosend) > 0) {
+      res$delay(pause * nchar(tosend))
+    }
+  })
+
   app$get("/uuid", function(req, res) {
     ret <- list(uuid = uuid_random())
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
@@ -501,8 +632,6 @@ httpbin_app <- function(log = interactive()) {
       set_type("html")$
       send(html)
   })
-
-  # TODO: /range/{numbytes} * /stream/{n}
 
   # Cookies ==============================================================
 
