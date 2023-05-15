@@ -53,6 +53,7 @@ reference:
   - mw_text
   - mw_json
   - mw_multipart
+  - mw_range_parser
   - mw_urlencoded
 
 - title: Other middleware
