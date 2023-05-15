@@ -22,6 +22,8 @@
 * `mw_etag()` now does not add an `ETag` header to the response, if there
   is one already. (The comparision is case sensitive.)
 
+* New middleware: `mw_range_parser()` to parse `Range` headers.
+
 # webfakes 1.1.7
 
 * No user visible changes.

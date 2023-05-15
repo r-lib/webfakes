@@ -43,6 +43,7 @@ Other middleware:
 \code{\link{mw_etag}()},
 \code{\link{mw_json}()},
 \code{\link{mw_multipart}()},
+\code{\link{mw_range_parser}()},
 \code{\link{mw_raw}()},
 \code{\link{mw_static}()},
 \code{\link{mw_text}()},
