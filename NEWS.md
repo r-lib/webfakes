@@ -19,6 +19,9 @@
 * The `offset` parameter is now optional in the `/links` endpoint of the
   httpbin app.
 
+* `mw_etag()` now does not add an `ETag` header to the response, if there
+  is one already. (The comparision is case sensitive.)
+
 # webfakes 1.1.7
 
 * No user visible changes.
