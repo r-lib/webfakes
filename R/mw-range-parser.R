@@ -23,7 +23,7 @@
 mw_range_parser <- function() {
   function(req, res) {
     rh <- req$get_header("Range")
-    if (is.null(rh)) return("next")
+    if (length(rh) == 0) return("next")
     req$ranges <- parse_range(rh)
     "next"
   }
@@ -31,7 +31,7 @@ mw_range_parser <- function() {
 
 parse_range <- function(rh) {
   rh <- trimws(rh)
-  if (!startsWith(rh, "bytes=")) return()
+  if (length(rh) == 0 || !startsWith(rh, "bytes=")) return()
   rh <- sub("^bytes=[ ]*", "", rh)
   rngs <- trimws(strsplit(rh, ",", fixed = TRUE)[[1]])
   res <- matrix(integer(1), nrow = length(rngs), ncol = 2)
