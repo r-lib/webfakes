@@ -1,4 +1,4 @@
-# webfakes (development version)
+# webfakes 1.2.0
 
 * The httpbin app now implements the `/brotli`, `/deflate`, `/digest-auth`
   `/forms/post`, `/hidden-basic-auth`, `/range/:n`, `/stream/:n`, `/cache`
