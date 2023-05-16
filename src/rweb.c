@@ -127,7 +127,7 @@ static int webfakes_clock_gettime(int clk_id, struct timespec *t) {
 /* --------------------------------------------------------------------- */
 
 #ifdef _WIN32
-int check_stdin() {
+int check_stdin(void) {
   HANDLE hnd = GetStdHandle(STD_INPUT_HANDLE);
   if (hnd == INVALID_HANDLE_VALUE) {
     R_THROW_SYSTEM_ERROR("Cannot get stdin handle");
