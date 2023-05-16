@@ -53,6 +53,7 @@ Lightweight fake web apps for testing. Built using the
     `local_app_process` to work.
 -   The `/brotli` endpoint of `httpbin_app()` needs the brotli package.
 -   The `/deflate` endpoint of `httpbin_app()` needs the zip package.
+-   The `/digest-aith` endpoint of `httpbin_app()` needs the digest package.
 
 ## Installation
 

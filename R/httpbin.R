@@ -153,7 +153,221 @@ httpbin_app <- function(log = interactive()) {
     }
   })
 
-  # TODO: /digest-auth
+  hash <- function(str, algorithm) {
+    algo <- tolower(algorithm %||% "md5")
+    algo <- c("md5" = "md5", "sha-256" = "sha256", "sha-512" = "sha512")[algo]
+    if (is.na(algo)) {
+      stop("Unknown hash algorithm for digest auth: ", algorithm)
+    }
+    digest::digest(str, algo = algo, serialize = FALSE)
+  }
+
+  hash1 <- function(realm, username, password, algorithm) {
+    realm <- realm %||% ""
+    hash(paste(collapse = ":", c(
+      username,
+      realm,
+      password
+    )), algorithm)
+  }
+
+  hash2 <- function(credentials, req, algorithm) {
+    qop <- credentials[["qop"]] %||% "auth"
+    query <- if (nchar(req$query_string %||% "")) paste0("?", req$query_string)
+    req_uri <- paste0(req$path, query)
+    if (qop == "auth") {
+      hash(paste(collapse = ":", c(
+        toupper(req[["method"]]),
+        req_uri
+      )), algorithm)
+
+    } else {
+      hash(paste0(collapse = ":", c(
+        toupper(req[["method"]]),
+        req_uri,
+        hash(req$.body %||% "", algorithm)
+      )), algorithm)
+    }
+  }
+
+  digest_challenge_response <- function(req, qop, algorithm, stale = FALSE) {
+    nonce <- hash(
+      paste0(req$remote_addr, ":", unclass(Sys.time()), ":", random_id(10)),
+      algorithm
+    )
+
+    opaque <- hash(random_id(10), algorithm)
+    realm <- "webfakes.r-lib.org"
+    qop <- qop %||% "auth,auth-int"
+
+    wwwauth <- paste0(
+      "Digest ",
+      "realm=\"", realm, "\", ",
+      "qop=\"", qop, "\", ",
+      "nonce=\"", nonce, "\", ",
+      "opaque=\"", opaque, "\", ",
+      "algorithm=", algorithm, ", ",
+      "stale=", stale
+    )
+
+    wwwauth
+  }
+
+  next_stale_after_value <- function(x) {
+    x <- suppressWarnings(as.integer(x))
+    if (is.na(x)) "never" else as.character(x - 1L)
+  }
+
+  check_digest_auth <- function(req, credentials, user, passwd) {
+    if (is.null(credentials)) return(FALSE)
+    algorithm <- credentials[["algorithm"]]
+    HA1_value <- hash1(
+      credentials[["realm"]],
+      credentials[["username"]],
+      passwd,
+      algorithm
+    )
+    HA2_value <- hash2(credentials, req, algorithm)
+
+    qop <- credentials[["qop"]] %||% "compat"
+    if (! qop %in% c("compat", "auth", "auth-int")) return(FALSE)
+
+    response_hash <- if (qop == "compat") {
+      hash(paste0(c(
+        HA1_value,
+        credentials[["nonce"]] %||% "",
+        HA2_value
+      ), collapse = ":"), algorithm)
+
+    } else {
+      if (any(! c("nonce", "nc", "cnonce", "qop") %in% names(credentials))) {
+        return(FALSE)
+      }
+      hash(paste0(c(
+        HA1_value,
+        credentials[["nonce"]],
+        credentials[["nc"]],
+        credentials[["cnonce"]],
+        credentials[["qop"]],
+        HA2_value
+      ), collapse = ":"), algorithm)
+    }
+
+    (credentials[["response"]] %||% "") == response_hash
+  }
+
+  digest_auth <- function(req, res, qop, user, passwd, algorithm, stale_after) {
+    require_cookie_handling <-
+      tolower(req$query$`require-cookie` %||% "") %in% c("1", "t", "true")
+    if (! algorithm %in% c("MD5", "SHA-256", "SHA-512")) {
+      algorithm <- "MD5"
+    }
+
+    if (! qop %in% c("auth", "auth-int")) {
+      qop <- NULL
+    }
+
+    authorization <- req$get_header("Authorization")
+    credentials <- if (!is.null(authorization)) {
+      parse_authorization_header(authorization)
+    }
+
+    if (is.null(authorization) ||
+        is.null(credentials) ||
+        tolower(credentials$scheme) != "digest" ||
+        (require_cookie_handling && is.null(req$get_header("Cookie")))
+        ) {
+      wwwauth <- digest_challenge_response(req, qop, algorithm)
+      res$
+        set_status(401L)$
+        add_cookie("stale_after", stale_after)$
+        add_cookie("fake", "fake_value")$
+        set_header("WWW-Authenticate", wwwauth)$
+        send("")
+      return()
+    }
+
+    if (require_cookie_handling &&
+        (req$cookies[["fake"]] %||% "") != "fake_value") {
+      res$
+        add_cookie("fake", "fake_value")$
+        add_status(403L)$
+        send_json(
+          list(errors = "missing cookie set on challenge"),
+          pretty = TRUE
+        )
+      return()
+    }
+
+    current_nonce <- credentials$nonce
+    stale_after_value <- req$cookies$stale_after %||% ""
+    if (identical(current_nonce, req$cookies[["last_nonce"]] %||% "") ||
+        stale_after_value == "0") {
+      wwwauth <- digest_challenge_response(req, qop, algorithm, TRUE)
+      res$
+        set_status(401L)$
+        add_cookie("stale_after", stale_after)$
+        add_cookie("last_nonce", current_nonce)$
+        add_cookie("fake", "fake_value")$
+        set_header("WWW-Authenticate", wwwauth)$
+        send("")
+      return()
+    }
+
+    if (!check_digest_auth(req, credentials, user, passwd)) {
+      wwwauth <- digest_challenge_response(req, qop, algorithm, FALSE)
+      res$
+        set_status(401L)$
+        add_cookie("stale_after", stale_after)$
+        add_cookie("last_nonce", current_nonce)$
+        add_cookie("fake", "fake_value")$
+        set_header("WWW-Authenticate", wwwauth)$
+        send("")
+      return()
+    }
+
+    res$add_cookie("fake", "fake_value")
+    if (!is.null(stale_after_value)) {
+      res$add_cookie(
+        "stale_after",
+        next_stale_after_value(stale_after_value)
+      )
+    }
+
+    res$
+      send_json(
+        list(authentication = TRUE, user = user),
+        pretty = TRUE,
+        auto_unbox = TRUE
+      )
+  }
+
+  app$get("/digest-auth/:qop/:user/:passwd", function(req, res) {
+    qop <- req$params$qop
+    user <- req$params$user
+    passwd <- req$params$passwd
+    digest_auth(req, res, qop, user, passwd, "MD5", "never")
+  })
+
+  app$get("/digest-auth/:qop/:user/:passwd/:algorithm", function(req, res) {
+    qop <- req$params$qop
+    user <- req$params$user
+    passwd <- req$params$passwd
+    algorithm <- req$params$algorithm
+    digest_auth(req, res, qop, user, passwd, algorithm, "never")
+  })
+
+  app$get(
+    "/digest-auth/:qop/:user/:passwd/:algorithm/:stale_after",
+    function(req, res) {
+      qop <- req$params$qop
+      user <- req$params$user
+      passwd <- req$params$passwd
+      algorithm <- req$params$algorithm
+      stale_after <- req$params$stale_after
+      digest_auth(req, res, qop, user, passwd, algorithm, stale_after)
+    }
+  )
 
   # Status codes =========================================================
 
@@ -503,7 +717,7 @@ httpbin_app <- function(log = interactive()) {
       if (numbytes < 0 || numbytes > 100 * 1024) {
         res$
           set_header("ETag", paste0("range", numbytes))$
-          set_header("Accept-Ranges", "bytes")
+          set_header("Accept-Ranges", "bytes")$
           set_status(404L)$
           send("number of bytes must be in the range (0, 102400].")
         return()
@@ -593,7 +807,6 @@ httpbin_app <- function(log = interactive()) {
 
     # send a part
     chunk_size <- res$locals$range$chunk_size
-    todo <- nchar(res$locals$range$bytes)
     pause <- res$locals$range$pause_per_byte
 
     tosend <- substr(res$locals$range$bytes, 1, chunk_size)

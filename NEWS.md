@@ -8,7 +8,7 @@
 
 * New utility function `http_time_stamp()` to format a time stamp for HTTP.
 
-* The httpbin app now implements the `/brotli`, `/deflate`,
+* The httpbin app now implements the `/brotli`, `/deflate`, `/digest-auth`
   `/hidden-basic-auth`, `/range/:n`, `/stream/:n`, `/cache` and `/cache/:value`
   endpoints (#3).
 

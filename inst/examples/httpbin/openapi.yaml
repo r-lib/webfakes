@@ -157,7 +157,7 @@ paths:
     get:
       tags:
       - Auth
-      summary: Basic authentication.
+      summary: Hidden basic authentication.
       description: |
         Basic authentication with specified user and password. This is the same
         as `/basic-auth`, but it returns a 404 if no authentication is supplied or
@@ -176,6 +176,202 @@ paths:
                     type: string
                     example: "Aladdin"
         '404':
+          description: Failed authentication.
+
+  '/digest-auth/:qop/:user/:passwd':
+    parameters:
+    - name: qop
+      in: path
+      required: true
+      description: Quality of protection, possible values are `auth` and `auth-int`.
+      schema:
+        type: string
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: passwd
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: require_cookie
+      in: query
+      required: false
+      description: |
+        Whether to require cookie handling for a successful authentication.
+        Set to `1`, 't` or `true` to require cookies.
+      scheme:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Digest authentication header. See
+        https://en.wikipedia.org/wiki/Digest_access_authentication for the details.
+    get:
+      tags:
+      - Auth
+      summary: Digest authentication.
+      description: |
+        Digest authentication with specified user and password
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '401':
+          description: Failed authentication.
+
+  '/digest-auth/:qop/:user/:passwd/:algorithm':
+    parameters:
+    - name: qop
+      in: path
+      required: true
+      description: Quality of protection, possible values are `auth` and `auth-int`.
+      schema:
+        type: string
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: passwd
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: algorithm
+      in: path
+      required: true
+      description: |
+        Hashing algorithm to use: `MD5`, `SHA-256` or `SHA-512`.
+      schema:
+        type: string
+      default: MD5
+    - name: require_cookie
+      in: query
+      required: false
+      description: |
+        Whether to require cookie handling for a successful authentication.
+        Set to `1`, 't` or `true` to require cookies.
+      scheme:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Digest authentication header. See
+        https://en.wikipedia.org/wiki/Digest_access_authentication for the details.
+    get:
+      tags:
+      - Auth
+      summary: Digest authentication algorithms.
+      description: |
+        Digest authentication with specified user and password, and algorithm.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '401':
+          description: Failed authentication.
+
+  '/digest-auth/:qop/:user/:passwd/:algorithm/:stale_after':
+    parameters:
+    - name: qop
+      in: path
+      required: true
+      description: Quality of protection, possible values are `auth` and `auth-int`.
+      schema:
+        type: string
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: passwd
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: algorithm
+      in: path
+      required: true
+      description: |
+        Hashing algorithm to use: `MD5`, `SHA-256` or `SHA-512`.
+      schema:
+        type: string
+      default: MD5
+    - name: stale_after
+      in: path
+      required: true
+      description: |
+        How many requests are allowed. This is stored in a cookie.
+      schema:
+        type: string
+      default: 'never'
+    - name: require_cookie
+      in: query
+      required: false
+      description: |
+        Whether to require cookie handling for a successful authentication.
+        Set to `1`, 't` or `true` to require cookies.
+      scheme:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Digest authentication header. See
+        https://en.wikipedia.org/wiki/Digest_access_authentication for the details.
+    get:
+      tags:
+      - Auth
+      summary: Digest authentication, stale after.
+      description: |
+        Digest authentication with specified user, password and algorithm,
+        with a stale_after value.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '401':
           description: Failed authentication.
 
   '/bearer':
@@ -886,7 +1082,7 @@ paths:
         '200':
           description: |
             Response with an `Accept-Ranges: bytes` header.
-                  
+
   '/uuid':
     get:
       tags:

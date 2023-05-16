@@ -149,6 +149,52 @@ test_that("/hidden-basic-auth", {
   expect_equal(headers$`www-authenticate`, NULL)
 })
 
+test_that("/digest-auth", {
+  # url <- "http://localhost:3000/digest-auth/auth/user/secret"
+  url <- httpbin$url("/digest-auth/auth/user/secret")
+  handle <- curl::new_handle()
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_true("www-authenticate" %in% names(headers))
+  creds <- parse_authorization_header(headers$`www-authenticate`)
+  expect_equal(creds$scheme, "digest")
+  expect_equal(creds$realm, "webfakes.r-lib.org")
+  expect_equal(creds$qop, "auth")
+  expect_equal(creds$algorithm, "MD5")
+  expect_equal(creds$stale, "FALSE")
+
+  auth <- list(
+    username = "user",
+    realm = "webfakes.r-lib.org",
+    nonce = creds$nonce,
+    uri = "/digest-auth/auth/user/secret",
+    qop = "auth",
+    nc = "00000001",
+    cnonce = "0a4f113b",
+    opaque = creds$opaque
+  )
+
+  hash <- function(x) digest::digest(x, algo = "md5", serialize = FALSE)
+
+  HA1 <- hash(paste(c(auth$username, auth$realm, "secret"), collapse = ":"))
+  HA2 <- hash("GET:/digest-auth/auth/user/secret")
+  auth$response <- hash(paste0(
+    collapse = ":",
+    c(HA1, auth$nonce, auth$nc, auth$cnonce, auth$qop, HA2)
+  ))
+
+  authorize <- paste0(
+    "Digest ",
+    paste0(names(auth), "=", auth, collapse = ", ")
+  )
+
+  curl::handle_setheaders(handle, authorization = authorize)
+  resp2 <- curl::curl_fetch_memory(handle = handle, url)
+  expect_equal(resp2$status_code, 200L)
+  cnt <- jsonlite::fromJSON(rawToChar(resp2$content), simplifyVector = TRUE)
+  expect_equal(cnt, list(authentication = TRUE, user = "user"))
+})
+
 test_that("/bearer", {
   # no auth
   url <- httpbin$url("/bearer")
@@ -159,7 +205,7 @@ test_that("/bearer", {
 
   # bad auth format
   handle <- curl::new_handle()
-  curl::handle_setheaders(handle, "authorization", "foobar")
+  curl::handle_setheaders(handle, authorization = "foobar")
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 401L)
   headers <- curl::parse_headers_list(resp$headers)

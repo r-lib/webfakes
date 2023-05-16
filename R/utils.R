@@ -106,8 +106,8 @@ set_name <- function(x, nm) {
   x
 }
 
-generate_token <- function() {
-  paste0(sample(c(0:9, letters[1:6]), 30, replace = TRUE), collapse = "")
+random_id <- generate_token <- function(n = 30) {
+  paste0(sample(c(0:9, letters[1:6]), n, replace = TRUE), collapse = "")
 }
 
 parse_url <- function(url) {
