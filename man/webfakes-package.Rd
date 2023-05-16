@@ -6,7 +6,7 @@
 \alias{webfakes-package}
 \title{webfakes: Fake Web Apps for HTTP Testing}
 \description{
-Create a web app that makes it easier to test web clients without using the internet. It includes a web app framework with path matching, parameters and templates. Can parse various 'HTTP' request bodies. Can send 'JSON' data or files from the disk. Includes a web app that implements the httpbin.org web service.
+Create a web app that makes it easier to test web clients without using the internet. It includes a web app framework with path matching, parameters and templates. Can parse various 'HTTP' request bodies. Can send 'JSON' data or files from the disk. Includes a web app that implements the 'httpbin.org' web service.
 }
 \seealso{
 Useful links:
