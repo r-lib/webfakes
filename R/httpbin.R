@@ -104,6 +104,13 @@ httpbin_app <- function(log = interactive()) {
   app$post("/post", common_response)
   app$put("/put", common_response)
 
+  app$get("/forms/post", function(req, res) {
+    res$send_file(
+      root = system.file(package = "webfakes", "examples", "httpbin", "assets"),
+      "forms-post.html"
+    )
+  })
+
   # Auth =================================================================
 
   basic_auth <- function(req, res, error_status = 401L) {
