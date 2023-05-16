@@ -21,7 +21,7 @@ Description: Create a web app that makes it easier to test web clients
     without using the internet. It includes a web app framework with path
     matching, parameters and templates. Can parse various 'HTTP' request
     bodies. Can send 'JSON' data or files from the disk. Includes a web
-    app that implements the <https://httpbin.org> web service.
+    app that implements the `https://httpbin.org` web service.
 License: MIT + file LICENSE
 URL: https://webfakes.r-lib.org/, https://github.com/r-lib/webfakes#readme
 BugReports: https://github.com/r-lib/webfakes/issues

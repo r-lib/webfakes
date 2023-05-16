@@ -1,7 +1,7 @@
 
 #' Generic web app for testing HTTP clients
 #'
-#' A web app similar to <https://httpbin.org>.
+#' A web app similar to `https://httpbin.org`.
 #' See [its specific docs](https://webfakes.r-lib.org/httpbin.html).
 #' You can also see these docs locally, by starting the app:
 #' ```r

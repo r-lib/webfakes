@@ -23,7 +23,7 @@ Lightweight fake web apps for testing. Built using the
 
 - Complete web app framework, define handlers for HTTP requests in R.
 - Write your own app for your custom test cases; our use app similar to
-  the <https://httpbin.org> API, so often you don’t need to write your
+  the `https://httpbin.org` API, so often you don’t need to write your
   own web app (e.g. if you are writing an HTTP client (httr, curl,
   crul).
 - Run one web app per test suite, per test file or per test case.
