@@ -1,5 +1,10 @@
 # webfakes (development version)
 
+* The httpbin app now implements the `/brotli`, `/deflate`, `/digest-auth`
+  `/forms/post`, `/hidden-basic-auth`, `/range/:n`, `/stream/:n`, `/cache`
+  and `/cache/:value` endpoints. With these, it implements all endpoint of
+  the otiginal Python httpbin app (#3).
+
 * New middleware `mw_cookie_parser()` to parse a `Cookie` header. Relatedly,
   new `response$add_cookie()` and `response$clear_cookie()` methods to add a
   cookie to a response and to add a header that clears a cookie (#2).
@@ -7,10 +12,6 @@
 * Parsing query parametes without a value now does not fail.
 
 * New utility function `http_time_stamp()` to format a time stamp for HTTP.
-
-* The httpbin app now implements the `/brotli`, `/deflate`, `/digest-auth`
-  `/hidden-basic-auth`, `/range/:n`, `/stream/:n`, `/cache` and `/cache/:value`
-  endpoints (#3).
 
 * The httpbin app now implements the endpoints related to cookies (#3).
 
