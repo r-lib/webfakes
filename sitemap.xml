@@ -31,6 +31,9 @@
     <loc>https://webfakes.r-lib.org/authors.html</loc>
   </url>
   <url>
+    <loc>https://webfakes.r-lib.org/forms-post.html</loc>
+  </url>
+  <url>
     <loc>https://webfakes.r-lib.org/httpbin.html</loc>
   </url>
   <url>
@@ -43,6 +46,9 @@
     <loc>https://webfakes.r-lib.org/reference/glossary.html</loc>
   </url>
   <url>
+    <loc>https://webfakes.r-lib.org/reference/http_time_stamp.html</loc>
+  </url>
+  <url>
     <loc>https://webfakes.r-lib.org/reference/httpbin_app.html</loc>
   </url>
   <url>
@@ -50,6 +56,9 @@
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/reference/local_app_process.html</loc>
+  </url>
+  <url>
+    <loc>https://webfakes.r-lib.org/reference/mw_cookie_parser.html</loc>
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/reference/mw_etag.html</loc>
@@ -62,6 +71,9 @@
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/reference/mw_multipart.html</loc>
+  </url>
+  <url>
+    <loc>https://webfakes.r-lib.org/reference/mw_range_parser.html</loc>
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/reference/mw_raw.html</loc>
