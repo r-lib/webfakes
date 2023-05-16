@@ -147,13 +147,15 @@ general), then webfakes will send a simple HTTP 404 response.</p>
 
 <p><code>app$use()</code> adds a middleware to the handler stack. A middleware is
 a handler function, see 'Handler functions' below. webfakes comes with
-middleware to perform common tasks:</p><ul><li><p><code><a href="mw_etag.html">mw_etag()</a></code> adds an <code>Etag</code> header to the response.</p></li>
-<li><p><code><a href="mw_log.html">mw_log()</a></code> logs each requests to standard output, or another connection.</p></li>
-<li><p><code><a href="mw_raw.html">mw_raw()</a></code> parses raw request bodies.</p></li>
-<li><p><code><a href="mw_text.html">mw_text()</a></code> parses plain text request bodies.</p></li>
+middleware to perform common tasks:</p><ul><li><p><code><a href="mw_cookie_parser.html">mw_cookie_parser()</a></code> parses <code>Cookie</code> headers.</p></li>
+<li><p><code><a href="mw_etag.html">mw_etag()</a></code> adds an <code>ETag</code> header to the response.</p></li>
 <li><p><code><a href="mw_json.html">mw_json()</a></code> parses JSON request bodies.</p></li>
+<li><p><code><a href="mw_log.html">mw_log()</a></code> logs each requests to standard output, or another connection.</p></li>
 <li><p><code><a href="mw_multipart.html">mw_multipart()</a></code> parses multipart request bodies.</p></li>
+<li><p><code><a href="mw_range_parser.html">mw_range_parser()</a></code> parses <code>Range</code> headers.</p></li>
+<li><p><code><a href="mw_raw.html">mw_raw()</a></code> parses raw request bodies.</p></li>
 <li><p><code><a href="mw_static.html">mw_static()</a></code> serves static files from a directory.</p></li>
+<li><p><code><a href="mw_text.html">mw_text()</a></code> parses plain text request bodies.</p></li>
 <li><p><code><a href="mw_urlencoded.html">mw_urlencoded()</a></code> parses URL encoded request bodies.</p></li>
 </ul><p></p><div class="sourceCode r"><pre><code><span><span class="va">app</span><span class="op">$</span><span class="fu">use</span><span class="op">(</span><span class="va">...</span>, .first <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre><p></p></div><ul><li><p><code>...</code> is a set of (middleware) handler functions. They are added to
 the handler stack, and called for every HTTP request. (Unless an HTTP

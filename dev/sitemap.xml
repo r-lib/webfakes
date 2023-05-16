@@ -28,6 +28,9 @@
     <loc>https://webfakes.r-lib.org/dev/authors.html</loc>
   </url>
   <url>
+    <loc>https://webfakes.r-lib.org/dev/forms-post.html</loc>
+  </url>
+  <url>
     <loc>https://webfakes.r-lib.org/dev/httpbin.html</loc>
   </url>
   <url>
@@ -65,6 +68,9 @@
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/dev/reference/mw_multipart.html</loc>
+  </url>
+  <url>
+    <loc>https://webfakes.r-lib.org/dev/reference/mw_range_parser.html</loc>
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/dev/reference/mw_raw.html</loc>
