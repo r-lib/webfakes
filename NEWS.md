@@ -1,5 +1,9 @@
 # webfakes (development version)
 
+* `tmpl_glue()` now works correctly on platform with an issue in
+  `readChar(..., useBytes = TRUE)`, e.g. on macOS 14.x Sonoma:
+  <https://bugs.r-project.org/show_bug.cgi?id=18605>
+
 # webfakes 1.2.0
 
 * The httpbin app now implements the `/brotli`, `/deflate`, `/digest-auth`
