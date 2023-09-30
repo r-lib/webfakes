@@ -423,7 +423,7 @@ test_that("/gzip", {
   on.exit(close(con), add = TRUE)
   echo <- readBin(con, "raw", 10000)
   expect_equal(echo[1:2], charToRaw("\x1f\x8b"))
-  json <- readChar(gzcon(rawConnection(echo)), 10000, useBytes = TRUE)
+  json <- readChar(gzcon(rawConnection(echo)), 10000)
   obj <- jsonlite::fromJSON(json, simplifyVector = FALSE)
   expect_equal(obj$path, "/gzip")
 })

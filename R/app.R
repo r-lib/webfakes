@@ -217,7 +217,7 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' ```r
 #' app$engine("txt", function(path, locals) {
-#'   txt <- readChar(path, nchars = file.size(path), useBytes = TRUE)
+#'   txt <- readChar(path, nchars = file.size(path))
 #'   glue::glue_data(locals, txt)
 #' })
 #' ```

@@ -240,7 +240,7 @@ that can be used in the template. It should return the result.
 An example template engine that uses glue might look like this:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{app$engine("txt", function(path, locals) \{
-  txt <- readChar(path, nchars = file.size(path), useBytes = TRUE)
+  txt <- readChar(path, nchars = file.size(path))
   glue::glue_data(locals, txt)
 \})
 }\if{html}{\out{</div>}}
