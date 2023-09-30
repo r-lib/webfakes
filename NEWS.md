@@ -1,4 +1,4 @@
-# webfakes (development version)
+# webfakes 1.2.1
 
 * `tmpl_glue()` now works correctly on platforms with an issue in
   `readChar(..., useBytes = TRUE)`, e.g. on macOS 14.x Sonoma:
