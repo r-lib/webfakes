@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">webfakes</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.2.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,6 +64,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="webfakes-development-version">webfakes (development version)<a class="anchor" aria-label="anchor" href="#webfakes-development-version"></a></h2>
 </div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.2.1" id="webfakes-121">webfakes 1.2.1<a class="anchor" aria-label="anchor" href="#webfakes-121"></a></h2>
+<ul><li>
+<code><a href="../reference/tmpl_glue.html">tmpl_glue()</a></code> now works correctly on platforms with an issue in <code>readChar(..., useBytes = TRUE)</code>, e.g. on macOS 14.x Sonoma: <a href="https://bugs.r-project.org/show_bug.cgi?id=18605" class="external-link uri">https://bugs.r-project.org/show_bug.cgi?id=18605</a>.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="webfakes-120">webfakes 1.2.0<a class="anchor" aria-label="anchor" href="#webfakes-120"></a></h2><p class="text-muted">CRAN release: 2023-05-16</p>
 <ul><li><p>The httpbin app now implements the <code>/brotli</code>, <code>/deflate</code>, <code>/digest-auth</code> <code>/forms/post</code>, <code>/hidden-basic-auth</code>, <code>/range/:n</code>, <code>/stream/:n</code>, <code>/cache</code> and <code>/cache/:value</code> endpoints. With these, it implements all endpoint of the otiginal Python httpbin app (<a href="https://github.com/r-lib/webfakes/issues/3" class="external-link">#3</a>).</p></li>
