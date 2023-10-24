@@ -55,6 +55,7 @@ Lightweight fake web apps for testing. Built using the
 - The `/deflate` endpoint of `httpbin_app()` needs the zip package.
 - The `/digest-auth` endpoint of `httpbin_app()` needs the digest
   package.
+- `git_app()` requires the processx package.
 
 ## Installation
 

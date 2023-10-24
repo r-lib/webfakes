@@ -57,6 +57,7 @@ Built using the [civetweb](https://github.com/civetweb/civetweb) embedded web se
 -   The `/brotli` endpoint of `httpbin_app()` needs the brotli package.
 -   The `/deflate` endpoint of `httpbin_app()` needs the zip package.
 -   The `/digest-auth` endpoint of `httpbin_app()` needs the digest package.
+-   `git_app()` requires the processx package.
 
 ## Installation
 
