@@ -49,7 +49,7 @@ NULL
 
 new_request <- function(app, self) {
   if (isTRUE(self$.has_methods)) return(self)
-  parsed_headers <- parse_headers(self$headers)
+  parsed_headers <- self$headers
   self$.has_methods <- TRUE
   self$app <- app
   self$headers <- parsed_headers
@@ -68,11 +68,6 @@ new_request <- function(app, self) {
 
   class(self) <- c("webfakes_request", class(self))
   self
-}
-
-parse_headers <- function(headers) {
-  # nothing to do now...
-  headers
 }
 
 parse_query <- function(query) {

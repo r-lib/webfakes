@@ -27,6 +27,7 @@ If its syntax is invalid or the unit is not \code{bytes}, then the
 }
 \seealso{
 Other middleware: 
+\code{\link{mw_cgi}()},
 \code{\link{mw_cookie_parser}()},
 \code{\link{mw_etag}()},
 \code{\link{mw_json}()},

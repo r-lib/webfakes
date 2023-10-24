@@ -18,6 +18,7 @@ if two cookies have the same name, only the first one is included.
 }
 \seealso{
 Other middleware: 
+\code{\link{mw_cgi}()},
 \code{\link{mw_etag}()},
 \code{\link{mw_json}()},
 \code{\link{mw_log}()},
