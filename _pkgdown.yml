@@ -58,6 +58,7 @@ reference:
 
 - title: Other middleware
   contents:
+  - mw_cgi
   - mw_etag
   - mw_log
   - mw_static
@@ -76,6 +77,10 @@ reference:
   - oauth2_login
   - oauth2_resource_app
   - oauth2_third_party_app
+
+- title: git app
+  contents:
+  - git_app
 
 - title: Misc Utilities
   contents:

@@ -12,7 +12,7 @@
 #'   garbage collected.
 #'
 #' @export
-#' @examplesIf
+#' @examplesIf FALSE
 #' dir.create(tmp <- tempfile())
 #' setwd(tmp)
 #' system("git clone --bare https://github.com/cran/crayon")

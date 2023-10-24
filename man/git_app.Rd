@@ -30,7 +30,7 @@ garbage collected.}
 It is useful for tests that need an HTTP git server.
 }
 \examples{
-\dontshow{if () (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 dir.create(tmp <- tempfile())
 setwd(tmp)
 system("git clone --bare https://github.com/cran/crayon")
