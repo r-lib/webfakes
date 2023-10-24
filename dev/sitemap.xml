@@ -40,6 +40,9 @@
     <loc>https://webfakes.r-lib.org/dev/news/index.html</loc>
   </url>
   <url>
+    <loc>https://webfakes.r-lib.org/dev/reference/git_app.html</loc>
+  </url>
+  <url>
     <loc>https://webfakes.r-lib.org/dev/reference/glossary.html</loc>
   </url>
   <url>
@@ -53,6 +56,9 @@
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/dev/reference/local_app_process.html</loc>
+  </url>
+  <url>
+    <loc>https://webfakes.r-lib.org/dev/reference/mw_cgi.html</loc>
   </url>
   <url>
     <loc>https://webfakes.r-lib.org/dev/reference/mw_cookie_parser.html</loc>
