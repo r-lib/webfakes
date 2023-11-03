@@ -25,7 +25,8 @@ Description: Create a web app that makes it easier to test web clients
 License: MIT + file LICENSE
 URL: https://webfakes.r-lib.org/, https://github.com/r-lib/webfakes#readme
 BugReports: https://github.com/r-lib/webfakes/issues
-Depends: R (>= 3.5.0)
+Depends: 
+    R (>= 3.6)
 Imports:
     stats,
     tools,
