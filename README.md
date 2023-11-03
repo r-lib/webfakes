@@ -65,6 +65,13 @@ Install the release version from CRAN:
 install.packages("webfakes")
 ```
 
+If you need the development version of the package, install it from
+GitHub:
+
+``` r
+pak::pak("r-lib/webfakes")
+```
+
 ## Usage
 
 Start a web app at the beginning of your tests or test file, and stop it
