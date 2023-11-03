@@ -151,7 +151,7 @@ known yet.</p>
 <code class="sourceCode R"><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="st">"{url}"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:39965/"</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:37857/"</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] ""</span></span></code></pre></div>
@@ -174,14 +174,14 @@ subprocess with <code><a href="../reference/new_app_process.html">new_app_proces
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:46103/"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:35527/"</span></span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For
 example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $time</span></span>
-<span><span class="co">#&gt; [1] "2023-11-03 15:04:54"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2023-11-03 15:08:36"</span></span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
@@ -362,11 +362,11 @@ at 0, not 1.</p>
 <code class="sourceCode R"><span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">flaky</span><span class="op">)</span></span>
 <span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html" class="external-link">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Request failed [401]. Retrying in 1.6 seconds...</span></span>
-<span><span class="co">#&gt; Request failed [401]. Retrying in 1.9 seconds...</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 3.1 seconds...</span></span>
 <span><span class="co">#&gt; Request failed [401]. Retrying in 2.6 seconds...</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:45437/unstable]</span></span>
-<span><span class="co">#&gt;   Date: 2023-11-03 15:05</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:42483/unstable]</span></span>
+<span><span class="co">#&gt;   Date: 2023-11-03 15:08</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 17 B</span></span></code></pre></div>
@@ -417,8 +417,8 @@ it.</p>
 <span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:34833/packages?name=vcr]</span></span>
-<span><span class="co">#&gt;   Date: 2023-11-03 15:05</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:41163/packages?name=vcr]</span></span>
+<span><span class="co">#&gt;   Date: 2023-11-03 15:08</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 18 B</span></span>
@@ -431,8 +431,8 @@ it.</p>
 <span><span class="co">#&gt; [1] "vcr"</span></span>
 <span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:34833/packages?name=httptest]</span></span>
-<span><span class="co">#&gt;   Date: 2023-11-03 15:05</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:41163/packages?name=httptest]</span></span>
+<span><span class="co">#&gt;   Date: 2023-11-03 15:08</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 29 B</span></span>
@@ -574,7 +574,7 @@ second.</p>
 <span><span class="co">#&gt; one is done</span></span>
 <span><span class="co">#&gt; one is done</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.002   0.000   1.031 </span></span>
+<span><span class="co">#&gt;   0.001   0.000   1.035 </span></span>
 <span><span class="co">#&gt; Test passed</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -618,9 +618,9 @@ different connection speed. This is how it goes:</p>
 <span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/curl/man/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">resp</span><span class="op">$</span><span class="va">times</span></span>
 <span><span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer </span></span>
-<span><span class="co">#&gt;      0.000000      0.000031      0.000126      0.000161      0.008000 </span></span>
+<span><span class="co">#&gt;      0.000000      0.000047      0.000143      0.000178      0.009876 </span></span>
 <span><span class="co">#&gt;         total </span></span>
-<span><span class="co">#&gt;      2.008495</span></span></code></pre></div>
+<span><span class="co">#&gt;      2.010211</span></span></code></pre></div>
 <p><code>throttle</code> gives the number of bytes per second, so
 downloading 200 random bytes from the fake app will take about 2
 seconds.</p>
