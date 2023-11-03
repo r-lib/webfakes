@@ -22,7 +22,7 @@ Useful links:
 
 Other contributors:
 \itemize{
-  \item  RStudio, Pbc. [copyright holder, funder]
+  \item Posit Software, PBC [copyright holder, funder]
   \item  Civetweb contributors (see inst/credits/ciwetweb.md) [contributor]
   \item  Redoc contributors (see inst/credits/redoc.md) [contributor]
   \item L. Peter Deutsch (src/md5.h) [contributor]
