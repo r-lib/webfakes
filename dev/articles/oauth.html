@@ -138,9 +138,9 @@ authorization, and we create variables holding its different URLs.</p>
 <span><span class="co">#&gt; auto_start:</span></span>
 <span><span class="co">#&gt;   TRUE</span></span>
 <span><span class="co">#&gt; process id:</span></span>
-<span><span class="co">#&gt;   8237</span></span>
+<span><span class="co">#&gt;   7980</span></span>
 <span><span class="co">#&gt; http url:</span></span>
-<span><span class="co">#&gt;   http://127.0.0.1:42983/</span></span>
+<span><span class="co">#&gt;   http://127.0.0.1:34797/</span></span>
 <span><span class="co">#&gt; fields and methods:</span></span>
 <span><span class="co">#&gt;   get_app()              # get the app object</span></span>
 <span><span class="co">#&gt;   get_port()             # query port of the app</span></span>
@@ -175,9 +175,9 @@ its different URLs.</p>
 <span><span class="co">#&gt; auto_start:</span></span>
 <span><span class="co">#&gt;   TRUE</span></span>
 <span><span class="co">#&gt; process id:</span></span>
-<span><span class="co">#&gt;   8250</span></span>
+<span><span class="co">#&gt;   7993</span></span>
 <span><span class="co">#&gt; http url:</span></span>
-<span><span class="co">#&gt;   http://127.0.0.1:37719/</span></span>
+<span><span class="co">#&gt;   http://127.0.0.1:45511/</span></span>
 <span><span class="co">#&gt; fields and methods:</span></span>
 <span><span class="co">#&gt;   get_app()              # get the app object</span></span>
 <span><span class="co">#&gt;   get_port()             # query port of the app</span></span>
@@ -201,8 +201,8 @@ redirect URL, as query parameters.</p>
 <span><span class="op">)</span></span>
 <span><span class="va">reg_resp</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
 <span><span class="va">reg_resp</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:42983/register?name=3P%20app&amp;redirect_uri=http://127.0.0.1:37719/login/redirect]</span></span>
-<span><span class="co">#&gt;   Date: 2023-12-11 00:50</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:34797/register?name=3P%20app&amp;redirect_uri=http://127.0.0.1:45511/login/redirect]</span></span>
+<span><span class="co">#&gt;   Date: 2023-12-11 00:52</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 184 B</span></span>
@@ -215,17 +215,17 @@ redirect URL, as query parameters.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $client_id</span></span>
 <span><span class="co">#&gt; $client_id[[1]]</span></span>
-<span><span class="co">#&gt; [1] "id-f99835419d284c95ed2dd87ce5852a"</span></span>
+<span><span class="co">#&gt; [1] "id-8bed85b6c0d9ae78f3b6988d73d221"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $client_secret</span></span>
 <span><span class="co">#&gt; $client_secret[[1]]</span></span>
-<span><span class="co">#&gt; [1] "secret-77678c1d8ffb0dfbb5acd25c2fd3e2"</span></span>
+<span><span class="co">#&gt; [1] "secret-2f088dfd249fb6677644dfa86cdf0f"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $redirect_uri</span></span>
 <span><span class="co">#&gt; $redirect_uri[[1]]</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:37719/login/redirect"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:45511/login/redirect"</span></span></code></pre></div>
 <p>The resource app replies with the client id and the client secret.
 We’ll use them to authenticate the third party app. In real life they
 are included in the config of the third party app by its admin. Our
@@ -244,8 +244,8 @@ in <code>conf_url</code>) to configure them.</p>
 <span>  body <span class="op">=</span> <span class="va">auth_data</span>,</span>
 <span>  encode <span class="op">=</span> <span class="st">"json"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:37719/login/config]</span></span>
-<span><span class="co">#&gt;   Date: 2023-12-11 00:50</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:45511/login/config]</span></span>
+<span><span class="co">#&gt;   Date: 2023-12-11 00:52</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 41 B</span></span></code></pre></div>
@@ -266,9 +266,9 @@ browser.</p>
 variable, and also returns in JSON, so you can see that in the
 browser:</p>
 <pre><code><span><span class="co">#&gt; {</span></span>
-<span><span class="co">#&gt;   "access_token": "token-d221841933a1cd6654dc1e7e88c60c",</span></span>
+<span><span class="co">#&gt;   "access_token": "token-1a3f775cd197965d4ea9bb2f87db21",</span></span>
 <span><span class="co">#&gt;   "expiry": 10,</span></span>
-<span><span class="co">#&gt;   "refresh_token": "refresh-token-dfaa2490ac5ef569d2f61d2b4f68b6"</span></span>
+<span><span class="co">#&gt;   "refresh_token": "refresh-token-fb95f68e108d088ec451a1fae65232"</span></span>
 <span><span class="co">#&gt; }</span></span></code></pre>
 <p>If you want to change this behavior, you can define the
 <code>redirect_hook</code> function in the third party app. For
@@ -296,9 +296,9 @@ example:</p>
 <span><span class="co">#&gt; auto_start:</span></span>
 <span><span class="co">#&gt;   TRUE</span></span>
 <span><span class="co">#&gt; process id:</span></span>
-<span><span class="co">#&gt;   8263</span></span>
+<span><span class="co">#&gt;   8006</span></span>
 <span><span class="co">#&gt; http url:</span></span>
-<span><span class="co">#&gt;   http://127.0.0.1:42247/</span></span>
+<span><span class="co">#&gt;   http://127.0.0.1:33663/</span></span>
 <span><span class="co">#&gt; fields and methods:</span></span>
 <span><span class="co">#&gt;   get_app()              # get the app object</span></span>
 <span><span class="co">#&gt;   get_port()             # query port of the app</span></span>
@@ -316,8 +316,8 @@ example:</p>
 <span><span class="op">)</span></span>
 <span><span class="va">reg_resp2</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url2</span><span class="op">)</span></span>
 <span><span class="va">reg_resp2</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:42983/register?name=3P%20app2&amp;redirect_uri=http://127.0.0.1:42247/login/redirect]</span></span>
-<span><span class="co">#&gt;   Date: 2023-12-11 00:50</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:34797/register?name=3P%20app2&amp;redirect_uri=http://127.0.0.1:33663/login/redirect]</span></span>
+<span><span class="co">#&gt;   Date: 2023-12-11 00:52</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 185 B</span></span>
@@ -330,17 +330,17 @@ example:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $client_id</span></span>
 <span><span class="co">#&gt; $client_id[[1]]</span></span>
-<span><span class="co">#&gt; [1] "id-4805a1142e7c6421e9855eae5d7578"</span></span>
+<span><span class="co">#&gt; [1] "id-0fb08694958190b8e91f98b393ce28"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $client_secret</span></span>
 <span><span class="co">#&gt; $client_secret[[1]]</span></span>
-<span><span class="co">#&gt; [1] "secret-3719c575372aca75bc9421d9d9aa1a"</span></span>
+<span><span class="co">#&gt; [1] "secret-ced249aacb4d13f38806400c1c4cab"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $redirect_uri</span></span>
 <span><span class="co">#&gt; $redirect_uri[[1]]</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:42247/login/redirect"</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:33663/login/redirect"</span></span>
 <span><span class="va">auth_data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  auth_url <span class="op">=</span> <span class="va">auth_url</span>,</span>
 <span>  token_url <span class="op">=</span> <span class="va">toke_url</span>,</span>
@@ -353,8 +353,8 @@ example:</p>
 <span>  body <span class="op">=</span> <span class="va">auth_data2</span>,</span>
 <span>  encode <span class="op">=</span> <span class="st">"json"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:42247/login/config]</span></span>
-<span><span class="co">#&gt;   Date: 2023-12-11 00:50</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:33663/login/config]</span></span>
+<span><span class="co">#&gt;   Date: 2023-12-11 00:52</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 41 B</span></span></code></pre></div>
@@ -367,13 +367,13 @@ tokens:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">tpapp2</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/locals"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $access_token</span></span>
-<span><span class="co">#&gt; [1] "token-a4ecc15b1df81b8314311bb794fb9b"</span></span>
+<span><span class="co">#&gt; [1] "token-375b98979de0b9f18e93ada0d5b903"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $expiry</span></span>
 <span><span class="co">#&gt; [1] 10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh_token</span></span>
-<span><span class="co">#&gt; [1] "refresh-token-e7d8d53eb1f068306ebc1fb909b75e"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "refresh-token-50b7a445499e3b146a3870920e30ca"</span></span></code></pre></div>
 <p>Now the third-party app can get data on your behalf (the whole goal
 of OAuth!) — it could also post data on your behalf if the resource app
 had endpoints for that.</p>
@@ -384,8 +384,8 @@ works fine:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">resp_data</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">tpapp2</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/data"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">resp_data</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:42247/data]</span></span>
-<span><span class="co">#&gt;   Date: 2023-12-11 00:50</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:33663/data]</span></span>
+<span><span class="co">#&gt;   Date: 2023-12-11 00:52</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 24 B</span></span>
@@ -416,8 +416,8 @@ that uses OAuth2.0 to authenticate to a resource server.</p>
 <span><span class="op">)</span></span>
 <span><span class="va">reg_resp3</span> <span class="op">&lt;-</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url3</span><span class="op">)</span></span>
 <span><span class="va">reg_resp3</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:42983/register?name=3P%20app2&amp;redirect_uri=http://localhost:1410/]</span></span>
-<span><span class="co">#&gt;   Date: 2023-12-11 00:50</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:34797/register?name=3P%20app2&amp;redirect_uri=http://localhost:1410/]</span></span>
+<span><span class="co">#&gt;   Date: 2023-12-11 00:52</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 170 B</span></span>
@@ -430,12 +430,12 @@ that uses OAuth2.0 to authenticate to a resource server.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $client_id</span></span>
 <span><span class="co">#&gt; $client_id[[1]]</span></span>
-<span><span class="co">#&gt; [1] "id-051bc3bf641bb09b045e2d5e54dd83"</span></span>
+<span><span class="co">#&gt; [1] "id-cdaf5a90429272a2ad4953068f1222"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $client_secret</span></span>
 <span><span class="co">#&gt; $client_secret[[1]]</span></span>
-<span><span class="co">#&gt; [1] "secret-123bd4f08a74f8d618c99d0331747e"</span></span>
+<span><span class="co">#&gt; [1] "secret-25986a3ae85e006d9e84f9eb481854"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $redirect_uri</span></span>
@@ -466,18 +466,18 @@ that uses OAuth2.0 to authenticate to a resource server.</p>
 <code class="sourceCode R"><span><span class="va">token</span></span>
 <span><span class="co">#&gt; &lt;Token&gt;</span></span>
 <span><span class="co">#&gt; &lt;oauth_endpoint&gt;</span></span>
-<span><span class="co">#&gt;  authorize: http://127.0.0.1:42983/authorize</span></span>
-<span><span class="co">#&gt;  access:    http://127.0.0.1:42983/token</span></span>
+<span><span class="co">#&gt;  authorize: http://127.0.0.1:34797/authorize</span></span>
+<span><span class="co">#&gt;  access:    http://127.0.0.1:34797/token</span></span>
 <span><span class="co">#&gt; &lt;oauth_app&gt; 3P app2</span></span>
-<span><span class="co">#&gt;   key:    id-051bc3bf641bb09b045e2d5e54dd83</span></span>
+<span><span class="co">#&gt;   key:    id-cdaf5a90429272a2ad4953068f1222</span></span>
 <span><span class="co">#&gt;   secret: &lt;hidden&gt;</span></span>
 <span><span class="co">#&gt; &lt;credentials&gt; access_token, expiry, refresh_token</span></span>
 <span><span class="co">#&gt; ---</span></span></code></pre></div>
 <p>Without the token, the query to the resource server fails:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">rsapp</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/data"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:42983/data]</span></span>
-<span><span class="co">#&gt;   Date: 2023-12-11 00:50</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:34797/data]</span></span>
+<span><span class="co">#&gt;   Date: 2023-12-11 00:52</span></span>
 <span><span class="co">#&gt;   Status: 401</span></span>
 <span><span class="co">#&gt;   Content-Type: text/plain</span></span>
 <span><span class="co">#&gt;   Size: 20 B</span></span></code></pre></div>
@@ -544,13 +544,13 @@ tokens:</p>
 <span><span class="co">#&gt; [1] "3P app"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[1]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-f99835419d284c95ed2dd87ce5852a"</span></span>
+<span><span class="co">#&gt; [1] "id-8bed85b6c0d9ae78f3b6988d73d221"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[1]]$client_secret</span></span>
-<span><span class="co">#&gt; [1] "secret-77678c1d8ffb0dfbb5acd25c2fd3e2"</span></span>
+<span><span class="co">#&gt; [1] "secret-2f088dfd249fb6677644dfa86cdf0f"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[1]]$redirect_uri</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:37719/login/redirect"</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:45511/login/redirect"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[2]]</span></span>
@@ -558,13 +558,13 @@ tokens:</p>
 <span><span class="co">#&gt; [1] "3P app2"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[2]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-4805a1142e7c6421e9855eae5d7578"</span></span>
+<span><span class="co">#&gt; [1] "id-0fb08694958190b8e91f98b393ce28"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[2]]$client_secret</span></span>
-<span><span class="co">#&gt; [1] "secret-3719c575372aca75bc9421d9d9aa1a"</span></span>
+<span><span class="co">#&gt; [1] "secret-ced249aacb4d13f38806400c1c4cab"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[2]]$redirect_uri</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:42247/login/redirect"</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:33663/login/redirect"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[3]]</span></span>
@@ -572,10 +572,10 @@ tokens:</p>
 <span><span class="co">#&gt; [1] "3P app2"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[3]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-051bc3bf641bb09b045e2d5e54dd83"</span></span>
+<span><span class="co">#&gt; [1] "id-cdaf5a90429272a2ad4953068f1222"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[3]]$client_secret</span></span>
-<span><span class="co">#&gt; [1] "secret-123bd4f08a74f8d618c99d0331747e"</span></span>
+<span><span class="co">#&gt; [1] "secret-25986a3ae85e006d9e84f9eb481854"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $apps[[3]]$redirect_uri</span></span>
 <span><span class="co">#&gt; [1] "http://localhost:1410/"</span></span>
@@ -585,70 +585,70 @@ tokens:</p>
 <span><span class="co">#&gt; $access</span></span>
 <span><span class="co">#&gt; $access[[1]]</span></span>
 <span><span class="co">#&gt; $access[[1]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-f99835419d284c95ed2dd87ce5852a"</span></span>
+<span><span class="co">#&gt; [1] "id-8bed85b6c0d9ae78f3b6988d73d221"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $access[[1]]$token</span></span>
-<span><span class="co">#&gt; [1] "token-d221841933a1cd6654dc1e7e88c60c"</span></span>
+<span><span class="co">#&gt; [1] "token-1a3f775cd197965d4ea9bb2f87db21"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $access[[1]]$expiry</span></span>
-<span><span class="co">#&gt; [1] "2023-12-11 00:50:42"</span></span>
+<span><span class="co">#&gt; [1] "2023-12-11 00:52:59"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $access[[2]]</span></span>
 <span><span class="co">#&gt; $access[[2]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-4805a1142e7c6421e9855eae5d7578"</span></span>
+<span><span class="co">#&gt; [1] "id-0fb08694958190b8e91f98b393ce28"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $access[[2]]$token</span></span>
-<span><span class="co">#&gt; [1] "token-a4ecc15b1df81b8314311bb794fb9b"</span></span>
+<span><span class="co">#&gt; [1] "token-375b98979de0b9f18e93ada0d5b903"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $access[[2]]$expiry</span></span>
-<span><span class="co">#&gt; [1] "2023-12-11 00:50:43"</span></span>
+<span><span class="co">#&gt; [1] "2023-12-11 00:52:59"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $access[[3]]</span></span>
 <span><span class="co">#&gt; $access[[3]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-051bc3bf641bb09b045e2d5e54dd83"</span></span>
+<span><span class="co">#&gt; [1] "id-cdaf5a90429272a2ad4953068f1222"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $access[[3]]$token</span></span>
-<span><span class="co">#&gt; [1] "token-257afb4ae2731f722336aa67454e02"</span></span>
+<span><span class="co">#&gt; [1] "token-9fcf1d2ad00f01b1379114bdeb7f81"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $access[[3]]$expiry</span></span>
-<span><span class="co">#&gt; [1] "2023-12-11 00:50:43"</span></span>
+<span><span class="co">#&gt; [1] "2023-12-11 00:53:00"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh</span></span>
 <span><span class="co">#&gt; $refresh[[1]]</span></span>
 <span><span class="co">#&gt; $refresh[[1]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-f99835419d284c95ed2dd87ce5852a"</span></span>
+<span><span class="co">#&gt; [1] "id-8bed85b6c0d9ae78f3b6988d73d221"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh[[1]]$token</span></span>
-<span><span class="co">#&gt; [1] "refresh-token-dfaa2490ac5ef569d2f61d2b4f68b6"</span></span>
+<span><span class="co">#&gt; [1] "refresh-token-fb95f68e108d088ec451a1fae65232"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh[[1]]$expiry</span></span>
-<span><span class="co">#&gt; [1] "2091-12-29 04:04:39"</span></span>
+<span><span class="co">#&gt; [1] "2091-12-29 04:06:56"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh[[2]]</span></span>
 <span><span class="co">#&gt; $refresh[[2]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-4805a1142e7c6421e9855eae5d7578"</span></span>
+<span><span class="co">#&gt; [1] "id-0fb08694958190b8e91f98b393ce28"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh[[2]]$token</span></span>
-<span><span class="co">#&gt; [1] "refresh-token-e7d8d53eb1f068306ebc1fb909b75e"</span></span>
+<span><span class="co">#&gt; [1] "refresh-token-50b7a445499e3b146a3870920e30ca"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh[[2]]$expiry</span></span>
-<span><span class="co">#&gt; [1] "2091-12-29 04:04:40"</span></span>
+<span><span class="co">#&gt; [1] "2091-12-29 04:06:56"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh[[3]]</span></span>
 <span><span class="co">#&gt; $refresh[[3]]$client_id</span></span>
-<span><span class="co">#&gt; [1] "id-051bc3bf641bb09b045e2d5e54dd83"</span></span>
+<span><span class="co">#&gt; [1] "id-cdaf5a90429272a2ad4953068f1222"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh[[3]]$token</span></span>
-<span><span class="co">#&gt; [1] "refresh-token-392f2aa8ea3635cc85338d5582a26f"</span></span>
+<span><span class="co">#&gt; [1] "refresh-token-a24f00a8e63292c89f0b7e52472005"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $refresh[[3]]$expiry</span></span>
-<span><span class="co">#&gt; [1] "2091-12-29 04:04:40"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2091-12-29 04:06:57"</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
