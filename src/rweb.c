@@ -404,11 +404,10 @@ static void webfakes_server_finalizer(SEXP server) {
   void *ctx_addr = ctx;
 #endif
   mg_stop(ctx);
-  int ret = 0;
-  ret += pthread_mutex_unlock(&srv_data->process_lock);
-  ret += pthread_mutex_destroy(&srv_data->process_lock);
-  ret += pthread_cond_destroy(&srv_data->process_more);
-  ret += pthread_cond_destroy(&srv_data->process_less);
+  pthread_mutex_unlock(&srv_data->process_lock);
+  pthread_mutex_destroy(&srv_data->process_lock);
+  pthread_cond_destroy(&srv_data->process_more);
+  pthread_cond_destroy(&srv_data->process_less);
   free(srv_data);
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: that would be all for today\n", (void*) ctx_addr);
