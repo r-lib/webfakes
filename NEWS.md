@@ -1,7 +1,7 @@
 # webfakes (development version)
 
-* New `git_app()` app to fake a git HTTP server. See the web fakes test cases
-  to see how it works.
+* New `git_app()` app to fake a git HTTP server. See the webfakes test cases
+  for examples.
 
 * New `mw_cgi()` middleware to call CGI scripts. See the new `git_app()`
   for an example.
