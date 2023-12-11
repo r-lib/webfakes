@@ -1,4 +1,4 @@
-# webfakes (development version)
+# webfakes 1.3.0
 
 * New `git_app()` app to fake a git HTTP server. See the webfakes test cases
   for examples.
