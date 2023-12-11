@@ -12,7 +12,7 @@ Create a web app that makes it easier to test web clients without using the inte
 Useful links:
 \itemize{
   \item \url{https://webfakes.r-lib.org/}
-  \item \url{https://github.com/r-lib/webfakes#readme}
+  \item \url{https://github.com/r-lib/webfakes}
   \item Report bugs at \url{https://github.com/r-lib/webfakes/issues}
 }
 
