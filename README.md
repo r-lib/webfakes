@@ -11,9 +11,9 @@
 status](https://github.com/r-lib/webfakes/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/webfakes/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/webfakes)](https://CRAN.R-project.org/package=webfakes)
-[![Codecov test
-coverage](https://codecov.io/gh/r-lib/webfakes/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/webfakes?branch=main)
 [![R-CMD-check](https://github.com/r-lib/webfakes/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/webfakes/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/r-lib/webfakes/graph/badge.svg)](https://app.codecov.io/gh/r-lib/webfakes)
 <!-- badges: end -->
 
 Lightweight fake web apps for testing. Built using the
