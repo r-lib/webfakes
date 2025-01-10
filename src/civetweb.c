@@ -34,17 +34,17 @@
 #if defined(GCC_DIAGNOSTIC)
 /* Disable unused macros warnings - not all defines are required
  * for all systems and all compilers. */
-#pragma GCC diagnostic ignored "-Wunused-macros"
+# pragma GCC diagnostic ignored "-Wunused-macros"
 /* A padding warning is just plain useless */
-#pragma GCC diagnostic ignored "-Wpadded"
+# pragma GCC diagnostic ignored "-Wpadded"
 #endif
 
 #if defined(__clang__) /* GCC does not (yet) support this pragma */
 /* We must set some flags for the headers we include. These flags
  * are reserved ids according to C99, so we need to disable a
  * warning for that. */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreserved-id-macro"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wreserved-id-macro"
 #endif
 
 #if defined(_WIN32)
@@ -88,7 +88,7 @@
 
 #if defined(__clang__)
 /* Enable reserved-id-macro warning again. */
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 
 
@@ -98,19 +98,19 @@
 
 #if defined(_MSC_VER)
 /* 'type cast' : conversion from 'int' to 'HANDLE' of greater size */
-#pragma warning(disable : 4306)
+# pragma warning(disable : 4306)
 /* conditional expression is constant: introduced by FD_SET(..) */
-#pragma warning(disable : 4127)
+# pragma warning(disable : 4127)
 /* non-constant aggregate initializer: issued due to missing C99 support */
-#pragma warning(disable : 4204)
+# pragma warning(disable : 4204)
 /* padding added after data member */
-#pragma warning(disable : 4820)
+# pragma warning(disable : 4820)
 /* not defined as a preprocessor macro, replacing with '0' for '#if/#elif' */
-#pragma warning(disable : 4668)
+# pragma warning(disable : 4668)
 /* no function prototype given: converting '()' to '(void)' */
-#pragma warning(disable : 4255)
+# pragma warning(disable : 4255)
 /* function has been selected for automatic inline expansion */
-#pragma warning(disable : 4711)
+# pragma warning(disable : 4711)
 #endif
 
 
@@ -302,13 +302,13 @@ __cyg_profile_func_exit(void *this_fn, void *call_site)
  * On the other hand, if the function is marked with this attribute,
  * but is used, the compiler raises a completely idiotic
  * "used-but-marked-unused" warning - and
- *   #pragma GCC diagnostic ignored "-Wused-but-marked-unused"
- * raises error: unknown option after "#pragma GCC diagnostic".
+ *   # pragma GCC diagnostic ignored "-Wused-but-marked-unused"
+ * raises error: unknown option after "# pragma GCC diagnostic".
  * Disable this warning completely, until the GCC guys sober up
  * again.
  */
 
-#pragma GCC diagnostic ignored "-Wunused-function"
+# pragma GCC diagnostic ignored "-Wunused-function"
 
 #define FUNCTION_MAY_BE_UNUSED /* __attribute__((unused)) */
 
@@ -332,7 +332,7 @@ __cyg_profile_func_exit(void *this_fn, void *call_site)
 /* When using -Weverything, clang does not accept it's own headers
  * in a release build configuration. Disable what is too much in
  * -Weverything. */
-#pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+# pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
 #endif
 
 #if defined(__GNUC__) || defined(__MINGW32__)
@@ -342,8 +342,8 @@ __cyg_profile_func_exit(void *this_fn, void *call_site)
  * Just disable this nonsense warning. */
 
 /* And disabling them does not work either:
- * #pragma clang diagnostic ignored "-Wno-error=date-time"
- * #pragma clang diagnostic ignored "-Wdate-time"
+ * # pragma clang diagnostic ignored "-Wno-error=date-time"
+ * # pragma clang diagnostic ignored "-Wdate-time"
  * So we just have to disable ALL warnings for some lines
  * of code.
  * This seems to be a known GCC bug, not resolved since 2012:
@@ -357,8 +357,8 @@ __cyg_profile_func_exit(void *this_fn, void *call_site)
 #if defined(__clang__)
 #if (__clang_major__ == 3) && ((__clang_minor__ == 7) || (__clang_minor__ == 8))
 /* Avoid warnings for Xcode 7. It seems it does no longer exist in Xcode 8 */
-#pragma clang diagnostic ignored "-Wno-reserved-id-macro"
-#pragma clang diagnostic ignored "-Wno-keyword-macro"
+# pragma clang diagnostic ignored "-Wno-reserved-id-macro"
+# pragma clang diagnostic ignored "-Wno-keyword-macro"
 #endif
 #endif
 
@@ -850,7 +850,7 @@ struct mg_pollfd {
 
 /* Mark required libraries */
 #if defined(_MSC_VER)
-#pragma comment(lib, "Ws2_32.lib")
+# pragma comment(lib, "Ws2_32.lib")
 #endif
 
 #else /* defined(_WIN32) - WINDOWS vs UNIX include block */
@@ -1009,8 +1009,8 @@ timegm(struct tm *tm)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Show no warning in case system functions are not used. */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
 
@@ -1066,7 +1066,7 @@ pthread_getspecific(pthread_key_t key)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Enable unused function warning again */
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 
 static struct pthread_mutex_undefined_struct *pthread_mutex_attr = NULL;
@@ -1077,13 +1077,13 @@ static pthread_mutexattr_t pthread_mutex_attr;
 
 #if defined(GCC_DIAGNOSTIC)
 /* Show no warning in case system functions are not used. */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-function"
 #endif /* defined(GCC_DIAGNOSTIC) */
 #if defined(__clang__)
 /* Show no warning in case system functions are not used. */
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-function"
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wunused-function"
 #endif
 
 static pthread_mutex_t global_lock_mutex;
@@ -1269,11 +1269,11 @@ mg_atomic_add64(volatile int64_t *addr, int64_t value)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Show no warning in case system functions are not used. */
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif /* defined(GCC_DIAGNOSTIC) */
 #if defined(__clang__)
 /* Show no warning in case system functions are not used. */
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
 #endif
 
 
@@ -1601,13 +1601,13 @@ struct mg_workerTLS {
 
 #if defined(GCC_DIAGNOSTIC)
 /* Show no warning in case system functions are not used. */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-function"
 #endif /* defined(GCC_DIAGNOSTIC) */
 #if defined(__clang__)
 /* Show no warning in case system functions are not used. */
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-function"
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wunused-function"
 #endif
 
 
@@ -1630,8 +1630,8 @@ mg_current_thread_id(void)
 #else
 
 #if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunreachable-code"
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wunreachable-code"
 	/* For every compiler, either "sizeof(pthread_t) > sizeof(unsigned long)"
 	 * or not, so one of the two conditions will be unreachable by construction.
 	 * Unfortunately the C standard does not define a way to check this at
@@ -1664,7 +1664,7 @@ mg_current_thread_id(void)
 	}
 
 #if defined(__clang__)
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
 #endif
 
 #endif
@@ -1683,11 +1683,11 @@ mg_get_current_time_ns(void)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Show no warning in case system functions are not used. */
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif /* defined(GCC_DIAGNOSTIC) */
 #if defined(__clang__)
 /* Show no warning in case system functions are not used. */
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
 #endif
 
 
@@ -2599,14 +2599,14 @@ static void mg_cry_internal_wrap(const struct mg_connection *conn,
 /* Set the thread name for debugging purposes in Visual Studio
  * http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
  */
-#pragma pack(push, 8)
+# pragma pack(push, 8)
 typedef struct tagTHREADNAME_INFO {
 	DWORD dwType;     /* Must be 0x1000. */
 	LPCSTR szName;    /* Pointer to name (in user addr space). */
 	DWORD dwThreadID; /* Thread ID (-1=caller thread). */
 	DWORD dwFlags;    /* Reserved for future use, must be zero. */
 } THREADNAME_INFO;
-#pragma pack(pop)
+# pragma pack(pop)
 
 #elif defined(__linux__)
 
@@ -3108,8 +3108,8 @@ mg_vsnprintf(const struct mg_connection *conn,
 	}
 
 #if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wformat-nonliteral"
 	/* Using fmt as a non-literal is intended here, since it is mostly called
 	 * indirectly by mg_snprintf */
 #endif
@@ -3118,7 +3118,7 @@ mg_vsnprintf(const struct mg_connection *conn,
 	ok = (n >= 0) && ((size_t)n < buflen);
 
 #if defined(__clang__)
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
 #endif
 
 	if (ok) {
@@ -3394,14 +3394,14 @@ mg_cry_internal_impl(const struct mg_connection *conn,
 	(void)line;
 
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #endif
 
 	IGNORE_UNUSED_RESULT(vsnprintf_impl(buf, sizeof(buf), fmt, ap));
 
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 
 	buf[sizeof(buf) - 1] = 0;
@@ -3574,8 +3574,8 @@ static const char *
 get_proto_name(const struct mg_connection *conn)
 {
 #if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunreachable-code"
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wunreachable-code"
 	/* Depending on USE_WEBSOCKET and NO_SSL, some oft the protocols might be
 	 * not supported. Clang raises an "unreachable code" warning for parts of ?:
 	 * unreachable, but splitting into four different #ifdef clauses here is
@@ -3592,7 +3592,7 @@ get_proto_name(const struct mg_connection *conn)
 	return proto;
 
 #if defined(__clang__)
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
 #endif
 }
 
@@ -3794,14 +3794,14 @@ skip_quoted(char **buf,
 
 #if defined(GCC_DIAGNOSTIC)
 		/* Disable spurious conversion warning for GCC */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif /* defined(GCC_DIAGNOSTIC) */
 
 		end_whitespace = end_word + strspn(&end_word[1], whitespace) + 1;
 
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif /* defined(GCC_DIAGNOSTIC) */
 
 		for (p = end_word; p < end_whitespace; p++) {
@@ -4728,8 +4728,8 @@ mg_send_http_redirect(struct mg_connection *conn,
 
 #if defined(GCC_DIAGNOSTIC)
 /* Show no warning in case system functions are not used. */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
 
@@ -4933,7 +4933,7 @@ event_destroy(void *eventhdl)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Enable unused function warning again */
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 
 
@@ -5112,8 +5112,8 @@ mg_mkdir(const struct mg_connection *conn, const char *path, int mode)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Show no warning in case system functions are not used. */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
 
@@ -5277,7 +5277,7 @@ poll(struct mg_pollfd *pfd, unsigned int n, int milliseconds)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Enable unused function warning again */
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 
 
@@ -5361,8 +5361,8 @@ mg_join_thread(pthread_t threadid)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Show no warning in case system functions are not used. */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-function"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
 
@@ -5395,7 +5395,7 @@ dlclose(void *handle)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Enable unused function warning again */
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 
 #endif
@@ -6896,8 +6896,8 @@ mg_send_chunk(struct mg_connection *conn,
 #if defined(GCC_DIAGNOSTIC)
 /* This block forwards format strings to printf implementations,
  * so we need to disable the format-nonliteral warning. */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #endif
 
 
@@ -7008,7 +7008,7 @@ alloc_printf(char **out_buf, const char *fmt, ...)
 
 #if defined(GCC_DIAGNOSTIC)
 /* Enable format-nonliteral warning again. */
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 
 
@@ -13519,8 +13519,8 @@ mg_websocket_write_exec(struct mg_connection *conn,
 
 #if defined(GCC_DIAGNOSTIC)
 	/* Disable spurious conversion warning for GCC */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
 	/* Note that POSIX/Winsock's send() is threadsafe
@@ -13572,7 +13572,7 @@ mg_websocket_write_exec(struct mg_connection *conn,
 		header[0] = 0x80u | (unsigned char)((unsigned)opcode & 0xf);
 
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 
 	/* Frame format: http://tools.ietf.org/html/rfc6455#section-5.2 */
@@ -17067,15 +17067,15 @@ static int
 ssl_servername_callback(SSL *ssl, int *ad, void *arg)
 {
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-align"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wcast-align"
 #endif /* defined(GCC_DIAGNOSTIC) */
 
 	/* We used an aligned pointer in SSL_set_app_data */
 	struct mg_connection *conn = (struct mg_connection *)SSL_get_app_data(ssl);
 
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif /* defined(GCC_DIAGNOSTIC) */
 
 	const char *servername = SSL_get_servername(ssl, TLSEXT_NAMETYPE_host_name);
@@ -17784,12 +17784,12 @@ close_socket_gracefully(struct mg_connection *conn)
 		linger.l_onoff = 1;
 
 #if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4244)
+# pragma warning(push)
+# pragma warning(disable : 4244)
 #endif
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wconversion"
 #endif
 		/* Data type of linger structure elements may differ,
 		 * so we don't know what cast we need here.
@@ -17798,10 +17798,10 @@ close_socket_gracefully(struct mg_connection *conn)
 		linger.l_linger = (linger_timeout + 999) / 1000;
 
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 #if defined(_MSC_VER)
-#pragma warning(pop)
+# pragma warning(pop)
 #endif
 
 	} else {
@@ -18045,15 +18045,15 @@ mg_connect_client_impl(const struct mg_client_options *client_options,
 	}
 
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-align"
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wcast-align"
 #endif /* defined(GCC_DIAGNOSTIC) */
 	/* conn_size is aligned to 8 bytes */
 
 	conn->phys_ctx = (struct mg_context *)(((char *)conn) + conn_size);
 
 #if defined(GCC_DIAGNOSTIC)
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif /* defined(GCC_DIAGNOSTIC) */
 
 	conn->buf = (((char *)conn) + conn_size + ctx_size);
@@ -19024,8 +19024,8 @@ mg_connect_websocket_client_impl(const struct mg_client_options *client_options,
 	error.text = error_buffer;
 
 #if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wformat-nonliteral"
 #endif
 
 	/* Establish the client connection and request upgrade */
@@ -19127,7 +19127,7 @@ mg_connect_websocket_client_impl(const struct mg_client_options *client_options,
 	conn->request_info.local_uri = conn->request_info.local_uri_raw;
 
 #if defined(__clang__)
-#pragma clang diagnostic pop
+# pragma clang diagnostic pop
 #endif
 
 	if (conn->response_info.status_code != 101) {
@@ -20291,7 +20291,7 @@ free_context(struct mg_context *ctx)
 	for (i = 0; i < NUM_OPTIONS; i++) {
 		if (ctx->dd.config[i] != NULL) {
 #if defined(_MSC_VER)
-#pragma warning(suppress : 6001)
+# pragma warning(suppress : 6001)
 #endif
 			mg_free(ctx->dd.config[i]);
 		}
@@ -20398,13 +20398,13 @@ get_system_name(char **sysName)
 	BOOL wowRet, isWoW = FALSE;
 
 #if defined(_MSC_VER)
-#pragma warning(push)
+# pragma warning(push)
 	/* GetVersion was declared deprecated */
-#pragma warning(disable : 4996)
+# pragma warning(disable : 4996)
 #endif
 	dwVersion = GetVersion();
 #if defined(_MSC_VER)
-#pragma warning(pop)
+# pragma warning(pop)
 #endif
 
 	dwMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
@@ -21563,13 +21563,13 @@ mg_get_system_info(char *buffer, int buflen)
 		GetSystemInfo(&si);
 
 #if defined(_MSC_VER)
-#pragma warning(push)
+# pragma warning(push)
 		/* GetVersion was declared deprecated */
-#pragma warning(disable : 4996)
+# pragma warning(disable : 4996)
 #endif
 		dwVersion = GetVersion();
 #if defined(_MSC_VER)
-#pragma warning(pop)
+# pragma warning(pop)
 #endif
 
 		dwMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
@@ -21679,17 +21679,17 @@ mg_get_system_info(char *buffer, int buflen)
 #else
 #if defined(GCC_DIAGNOSTIC)
 #if GCC_VERSION >= 40900
-#pragma GCC diagnostic push
+# pragma GCC diagnostic push
 		/* Disable idiotic compiler warning -Wdate-time, appeared in gcc5. This
 		 * does not work in some versions. If "BUILD_DATE" is defined to some
 		 * string, it is used instead of __DATE__. */
-#pragma GCC diagnostic ignored "-Wdate-time"
+# pragma GCC diagnostic ignored "-Wdate-time"
 #endif
 #endif
 		const char *bd = __DATE__;
 #if defined(GCC_DIAGNOSTIC)
 #if GCC_VERSION >= 40900
-#pragma GCC diagnostic pop
+# pragma GCC diagnostic pop
 #endif
 #endif
 #endif
