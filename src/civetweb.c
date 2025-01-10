@@ -273,7 +273,7 @@ void
 __cyg_profile_func_enter(void *this_fn, void *call_site)
 {
 	if ((void *)this_fn != (void *)printf) {
-		printf("E %p %p\n", this_fn, call_site);
+		/* printf("E %p %p\n", this_fn, call_site); */
 	}
 }
 
@@ -281,7 +281,7 @@ void
 __cyg_profile_func_exit(void *this_fn, void *call_site)
 {
 	if ((void *)this_fn != (void *)printf) {
-		printf("X %p %p\n", this_fn, call_site);
+		/* printf("X %p %p\n", this_fn, call_site); */
 	}
 }
 #endif
@@ -1530,9 +1530,9 @@ static void mg_snprintf(const struct mg_connection *conn,
 #if defined(free)
 #undef free
 #endif
-#if defined(snprintf)
-#undef snprintf
-#endif
+/* #if defined(snprintf) */
+/* #undef snprintf */
+/* #endif */
 #if defined(vsnprintf)
 #undef vsnprintf
 #endif
@@ -1540,7 +1540,7 @@ static void mg_snprintf(const struct mg_connection *conn,
 #define calloc DO_NOT_USE_THIS_FUNCTION__USE_mg_calloc
 #define realloc DO_NOT_USE_THIS_FUNCTION__USE_mg_realloc
 #define free DO_NOT_USE_THIS_FUNCTION__USE_mg_free
-#define snprintf DO_NOT_USE_THIS_FUNCTION__USE_mg_snprintf
+/* #define snprintf DO_NOT_USE_THIS_FUNCTION__USE_mg_snprintf */
 #if defined(_WIN32)
 /* vsnprintf must not be used in any system,
  * but this define only works well for Windows. */
@@ -3409,7 +3409,7 @@ mg_cry_internal_impl(const struct mg_connection *conn,
 	DEBUG_TRACE("mg_cry called from %s:%u: %s", func, line, buf);
 
 	if (!conn) {
-		puts(buf);
+		/* puts(buf) */
 		return;
 	}
 
@@ -3529,7 +3529,7 @@ mg_get_request_info(const struct mg_connection *conn)
 		struct mg_workerTLS *tls =
 		    (struct mg_workerTLS *)pthread_getspecific(sTlsKey);
 
-		sprintf(txt, "%03i", conn->response_info.status_code);
+		snprintf(txt, "%03i", sizeof(txt), conn->response_info.status_code);
 		if (strlen(txt) == 3) {
 			memcpy(tls->txtbuf, txt, 4);
 		} else {
@@ -3699,7 +3699,7 @@ mg_construct_local_link(const struct mg_connection *conn,
 			char server_ip[48];
 
 			if (port != default_port) {
-				sprintf(portstr, ":%u", (unsigned)port);
+				snprintf(portstr, sizeof(portstr), ":%u", (unsigned)port);
 			} else {
 				portstr[0] = 0;
 			}
@@ -6867,7 +6867,7 @@ mg_send_chunk(struct mg_connection *conn,
 	int t;
 
 	/* First store the length information in a text buffer. */
-	sprintf(lenbuf, "%x\r\n", chunk_len);
+	snprintf(lenbuf, sizeof(lenbuf), "%x\r\n", chunk_len);
 	lenbuf_len = strlen(lenbuf);
 
 	/* Then send length information, chunk and terminating \r\n. */
@@ -9150,7 +9150,8 @@ mg_modify_passwords_file_ha1(const char *fname,
 				/* Found the user: change the password hash or drop the user
 				 */
 				if ((ha1 != NULL) && (!found)) {
-					i = sprintf(temp_file + temp_file_offs,
+					i = snprintf(temp_file + temp_file_offs,
+						    temp_buf_len - temp_file_offs,
 					            "%s:%s:%s\n",
 					            user,
 					            domain,
@@ -9165,7 +9166,7 @@ mg_modify_passwords_file_ha1(const char *fname,
 				found = 1;
 			} else {
 				/* Copy existing user, including password hash */
-				i = sprintf(temp_file + temp_file_offs, "%s:%s:%s\n", u, d, h);
+				i = snprintf(temp_file + temp_file_offs, temp_buf_len - temp_file_offs, "%s:%s:%s\n", u, d, h);
 				if (i < 1) {
 					fclose(fp);
 					mg_free(temp_file);
@@ -12855,7 +12856,7 @@ dav_lock_file(struct mg_connection *conn, const char *path)
 			if (dav_lock[i].path[0] == 0) {
 				char s[32];
 				dav_lock[i].locktime = mg_get_current_time_ns();
-				sprintf(s, "%" UINT64_FMT, (uint64_t)dav_lock[i].locktime);
+				snprintf(s, sizeof(s), "%" UINT64_FMT, (uint64_t)dav_lock[i].locktime);
 				mg_md5(dav_lock[i].token,
 				       link_buf,
 				       "\x01",
@@ -20413,7 +20414,8 @@ get_system_name(char **sysName)
 
 	wowRet = IsWow64Process(GetCurrentProcess(), &isWoW);
 
-	sprintf(name,
+	snprintf(name,
+		 sizeof(name),
 	        "Windows %u.%u%s",
 	        (unsigned)dwMajorVersion,
 	        (unsigned)dwMinorVersion,
