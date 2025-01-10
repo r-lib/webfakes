@@ -1145,7 +1145,7 @@ mg_atomic_dec(volatile ptrdiff_t *addr)
 {
 	ptrdiff_t ret;
 
-#if defined(_WIN64) && !defined(NO_ATOMICS)
+#if (defined(_WIN64) || __PTRDIFF_WIDTH__ == 64) && defined(_WIN32) && !defined(NO_ATOMICS)
 	ret = InterlockedDecrement64(addr);
 #elif defined(_WIN32) && !defined(NO_ATOMICS)
 	ret = InterlockedDecrement(addr);
