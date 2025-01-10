@@ -1,5 +1,8 @@
 # webfakes (development version)
 
+* New server option: `decode_url`. If set to `FALSE`, then the web server
+  will not URL-decode the URL (#106).
+
 # webfakes 1.3.1
 
 No changes.
