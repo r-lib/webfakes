@@ -56,7 +56,7 @@ A non-terminal handler tells the app to keep calling handlers, by returning the 
 
 \subsection{httpbin app}{
 
-This is an example app, which implements the excellent \url{https://httpbin.org/} web service.
+This is an example app, which implements the excellent \verb{https://httpbin.org/} web service.
 You can use it to simulate certain HTTP responses.
 It is most handy for HTTP clients, but potentially useful for other tools as well.
 

@@ -113,6 +113,88 @@ test_that("/basic-auth", {
   expect_equal(headers$`www-authenticate`, "Basic realm=\"Fake Realm\"")
 })
 
+test_that("/hidden-basic-auth", {
+  # no auth supplied
+  url <- httpbin$url("/hidden-basic-auth/Aladdin/OpenSesame")
+  resp <- curl::curl_fetch_memory(url)
+  expect_equal(resp$status_code, 404L)
+  expect_equal(resp$type, "text/plain")
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers$`www-authenticate`, NULL)
+
+  # correct auth
+  handle <- curl::new_handle()
+  curl::handle_setheaders(
+    handle,
+    "Authorization"= "Basic QWxhZGRpbjpPcGVuU2VzYW1l"
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(resp$type, "application/json")
+  expect_equal(
+    jsonlite::fromJSON(rawToChar(resp$content)),
+    list(authenticated = TRUE, user = "Aladdin")
+  )
+
+  # wrong auth
+  handle <- curl::new_handle()
+  curl::handle_setheaders(
+    handle,
+    "Authorization"= "Basic NOLUCK"
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 404L)
+  expect_equal(resp$type, "text/plain")
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_equal(headers$`www-authenticate`, NULL)
+})
+
+test_that("/digest-auth", {
+  # url <- "http://localhost:3000/digest-auth/auth/user/secret"
+  url <- httpbin$url("/digest-auth/auth/user/secret")
+  handle <- curl::new_handle()
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl::parse_headers_list(resp$headers)
+  expect_true("www-authenticate" %in% names(headers))
+  creds <- parse_authorization_header(headers$`www-authenticate`)
+  expect_equal(creds$scheme, "digest")
+  expect_equal(creds$realm, "webfakes.r-lib.org")
+  expect_equal(creds$qop, "auth")
+  expect_equal(creds$algorithm, "MD5")
+  expect_equal(creds$stale, "FALSE")
+
+  auth <- list(
+    username = "user",
+    realm = "webfakes.r-lib.org",
+    nonce = creds$nonce,
+    uri = "/digest-auth/auth/user/secret",
+    qop = "auth",
+    nc = "00000001",
+    cnonce = "0a4f113b",
+    opaque = creds$opaque
+  )
+
+  hash <- function(x) digest::digest(x, algo = "md5", serialize = FALSE)
+
+  HA1 <- hash(paste(c(auth$username, auth$realm, "secret"), collapse = ":"))
+  HA2 <- hash("GET:/digest-auth/auth/user/secret")
+  auth$response <- hash(paste0(
+    collapse = ":",
+    c(HA1, auth$nonce, auth$nc, auth$cnonce, auth$qop, HA2)
+  ))
+
+  authorize <- paste0(
+    "Digest ",
+    paste0(names(auth), "=", auth, collapse = ", ")
+  )
+
+  curl::handle_setheaders(handle, authorization = authorize)
+  resp2 <- curl::curl_fetch_memory(handle = handle, url)
+  expect_equal(resp2$status_code, 200L)
+  cnt <- jsonlite::fromJSON(rawToChar(resp2$content), simplifyVector = TRUE)
+  expect_equal(cnt, list(authentication = TRUE, user = "user"))
+})
+
 test_that("/bearer", {
   # no auth
   url <- httpbin$url("/bearer")
@@ -123,7 +205,7 @@ test_that("/bearer", {
 
   # bad auth format
   handle <- curl::new_handle()
-  curl::handle_setheaders(handle, "authorization", "foobar")
+  curl::handle_setheaders(handle, authorization = "foobar")
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 401L)
   headers <- curl::parse_headers_list(resp$headers)
@@ -296,7 +378,7 @@ test_that("/cache", {
   curl::handle_setheaders(
     handle,
     "If-Modified-Since" =
-      time_stamp(Sys.time() - as.difftime(5, units = "mins"))
+      http_time_stamp(Sys.time() - as.difftime(5, units = "mins"))
   )
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 304L)
@@ -341,9 +423,27 @@ test_that("/gzip", {
   on.exit(close(con), add = TRUE)
   echo <- readBin(con, "raw", 10000)
   expect_equal(echo[1:2], charToRaw("\x1f\x8b"))
-  json <- readChar(gzcon(rawConnection(echo)), 10000, useBytes = TRUE)
+  json <- readChar(gzcon(rawConnection(echo)), 10000)
   obj <- jsonlite::fromJSON(json, simplifyVector = FALSE)
   expect_equal(obj$path, "/gzip")
+})
+
+test_that("/deflate", {
+  url <- httpbin$url("/deflate")
+  con <- url(url, open = "rb")
+  on.exit(close(con), add = TRUE)
+  echo <- readBin(con, "raw", 10000)
+  data <- jsonlite::fromJSON(rawToChar(zip::inflate(echo)$output))
+  expect_true(data$deflated)
+})
+
+test_that("/brotli", {
+  url <- httpbin$url("/brotli")
+  con <- url(url, open = "rb")
+  on.exit(close(con), add = TRUE)
+  echo <- readBin(con, "raw", 10000)
+  data <- jsonlite::fromJSON(rawToChar(brotli::brotli_decompress(echo)))
+  expect_true(data$brotli)
 })
 
 test_that("/encoding/utf8", {
@@ -465,6 +565,65 @@ test_that("/stream-bytes", {
   expect_equal(length(resp$content), 100)
 })
 
+test_that("/range", {
+  url <- httpbin$url("/range/100")
+
+  # HEAD
+  handle <- curl::new_handle()
+  curl::handle_setopt(handle, customrequest = "HEAD")
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+
+  abc <- function(n) {
+    l <- paste(letters, collapse = "")
+    substr(strrep(l, n / nchar(l) + 1), 1, n)
+  }
+
+  # No range header
+  handle <- curl::new_handle()
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+  expect_equal(resp$content, charToRaw(abc(100)))
+
+  # Illegal range headers
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, Range = "bytes=20-30, 25-35")
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+  expect_equal(resp$content, charToRaw(abc(100)))
+
+  # Legal header
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, Range = "bytes=20-29")
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 206L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+  expect_equal(resp$content, charToRaw(substr(abc(30), 21, 30)))
+
+  # In pieces, duration is for the full response
+  url <- httpbin$url("/range/100?chunk_size=1&duration=10")
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, Range = "bytes=20-29")
+  resp <- curl::curl_fetch_memory(handle = handle, url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 206L)
+  expect_equal(headers$`accept-ranges`, "bytes")
+  expect_equal(headers$`etag`, "range100")
+  expect_equal(resp$content, charToRaw(substr(abc(30), 21, 30)))
+  expect_true(resp$times[["total"]] > 0.5)
+})
+
 test_that("/uuid", {
   url <- httpbin$url("/uuid")
   resp <- curl::curl_fetch_memory(url)
@@ -473,7 +632,75 @@ test_that("/uuid", {
   expect_equal(nchar(echo$uuid), 36)
 })
 
+test_that("/stream", {
+  url <- httpbin$url("/stream/10")
+  resp <- curl::curl_fetch_memory(url)
+  headers <- curl:::parse_headers_list(resp$headers)
+  expect_equal(resp$status_code, 200)
+  expect_equal(headers[["transfer-encoding"]], "chunked")
+  lines <- strsplit(rawToChar(resp$content), "\n", fixed = TRUE)[[1]]
+  json <- lapply(lines, jsonlite::fromJSON, simplifyVector = TRUE)
+  expect_equal(vapply(json, "[[", integer(1), "id"), 0:9)
+})
+
 # Cookies ==============================================================
+
+test_that("/cookies", {
+  url <- httpbin$url("/cookies")
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, Cookie = "foo=bar; bar=baz")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+  expect_equal(data, list(cookies = list(foo = "bar", bar = "baz")))
+})
+
+test_that("/cookies/set/:name/:value", {
+  url <- httpbin$url("/cookies/set/foo/bar")
+  handle <- curl::new_handle()
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers(resp$headers, multiple = TRUE)
+  expect_true("HTTP/1.1 302 Found" %in% headers[[1]])
+  expect_true("Set-Cookie: foo=bar; Path=/" %in% headers[[1]])
+  expect_true("HTTP/1.1 200 OK" %in% headers[[2]])
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+  expect_equal(data, list(cookies = list(foo = "bar")))
+  expect_snapshot(curl::handle_cookies(handle), variant = r_variant())
+})
+
+test_that("/cookies/set", {
+  url <- httpbin$url("/cookies/set?foo=bar&bar=baz")
+  handle <- curl::new_handle()
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers(resp$headers, multiple = TRUE)
+  expect_true("HTTP/1.1 302 Found" %in% headers[[1]])
+  expect_true("Set-Cookie: foo=bar; Path=/" %in% headers[[1]])
+  expect_true("Set-Cookie: bar=baz; Path=/" %in% headers[[1]])
+  expect_true("HTTP/1.1 200 OK" %in% headers[[2]])
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+  expect_equal(data, list(cookies = list(bar="baz", foo = "bar")))
+  expect_snapshot(curl::handle_cookies(handle), variant = r_variant())
+})
+
+test_that("/cookies/delete", {
+  handle <- curl::new_handle()
+
+  url1 <- httpbin$url("/cookies/set?foo=bar&bar=baz")
+  resp1 <- curl::curl_fetch_memory(url1, handle = handle)
+
+  url <- httpbin$url("/cookies/delete?foo")
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  headers <- curl::parse_headers(resp$headers, multiple = TRUE)
+  expect_true("HTTP/1.1 302 Found" %in% headers[[1]])
+  expect_true("Set-Cookie: foo=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/" %in% headers[[1]])
+  expect_true("HTTP/1.1 200 OK" %in% headers[[2]])
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
+  expect_equal(data, list(cookies = list(bar = "baz")))
+  expect_snapshot(curl::handle_cookies(handle), variant = r_variant())
+})
 
 # Images ===============================================================
 

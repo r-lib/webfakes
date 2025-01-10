@@ -47,7 +47,7 @@ The advantages of using your own webfakes server, over mocking:
 -   Works if you stream data from a HTTP connection, instead of reading the whole response at once.
 -   You can reuse the same app for multiple tests, in multiple packages.
 -   Easier to use for tests that require multiple rounds of requests.
--   Comes with a built-in <https://httpbin.org> compatible app, chances are, you don't even need to write your testing app, just start writing tests right away.
+-   Comes with a built-in `https://httpbin.org` compatible app, chances are, you don't even need to write your testing app, just start writing tests right away.
 -   Better test writing experience. This is subjective, and your mileage may vary.
 
 ## Webfakes vs the real API

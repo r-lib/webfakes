@@ -132,6 +132,248 @@ paths:
                 type: string
                 pattern: '^Basic realm=".*"'
 
+  '/hidden-basic-auth/:user/:password':
+    parameters:
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: password
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Base64 encoded user name and password.
+        See <https://en.wikipedia.org/wiki/Basic_access_authentication#Client_side>
+        for the protocol.
+    get:
+      tags:
+      - Auth
+      summary: Hidden basic authentication.
+      description: |
+        Basic authentication with specified user and password. This is the same
+        as `/basic-auth`, but it returns a 404 if no authentication is supplied or
+        the authentication fails.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '404':
+          description: Failed authentication.
+
+  '/digest-auth/:qop/:user/:passwd':
+    parameters:
+    - name: qop
+      in: path
+      required: true
+      description: Quality of protection, possible values are `auth` and `auth-int`.
+      schema:
+        type: string
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: passwd
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: require_cookie
+      in: query
+      required: false
+      description: |
+        Whether to require cookie handling for a successful authentication.
+        Set to `1`, 't` or `true` to require cookies.
+      scheme:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Digest authentication header. See
+        https://en.wikipedia.org/wiki/Digest_access_authentication for the details.
+    get:
+      tags:
+      - Auth
+      summary: Digest authentication.
+      description: |
+        Digest authentication with specified user and password
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '401':
+          description: Failed authentication.
+
+  '/digest-auth/:qop/:user/:passwd/:algorithm':
+    parameters:
+    - name: qop
+      in: path
+      required: true
+      description: Quality of protection, possible values are `auth` and `auth-int`.
+      schema:
+        type: string
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: passwd
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: algorithm
+      in: path
+      required: true
+      description: |
+        Hashing algorithm to use: `MD5`, `SHA-256` or `SHA-512`.
+      schema:
+        type: string
+      default: MD5
+    - name: require_cookie
+      in: query
+      required: false
+      description: |
+        Whether to require cookie handling for a successful authentication.
+        Set to `1`, 't` or `true` to require cookies.
+      scheme:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Digest authentication header. See
+        https://en.wikipedia.org/wiki/Digest_access_authentication for the details.
+    get:
+      tags:
+      - Auth
+      summary: Digest authentication algorithms.
+      description: |
+        Digest authentication with specified user and password, and algorithm.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '401':
+          description: Failed authentication.
+
+  '/digest-auth/:qop/:user/:passwd/:algorithm/:stale_after':
+    parameters:
+    - name: qop
+      in: path
+      required: true
+      description: Quality of protection, possible values are `auth` and `auth-int`.
+      schema:
+        type: string
+    - name: user
+      in: path
+      required: true
+      description: User name.
+      schema:
+        type: string
+    - name: passwd
+      in: path
+      required: true
+      description: Password.
+      schema:
+        type: string
+    - name: algorithm
+      in: path
+      required: true
+      description: |
+        Hashing algorithm to use: `MD5`, `SHA-256` or `SHA-512`.
+      schema:
+        type: string
+      default: MD5
+    - name: stale_after
+      in: path
+      required: true
+      description: |
+        How many requests are allowed. This is stored in a cookie.
+      schema:
+        type: string
+      default: 'never'
+    - name: require_cookie
+      in: query
+      required: false
+      description: |
+        Whether to require cookie handling for a successful authentication.
+        Set to `1`, 't` or `true` to require cookies.
+      scheme:
+        type: string
+    - name: Authorization
+      in: header
+      schema:
+        type: string
+      description: |
+        Digest authentication header. See
+        https://en.wikipedia.org/wiki/Digest_access_authentication for the details.
+    get:
+      tags:
+      - Auth
+      summary: Digest authentication, stale after.
+      description: |
+        Digest authentication with specified user, password and algorithm,
+        with a stale_after value.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  user:
+                    type: string
+                    example: "Aladdin"
+        '401':
+          description: Failed authentication.
+
   '/bearer':
     parameters:
     - name: Authorization
@@ -489,6 +731,42 @@ paths:
                 type: string
                 pattern: '^gzip$'
 
+  '/deflate':
+    get:
+      tags:
+      - Response formats
+      summary: Deflated data.
+      description: |
+        Returns Deflate-encoded data. This needs the zip R package.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/common'
+          headers:
+            'Content-Encoding':
+              description: Set to `deflate`.
+              schema:
+                type: string
+                pattern: '^deflate$'
+
+  '/brotli':
+    get:
+      tags:
+      - Response formats
+      summary: brotli compression
+      description: |
+        Returns brotli-encoded data. This needs the brotli R package.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/common'
+          headers:
+            'Content-Encoding':
+              description: Set to `brotli`.
+              schema:
+                type: string
+                pattern: '^brotli'
+
   '/encoding/utf8':
     get:
       tags:
@@ -667,8 +945,56 @@ paths:
               schema:
                 type: string
 
+  '/links/:n/:offset':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of links.
+      schema:
+        type: integer
+    - name: offset
+      in: path
+      required: false
+      description: Id of the page to return, out of `n`.
+      schema:
+        type: integer
+    get:
+      tags:
+      - Dynamic data
+      summary: Links
+      description: |
+        Generate a page containing n links to other pages which do the same.
+      responses:
+        '200':
+          description: |
+            HTML links.
+          content:
+            text/html
 
-  '/stream-bytes':
+  '/stream/:n':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of JSON chunks to send.
+      schema:
+        type: integer
+    get:
+      tags:
+      - Dynamic data
+      summary: Stream JSON chunks.
+      description: |
+        Stream `n` JSON responses, each terminated by a newline character.
+      responses:
+        '200':
+          description: |
+            Streamed JSON responses. Each JSON chunk contains an `id` field, from
+            zero, up to `n-1`.
+          content:
+            application/json
+
+  '/stream-bytes/:n':
     parameters:
     - name: n
       in: path
@@ -706,6 +1032,57 @@ paths:
                 type:
                   string
 
+  '/range/:n':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of bytes, maximum 102400.
+      schema:
+        type: integer
+    - name: chunk_size
+      in: query
+      required: false
+      description: Chunk size, if `duration` is not 0.
+      schema:
+        type: number
+        default: 10240
+    - name: duration
+      in: query
+      required: false
+      description: |
+        Duration for the total response. It applies to the full response size
+        without ranges.
+      schema:
+        type: number
+        default: 0
+    get:
+      tags:
+      - Dynamic data
+      summary: Range requests.
+      description: |
+        Send only part of the response, after a `Range` header.
+      responses:
+        '200':
+          description: |
+            Full response, if there was no `Range` header, or the `Range` header
+            was invalid.
+          content:
+            text/plain
+        '206':
+          description: |
+            Partial response, containing the requested range.
+    head:
+      tags:
+      - Dynamic data
+      summary: Range requests..
+      desciption: |
+        HEAD request to an endpoint that supports ranges.
+      responses:
+        '200':
+          description: |
+            Response with an `Accept-Ranges: bytes` header.
+
   '/uuid':
     get:
       tags:
@@ -723,6 +1100,77 @@ paths:
                   uuid:
                     type: string
                     example: "ee4610df-3b7b-4624-8ce9-da6975b3e9f1"
+
+  '/cookies':
+    get:
+      tags:
+      - Cookies
+      summary: Cookie data.
+      description: Returns cookie data.
+      responses:
+        '200':
+          description: Set cookies.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cookies:
+                    type: object
+
+  '/cookies/delete':
+    parameters:
+    - name: freeform
+      in: query
+      style: "form"
+    get:
+      tags:
+      - Cookies
+      summary: Delete cookies.
+      description: |
+        Deletes cookie(s) as provided by the query string and redirects
+        to cookie list.
+      responses:
+        '302':
+          description: Redirect to the cookie list.
+
+  '/cookies/set':
+    parameters:
+    - name: freeform
+      in: query
+      style: "form"
+    get:
+      tags:
+      - Cookies
+      summary: Set cookies.
+      description: |
+        Sets cookie(s) as provided by the query string and redirects
+        to cookie list.
+      responses:
+        '302':
+          description: Redirect to the cookie list.
+
+  '/cookies/set/:name/:value':
+    parameters:
+    - name: name
+      in: path
+      description: Cookie name.
+      schema:
+        type: string
+    - name: value
+      in: path
+      description: Cookie value.
+      schema:
+        type: string
+    get:
+      tags:
+      - Cookies
+      summary: Set one cookie.
+      description: |
+        Sets a cookie and redirects to cookie list.
+      responses:
+        '302':
+          description: Redirect to the cookie list.
 
   '/image':
     parameters:

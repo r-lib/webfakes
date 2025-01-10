@@ -13,7 +13,7 @@ httpbin_app(log = interactive())
 A \code{webfakes_app}.
 }
 \description{
-A web app similar to \url{https://httpbin.org}.
+A web app similar to \verb{https://httpbin.org}.
 See \href{https://webfakes.r-lib.org/httpbin.html}{its specific docs}.
 You can also see these docs locally, by starting the app:
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mw-etag.R
 \name{mw_etag}
 \alias{mw_etag}
-\title{Middleware that add an \code{Etag} header to the response}
+\title{Middleware that add an \code{ETag} header to the response}
 \usage{
 mw_etag(algorithm = "crc32")
 }
@@ -14,9 +14,12 @@ implemented currently.}
 Handler function.
 }
 \description{
+If the response already has an \code{ETag} header, then it is kept.
+}
+\details{
 This middleware handles the \code{If-None-Match} headers, and it sets the
 status code of the response to 304 if \code{If-None-Match} matches the
-\code{Etag}. It also removes the response body in this case.
+\code{ETag}. It also removes the response body in this case.
 }
 \examples{
 app <- new_app()
@@ -25,9 +28,12 @@ app
 }
 \seealso{
 Other middleware: 
+\code{\link{mw_cgi}()},
+\code{\link{mw_cookie_parser}()},
 \code{\link{mw_json}()},
 \code{\link{mw_log}()},
 \code{\link{mw_multipart}()},
+\code{\link{mw_range_parser}()},
 \code{\link{mw_raw}()},
 \code{\link{mw_static}()},
 \code{\link{mw_text}()},

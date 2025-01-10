@@ -27,7 +27,8 @@ server_start <- function(opts = server_opts()) {
 
     # These are not configurable currently
     "request_timeout_ms"       = "100000",
-    "enable_auth_domain_check" = "no"
+    "enable_auth_domain_check" = "no",
+    "decode_url"               = if (opts$decode_url) "yes" else "no"
   )
 
   srv <- call_with_cleanup(c_server_start, options)
@@ -59,6 +60,10 @@ server_start <- function(opts = server_opts()) {
 #' @param throttle Limit download speed for clients. If not `Inf`,
 #'   then it is the maximum number of bytes per second, that is sent to
 #'   as connection.
+#' @param decode_url Whether the server should automatically decode
+#'   URL-encodded URLs. If `TRUE` (the default), `/foo%2fbar` will be
+#'   converted to `/foo/bar` automatically. If `FALSE`, URLs as not
+#'   URL-decoded.
 #' @return List of options that can be passed to `webfakes_app$listen()`
 #'   (see [new_app()]), and [new_app_process()].
 #'
@@ -87,7 +92,8 @@ server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
                         access_log_file = remote,
                         error_log_file = TRUE,
                         tcp_nodelay = FALSE,
-                        throttle = Inf) {
+                        throttle = Inf,
+                        decode_url = TRUE) {
 
   log_dir <- Sys.getenv("WEBFAKES_LOG_DIR", file.path(tempdir(), "webfakes"))
   if (isTRUE(access_log_file)) {

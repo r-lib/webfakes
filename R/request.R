@@ -49,7 +49,7 @@ NULL
 
 new_request <- function(app, self) {
   if (isTRUE(self$.has_methods)) return(self)
-  parsed_headers <- parse_headers(self$headers)
+  parsed_headers <- self$headers
   self$.has_methods <- TRUE
   self$app <- app
   self$headers <- parsed_headers
@@ -70,17 +70,14 @@ new_request <- function(app, self) {
   self
 }
 
-parse_headers <- function(headers) {
-  # nothing to do now...
-  headers
-}
-
 parse_query <- function(query) {
   query <- sub("^[?]", "", query)
   query <- chartr("+", " ", query)
   argstr <- strsplit(query, "&", fixed = TRUE)[[1]]
   argstr <- strsplit(argstr, "=", fixed = TRUE)
   keys <- vapply(argstr, function(x) utils::URLdecode(x[[1]]), character(1))
-  vals <- lapply(argstr, function(x) utils::URLdecode(x[[2]]))
+  vals <- lapply(argstr, function(x) {
+    if (length(x) == 2) utils::URLdecode(x[[2]]) else ""
+  })
   structure(vals, names = keys)
 }

@@ -1,9 +1,9 @@
 Package: webfakes
 Title: Fake Web Apps for HTTP Testing
-Version: 1.1.7.9000
+Version: 1.3.1.9000
 Authors@R: c(
     person("Gábor", "Csárdi", , "csardi.gabor@gmail.com", role = c("aut", "cre")),
-    person(, "RStudio, Pbc.", role = c("cph", "fnd")),
+    person("Posit Software, PBC", role = c("cph", "fnd")),
     person(, "Civetweb contributors", role = "ctb",
            comment = "see inst/credits/ciwetweb.md"),
     person(, "Redoc contributors", role = "ctb",
@@ -21,28 +21,33 @@ Description: Create a web app that makes it easier to test web clients
     without using the internet. It includes a web app framework with path
     matching, parameters and templates. Can parse various 'HTTP' request
     bodies. Can send 'JSON' data or files from the disk. Includes a web
-    app that implements the <https://httpbin.org> web service.
+    app that implements the 'httpbin.org' web service.
 License: MIT + file LICENSE
-URL: https://webfakes.r-lib.org/, https://github.com/r-lib/webfakes#readme
+URL: https://webfakes.r-lib.org/, https://github.com/r-lib/webfakes
 BugReports: https://github.com/r-lib/webfakes/issues
-Depends: R (>= 3.5.0)
+Depends: 
+    R (>= 3.6)
 Imports:
     stats,
     tools,
     utils
 Suggests:
+    brotli,
     callr,
     covr,
     curl,
+    digest,
     glue,
     httpuv,
     httr,
     jsonlite,
+    processx,
     testthat (>= 3.0.0),
     withr,
-    xml2
-Config/testthat/edition: 3
+    xml2,
+    zip (>= 2.3.0)
 Config/Needs/website: tidyverse/tidytemplate
+Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1.9000
+RoxygenNote: 7.3.2

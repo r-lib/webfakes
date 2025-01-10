@@ -81,13 +81,15 @@ pkg_data <- new.env(parent = emptyenv())
 #' a handler function, see 'Handler functions' below. webfakes comes with
 #' middleware to perform common tasks:
 #'
-#' * [mw_etag()] adds an `Etag` header to the response.
-#' * [mw_log()] logs each requests to standard output, or another connection.
-#' * [mw_raw()] parses raw request bodies.
-#' * [mw_text()] parses plain text request bodies.
+#' * [mw_cookie_parser()] parses `Cookie` headers.
+#' * [mw_etag()] adds an `ETag` header to the response.
 #' * [mw_json()] parses JSON request bodies.
+#' * [mw_log()] logs each requests to standard output, or another connection.
 #' * [mw_multipart()] parses multipart request bodies.
+#' * [mw_range_parser()] parses `Range` headers.
+#' * [mw_raw()] parses raw request bodies.
 #' * [mw_static()] serves static files from a directory.
+#' * [mw_text()] parses plain text request bodies.
 #' * [mw_urlencoded()] parses URL encoded request bodies.
 #'
 #' ```r
@@ -215,7 +217,7 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' ```r
 #' app$engine("txt", function(path, locals) {
-#'   txt <- readChar(path, nchars = file.size(path), useBytes = TRUE)
+#'   txt <- readChar(path, nchars = file.size(path))
 #'   glue::glue_data(locals, txt)
 #' })
 #' ```

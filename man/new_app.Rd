@@ -97,13 +97,15 @@ general), then webfakes will send a simple HTTP 404 response.
 a handler function, see 'Handler functions' below. webfakes comes with
 middleware to perform common tasks:
 \itemize{
-\item \code{\link[=mw_etag]{mw_etag()}} adds an \code{Etag} header to the response.
-\item \code{\link[=mw_log]{mw_log()}} logs each requests to standard output, or another connection.
-\item \code{\link[=mw_raw]{mw_raw()}} parses raw request bodies.
-\item \code{\link[=mw_text]{mw_text()}} parses plain text request bodies.
+\item \code{\link[=mw_cookie_parser]{mw_cookie_parser()}} parses \code{Cookie} headers.
+\item \code{\link[=mw_etag]{mw_etag()}} adds an \code{ETag} header to the response.
 \item \code{\link[=mw_json]{mw_json()}} parses JSON request bodies.
+\item \code{\link[=mw_log]{mw_log()}} logs each requests to standard output, or another connection.
 \item \code{\link[=mw_multipart]{mw_multipart()}} parses multipart request bodies.
+\item \code{\link[=mw_range_parser]{mw_range_parser()}} parses \code{Range} headers.
+\item \code{\link[=mw_raw]{mw_raw()}} parses raw request bodies.
 \item \code{\link[=mw_static]{mw_static()}} serves static files from a directory.
+\item \code{\link[=mw_text]{mw_text()}} parses plain text request bodies.
 \item \code{\link[=mw_urlencoded]{mw_urlencoded()}} parses URL encoded request bodies.
 }
 
@@ -238,7 +240,7 @@ that can be used in the template. It should return the result.
 An example template engine that uses glue might look like this:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{app$engine("txt", function(path, locals) \{
-  txt <- readChar(path, nchars = file.size(path), useBytes = TRUE)
+  txt <- readChar(path, nchars = file.size(path))
   glue::glue_data(locals, txt)
 \})
 }\if{html}{\out{</div>}}

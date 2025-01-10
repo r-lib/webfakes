@@ -127,7 +127,7 @@ static int webfakes_clock_gettime(int clk_id, struct timespec *t) {
 /* --------------------------------------------------------------------- */
 
 #ifdef _WIN32
-int check_stdin() {
+int check_stdin(void) {
   HANDLE hnd = GetStdHandle(STD_INPUT_HANDLE);
   if (hnd == INVALID_HANDLE_VALUE) {
     R_THROW_SYSTEM_ERROR("Cannot get stdin handle");
@@ -213,11 +213,15 @@ SEXP webfakes_create_request(struct mg_connection *conn);
 
 static R_INLINE SEXP new_env(void) {
   SEXP env;
+#if R_VERSION >= R_Version(4, 1, 0)
+  PROTECT(env = R_NewEnv(R_EmptyEnv, 1, 29));
+#else
   PROTECT(env = allocSExp(ENVSXP));
   SET_FRAME(env, R_NilValue);
   SET_ENCLOS(env, R_EmptyEnv);
   SET_HASHTAB(env, R_NilValue);
   SET_ATTRIB(env, R_NilValue);
+#endif
   UNPROTECT(1);
   return env;
 }
@@ -404,11 +408,10 @@ static void webfakes_server_finalizer(SEXP server) {
   void *ctx_addr = ctx;
 #endif
   mg_stop(ctx);
-  int ret = 0;
-  ret += pthread_mutex_unlock(&srv_data->process_lock);
-  ret += pthread_mutex_destroy(&srv_data->process_lock);
-  ret += pthread_cond_destroy(&srv_data->process_more);
-  ret += pthread_cond_destroy(&srv_data->process_less);
+  pthread_mutex_unlock(&srv_data->process_lock);
+  pthread_mutex_destroy(&srv_data->process_lock);
+  pthread_cond_destroy(&srv_data->process_more);
+  pthread_cond_destroy(&srv_data->process_less);
   free(srv_data);
 #ifndef NDEBUG
   fprintf(stderr, "serv %p: that would be all for today\n", (void*) ctx_addr);
