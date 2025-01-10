@@ -87,7 +87,10 @@ new_app_process <- function(app, port = NULL,
   unlink(tmp)
 
   process_timeout <- process_timeout %||%
-    as.integer(Sys.getenv("R_WEBFAKES_PROCESS_TIMEOUT", 5000))
+    as.integer(Sys.getenv(
+      "R_WEBFAKES_PROCESS_TIMEOUT",
+      if (Sys.getenv("R_COVR") == "true") 30000 else 5000
+    ))
 
   self <- new_object(
     "webfakes_app_process",

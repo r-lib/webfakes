@@ -3,26 +3,25 @@ test_that("error if cannot start", {
   # does not start before the timeout
   app <- new_app()
   app$listen <- function(...) Sys.sleep(1)
-  expect_error(
-    new_app_process(app, process_timeout = 100, start = TRUE),
-    "webfakes app subprocess did not start"
+  expect_snapshot(
+    error = TRUE,
+    new_app_process(app, process_timeout = 100, start = TRUE)
   )
 
   # errors before/while starting
   app <- new_app()
   app$listen <- function(...) stop("oops")
-  expect_error(
-    new_app_process(app, start = TRUE),
-    class = "callr_status_error",
-    "failed to start webfakes app process.*oops"
+  expect_snapshot(
+    error = TRUE,
+    new_app_process(app, start = TRUE)
   )
 
   # sends a different message first
   app <- new_app()
   app$listen <- function(...) "foobar"
-  expect_error(
-    new_app_process(app, start = TRUE),
-    "Unexpected message from webfakes app subprocess"
+  expect_snapshot(
+    error = TRUE,
+    new_app_process(app, start = TRUE)
   )
 })
 
