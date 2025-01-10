@@ -13,7 +13,8 @@ server_opts(
   access_log_file = remote,
   error_log_file = TRUE,
   tcp_nodelay = FALSE,
-  throttle = Inf
+  throttle = Inf,
+  decode_url = TRUE
 )
 }
 \arguments{
@@ -47,6 +48,11 @@ possible, instead of waiting for a full buffer or timeout to occur.}
 \item{throttle}{Limit download speed for clients. If not \code{Inf},
 then it is the maximum number of bytes per second, that is sent to
 as connection.}
+
+\item{decode_url}{Whether the server should automatically decode
+URL-encodded URLs. If \code{TRUE} (the default), \verb{/foo\%2fbar} will be
+converted to \verb{/foo/bar} automatically. If \code{FALSE}, URLs as not
+URL-decoded.}
 }
 \value{
 List of options that can be passed to \code{webfakes_app$listen()}
