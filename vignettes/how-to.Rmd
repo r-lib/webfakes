@@ -381,7 +381,7 @@ web <- webfakes::local_app_process(
 test_that("", {
   url <- web$url("/delay/1")
   p <- curl::new_pool()
-  handles <- replicate(3, curl::new_handle(url = url))
+  handles <- replicate(3, curl::new_handle(url = url, http_version = 2))
   resps <- list()
   for (handle in handles) {
     curl::multi_add(
@@ -396,6 +396,9 @@ test_that("", {
   expect_true(st[["elapsed"]] < 3.0)
 })
 ```
+
+(The `http_version = 2` option is currently needed because of a bug
+(https://github.com/r-lib/webfakes/issues/108).)
 
 ## How to make sure that my code works with the *real* API?
 
