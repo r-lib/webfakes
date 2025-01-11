@@ -1,135 +1,45 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://webfakes.r-lib.org/404.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/articles/glossary.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/articles/how-to.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/articles/internals.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/articles/introduction.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/articles/oauth.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/forms-post.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/httpbin.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/index.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/git_app.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/glossary.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/http_time_stamp.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/httpbin_app.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/local_app_process.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_cgi.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_cookie_parser.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_etag.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_json.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_log.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_multipart.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_range_parser.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_raw.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_static.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_text.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/mw_urlencoded.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/new_app.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/new_app_process.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/new_regexp.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/oauth2_httr_login.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/oauth2_login.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/oauth2_resource_app.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/oauth2_third_party_app.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/server_opts.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/tmpl_glue.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/webfakes-package.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/webfakes_request.html</loc>
-  </url>
-  <url>
-    <loc>https://webfakes.r-lib.org/reference/webfakes_response.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://webfakes.r-lib.org/404.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/LICENSE-text.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/LICENSE.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/articles/glossary.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/articles/how-to.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/articles/index.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/articles/internals.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/articles/introduction.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/articles/oauth.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/authors.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/index.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/news/index.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/git_app.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/glossary.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/http_time_stamp.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/httpbin_app.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/index.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/local_app_process.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_cgi.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_cookie_parser.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_etag.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_json.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_log.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_multipart.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_range_parser.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_raw.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_static.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_text.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/mw_urlencoded.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/new_app.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/new_app_process.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/new_regexp.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/oauth2_httr_login.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/oauth2_login.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/oauth2_resource_app.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/oauth2_third_party_app.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/server_opts.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/tmpl_glue.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/webfakes-package.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/webfakes_request.html</loc></url>
+<url><loc>https://webfakes.r-lib.org/reference/webfakes_response.html</loc></url>
 </urlset>
+
