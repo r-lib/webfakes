@@ -634,8 +634,9 @@ typedef const char *SOCK_OPT_TYPE;
 #define W_OK (2) /* http://msdn.microsoft.com/en-us/library/1w06ktdy.aspx */
 #endif
 #define _POSIX_
-#define INT64_FMT "I64d"
-#define UINT64_FMT "I64u"
+#include <inttypes.h>
+#define INT64_FMT PRId64
+#define UINT64_FMT PRIu64
 
 #define WINCDECL __cdecl
 #define vsnprintf_impl _vsnprintf
