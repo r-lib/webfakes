@@ -6048,7 +6048,7 @@ push_inner(struct mg_context *ctx,
 				    || n == MBEDTLS_ERR_SSL_ASYNC_IN_PROGRESS) {
 					n = 0;
 				} else {
-					fprintf(stderr, "SSL write failed, error %d\n", n);
+					DEBUG_TRACE("SSL write failed, error %d\n", n);
 					return -2;
 				}
 			} else {
@@ -6280,7 +6280,7 @@ pull_inner(FILE *fp,
 				    || nread == MBEDTLS_ERR_SSL_ASYNC_IN_PROGRESS) {
 					nread = 0;
 				} else {
-					fprintf(stderr, "SSL read failed, error %d\n", nread);
+					DEBUG_TRACE("SSL read failed, error %d\n", nread);
 					return -2;
 				}
 			} else {
@@ -16356,7 +16356,7 @@ mg_sslctx_init(struct mg_context *phys_ctx, struct mg_domain_context *dom_ctx)
 
 	dom_ctx->ssl_ctx = (SSL_CTX *)mg_calloc(1, sizeof(*dom_ctx->ssl_ctx));
 	if (dom_ctx->ssl_ctx == NULL) {
-		fprintf(stderr, "ssl_ctx malloc failed\n");
+		DEBUG_TRACE("ssl_ctx malloc failed");
 		return 0;
 	}
 
