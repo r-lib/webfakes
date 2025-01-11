@@ -1123,14 +1123,14 @@ mg_atomic_inc(volatile ptrdiff_t *addr)
 {
 	ptrdiff_t ret;
 
-#if defined(_WIN64) && !defined(NO_ATOMICS)
+#if defined(_WIN64) && defined(_WIN32) && !defined(NO_ATOMICS)
 	ret = InterlockedIncrement64(addr);
-#elif defined(_WIN32) && !defined(NO_ATOMICS)
-	ret = InterlockedIncrement(addr);
 #elif defined(__GNUC__)                                                        \
     && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ > 0)))           \
     && !defined(NO_ATOMICS)
 	ret = __sync_add_and_fetch(addr, 1);
+#elif defined(_WIN32) && !defined(NO_ATOMICS)
+	ret = InterlockedIncrement(addr);
 #else
 	mg_global_lock();
 	ret = (++(*addr));
@@ -1146,14 +1146,14 @@ mg_atomic_dec(volatile ptrdiff_t *addr)
 {
 	ptrdiff_t ret;
 
-#if (defined(_WIN64) || __PTRDIFF_WIDTH__ == 64) && defined(_WIN32) && !defined(NO_ATOMICS)
+#if defined(_WIN64) && defined(_WIN32) && !defined(NO_ATOMICS)
 	ret = InterlockedDecrement64(addr);
-#elif defined(_WIN32) && !defined(NO_ATOMICS)
-	ret = InterlockedDecrement(addr);
 #elif defined(__GNUC__)                                                        \
     && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ > 0)))           \
     && !defined(NO_ATOMICS)
 	ret = __sync_sub_and_fetch(addr, 1);
+#elif defined(_WIN32) && !defined(NO_ATOMICS)
+	ret = InterlockedDecrement(addr);
 #else
 	mg_global_lock();
 	ret = (--(*addr));
