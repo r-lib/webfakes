@@ -15,8 +15,8 @@
 #' function(req, res, env = character())
 #' ```
 #'
-#' See [RFC 3875](https://www.ietf.org/rfc/rfc3875) for details on the CGI
-#' protocol.
+#' See [RFC 3875](https://datatracker.ietf.org/doc/html/rfc3875)
+#' for details on the CGI protocol.
 #'
 #' The request body (if any) is passed to the external command as standard
 #' intput. `mw_cgi()` sets `CONTENT_LENGTH`, `CONTENT_TYPE`,

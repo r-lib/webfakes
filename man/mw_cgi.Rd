@@ -21,8 +21,8 @@ A function with signature
 \if{html}{\out{<div class="sourceCode">}}\preformatted{function(req, res, env = character())
 }\if{html}{\out{</div>}}
 
-See \href{https://www.ietf.org/rfc/rfc3875}{RFC 3875} for details on the CGI
-protocol.
+See \href{https://datatracker.ietf.org/doc/html/rfc3875}{RFC 3875}
+for details on the CGI protocol.
 
 The request body (if any) is passed to the external command as standard
 intput. \code{mw_cgi()} sets \code{CONTENT_LENGTH}, \code{CONTENT_TYPE},
