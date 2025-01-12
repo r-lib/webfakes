@@ -1,0 +1,30 @@
+#! /usr/bin/env sh
+
+# Check that this is not just ./configure. We need to run this
+# from R CMD INSTALL, to have the R env vars set.
+
+if [ -z "$R_HOME" ]; then
+    echo >&2 R_HOME is not set, are you running R CMD INSTALL?
+    exit 1
+fi
+
+# Find the R binary we need to use. This is a bit trickier on
+# Windows, because it has two architectures. On windows R_ARCH_BIN
+# is set, so this should work everywhere.
+RBIN="${R_HOME}/bin${R_ARCH_BIN}/R"
+
+unset WINDOWS
+if [ "$R_OSTYPE" = "windows" ]; then WINDOWS=true; fi
+
+OBJECTS=`ls src/*.c | sed 's/[.]c$/.o/' | sed 's|^src/||'`
+OBJECTS="$OBJECTS `ls src/mbedtls/library/*.c | sed 's/[.]c$/.o/' | sed 's|^src/||'`"
+OBJECTS="`echo $OBJECTS | tr '\n' ' '`"
+
+if [ -n "$WINDOWS" ]; then
+   LIBS=-lws2_32
+fi
+
+cat src/Makevars.in | \
+    sed "s|@OBJECTS@|${OBJECTS}|" | \
+    sed "s/@LIBS@/${LIBS}/" \
+    > src/Makevars

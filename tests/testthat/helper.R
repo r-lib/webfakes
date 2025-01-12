@@ -102,3 +102,19 @@ r_variant <- function() {
     "new-r"
   }
 }
+
+callr_curl <- function(url, options = list()) {
+  callr::r(
+    function(url, options) {
+      h <- curl::new_handle()
+      curl::handle_setopt(h, .list = options)
+      curl::curl_fetch_memory(url, handle = h)
+    },
+    list(url = url, options = options),
+    env = c(
+      callr::rcmd_safe_env(),
+      CURL_SSL_BACKEND = "openssl",
+      CURL_CA_BUNDLE = if ("cainfo" %in% names(options)) options$cainfo
+    )
+  )
+}

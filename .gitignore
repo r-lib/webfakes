@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 /src/*.so
-/src/*.o
+/src/**/*.o
 /src/*.dll
 /src/*.gcda
 /src/*.gcno
@@ -11,3 +11,4 @@
 /README.html
 /dev-lib
 /revdep
+/src/Makevars

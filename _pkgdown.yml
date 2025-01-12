@@ -87,4 +87,7 @@ reference:
   - http_time_stamp
 
 - title: internal
-  contents: glossary
+  contents:
+  - glossary
+  - how-to
+  - introduction

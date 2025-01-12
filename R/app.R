@@ -249,7 +249,10 @@ pkg_data <- new.env(parent = emptyenv())
 #' ```
 #'
 #' * `port`: port to listen on. When `NULL`, the operating system will
-#'   automatically select a free port.
+#'   automatically select a free port. Add an `"s"` suffix to the port
+#'   to use HTTPS. Use `"0s"` to use an OS assigned port with HTTPS.
+#'   See the [how-to] manual page if you want to start the web server
+#'   on more than one ports.
 #'
 #' * `opts`: options to the web server. See [server_opts()] for the
 #'   list of options and their default values.
@@ -405,7 +408,6 @@ new_app <- function() {
     },
 
     listen = function(port = NULL, opts = server_opts(), cleanup = TRUE) {
-      stopifnot(is.null(port) || is_port(port) || is_na_scalar(port))
       if (is_na_scalar(port)) port <- NULL
       opts$port <- port
       self$.enable_keep_alive <- opts$enable_keep_alive
@@ -417,9 +419,14 @@ new_app <- function() {
         err$message <- paste(sep = "\n", err$message, self$.get_error_log())
         stop(err)
       })
-      ports <- server_get_ports(srv)
-      self$.port <- ports$port[1]
-      message("Running webfakes web app on port ", self$.port)
+      self$.ports <- server_get_ports(srv)
+      self$.port <- self$.ports$port[1]
+      port_nums <- paste0(self$.ports$port, ifelse(self$.ports$ssl, " (SSL)", ""))
+      message(
+        "Running webfakes web app on port",
+        if (length(port_nums) > 1) "s " else " ",
+        paste(port_nums, collapse = ", ")
+      )
       if (!is.na(opts$access_log_file)) {
         message("Access log file: ", opts$access_log_file)
       }
@@ -428,6 +435,7 @@ new_app <- function() {
       }
       msg <- structure(
         list(
+          ports = self$.ports,
           port = self$.port,
           access_log = attr(srv, "options")$access_log_file,
           error_log = attr(srv, "options")$error_log_file
@@ -504,6 +512,7 @@ new_app <- function() {
     locals = new.env(parent = parent.frame()),
 
     # Private data
+    .ports = NULL,
     .port = NULL,
     .enable_keep_alive = NULL,
     .opts = NULL,

@@ -73,8 +73,5 @@ test_that("webfakes_app_process", {
   proc$stop()
   # make the output deterministic
   proc$.port <- 3000
-  verify_output(
-    test_path("fixtures", "output", "webfakes_app_process.txt"),
-    proc
-  )
+  expect_snapshot(proc)
 })

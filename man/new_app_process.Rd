@@ -18,7 +18,10 @@ new_app_process(
 \arguments{
 \item{app}{\code{webfakes_app} object, the web app to run.}
 
-\item{port}{Port to use. By default the OS assigns a port.}
+\item{port}{Port(s) to use. By default the OS assigns a port.
+Add an \code{"s"} suffix to the port to use HTTPS. Use \code{"0s"} to
+use an OS assigned port with HTTPS. See the \link{how-to} on how
+to run the web server on multiple ports.}
 
 \item{opts}{Server options. See \code{\link[=server_opts]{server_opts()}} for the defaults.}
 
@@ -27,7 +30,7 @@ new_app_process(
 
 \item{auto_start}{Whether to start the web server process automatically.
 If \code{TRUE} and the process is not running, then \verb{$start()},
-\verb{$get_port()} and \verb{$url()} start the process.}
+\verb{$get_port()}, \verb{$get_ports()} and \verb{$url()} start the process.}
 
 \item{process_timeout}{How long to wait for the subprocess to start, in
 milliseconds.}
@@ -43,6 +46,7 @@ The \code{webfakes_app_process} class has the following methods:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{get_app()
 get_port()
+get_ports()
 stop()
 get_state()
 local_env(envvars)
@@ -57,7 +61,11 @@ is replaced by the URL of the app.
 
 \code{get_app()} returns the app object.
 
-\code{get_port()} returns the port the web server is running on.
+\code{get_port()} returns the (first) port the web server is running on.
+
+\code{get_ports()} returns all ports the web server is running on, and
+whether it uses SSL on those ports, in a data frame with columns
+\code{ipv4}, \code{ipv6}, \code{port} and \code{ssl}.
 
 \code{stop()} stops the web server, and also the subprocess. If the error
 log file is not empty, then it dumps its contents to the screen.
