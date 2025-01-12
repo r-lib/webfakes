@@ -2,6 +2,11 @@
 # PKG_CPPFLAGS=-UNDEBUG
 PKG_CPPFLAGS=-DUSE_MBEDTLS -Imbedtls/include -D"MBEDTLS_PLATFORM_PRINTF_MACRO(...)="
 PKG_CFLAGS=-DNO_CGI -DNO_FILES
-PKG_LIBS=@LIBS@
+PKG_LIBS=@LIBS@ libmbedtls.a
 
 OBJECTS=@OBJECTS@
+
+$(SHLIB): libmbedtls.a
+
+libmbedtls.a: @MBED@
+	$(AR) r $@ $^

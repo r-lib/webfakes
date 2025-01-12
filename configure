@@ -17,8 +17,9 @@ unset WINDOWS
 if [ "$R_OSTYPE" = "windows" ]; then WINDOWS=true; fi
 
 OBJECTS=`ls src/*.c | sed 's/[.]c$/.o/' | sed 's|^src/||'`
-OBJECTS="$OBJECTS `ls src/mbedtls/library/*.c | sed 's/[.]c$/.o/' | sed 's|^src/||'`"
 OBJECTS="`echo $OBJECTS | tr '\n' ' '`"
+MBED="$OBJECTS `ls src/mbedtls/library/*.c | sed 's/[.]c$/.o/' | sed 's|^src/||'`"
+MBED="`echo $MBED | tr '\n' ' '`"
 
 if [ -n "$WINDOWS" ]; then
    LIBS=-lws2_32
@@ -26,5 +27,6 @@ fi
 
 cat src/Makevars.in | \
     sed "s|@OBJECTS@|${OBJECTS}|" | \
+    sed "s|@MBED@|${MBED}|" | \
     sed "s/@LIBS@/${LIBS}/" \
     > src/Makevars

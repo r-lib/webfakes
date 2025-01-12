@@ -21,3 +21,4 @@
 ^codecov\.yml$
 ^dev\-lib$
 ^LICENSE\.md$
+^src/libmbedtls.a$

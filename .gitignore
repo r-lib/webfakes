@@ -12,3 +12,4 @@
 /dev-lib
 /revdep
 /src/Makevars
+/src/*.a
