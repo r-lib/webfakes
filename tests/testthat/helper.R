@@ -111,6 +111,10 @@ callr_curl <- function(url, options = list()) {
       curl::curl_fetch_memory(url, handle = h)
     },
     list(url = url, options = options),
-    env = c(callr::rcmd_safe_env(), CURL_SSL_BACKEND = "openssl")
+    env = c(
+      callr::rcmd_safe_env(),
+      CURL_SSL_BACKEND = "openssl",
+      CURL_CA_BUNDLE = if ("cainfo" %in% names(options)) options$cainfo
+    )
   )
 }
