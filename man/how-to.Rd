@@ -491,14 +491,64 @@ For \code{utils::download.file} point the \code{CURL_CA_BUNDLE} environment vari
 to the \code{ca.crt} file. Don't forget to undo this, once the HTTP request
 is done.
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{Sys.setenv(
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{Sys.setenv(
   CURL_CA_BUNDLE = system.file("cert/localhost/ca.crt", package = "webfakes")
 )
 download.file(http$url("/path/to/endpoint"), res <- tempfile())
 }\if{html}{\out{</div>}}
+\subsection{Special considerations for tests on Windows}{
+
+Unfortunately things are not that simple on Windows, for the HTTP clients.
+As far as I can tell, it is not easily possible to make the HTTP clients
+accept a new self-signed certificate. It is possible with libcurl, though,
+but you need to set the \code{CURL_SSL_BACKEND=openssl} environment variable.
+(And libcurl must be built with openssl support of course.) You need to
+set this env var \emph{before} loading libcurl, so it is best to set it before
+starting R. One way to do this in the tests is to run the tests in a
+subprocess, with the callr package. Look at the \code{test-https.R} file in
+webfakes for a complete, current example. The tests use this helper
+function, defined in \code{helper.R}:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{callr_curl <- function(url, options = list()) \{
+  callr::r(
+    function(url, options) \{
+      h <- curl::new_handle()
+      curl::handle_setopt(h, .list = options)
+      curl::curl_fetch_memory(url, handle = h)
+    \},
+    list(url = url, options = options),
+    env = c(
+      callr::rcmd_safe_env(),
+      CURL_SSL_BACKEND = "openssl",
+      CURL_CA_BUNDLE = if ("cainfo" \%in\% names(options)) options$cainfo
+    )
+  )
+\}
+}\if{html}{\out{</div>}}
+
+Example test case:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# ...
+  cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
+  resp <- if (.Platform$OS.type == "windows") \{
+    callr_curl(http$url("/hello"), list(cainfo = cainfo))
+  \} else \{
+    curl::curl_fetch_memory(
+      http$url("/hello"),
+      handle = curl::new_handle(cainfo = cainfo)
+    )
+  \}
+# ...
+}\if{html}{\out{</div>}}
+
+It seems like a good idea to \code{skip_on_cran()} HTTPS tests, at least on
+Windows, because this setup is not yet tested enough to consider it
+robust.
 
 webfakes uses \href{https://www.trustedfirmware.org/projects/mbed-tls/}{Mbed TLS}
 for serving HTTPS.
+}
+
 }
 
 \subsection{How can I run a server on multiple ports?}{
