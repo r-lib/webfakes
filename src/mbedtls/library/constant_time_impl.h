@@ -32,8 +32,8 @@
  * at the bottom of this file.
  */
 #if defined(MBEDTLS_COMPILER_IS_GCC) && (__GNUC__ > 4)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wredundant-decls"
+    # pragma GCC diagnostic push
+    # pragma GCC diagnostic ignored "-Wredundant-decls"
 #endif
 
 /* Disable asm under Memsan because it confuses Memsan and generates false errors.
@@ -200,8 +200,8 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool(mbedtls_ct_uint_t x)
 #if defined(_MSC_VER)
     /* MSVC has a warning about unary minus on unsigned, but this is
      * well-defined and precisely what we want to do here */
-#pragma warning( push )
-#pragma warning( disable : 4146 )
+# pragma warning( push )
+# pragma warning( disable : 4146 )
 #endif
     // y is negative (i.e., top bit set) iff x is non-zero
     mbedtls_ct_int_t y = (-xo) | -(xo >> 1);
@@ -212,7 +212,7 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool(mbedtls_ct_uint_t x)
     // -y has all bits set (if x is non-zero), or all bits clear (if x is zero)
     return (mbedtls_ct_condition_t) (-y);
 #if defined(_MSC_VER)
-#pragma warning( pop )
+# pragma warning( pop )
 #endif
 #endif
 }
@@ -550,7 +550,7 @@ static inline mbedtls_ct_condition_t mbedtls_ct_bool_not(mbedtls_ct_condition_t 
 
 #if defined(MBEDTLS_COMPILER_IS_GCC) && (__GNUC__ > 4)
 /* Restore warnings for -Wredundant-decls on gcc */
-    #pragma GCC diagnostic pop
+    # pragma GCC diagnostic pop
 #endif
 
 #endif /* MBEDTLS_CONSTANT_TIME_IMPL_H */
