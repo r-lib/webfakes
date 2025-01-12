@@ -271,7 +271,10 @@ available.</p>
 
 
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">app</span><span class="op">$</span><span class="fu">listen</span><span class="op">(</span>port <span class="op">=</span> <span class="cn">NULL</span>, opts <span class="op">=</span> <span class="fu"><a href="../reference/server_opts.html">server_opts</a></span><span class="op">(</span><span class="op">)</span>, cleanup <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre><p></p></div><ul><li><p><code>port</code>: port to listen on. When <code>NULL</code>, the operating system will
-automatically select a free port.</p></li>
+automatically select a free port. Add an <code>"s"</code> suffix to the port
+to use HTTPS. Use <code>"0s"</code> to use an OS assigned port with HTTPS.
+See the <a href="how-to.html">how-to</a> manual page if you want to start the web server
+on more than one ports.</p></li>
 <li><p><code>opts</code>: options to the web server. See <code><a href="server_opts.html">server_opts()</a></code> for the
 list of options and their default values.</p></li>
 <li><p><code>cleanup</code>: stop the server (with an error) if the standard input

@@ -131,7 +131,7 @@ known yet.</p>
 <code class="sourceCode R"><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="st">"{url}"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:34633/"</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:43481/"</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] ""</span></span></code></pre></div>
@@ -154,14 +154,14 @@ subprocess with <code><a href="../reference/new_app_process.html">new_app_proces
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:41561/"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:36725/"</span></span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For
 example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $time</span></span>
-<span><span class="co">#&gt; [1] "2025-01-11 11:49:02"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2025-01-12 12:48:15"</span></span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
@@ -345,8 +345,8 @@ at 0, not 1.</p>
 <span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
 <span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
 <span><span class="co">#&gt; Request failed [401]. Retrying in 3.7 seconds...</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:33615/unstable]</span></span>
-<span><span class="co">#&gt;   Date: 2025-01-11 11:49</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:40265/unstable]</span></span>
+<span><span class="co">#&gt;   Date: 2025-01-12 12:48</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 17 B</span></span></code></pre></div>
@@ -397,8 +397,8 @@ it.</p>
 <span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:39109/packages?name=vcr]</span></span>
-<span><span class="co">#&gt;   Date: 2025-01-11 11:49</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:34645/packages?name=vcr]</span></span>
+<span><span class="co">#&gt;   Date: 2025-01-12 12:48</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 18 B</span></span>
@@ -411,8 +411,8 @@ it.</p>
 <span><span class="co">#&gt; [1] "vcr"</span></span>
 <span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:39109/packages?name=httptest]</span></span>
-<span><span class="co">#&gt;   Date: 2025-01-11 11:49</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:34645/packages?name=httptest]</span></span>
+<span><span class="co">#&gt;   Date: 2025-01-12 12:48</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 29 B</span></span>
@@ -498,6 +498,130 @@ command there.</p>
 the main session.</p>
 </div>
 <div class="section level2">
+<h2 id="how-can-i-test-https-requests">How can I test HTTPS requests?<a class="anchor" aria-label="anchor" href="#how-can-i-test-https-requests"></a>
+</h2>
+<p>Serving HTTPS from <code>localhost</code> or <code>127.0.0.1</code>
+instead of HTTP is easy, all you need to do is 1. Set the port to an
+HTTPS port by adding an <code>"s"</code> suffix to the port number. Use
+<code>"0s"</code> for an OS assigned free port:
+<code>r    new_app_process(app, port = "0s")</code> By default webfakes
+uses the server key + certificate in the file at
+<code>r    system.file("cert/localhost/server.pem", package = "webfakes")</code>
+This certificate includes <code>localhost</code>, <code>127.0.0.1</code>
+and <code>localhost.localdomain</code>. If you need another domain or IP
+address, you’ll need to create your own certificate. The
+<code>generate.sh</code> file in the same directory helps with that. 2.
+Specify the certificate bundle to the HTTP client you are using. For the
+default server key use the <code>ca.crt</code> file from the webfakes
+package:
+<code>r    system.file("cert/localhost/ca.crt", package = "webfakes")</code>
+See examples for HTTP clients below.</p>
+<p>If you are using the curl package, use the <code>ca_info</code>
+option in <code><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">curl::new_handle()</a></code> or
+<code><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">curl::handle_setopt()</a></code>:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cainfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cert/localhost/ca.crt"</span>, package <span class="op">=</span> <span class="st">"webfakes"</span><span class="op">)</span></span>
+<span><span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span></span>
+<span>  <span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/path/to/endpoint"</span><span class="op">)</span>, </span>
+<span>  handle <span class="op">=</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">new_handle</a></span><span class="op">(</span>cainfo <span class="op">=</span> <span class="va">cainfo</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>For the httr package, use
+<code>httr::config(cainfo = ...)</code>:</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span></span>
+<span>  <span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/headers"</span>, https <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, </span>
+<span>  <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/config.html" class="external-link">config</a></span><span class="op">(</span>cainfo <span class="op">=</span> <span class="va">cainfo</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>For the httr2 package:</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/request.html" class="external-link">request</a></span><span class="op">(</span><span class="st">"https://example.com"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_options.html" class="external-link">req_options</a></span><span class="op">(</span>cainfo <span class="op">=</span> <span class="va">cainfo</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">httr2</span><span class="fu">::</span><span class="fu"><a href="https://httr2.r-lib.org/reference/req_perform.html" class="external-link">req_perform</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>For <code><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">utils::download.file</a></code> point the
+<code>CURL_CA_BUNDLE</code> environment variable to the
+<code>ca.crt</code> file. Don’t forget to undo this, once the HTTP
+request is done.</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span></span>
+<span>  CURL_CA_BUNDLE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cert/localhost/ca.crt"</span>, package <span class="op">=</span> <span class="st">"webfakes"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/path/to/endpoint"</span><span class="op">)</span>, <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="special-considerations-for-tests-on-windows">Special considerations for tests on Windows<a class="anchor" aria-label="anchor" href="#special-considerations-for-tests-on-windows"></a>
+</h3>
+<p>Unfortunately things are not that simple on Windows, for the HTTP
+clients. As far as I can tell, it is not easily possible to make the
+HTTP clients accept a new self-signed certificate. It is possible with
+libcurl, though, but you need to set the
+<code>CURL_SSL_BACKEND=openssl</code> environment variable. (And libcurl
+must be built with openssl support of course.) You need to set this env
+var <em>before</em> loading libcurl, so it is best to set it before
+starting R. One way to do this in the tests is to run the tests in a
+subprocess, with the callr package. Look at the
+<code>test-https.R</code> file in webfakes for a complete, current
+example. The tests use this helper function, defined in
+<code>helper.R</code>:</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">callr_curl</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span>, <span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">callr</span><span class="fu">::</span><span class="fu"><a href="https://callr.r-lib.org/reference/r.html" class="external-link">r</a></span><span class="op">(</span></span>
+<span>    <span class="kw">function</span><span class="op">(</span><span class="va">url</span>, <span class="va">options</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">h</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">new_handle</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">handle_setopt</a></span><span class="op">(</span><span class="va">h</span>, .list <span class="op">=</span> <span class="va">options</span><span class="op">)</span></span>
+<span>      <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">url</span>, handle <span class="op">=</span> <span class="va">h</span><span class="op">)</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, options <span class="op">=</span> <span class="va">options</span><span class="op">)</span>,</span>
+<span>    env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      <span class="fu">callr</span><span class="fu">::</span><span class="fu"><a href="https://callr.r-lib.org/reference/rcmd_safe_env.html" class="external-link">rcmd_safe_env</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      CURL_SSL_BACKEND <span class="op">=</span> <span class="st">"openssl"</span>,</span>
+<span>      CURL_CA_BUNDLE <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="st">"cainfo"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">options</span><span class="op">)</span><span class="op">)</span> <span class="va">options</span><span class="op">$</span><span class="va">cainfo</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Example test case:</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ...</span></span>
+<span>  <span class="va">cainfo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cert/localhost/ca.crt"</span>, package <span class="op">=</span> <span class="st">"webfakes"</span><span class="op">)</span></span>
+<span>  <span class="va">resp</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">.Platform</span><span class="op">$</span><span class="va">OS.type</span> <span class="op">==</span> <span class="st">"windows"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">callr_curl</span><span class="op">(</span><span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cainfo <span class="op">=</span> <span class="va">cainfo</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span></span>
+<span>      <span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/hello"</span><span class="op">)</span>,</span>
+<span>      handle <span class="op">=</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">new_handle</a></span><span class="op">(</span>cainfo <span class="op">=</span> <span class="va">cainfo</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="co"># ...</span></span></code></pre></div>
+<p>It seems like a good idea to <code>skip_on_cran()</code> HTTPS tests,
+at least on Windows, because this setup is not yet tested enough to
+consider it robust.</p>
+<p>webfakes uses <a href="https://www.trustedfirmware.org/projects/mbed-tls/" class="external-link">Mbed TLS</a>
+for serving HTTPS.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="how-can-i-run-a-server-on-multiple-ports">How can I run a server on multiple ports?<a class="anchor" aria-label="anchor" href="#how-can-i-run-a-server-on-multiple-ports"></a>
+</h2>
+<p>You can specify multiple port numbers, in a vector. webfakes will
+then listen on all those ports. You can also mix HTTP and HTTP
+ports.</p>
+<p>To redirect from an HTTP port to an HTTPS port, append an
+<code>"r"</code> suffix to the HTTP port number. THis port will be
+redirected to the next HTTPS port. E.g.</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">app</span>, port <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"3000r"</span>, <span class="st">"3001s"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>will redirect HTTP from port 3000 to HTTPS on port 3001.</p>
+<p>To redirect from an OS assigned HTTP port to an OS assigned HTTPS
+port, use zeros for the port numbers:</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">app</span>, port <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0r"</span>, <span class="st">"0s"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Then you can use <code>http$get_ports()</code> to query all port
+numbers.</p>
+<p>You can also use</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">http</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="va">...</span>, https <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>to get an HTTPS URL instead of the default one (the one with the
+first port).</p>
+</div>
+<div class="section level2">
 <h2 id="can-i-test-asynchronous-or-parallel-http-requests">Can I test asynchronous or parallel HTTP requests?<a class="anchor" aria-label="anchor" href="#can-i-test-asynchronous-or-parallel-http-requests"></a>
 </h2>
 <p>R is single threaded and a webfakes app runs an R interpreter, so it
@@ -527,12 +651,12 @@ of threads. The code below calls the same API request concurrently,
 three times. Each request takes 1 second to answer, but if the web
 server has more than three threads, together they’ll still take about 1
 second.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span></span>
 <span>  <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  opts <span class="op">=</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/server_opts.html">server_opts</a></span><span class="op">(</span>num_threads <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">test_that</span><span class="op">(</span><span class="st">""</span>, <span class="op">{</span></span>
 <span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/delay/1"</span><span class="op">)</span></span>
 <span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/multi.html" class="external-link">new_pool</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -554,7 +678,7 @@ second.</p>
 <span><span class="co">#&gt; one is done</span></span>
 <span><span class="co">#&gt; one is done</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.000   0.002   1.029 </span></span>
+<span><span class="co">#&gt;   0.001   0.000   1.030 </span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">Test passed</span> 🎊</span></span></code></pre></div>
 <p>(The <code>http_version = 2</code> option is currently needed because
 of a bug (<a href="https://github.com/r-lib/webfakes/issues/108" class="external-link uri">https://github.com/r-lib/webfakes/issues/108</a>).)</p>
@@ -591,7 +715,7 @@ local server</a>.</p>
 <p>You need to use the <code>throttle</code> server option when you
 start your web app. This means that you can run the very same app with
 different connection speed. This is how it goes:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://webfakes.r-lib.org/">webfakes</a></span><span class="op">)</span></span>
 <span><span class="va">slow</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -600,9 +724,9 @@ different connection speed. This is how it goes:</p>
 <span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">resp</span><span class="op">$</span><span class="va">times</span></span>
 <span><span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer </span></span>
-<span><span class="co">#&gt;      0.000000      0.000045      0.000213      0.000258      0.007590 </span></span>
+<span><span class="co">#&gt;      0.000000      0.000037      0.000187      0.000237      0.008330 </span></span>
 <span><span class="co">#&gt;         total </span></span>
-<span><span class="co">#&gt;      2.008000</span></span></code></pre></div>
+<span><span class="co">#&gt;      2.008797</span></span></code></pre></div>
 <p><code>throttle</code> gives the number of bytes per second, so
 downloading 200 random bytes from the fake app will take about 2
 seconds.</p>

@@ -68,7 +68,10 @@
 
 
 <dt id="arg-port">port<a class="anchor" aria-label="anchor" href="#arg-port"></a></dt>
-<dd><p>Port to use. By default the OS assigns a port.</p></dd>
+<dd><p>Port(s) to use. By default the OS assigns a port.
+Add an <code>"s"</code> suffix to the port to use HTTPS. Use <code>"0s"</code> to
+use an OS assigned port with HTTPS. See the <a href="how-to.html">how-to</a> on how
+to run the web server on multiple ports.</p></dd>
 
 
 <dt id="arg-opts">opts<a class="anchor" aria-label="anchor" href="#arg-opts"></a></dt>
@@ -83,7 +86,7 @@
 <dt id="arg-auto-start">auto_start<a class="anchor" aria-label="anchor" href="#arg-auto-start"></a></dt>
 <dd><p>Whether to start the web server process automatically.
 If <code>TRUE</code> and the process is not running, then <code>$start()</code>,
-<code>$get_port()</code> and <code>$url()</code> start the process.</p></dd>
+<code>$get_port()</code>, <code>$get_ports()</code> and <code>$url()</code> start the process.</p></dd>
 
 
 <dt id="arg-process-timeout">process_timeout<a class="anchor" aria-label="anchor" href="#arg-process-timeout"></a></dt>
@@ -105,6 +108,7 @@ when setting up the subprocess.</p></dd>
 <p>The <code>webfakes_app_process</code> class has the following methods:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu">get_app</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">get_port</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">get_ports</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">get_state</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">local_env</span><span class="op">(</span><span class="va">envvars</span><span class="op">)</span></span>
@@ -113,7 +117,10 @@ is replaced by the URL of the app.</p></li>
 <li><p><code>path</code>: Path to return the URL for.</p></li>
 <li><p><code>query</code>: Additional query parameters, a named list, to add to the URL.</p></li>
 </ul><p><code>get_app()</code> returns the app object.</p>
-<p><code>get_port()</code> returns the port the web server is running on.</p>
+<p><code>get_port()</code> returns the (first) port the web server is running on.</p>
+<p><code>get_ports()</code> returns all ports the web server is running on, and
+whether it uses SSL on those ports, in a data frame with columns
+<code>ipv4</code>, <code>ipv6</code>, <code>port</code> and <code>ssl</code>.</p>
 <p><code><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop()</a></code> stops the web server, and also the subprocess. If the error
 log file is not empty, then it dumps its contents to the screen.</p>
 <p><code>get_state()</code> returns a string, the state of the web server:</p><ul><li><p><code>"not running"</code> the server is not running (because it was stopped
