@@ -14,7 +14,8 @@ server_opts(
   error_log_file = TRUE,
   tcp_nodelay = FALSE,
   throttle = Inf,
-  decode_url = TRUE
+  decode_url = TRUE,
+  ssl_certificate = NULL
 )
 }
 \arguments{
@@ -53,6 +54,9 @@ as connection.}
 URL-encodded URLs. If \code{TRUE} (the default), \verb{/foo\%2fbar} will be
 converted to \verb{/foo/bar} automatically. If \code{FALSE}, URLs as not
 URL-decoded.}
+
+\item{ssl_certificate}{Path to the SSL certificate of the server,
+needed if you want to server HTTPS requests.}
 }
 \value{
 List of options that can be passed to \code{webfakes_app$listen()}

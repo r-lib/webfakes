@@ -1,6 +1,14 @@
 
+parse_ports <- function(opts = server_opts()) {
+  paste0(
+    if (!is.null(opts$interfaces)) paste0(opts$interfaces, ":"),
+    opts$port %||% "0",
+    collapse = ","
+  )
+}
+
 server_start <- function(opts = server_opts()) {
-  ports <- paste0(opts$interfaces, ":", opts$port %||% "0", collapse = ",")
+  ports <- parse_ports(opts)
 
   if (!is.na(opts$access_log_file)) {
     mkdirp(dirname(opts$access_log_file))
@@ -28,7 +36,9 @@ server_start <- function(opts = server_opts()) {
     # These are not configurable currently
     "request_timeout_ms"       = "100000",
     "enable_auth_domain_check" = "no",
-    "decode_url"               = if (opts$decode_url) "yes" else "no"
+    "decode_url"               = if (opts$decode_url) "yes" else "no",
+    "ssl_certificate"          =
+      if (!is.null(opts$ssl_certificate)) opts$ssl_certificate
   )
 
   srv <- call_with_cleanup(c_server_start, options)
@@ -64,6 +74,8 @@ server_start <- function(opts = server_opts()) {
 #'   URL-encodded URLs. If `TRUE` (the default), `/foo%2fbar` will be
 #'   converted to `/foo/bar` automatically. If `FALSE`, URLs as not
 #'   URL-decoded.
+#' @param ssl_certificate Path to the SSL certificate of the server,
+#'   needed if you want to server HTTPS requests.
 #' @return List of options that can be passed to `webfakes_app$listen()`
 #'   (see [new_app()]), and [new_app_process()].
 #'
@@ -93,7 +105,8 @@ server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
                         error_log_file = TRUE,
                         tcp_nodelay = FALSE,
                         throttle = Inf,
-                        decode_url = TRUE) {
+                        decode_url = TRUE,
+                        ssl_certificate = NULL) {
 
   log_dir <- Sys.getenv("WEBFAKES_LOG_DIR", file.path(tempdir(), "webfakes"))
   if (isTRUE(access_log_file)) {
@@ -115,6 +128,9 @@ server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
     error_log_file <- NA_character_
   }
   rm(log_dir)
+
+  ssl_certificate <- ssl_certificate %||%
+    system.file("cert/localhost/server.pem", package = "webfakes")
 
   as.list(environment())
 }

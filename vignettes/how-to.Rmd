@@ -351,6 +351,96 @@ fields and methods:
 
 Press `CTRL+C` or `ESC` to interrupt the app in the main session.
 
+## How can I test HTTPS requests?
+
+Serving HTTPS from `localhost` or `127.0.0.1` instead of HTTP is easy,
+all you need to do is
+1. Set the port to an HTTPS port by adding an `"s"` suffix
+   to the port number. Use `"0s"` for an OS assigned free port:
+   ```r
+   new_app_process(app, port = "0s")
+   ```
+   By default webfakes uses the server key + certificate in the file at
+   ```r
+   system.file("cert/localhost/server.pem", package = "webfakes")
+   ```
+   This certificate includes `localhost`, `127.0.0.1` and 
+   `localhost.localdomain`. If you need another domain or IP address,
+   you'll need to create your own certificate. The `generate.sh`
+   file in the same directory helps with that.
+2. Specify the certificate bundle to the HTTP client you are using.
+   For the default server key use the `ca.crt` file from
+   the webfakes package:
+   ```r
+   system.file("cert/localhost/ca.crt", package = "webfakes")
+   ```
+   See examples for HTTP clients below.
+
+If you are using the curl package, use the `ca_info` option in 
+`curl::new_handle()` or `curl::handle_setopt()`:
+```r
+cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
+curl::curl_fetch_memory(
+  http$url("/path/to/endpoint"), 
+  handle = curl::new_handle(cainfo = cainfo)
+)
+```
+
+For the httr package, use `httr::config(cainfo = ...)`:
+```r
+httr::GET(
+  http$url("/headers", https = TRUE), 
+  httr::config(cainfo = cainfo)
+)
+```
+
+For the httr2 package:
+```r
+httr2::request("https://example.com") |>
+  httr2::req_options(cainfo = cainfo) |>
+  httr2::req_perform()
+```
+
+For `utils::download.file` point the `CURL_CA_BUNDLE` environment variable
+to the `ca.crt` file. Don't forget to undo this, once the HTTP request
+is done.
+```
+Sys.setenv(
+  CURL_CA_BUNDLE = system.file("cert/localhost/ca.crt", package = "webfakes")
+)
+download.file(http$url("/path/to/endpoint"), res <- tempfile())
+```
+
+webfakes uses [Mbed TLS](https://www.trustedfirmware.org/projects/mbed-tls/)
+for serving HTTPS.
+
+## How can I run a server on multiple ports?
+
+You can specify multiple port numbers, in a vector. webfakes will 
+then listen on all those ports. You can also mix HTTP and HTTP ports.
+
+To redirect from an HTTP port to an HTTPS port, append an `"r"` suffix
+to the HTTP port number. THis port will be redirected to the next HTTPS
+port. E.g. 
+```r
+new_app_process(app, port = c("3000r", "3001s"))
+```
+will redirect HTTP from port 3000 to HTTPS on port 3001.
+
+To redirect from an OS assigned HTTP port to an OS assigned HTTPS port,
+use zeros for the port numbers:
+```r
+http <- new_app_process(app, port = c("0r", "0s"))
+```
+Then you can use `http$get_ports()` to query all port numbers.
+
+You can also use 
+```r
+http$url(..., https = TRUE)
+```
+to get an HTTPS URL instead of the default one (the one with the
+first port).
+
 ## Can I test asynchronous or parallel HTTP requests?
 
 R is single threaded and a webfakes app runs an R interpreter, so it cannot process multiple requests at the same time.
