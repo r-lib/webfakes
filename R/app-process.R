@@ -46,7 +46,7 @@
 #' `get_ports()` returns all ports the web server is running on, and
 #' whether it uses SSL on those ports, in a data frame with columns
 #' `ipv4`, `ipv6`, `port` and `ssl`.
-#' 
+#'
 #' `stop()` stops the web server, and also the subprocess. If the error
 #' log file is not empty, then it dumps its contents to the screen.
 #'
@@ -152,7 +152,7 @@ new_app_process <- function(app, port = NULL,
       if (self$get_state() == "not running" && auto_start) self$start()
       self[[".ports"]]
     },
-    
+
     stop = function() {
       self$.reset_env()
       if (is.null(self$.process)) return(invisible(self))
@@ -227,7 +227,8 @@ new_app_process <- function(app, port = NULL,
       }
     },
 
-    url = function(path = "/", query = NULL, https = FALSE) {
+    url = function(path = "/", query = NULL, https = FALSE,
+                   domain = "127.0.0.1") {
       if (self$get_state() == "not running" && auto_start) self$start()
       if (!is.null(query)) {
         query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
@@ -245,7 +246,7 @@ new_app_process <- function(app, port = NULL,
       } else {
         "http"
       }
-      paste0(proto, "://127.0.0.1:", port, path, query)
+      paste0(proto, "://", domain, ":", port, path, query)
     },
 
     .process = NULL,

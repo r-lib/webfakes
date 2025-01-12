@@ -7,7 +7,7 @@ test_that("HTTPS", {
   http <- local_app_process(app, port = "0s")
   cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
   resp <- curl::curl_fetch_memory(
-    http$url("/hello"),
+    http$url("/hello", domain = "localhost"),
     handle = curl::new_handle(cainfo = cainfo)
   )
   expect_equal(resp$status_code, 200L)
@@ -23,14 +23,14 @@ test_that("HTTP + HTTPS", {
   cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
 
   resp1 <- curl::curl_fetch_memory(
-    http$url("/hello"),
+    http$url("/hello", domain = "localhost"),
     handle = curl::new_handle(cainfo = cainfo)
   )
   expect_equal(resp1$status_code, 200L)
   expect_equal(resp1$scheme, "HTTP")
 
   resp2 <- curl::curl_fetch_memory(
-    http$url("/hello", https = TRUE),
+    http$url("/hello", https = TRUE, domain = "localhost"),
     handle = curl::new_handle(cainfo = cainfo)
   )
   expect_equal(resp2$status_code, 200L)
@@ -46,14 +46,14 @@ test_that("Redirect HTTP to HTTPS", {
   cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
 
   resp1 <- curl::curl_fetch_memory(
-    http$url("/hello"),
+    http$url("/hello", domain = "localhost"),
     handle = curl::new_handle(cainfo = cainfo)
   )
   expect_equal(resp1$status_code, 200L)
   expect_equal(resp1$scheme, "HTTPS")
 
   resp2 <- curl::curl_fetch_memory(
-    http$url("/hello", https = TRUE),
+    http$url("/hello", https = TRUE, domain = "localhost"),
     handle = curl::new_handle(cainfo = cainfo)
   )
   expect_equal(resp2$status_code, 200L)
