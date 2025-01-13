@@ -617,6 +617,9 @@ httpbin_app <- function(log = interactive()) {
     } else if (is.null(res$locals$seen)) {
       res$locals$seen <- TRUE
       delay <- min(delay, 10)
+      res$set_status(200)
+      res$set_type("application/json")
+      res$write(raw(0))
       res$delay(delay)
     } else if (req$method == "head") {
       res$send_status(200L)
