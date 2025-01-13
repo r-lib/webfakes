@@ -616,15 +616,38 @@ httpbin_app <- function(log = interactive()) {
       return("next")
     } else if (is.null(res$locals$seen)) {
       res$locals$seen <- TRUE
-      delay <- min(delay, 10)
-      res$set_status(200)
+      # we need to send the headers early, to work around
+      # https://github.com/r-lib/webfakes/issues/108
+      # but then if we want to send content-length and etag, we
+      # need to calculate the response here and save it
+      res$locals$response <- jsonlite::toJSON(
+        make_common_response(req, res),
+        auto_unbox = TRUE,
+        pretty = TRUE
+      )
+      content_length <- nchar(res$locals$response, type = "bytes")
+      res$set_header('Content-Length', content_length)
+      etag <- paste0("\"", crc32(res$locals$response), "\"")
+      res$set_header("ETag", etag)
+      # this actually cannot happen, because the ETag header is also
+      # part of the response, so it is included in the ETag calculation
+      # So there is no ETag that could ever match here. Nevertheless we
+      # check for it, for future reference.
+      req_etag <- req$get_header("If-None-Match")
+      if (!is.null(req_etag) && req_etag == etag) {
+        res$locals$response <- NULL
+        res$set_status(304)
+      } else {
+        res$set_status(200)
+      }
       res$set_type("application/json")
       res$write(raw(0))
+      delay <- min(delay, 10)
       res$delay(delay)
     } else if (req$method == "head") {
       res$send_status(200L)
     } else {
-      common_response(req, res)
+      res$send(res$locals$response)
     }
   })
 
