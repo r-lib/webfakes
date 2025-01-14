@@ -1,7 +1,7 @@
 test_that("parallel requests", {
   url <- httpbin$url("/delay/0.5")
   p <- curl::new_pool()
-  handles <- replicate(3, curl::new_handle(url = url, http_version = 3))
+  handles <- replicate(3, curl::new_handle(url = url, http_version = 2))
   resps <- list()
   for (handle in handles) {
     curl::multi_add(
