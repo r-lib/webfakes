@@ -97,7 +97,7 @@ This is needed by default, because the web server process starts up only later, 
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="st">"{url}"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:59481/"</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:64362/"</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] ""</span></span></code></pre><p></p></div>
@@ -120,12 +120,12 @@ look like this:</p>
 Alternatively, you can start it in a subprocess with <code><a href="new_app_process.html">new_app_process()</a></code>.</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:59482/"</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:64364/"</span></span></code></pre><p></p></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For example:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $time</span></span>
-<span><span class="co">#&gt; [1] "2025-01-12 02:08:03"</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; [1] "2025-01-14 10:07:38"</span></span></code></pre><p></p></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">get_state</span><span class="op">(</span><span class="op">)</span></span>
@@ -258,11 +258,11 @@ You can add something to <code>app$locals</code> via methods or directly after c
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">flaky</span><span class="op">)</span></span>
 <span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">pr</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/unstable"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/RETRY.html" class="external-link">RETRY</a></span><span class="op">(</span><span class="st">"GET"</span>, <span class="va">url</span>, times <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Request failed [401]. Retrying in 1.6 seconds...</span></span>
-<span><span class="co">#&gt; Request failed [401]. Retrying in 1.8 seconds...</span></span>
-<span><span class="co">#&gt; Request failed [401]. Retrying in 3.4 seconds...</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:59492/unstable]</span></span>
-<span><span class="co">#&gt;   Date: 2025-01-12 02:08</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
+<span><span class="co">#&gt; Request failed [401]. Retrying in 2.1 seconds...</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:64374/unstable]</span></span>
+<span><span class="co">#&gt;   Date: 2025-01-14 10:07</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 17 B</span></span></code></pre><p></p></div>
@@ -307,8 +307,8 @@ On a POST request we store the <code>name</code> query parameter in <code>app$lo
 <span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:59498/packages?name=vcr]</span></span>
-<span><span class="co">#&gt;   Date: 2025-01-12 02:08</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:64380/packages?name=vcr]</span></span>
+<span><span class="co">#&gt;   Date: 2025-01-14 10:07</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 18 B</span></span>
@@ -321,8 +321,8 @@ On a POST request we store the <code>name</code> query parameter in <code>app$lo
 <span><span class="co">#&gt; [1] "vcr"</span></span>
 <span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:59498/packages?name=httptest]</span></span>
-<span><span class="co">#&gt;   Date: 2025-01-12 02:08</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:64380/packages?name=httptest]</span></span>
+<span><span class="co">#&gt;   Date: 2025-01-14 10:07</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 29 B</span></span>
@@ -536,33 +536,27 @@ The code below calls the same API request concurrently, three times.
 Each request takes 1 second to answer, but if the web server has more than three threads, together they'll still take about 1 second.</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span></span>
 <span>  <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  opts <span class="op">=</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/server_opts.html">server_opts</a></span><span class="op">(</span>num_threads <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span>  opts <span class="op">=</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/server_opts.html">server_opts</a></span><span class="op">(</span>num_threads <span class="op">=</span> <span class="fl">6</span>, enable_keep_alive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre><p></p></div>
-<p></p><div class="sourceCode r"><pre><code><span><span class="fu">test_that</span><span class="op">(</span><span class="st">""</span>, <span class="op">{</span></span>
-<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/delay/1"</span><span class="op">)</span></span>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu">testthat</span><span class="fu">::</span><span class="fu"><a href="https://testthat.r-lib.org/reference/test_that.html" class="external-link">test_that</a></span><span class="op">(</span><span class="st">"parallel requests"</span>, <span class="op">{</span></span>
+<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/delay/0.5"</span><span class="op">)</span></span>
 <span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/multi.html" class="external-link">new_pool</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="va">handles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">new_handle</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span>, http_version <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">handles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/handle.html" class="external-link">new_handle</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">resps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="kw">for</span> <span class="op">(</span><span class="va">handle</span> <span class="kw">in</span> <span class="va">handles</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/multi.html" class="external-link">multi_add</a></span><span class="op">(</span></span>
 <span>      <span class="va">handle</span>,</span>
-<span>      done <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"one is done"</span><span class="op">)</span>,</span>
+<span>      done <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">resps</span> <span class="op">&lt;&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">resps</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>      fail <span class="op">=</span> <span class="va">stop</span>,</span>
 <span>      pool <span class="op">=</span> <span class="va">p</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
-<span>  <span class="va">st</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/multi.html" class="external-link">multi_run</a></span><span class="op">(</span>timeout <span class="op">=</span> <span class="fl">5</span>, pool <span class="op">=</span> <span class="va">p</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">st</span><span class="op">)</span></span>
-<span>  <span class="fu">expect_true</span><span class="op">(</span><span class="va">st</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;</span> <span class="fl">3.0</span><span class="op">)</span></span>
+<span>  <span class="va">st</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/multi.html" class="external-link">multi_run</a></span><span class="op">(</span>timeout <span class="op">=</span> <span class="fl">3</span>, pool <span class="op">=</span> <span class="va">p</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">testthat</span><span class="fu">::</span><span class="fu"><a href="https://testthat.r-lib.org/reference/logical-expectations.html" class="external-link">expect_true</a></span><span class="op">(</span><span class="va">st</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;</span> <span class="fl">1.5</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt; one is done</span></span>
-<span><span class="co">#&gt; one is done</span></span>
-<span><span class="co">#&gt; one is done</span></span>
-<span><span class="co">#&gt;    user  system elapsed</span></span>
-<span><span class="co">#&gt;   0.002   0.001   1.094</span></span>
 <span><span class="co">#&gt; Test passed</span></span></code></pre><p></p></div>
-<p>(The <code>http_version = 2</code> option is currently needed because of a bug
-(https://github.com/r-lib/webfakes/issues/108).)</p>
+<p>(If this should fail for you and webfakes appears to process the
+requests sequentially, see <a href="https://github.com/r-lib/webfakes/issues/108" class="external-link">issue #108</a> for possible workarounds.)</p>
 </div>
 
 <div class="section">
@@ -598,9 +592,9 @@ This is how it goes:</p>
 <span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">resp</span><span class="op">$</span><span class="va">times</span></span>
 <span><span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer</span></span>
-<span><span class="co">#&gt;      0.000000      0.000097      0.000315      0.000339      0.004731</span></span>
+<span><span class="co">#&gt;      0.000000      0.000087      0.000266      0.000284      0.004878</span></span>
 <span><span class="co">#&gt;         total</span></span>
-<span><span class="co">#&gt;      2.013523</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt;      2.013756</span></span></code></pre><p></p></div>
 <p><code>throttle</code> gives the number of bytes per second, so downloading 200 random bytes from the fake app will take about 2 seconds.</p>
 </div>
 
