@@ -121,7 +121,7 @@ Alternatively, you can start it in a subprocess with \code{new_app_process()}.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{web <- webfakes::new_app_process(time)
 web$url()
-#> [1] "http://127.0.0.1:59478/"
+#> [1] "http://127.0.0.1:64358/"
 }\if{html}{\out{</div>}}
 
 Use \code{web$url()} to query the URL of the app. For example:
@@ -129,7 +129,7 @@ Use \code{web$url()} to query the URL of the app. For example:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{url <- web$url("/time")
 httr::content(httr::GET(url))
 #> $time
-#> [1] "2025-01-12 02:07:58"
+#> [1] "2025-01-14 10:07:33"
 }\if{html}{\out{</div>}}
 
 \code{web$stop()} stops the app and the subprocess as well:

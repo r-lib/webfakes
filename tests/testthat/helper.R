@@ -92,7 +92,7 @@ test_response_app <- function() {
   app
 }
 
-httpbin <- local_app_process(httpbin_app())
+httpbin <- local_app_process(httpbin_app(), opts = server_opts(num_threads = 6))
 httpbin$local_env(c(FOO = "{url}xxx"))
 
 r_variant <- function() {

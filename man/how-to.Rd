@@ -62,7 +62,7 @@ This is needed by default, because the web server process starts up only later, 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{http <- webfakes::local_app_process(webfakes::httpbin_app(), start = TRUE)
 http$local_env(list(GITHUB_API = "\{url\}"))
 Sys.getenv("GITHUB_API")
-#> [1] "http://127.0.0.1:59481/"
+#> [1] "http://127.0.0.1:64362/"
 http$stop()
 Sys.getenv("GITHUB_API")
 #> [1] ""
@@ -88,7 +88,7 @@ Alternatively, you can start it in a subprocess with \code{new_app_process()}.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{web <- webfakes::new_app_process(time)
 web$url()
-#> [1] "http://127.0.0.1:59482/"
+#> [1] "http://127.0.0.1:64364/"
 }\if{html}{\out{</div>}}
 
 Use \code{web$url()} to query the URL of the app. For example:
@@ -96,7 +96,7 @@ Use \code{web$url()} to query the URL of the app. For example:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{url <- web$url("/time")
 httr::content(httr::GET(url))
 #> $time
-#> [1] "2025-01-12 02:08:03"
+#> [1] "2025-01-14 10:07:38"
 }\if{html}{\out{</div>}}
 
 \code{web$stop()} stops the app and the subprocess as well:
@@ -259,11 +259,11 @@ Let's run this app in another process and connect to it:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{pr <- webfakes::new_app_process(flaky)
 url <- pr$url("/unstable")
 httr::RETRY("GET", url, times = 4)
-#> Request failed [401]. Retrying in 1.6 seconds...
-#> Request failed [401]. Retrying in 1.8 seconds...
-#> Request failed [401]. Retrying in 3.4 seconds...
-#> Response [http://127.0.0.1:59492/unstable]
-#>   Date: 2025-01-12 02:08
+#> Request failed [401]. Retrying in 1 seconds...
+#> Request failed [401]. Retrying in 1 seconds...
+#> Request failed [401]. Retrying in 2.1 seconds...
+#> Response [http://127.0.0.1:64374/unstable]
+#>   Date: 2025-01-14 10:07
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 17 B
@@ -317,8 +317,8 @@ Let's POST some new information.
 )
 \}
 post_package("vcr")
-#> Response [http://127.0.0.1:59498/packages?name=vcr]
-#>   Date: 2025-01-12 02:08
+#> Response [http://127.0.0.1:64380/packages?name=vcr]
+#>   Date: 2025-01-14 10:07
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 18 B
@@ -331,8 +331,8 @@ get_packages()
 #> [1] "vcr"
 
 post_package("httptest")
-#> Response [http://127.0.0.1:59498/packages?name=httptest]
-#>   Date: 2025-01-12 02:08
+#> Response [http://127.0.0.1:64380/packages?name=httptest]
+#>   Date: 2025-01-14 10:07
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 29 B
@@ -603,37 +603,31 @@ Each request takes 1 second to answer, but if the web server has more than three
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{web <- webfakes::local_app_process(
   webfakes::httpbin_app(),
-  opts = webfakes::server_opts(num_threads = 3)
+  opts = webfakes::server_opts(num_threads = 6, enable_keep_alive = TRUE)
 )
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{test_that("", \{
-  url <- web$url("/delay/1")
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{testthat::test_that("parallel requests", \{
+  url <- web$url("/delay/0.5")
   p <- curl::new_pool()
-  handles <- replicate(3, curl::new_handle(url = url, http_version = 2))
+  handles <- replicate(3, curl::new_handle(url = url))
   resps <- list()
   for (handle in handles) \{
     curl::multi_add(
       handle,
-      done = function(x) message("one is done"),
+      done = function(x) resps <<- c(resps, list(x)),
       fail = stop,
       pool = p
     )
   \}
-  st <- system.time(curl::multi_run(timeout = 5, pool = p))
-  print(st)
-  expect_true(st[["elapsed"]] < 3.0)
+  st <- system.time(curl::multi_run(timeout = 3, pool = p))
+  testthat::expect_true(st[["elapsed"]] < 1.5)
 \})
-#> one is done
-#> one is done
-#> one is done
-#>    user  system elapsed 
-#>   0.002   0.001   1.094 
 #> Test passed
 }\if{html}{\out{</div>}}
 
-(The \code{http_version = 2} option is currently needed because of a bug
-(https://github.com/r-lib/webfakes/issues/108).)
+(If this should fail for you and webfakes appears to process the
+requests sequentially, see \href{https://github.com/r-lib/webfakes/issues/108}{issue #108} for possible workarounds.)
 }
 
 \subsection{How to make sure that my code works with the \emph{real} API?}{
@@ -670,9 +664,9 @@ slow <- new_app_process(
 resp <- curl::curl_fetch_memory(slow$url("/bytes/200"))
 resp$times
 #>      redirect    namelookup       connect   pretransfer starttransfer 
-#>      0.000000      0.000097      0.000315      0.000339      0.004731 
+#>      0.000000      0.000087      0.000266      0.000284      0.004878 
 #>         total 
-#>      2.013523
+#>      2.013756
 }\if{html}{\out{</div>}}
 
 \code{throttle} gives the number of bytes per second, so downloading 200 random bytes from the fake app will take about 2 seconds.

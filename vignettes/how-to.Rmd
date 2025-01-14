@@ -511,32 +511,32 @@ Each request takes 1 second to answer, but if the web server has more than three
 ```{r}
 web <- webfakes::local_app_process(
   webfakes::httpbin_app(),
-  opts = webfakes::server_opts(num_threads = 3)
+  opts = webfakes::server_opts(num_threads = 6, enable_keep_alive = TRUE)
 )
 ```
 
 ```{r}
-test_that("", {
-  url <- web$url("/delay/1")
+testthat::test_that("parallel requests", {
+  url <- web$url("/delay/0.5")
   p <- curl::new_pool()
-  handles <- replicate(3, curl::new_handle(url = url, http_version = 2))
+  handles <- replicate(3, curl::new_handle(url = url))
   resps <- list()
   for (handle in handles) {
     curl::multi_add(
       handle,
-      done = function(x) message("one is done"),
+      done = function(x) resps <<- c(resps, list(x)),
       fail = stop,
       pool = p
     )
   }
-  st <- system.time(curl::multi_run(timeout = 5, pool = p))
-  print(st)
-  expect_true(st[["elapsed"]] < 3.0)
+  st <- system.time(curl::multi_run(timeout = 3, pool = p))
+  testthat::expect_true(st[["elapsed"]] < 1.5)
 })
 ```
 
-(The `http_version = 2` option is currently needed because of a bug
-(https://github.com/r-lib/webfakes/issues/108).)
+(If this should fail for you and webfakes appears to process the
+requests sequentially, see [issue #108](
+https://github.com/r-lib/webfakes/issues/108) for possible workarounds.)
 
 ## How to make sure that my code works with the *real* API?
 
