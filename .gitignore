@@ -13,3 +13,4 @@
 /revdep
 /src/Makevars
 /src/*.a
+/src/*.x
