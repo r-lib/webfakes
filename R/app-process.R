@@ -167,23 +167,8 @@ new_app_process <- function(app, port = NULL,
         if (!is.null(err)) cat0("stderr:", err, "\n")
       }
 
-      # The details are important here, for the sake of covr,
-      # so that we can test the webfakes package itself.
-      # 1. The subprocess serving the app is in Sys.sleep(), which we
-      #    need to interrupt first.
-      # 2. Then we need to read out the result of that $call()
-      #    (i.e. the interruption), because otherwise the subprocess is
-      #    stuck at a blocking write() system call, and cannot be
-      #    interrupted in the $close() call, and will be killed, and
-      #    then it cannot write out the coverage results.
-      # 3. Once we $read(), we can call $close() because that will
-      #    close the standard input of the subprocess, which is reading
-      #    the standard input, so it will quit.
-
-      self$.process$interrupt()
-      self$.process$poll_process(1000)
+      try_silently(self$.process$close(grace = 0))
       try_silently(self$.process$read())
-      try_silently(self$.process$close())
       self$.print_errors()
       self$.process <- NULL
       invisible(self)
