@@ -10,18 +10,21 @@ editor_options:
     canonical: true
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup}
+```{r}
+#| label: setup
 library(webfakes)
 ```
 
-```{r child='../man/rmd-fragments/oauth2.Rmd'}
+<!-- does not work with in-body style options -->
+```{r child = "../man/rmd-fragments/oauth2.Rmd"}
 ```
 
 In this vignette, we shall look at how to implement a flow using both apps, or the server app together with httr's OAuth tools.
@@ -33,7 +36,8 @@ For an example using the curl package instead, look at the test file `test-oauth
 
 First we need to create the resource server, which also performs the authorization, and we create variables holding its different URLs.
 
-```{r resource-server-creation}
+```{r}
+#| label: resource-server-creation
 templog <- tempfile()
 rsapp <- new_app_process(
   oauth2_resource_app(
@@ -56,7 +60,8 @@ rsapp
 
 Then we create the third-party app, and we create variables holding its different URLs.
 
-```{r third-party-app-creation}
+```{r}
+#| label: third-party-app-creation
 tpapp <- new_app_process(
   oauth2_third_party_app("3P app"),
   opts = server_opts(num_threads = 3)
@@ -73,7 +78,8 @@ In real life this is done by the admin of the third party app.
 Our fake resource server provides an endpoint at `/register` (in `regi_url`) to do this automatically, without user interaction.
 We need to send the name of our third party app, and its redirect URL, as query parameters.
 
-```{r register}
+```{r}
+#| label: register
 url <- paste0(
   regi_url,
   "?name=3P%20app",
@@ -90,7 +96,8 @@ We'll use them to authenticate the third party app.
 In real life they are included in the config of the third party app by its admin.
 Our third party app has an API endpoint, `/login/config` (already in `conf_url`) to configure them.
 
-```{r register-data}
+```{r}
+#| label: register-data
 auth_data <- list(
   auth_url = auth_url,
   token_url = toke_url,
@@ -110,11 +117,13 @@ httr::POST(
 Now a user can go to the login URL of the third party app, `/login` in our fake app, to authenticate.
 To start the web page from R, you can run
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
 browseURL(tpapp$url("/login"))
 ```
 
-```{r include = FALSE}
+```{r}
+#| include: false
 login <- oauth2_login(tpapp$url("/login"))
 ```
 
@@ -123,14 +132,16 @@ See the `test-oauth.R` file within webfakes to see how to do this part programma
 
 By default our fake third party app saves the token(s) into a local variable, and also returns in JSON, so you can see that in the browser:
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
 cat(rawToChar(login$token_response$content))
 ```
 
 If you want to change this behavior, you can define the `redirect_hook` function in the third party app.
 For example:
 
-```{r hook}
+```{r}
+#| label: hook
 thirdp <- oauth2_third_party_app("3P app")
 thirdp$redirect_hook <- function(res, tokens) {
   res$
@@ -173,15 +184,18 @@ httr::POST(
 
 Then again you can authenticate at the new app with
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
 browseURL(tpapp2$url("/login"))
 ```
 
-```{r include = FALSE}
+```{r}
+#| include: false
 login2 <- oauth2_login(tpapp2$url("/login"))
 ```
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
 cat(rawToChar(login2$token_response$content))
 ```
 
@@ -213,7 +227,8 @@ When you use httr's OAuth tool, there's some gymnastics happening as R is playin
 
 What's crucial here is setting `httr::oauth_callback()` as redirect URI, which is what you do when creating an app for an R package that uses OAuth2.0 to authenticate to a resource server.
 
-```{r httr}
+```{r}
+#| label: httr
 url3 <- paste0(
   regi_url,
   "?name=3P%20app2",
@@ -227,7 +242,8 @@ regdata3
 
 Now we set the registration data on the third-party app.
 
-```{r httr-dance}
+```{r}
+#| label: httr-dance
 app <- httr::oauth_app(
   "3P app2",
   key = regdata3$client_id[[1]],
@@ -243,13 +259,15 @@ endpoint <- httr::oauth_endpoint(
 
 Now we can launch the token creation.
 
-```{r httr-dance2}
+```{r}
+#| label: httr-dance2
 token <- oauth2_httr_login(
   httr::oauth2.0_token(endpoint, app, cache = FALSE)
 )
 ```
 
-```{r refresh}
+```{r}
+#| label: refresh
 token
 ```
 
@@ -371,7 +389,9 @@ Sys.setenv(GH_CLIENT_ID = "<your client id here>")
 Sys.setenv(GH_CLIENT_SECRET = "<your client secret here>")
 ```
 
-```{r echo = FALSE, include = FALSE}
+```{r}
+#| echo: false
+#| include: false
 tryCatch({
   Sys.setenv(GH_CLIENT_ID = "283f205145036793ba0b")
   Sys.setenv(
@@ -383,11 +403,14 @@ When you run this function it opens a Window in your browser, where you can auth
 For the subsequent runs that browser window still opens, but the authorization is automatic.
 In a real package you could cache the OAuth2.0 tokens on the machine, e.g. using the keyring package.
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
 gh_repos()
 ```
 
-```{r echo = FALSE, eval = TRUE}
+```{r}
+#| echo: false
+#| eval: true
 # Ideally we would only run this when we don't have a real
 # secret, but httr's OAuth does not work well in non-interactive
 # sessions.

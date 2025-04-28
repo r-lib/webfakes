@@ -1,13 +1,15 @@
 You can use testthat's setup files. You start the app in a setup file and also register a teardown expression for it. `local_app_process()` can do both in one go. Your `tests/testthat/setup-http.R` may look like this:
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
 http <- webfakes::local_app_process(
   webfakes::httpbin_app(),
   .local_envir = testthat::teardown_env()
 )
 ```
 
-```{r include = FALSE}
+```{r}
+#| include: false
 http <- webfakes::new_app_process(webfakes::httpbin_app())
 ```
 
@@ -15,7 +17,8 @@ http <- webfakes::new_app_process(webfakes::httpbin_app())
 
 In the test cases you can query the `http` app process to get the URLs you need to connect to:
 
-```{r include = FALSE}
+```{r}
+#| include: false
 library(testthat)
 ```
 
@@ -30,7 +33,8 @@ test_that("fails on 404", {
 })
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 http$stop()
 ```
 

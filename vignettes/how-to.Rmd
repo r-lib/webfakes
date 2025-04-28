@@ -7,7 +7,8 @@ editor_options:
     canonical: true
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -61,7 +62,8 @@ When this is not set, the package connects to the proper GitHub API. When testin
 These are active while the process is running, and they are removed or reset in `$stop()`.
 For example:
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 # Make sure this is not set in the vignette
 Sys.unsetenv("GITHUB_API")
 ```
@@ -79,11 +81,13 @@ Sys.getenv("GITHUB_API")
 
 ## How can I write my own app?
 
+<!-- does not work with in-body style options -->
 ```{r child = "partials/_my-app.Rmd"}
 ```
 
 ## How do I use `httpbin_app()` (or another app) with testthat?
 
+<!-- does not work with in-body style options -->
 ```{R child = "partials/_howto-testthat.Rmd"}
 ```
 
@@ -97,7 +101,8 @@ One solution is to create server processes in the testthat `helper*.R` files.
 `load_all()` executes the helper files by default.
 So instead of using a setup file, you can simply do this in the `helper-http.R` file:
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
 httpbin <- local_app_process(httpbin_app())
 ```
 
@@ -106,7 +111,8 @@ You can also start it manually with `$start()`.
 
 Processes created in helper files are not cleaned up automatically at the end of the test suite, unless you clean them up by registering a `$stop()` call in a setup file, like this:
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
 withr::defer(httpbin$stop(), testthat::teardown_env())
 ```
 
@@ -129,11 +135,14 @@ app$get("/hello/:user", function(req, res) {
 })
 ```
 
-```{r start1, include = FALSE}
+```{r}
+#| label: start1
+#| include: false
 web <- webfakes::local_app_process(app)
 ```
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
 <<start1>>
 ```
 
@@ -290,7 +299,8 @@ Now start the app on port 3000:
 app$listen(port = 3000)
 ```
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
 message("Running webfakes web app on port 3000")
 ```
 
@@ -300,7 +310,8 @@ Connect to the app from another R or `curl` process:
 curl -v http://127.0.0.1:3000/debug
 ```
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
 cat('*   Trying 127.0.0.1...
 * TCP_NODELAY set
 * Connected to 127.0.0.1 (127.0.0.1) port 3000 (#0)
@@ -320,7 +331,8 @@ Got your back
 
 Your main R session will print the incoming request:
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
 cat('<webfakes_request>
 method:
   get
