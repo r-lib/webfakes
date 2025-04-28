@@ -1,4 +1,3 @@
-
 test_that("app from setup", {
   # This app was created in setup.R
   url <- httpbin2$url("/get", query = c(q1 = "one", q2 = "two"))

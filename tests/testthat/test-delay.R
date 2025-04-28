@@ -1,4 +1,3 @@
-
 app <- new_app()
 app$get("/delay", function(req, res) {
   if (is.null(res$locals$seen)) {

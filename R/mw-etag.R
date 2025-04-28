@@ -1,4 +1,3 @@
-
 #' Middleware that add an `ETag` header to the response
 #'
 #' If the response already has an `ETag` header, then it is kept.

@@ -1,4 +1,3 @@
-
 test_that("parse_range", {
   expect_snapshot({
     parse_range("foobar=1-100")

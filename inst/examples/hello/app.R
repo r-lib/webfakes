@@ -1,4 +1,3 @@
-
 library(webfakes)
 
 app <- new_app()
@@ -19,9 +18,7 @@ app$post("/hello", function(req, res) {
 
 app$get("/view", function(req, res) {
   txt <- res$render("test")
-  res$
-    set_type("text/plain")$
-    send(txt)
+  res$set_type("text/plain")$send(txt)
 })
 
 app$listen(3000L)

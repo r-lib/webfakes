@@ -1,4 +1,3 @@
-
 pkg_data <- new.env(parent = emptyenv())
 
 #' Create a new web application
@@ -368,7 +367,6 @@ pkg_data <- new.env(parent = emptyenv())
 #' # Or start it in another R session: new_app_process(app)
 
 new_app <- function() {
-
   self <- new_object(
     "webfakes_app",
 
@@ -421,7 +419,10 @@ new_app <- function() {
       })
       self$.ports <- server_get_ports(srv)
       self$.port <- self$.ports$port[1]
-      port_nums <- paste0(self$.ports$port, ifelse(self$.ports$ssl, " (SSL)", ""))
+      port_nums <- paste0(
+        self$.ports$port,
+        ifelse(self$.ports$ssl, " (SSL)", "")
+      )
       message(
         "Running webfakes web app on port",
         if (length(port_nums) > 1) "s " else " ",
@@ -534,30 +535,36 @@ new_app <- function() {
       res <- req$res
       res$.delay <- NULL
 
-      tryCatch({
-        for (i in sseq(res$.stackptr, length(self$.stack))) {
-          handler <- self$.stack[[i]]
-          m <- path_match(req$method, req$path, handler)
-          if (!isFALSE(m)) {
-            res$.i <- i
-            if (is.list(m)) req$params <- m$params
-            out <- handler$handler(req, res)
-            if (!identical(out, "next")) break
+      tryCatch(
+        {
+          for (i in sseq(res$.stackptr, length(self$.stack))) {
+            handler <- self$.stack[[i]]
+            m <- path_match(req$method, req$path, handler)
+            if (!isFALSE(m)) {
+              res$.i <- i
+              if (is.list(m)) req$params <- m$params
+              out <- handler$handler(req, res)
+              if (!identical(out, "next")) break
+            }
           }
-        }
 
-        if (!res$.sent && is.null(res$.delay)) {
-          if (!res$headers_sent) {
-            res$send_status(404)
-          } else if ((res$get_header("Transfer-Encoding") %||% "") == "chunked") {
-            res$send_chunk(raw(0))
-            res$headers_sent <- TRUE
-            res$send("")
-          } else {
-            res$send("")
+          if (!res$.sent && is.null(res$.delay)) {
+            if (!res$headers_sent) {
+              res$send_status(404)
+            } else if (
+              (res$get_header("Transfer-Encoding") %||% "") == "chunked"
+            ) {
+              res$send_chunk(raw(0))
+              res$headers_sent <- TRUE
+              res$send("")
+            } else {
+              res$send("")
+            }
           }
+        },
+        webfakes_error = function(err) {
         }
-      }, webfakes_error = function(err) { })
+      )
     },
 
     .get_error_log = function() {
@@ -565,7 +572,6 @@ new_app <- function() {
         paste0("Error log:\n", read_char(self$.opts$error_log_file))
       }
     }
-
   )
 
   self

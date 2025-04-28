@@ -1,4 +1,3 @@
-
 #' Run a webfakes app in another process
 #'
 #' Runs an app in a subprocess, using [callr::r_session].
@@ -81,17 +80,28 @@
 #'
 #' proc$stop()
 
-new_app_process <- function(app, port = NULL,
-                            opts = server_opts(remote = TRUE),
-                            start = FALSE, auto_start = TRUE,
-                            process_timeout = NULL,
-                            callr_opts = NULL) {
-
-  app; port; opts; start; auto_start; process_timeout; callr_opts
+new_app_process <- function(
+  app,
+  port = NULL,
+  opts = server_opts(remote = TRUE),
+  start = FALSE,
+  auto_start = TRUE,
+  process_timeout = NULL,
+  callr_opts = NULL
+) {
+  app
+  port
+  opts
+  start
+  auto_start
+  process_timeout
+  callr_opts
 
   # WTF
   tmp <- tempfile()
-  sink(tmp); print(app$.stack); sink(NULL)
+  sink(tmp)
+  print(app$.stack)
+  sink(NULL)
   unlink(tmp)
 
   process_timeout <- process_timeout %||%
@@ -129,8 +139,10 @@ new_app_process <- function(app, port = NULL,
         stop(msg$error)
       }
       if (msg$code != 301) {
-        stop("Unexpected message from webfakes app subprocess. ",
-             "Report a bug please.")
+        stop(
+          "Unexpected message from webfakes app subprocess. ",
+          "Report a bug please."
+        )
       }
       self$.ports <- msg$message$ports
       self$.port <- msg$message$ports$port[1]
@@ -212,8 +224,12 @@ new_app_process <- function(app, port = NULL,
       }
     },
 
-    url = function(path = "/", query = NULL, https = FALSE,
-                   domain = "127.0.0.1") {
+    url = function(
+      path = "/",
+      query = NULL,
+      https = FALSE,
+      domain = "127.0.0.1"
+    ) {
       if (self$get_state() == "not running" && auto_start) self$start()
       if (!is.null(query)) {
         query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
@@ -244,8 +260,11 @@ new_app_process <- function(app, port = NULL,
     .auto_start = auto_start,
 
     .print_errors = function() {
-      if (!is.na(self$.error_log) && file.exists(self$.error_log) &&
-          file.info(self$.error_log)$size > 0) {
+      if (
+        !is.na(self$.error_log) &&
+          file.exists(self$.error_log) &&
+          file.info(self$.error_log)$size > 0
+      ) {
         err <- readLines(self$.error_log, warn = FALSE)
         cat("webfakes web server errors:\n")
         cat(err, sep = "\n")

@@ -22,3 +22,5 @@
 ^dev\-lib$
 ^LICENSE\.md$
 ^src/libmbedtls.a$
+^[\.]?air\.toml$
+^\.vscode$

@@ -1,4 +1,3 @@
-
 web <- local_app_process(test_response_app())
 
 test_that("response locals", {
@@ -33,7 +32,11 @@ test_that("send_file", {
   resp <- curl::curl_fetch_memory(url)
   path <- system.file(
     package = "webfakes",
-    "examples", "static", "public", "foo", "bar.json"
+    "examples",
+    "static",
+    "public",
+    "foo",
+    "bar.json"
   )
   expect_equal(resp$content, read_bin(path))
 })

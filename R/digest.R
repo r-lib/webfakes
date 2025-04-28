@@ -1,4 +1,3 @@
-
 crc32 <- function(x) {
   if (is.character(x)) x <- charToRaw(x)
   stopifnot(is.raw(x))

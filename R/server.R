@@ -1,4 +1,3 @@
-
 parse_ports <- function(opts = server_opts()) {
   paste0(
     if (!is.null(opts$interfaces)) paste0(opts$interfaces, ":"),
@@ -25,20 +24,19 @@ server_start <- function(opts = server_opts()) {
   )
 
   options <- c(
-    "listening_ports"          = ports,
-    "num_threads"              = opts$num_threads,
-    "enable_keep_alive"        = c("no", "yes")[[opts$enable_keep_alive + 1]],
-    "access_log_file"          = opts$access_log_file %|NA|% "",
-    "error_log_file"           = opts$error_log_file %|NA|% "",
-    "tcp_nodelay"              = c("0", "1")[[opts$tcp_nodelay + 1]],
-    "throttle"                 = throttle,
+    "listening_ports" = ports,
+    "num_threads" = opts$num_threads,
+    "enable_keep_alive" = c("no", "yes")[[opts$enable_keep_alive + 1]],
+    "access_log_file" = opts$access_log_file %|NA|% "",
+    "error_log_file" = opts$error_log_file %|NA|% "",
+    "tcp_nodelay" = c("0", "1")[[opts$tcp_nodelay + 1]],
+    "throttle" = throttle,
 
     # These are not configurable currently
-    "request_timeout_ms"       = "100000",
+    "request_timeout_ms" = "100000",
     "enable_auth_domain_check" = "no",
-    "decode_url"               = if (opts$decode_url) "yes" else "no",
-    "ssl_certificate"          =
-      if (!is.null(opts$ssl_certificate)) opts$ssl_certificate
+    "decode_url" = if (opts$decode_url) "yes" else "no",
+    "ssl_certificate" = if (!is.null(opts$ssl_certificate)) opts$ssl_certificate
   )
 
   srv <- call_with_cleanup(c_server_start, options)
@@ -98,16 +96,19 @@ server_start <- function(opts = server_opts()) {
 #' # See the defaults
 #' server_opts()
 
-server_opts <- function(remote = FALSE, port = NULL, num_threads = 1,
-                        interfaces = "127.0.0.1",
-                        enable_keep_alive = FALSE,
-                        access_log_file = remote,
-                        error_log_file = TRUE,
-                        tcp_nodelay = FALSE,
-                        throttle = Inf,
-                        decode_url = TRUE,
-                        ssl_certificate = NULL) {
-
+server_opts <- function(
+  remote = FALSE,
+  port = NULL,
+  num_threads = 1,
+  interfaces = "127.0.0.1",
+  enable_keep_alive = FALSE,
+  access_log_file = remote,
+  error_log_file = TRUE,
+  tcp_nodelay = FALSE,
+  throttle = Inf,
+  decode_url = TRUE,
+  ssl_certificate = NULL
+) {
   log_dir <- Sys.getenv("WEBFAKES_LOG_DIR", file.path(tempdir(), "webfakes"))
   if (isTRUE(access_log_file)) {
     if (remote) {

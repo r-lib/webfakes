@@ -1,4 +1,3 @@
-
 #' glue based template engine
 #'
 #' Use this template engine to create pages with glue templates.
@@ -40,13 +39,29 @@
 #' # Now start the app with: app$listen(3000L)
 #' # Or start it in another process: new_process(app)
 
-tmpl_glue <- function(sep = "", open = "{", close = "}", na = "NA",
-                      transformer = NULL, trim = TRUE) {
-  sep; open; close; na; transformer; trim
+tmpl_glue <- function(
+  sep = "",
+  open = "{",
+  close = "}",
+  na = "NA",
+  transformer = NULL,
+  trim = TRUE
+) {
+  sep
+  open
+  close
+  na
+  transformer
+  trim
   function(path, locals) {
     txt <- readChar(path, nchars = file.size(path))
     glue::glue_data(
-      locals, txt, .sep = sep, .open = open, .close = close, .na = na,
+      locals,
+      txt,
+      .sep = sep,
+      .open = open,
+      .close = close,
+      .na = na,
       .transformer = transformer %||% glue::identity_transformer,
       .trim = trim
     )

@@ -1,4 +1,3 @@
-
 test_that("uuid_random() format", {
   uu <- replicate(1000, uuid_random())
 

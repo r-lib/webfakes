@@ -1,4 +1,3 @@
-
 #' Parse a multipart HTTP request body
 #'
 #' Adds the parsed form fields in the `form` element of the request and
@@ -19,29 +18,35 @@ mw_multipart <- function(type = "multipart/form-data") {
   type
   function(req, res) {
     ct <- req$get_header("Content-Type") %||% ""
-    if (!any(vapply(
-           paste0("^", type),
-           function(x) grepl(x, ct),
-           logical(1)))) return("next")
+    if (
+      !any(vapply(
+        paste0("^", type),
+        function(x) grepl(x, ct),
+        logical(1)
+      ))
+    )
+      return("next")
 
     parts <- str_trim(strsplit(ct, ";", fixed = TRUE)[[1]])
     bnd <- grep("boundary=", parts, value = TRUE)[1]
     if (is.na(bnd)) return("next")
     bnd <- sub("^boundary=", "", bnd)
 
-    tryCatch({
-      mp <- parse_multipart(req$.body, bnd)
-      req$form <- list()
-      req$files <- list()
-      for (p in mp) {
-        if (is.null(p$filename)) {
-          req$form[[p$name]] <- rawToChar(p$value)
-        } else {
-          req$files[[p$name]] <- list(filename = p$filename, value = p$value)
+    tryCatch(
+      {
+        mp <- parse_multipart(req$.body, bnd)
+        req$form <- list()
+        req$files <- list()
+        for (p in mp) {
+          if (is.null(p$filename)) {
+            req$form[[p$name]] <- rawToChar(p$value)
+          } else {
+            req$files[[p$name]] <- list(filename = p$filename, value = p$value)
+          }
         }
-      }
-
-    }, error = function(err) NULL)
+      },
+      error = function(err) NULL
+    )
 
     "next"
   }
@@ -62,16 +67,18 @@ parse_multipart <- function(body, boundary) {
       return(list())
     } else {
       # Something went wrong
-      stop("The 'boundary' was only found once in the ",
-           "multipart/form-data message. It should appear at ",
-           "least twice. The request-body might be truncated.")
+      stop(
+        "The 'boundary' was only found once in the ",
+        "multipart/form-data message. It should appear at ",
+        "least twice. The request-body might be truncated."
+      )
     }
   }
 
   parts <- list()
   for (i in seq_along(utils::head(indexes, -1))) {
     from <- indexes[i] + boundary_length
-    to <- indexes[i + 1] -1
+    to <- indexes[i + 1] - 1
     parts[[i]] <- body[from:to]
   }
 
@@ -91,7 +98,7 @@ multipart_sub <- function(bodydata) {
     stop("Invalid multipart subpart:\n\n", rawToChar(bodydata))
   }
 
-  headers <- bodydata[1:(splitchar-1)]
+  headers <- bodydata[1:(splitchar - 1)]
   headers <- str_trim(rawToChar(headers))
   headers <- gsub("\r\n", "\n", headers)
   headers <- gsub("\r", "\n", headers)
@@ -105,8 +112,7 @@ multipart_sub <- function(bodydata) {
 
   #get parameter name
   m <- regexpr("; name=\\\"(.*?)\\\"", dispheader)
-  if (m < 0)
-    stop('failed to find the name="..." header')
+  if (m < 0) stop('failed to find the name="..." header')
 
   namefield <- unquote(sub(
     "; name=",
@@ -129,7 +135,7 @@ multipart_sub <- function(bodydata) {
   }
 
   #filedata
-  splitval <- grepRaw("\\r\\n\\r\\n|\\n\\n|\\r\\r", bodydata, value=TRUE)
+  splitval <- grepRaw("\\r\\n\\r\\n|\\n\\n|\\r\\r", bodydata, value = TRUE)
   start <- splitchar + length(splitval)
   if (identical(utils::tail(bodydata, 2), charToRaw("\r\n"))) {
     end <- length(bodydata) - 2
@@ -138,7 +144,7 @@ multipart_sub <- function(bodydata) {
   }
 
   #the actual fields
-  list (
+  list(
     name = namefield,
     value = bodydata[start:end],
     filename = filenamefield

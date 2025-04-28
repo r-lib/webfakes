@@ -1,4 +1,3 @@
-
 #' Middleware to parse a Range header
 #'
 #' Adds the requested ranges to the `ranges` element of the request
@@ -51,14 +50,19 @@ parse_range <- function(rh) {
     } else {
       res[i, 1] <- parse_int(rng[1])
       res[i, 2] <- parse_int(rng[2])
-      if (is.na(res[i, 1]) || is.na(res[i, 2]) ||
-          res[i, 1] < 0 || res[i, 2] < 0 || res[i, 1] > res[i, 2]) {
+      if (
+        is.na(res[i, 1]) ||
+          is.na(res[i, 2]) ||
+          res[i, 1] < 0 ||
+          res[i, 2] < 0 ||
+          res[i, 1] > res[i, 2]
+      ) {
         return()
       }
     }
   }
 
-  res <- res[order(res[,1]), , drop = FALSE]
+  res <- res[order(res[, 1]), , drop = FALSE]
 
   # check for overlapping intervals
   if (intervals_overlap(res)) return()
@@ -74,5 +78,5 @@ intervals_overlap <- function(x) {
   # assume that it is sorted on first column
   # then every interval needs to finish before the next one starts
   if (nrow(x) <= 1) return(FALSE)
-  any(x[,2][-nrow(x)] >= x[,1][-1])
+  any(x[, 2][-nrow(x)] >= x[, 1][-1])
 }

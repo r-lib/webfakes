@@ -1,4 +1,3 @@
-
 uuid_random <- function() {
   # These uuids are pseudo-random, they are not secure!
   # xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx (8-4-4-4-12)

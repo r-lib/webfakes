@@ -1,4 +1,3 @@
-
 http_statuses <- c(
   "100" = "Continue",
   "101" = "Switching Protocols",

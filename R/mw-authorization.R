@@ -1,4 +1,3 @@
-
 parse_authorization_header <- function(x) {
   if (length(x) == 0) return(NULL)
 
@@ -7,13 +6,16 @@ parse_authorization_header <- function(x) {
 
   if (scheme == "basic") {
     username <- password <- NULL
-    tryCatch({
-      ptxt <- strsplit(base64_decode(rest), ":", fixed = TRUE)[[1]]
-      if (length(ptxt) == 2) {
-        username <- ptxt[1]
-        password <- ptxt[2]
-      }
-    }, error = function(err) NULL)
+    tryCatch(
+      {
+        ptxt <- strsplit(base64_decode(rest), ":", fixed = TRUE)[[1]]
+        if (length(ptxt) == 2) {
+          username <- ptxt[1]
+          password <- ptxt[2]
+        }
+      },
+      error = function(err) NULL
+    )
 
     if (!is.null(username) && !is.null(password)) {
       return(list(

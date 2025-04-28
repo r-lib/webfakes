@@ -1,4 +1,3 @@
-
 test_that("invalid handler", {
   app <- new_app()
   expect_error(

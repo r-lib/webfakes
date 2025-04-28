@@ -1,21 +1,10 @@
-
-app <- new_app()$
-  use(mw_log())$
-  get("/txt", function(req, res) {
-    res$
-      set_type("text/plain")$
-      send("textual")
-  })$
-  get("/html", function(req, res) {
-    res$
-      set_type("text/html")$
-      send("<html><head></head><body>hello</body></html>")
-    })$
-  get("/raw", function(req, res) {
-    res$
-      set_type("applicartion/octet-stream")$
-      send(charToRaw("raw"))
-  })
+app <- new_app()$use(mw_log())$get("/txt", function(req, res) {
+  res$set_type("text/plain")$send("textual")
+})$get("/html", function(req, res) {
+  res$set_type("text/html")$send("<html><head></head><body>hello</body></html>")
+})$get("/raw", function(req, res) {
+  res$set_type("applicartion/octet-stream")$send(charToRaw("raw"))
+})
 web <- local_app_process(app, callr_opts = list(stdout = "|"))
 
 test_that("text/plain response", {

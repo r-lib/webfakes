@@ -1,4 +1,3 @@
-
 test_that("error if cannot start", {
   # does not start before the timeout
   app <- new_app()
