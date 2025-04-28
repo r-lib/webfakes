@@ -1,4 +1,3 @@
-
 #' A webfakes request object
 #'
 #' webfakes creates a `webfakes_request` object for every incoming HTTP

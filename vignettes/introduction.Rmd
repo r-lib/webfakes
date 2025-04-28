@@ -7,7 +7,8 @@ editor_options:
     canonical: true
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -67,6 +68,7 @@ The advantages of using your own webfakes server, over mocking:
 
 ## Using `webfakes::httpbin_app()` with testthat
 
+<!-- does not work with in-body style options -->
 ```{r child = "partials/_howto-testthat.Rmd"}
 ```
 
@@ -78,5 +80,6 @@ See `vignette("how-to")` for details how.
 If the builtin `httpbin_app()` is not appropriate for your tests, you can write your own app.
 You can also extend the `httpbin_app()` app, if you don't want to start from scratch.
 
+<!-- does not work with in-body style options -->
 ```{r child = "partials/_my-app.Rmd"}
 ```

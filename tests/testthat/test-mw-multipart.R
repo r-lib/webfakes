@@ -1,4 +1,3 @@
-
 app <- new_app()
 app$use(mw_multipart())
 app$put("/form", function(req, res) {
@@ -15,7 +14,9 @@ test_that("mw_multipart", {
   handle <- curl::new_handle()
   curl::handle_setopt(handle, customrequest = "PUT")
   curl::handle_setform(
-    handle, a = "1", b = "2",
+    handle,
+    a = "1",
+    b = "2",
     c = curl::form_file(tmp, type = "text/plain")
   )
 

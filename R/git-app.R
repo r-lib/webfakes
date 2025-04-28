@@ -21,12 +21,13 @@
 #' git <- new_app_process(app)
 #' system(paste("git ls-remote", git$url("/crayon")))
 
-git_app <- function(git_root,
-                    git_cmd = "git",
-                    git_timeout = as.difftime(1, units = "mins"),
-                    filter = TRUE,
-                    cleanup = TRUE) {
-
+git_app <- function(
+  git_root,
+  git_cmd = "git",
+  git_timeout = as.difftime(1, units = "mins"),
+  filter = TRUE,
+  cleanup = TRUE
+) {
   app <- webfakes::new_app()
   app$locals$git_root <- git_root
   app$locals$git_timeout <- as.double(git_timeout, units = "secs") * 1000

@@ -1,4 +1,3 @@
-
 #' Middleware function to serve static files
 #'
 #' The content type of the response is set automatically from the
@@ -22,8 +21,8 @@
 #' app
 
 mw_static <- function(root, set_headers = NULL) {
-
-  root; set_headers
+  root
+  set_headers
   function(req, res) {
     path <- file.path(root, sub("^/", "", req$path))
     if (!file.exists(path)) return("next")

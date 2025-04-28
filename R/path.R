@@ -1,4 +1,3 @@
-
 #' Create a new regular expression to use in webfakes routes
 #'
 #' Note that webfakes uses PERL regular expressions.
@@ -22,13 +21,15 @@ new_regexp <- function(x) structure(x, class = "webfakes_regexp")
 
 path_match <- function(method, path, handler) {
   if (handler$method == "use") return(TRUE)
-  if ((! handler$method %in% c("all", method)) &&
-      !(handler$method == "get" && method == "head")) return(FALSE)
+  if (
+    (!handler$method %in% c("all", method)) &&
+      !(handler$method == "get" && method == "head")
+  )
+    return(FALSE)
   pattern_match(path, handler$path)
 }
 
 pattern_match <- function(path, patterns) {
-
   # Make sure patterns is a list
   if (inherits(patterns, "webfakes_regexp")) {
     patterns <- list(patterns)

@@ -1,8 +1,5 @@
-
 format_named_list <- function(name, data) {
-  c(paste0(name, ":"),
-    if (length(data)) paste0("  ", names(data), ": ", data)
-  )
+  c(paste0(name, ":"), if (length(data)) paste0("  ", names(data), ": ", data))
 }
 
 format_path <- function(patterns) {

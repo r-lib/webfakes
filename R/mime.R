@@ -1,4 +1,3 @@
-
 mime_find <- function(ext) {
   stopifnot(is_string(ext))
   m <- mime_types[ext]

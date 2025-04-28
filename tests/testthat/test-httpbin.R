@@ -1,4 +1,3 @@
-
 # HTTP methods =========================================================
 
 test_that("/get", {
@@ -55,7 +54,9 @@ test_that("/post and multipart data", {
   handle <- curl::new_handle()
   curl::handle_setopt(handle, customrequest = "POST")
   curl::handle_setform(
-    handle, a = "1", b = "2",
+    handle,
+    a = "1",
+    b = "2",
     c = curl::form_file(tmp, type = "application/octet-stream")
   )
 
@@ -90,7 +91,7 @@ test_that("/basic-auth", {
   handle <- curl::new_handle()
   curl::handle_setheaders(
     handle,
-    "Authorization"= "Basic QWxhZGRpbjpPcGVuU2VzYW1l"
+    "Authorization" = "Basic QWxhZGRpbjpPcGVuU2VzYW1l"
   )
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 200L)
@@ -104,7 +105,7 @@ test_that("/basic-auth", {
   handle <- curl::new_handle()
   curl::handle_setheaders(
     handle,
-    "Authorization"= "Basic NOLUCK"
+    "Authorization" = "Basic NOLUCK"
   )
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 401L)
@@ -126,7 +127,7 @@ test_that("/hidden-basic-auth", {
   handle <- curl::new_handle()
   curl::handle_setheaders(
     handle,
-    "Authorization"= "Basic QWxhZGRpbjpPcGVuU2VzYW1l"
+    "Authorization" = "Basic QWxhZGRpbjpPcGVuU2VzYW1l"
   )
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 200L)
@@ -140,7 +141,7 @@ test_that("/hidden-basic-auth", {
   handle <- curl::new_handle()
   curl::handle_setheaders(
     handle,
-    "Authorization"= "Basic NOLUCK"
+    "Authorization" = "Basic NOLUCK"
   )
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 404L)
@@ -377,12 +378,12 @@ test_that("/cache", {
   handle <- curl::new_handle()
   curl::handle_setheaders(
     handle,
-    "If-Modified-Since" =
-      http_time_stamp(Sys.time() - as.difftime(5, units = "mins"))
+    "If-Modified-Since" = http_time_stamp(
+      Sys.time() - as.difftime(5, units = "mins")
+    )
   )
   resp <- curl::curl_fetch_memory(url, handle = handle)
   expect_equal(resp$status_code, 304L)
-
 
   handle <- curl::new_handle()
   curl::handle_setheaders(
@@ -411,7 +412,10 @@ test_that("/deny", {
   expect_equal(resp$status_code, 200L)
   path <- system.file(
     package = "webfakes",
-    "examples", "httpbin", "data", "deny.txt"
+    "examples",
+    "httpbin",
+    "data",
+    "deny.txt"
   )
   expect_equal(resp$content, read_bin(path))
 })
@@ -451,8 +455,25 @@ test_that("/encoding/utf8", {
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$type, "text/html; charset=utf-8")
   ptrn <- as.raw(c(
-    0xe1, 0x8c, 0x8c, 0xe1, 0x8c, 0xa5, 0x20, 0xe1, 0x8b,
-    0xab, 0xe1, 0x88, 0x88, 0xe1, 0x89, 0xa4, 0xe1, 0x89, 0xb1
+    0xe1,
+    0x8c,
+    0x8c,
+    0xe1,
+    0x8c,
+    0xa5,
+    0x20,
+    0xe1,
+    0x8b,
+    0xab,
+    0xe1,
+    0x88,
+    0x88,
+    0xe1,
+    0x89,
+    0xa4,
+    0xe1,
+    0x89,
+    0xb1
   ))
   # On windows end of line is converted to \r\n
   expect_true(grepRaw(ptrn, resp$content, fixed = TRUE) %in% c(9085, 9233))
@@ -471,7 +492,10 @@ test_that("/json", {
   expect_equal(resp$type, "application/json")
   path <- system.file(
     package = "webfakes",
-    "examples", "httpbin", "data", "example.json"
+    "examples",
+    "httpbin",
+    "data",
+    "example.json"
   )
   expect_equal(resp$content, read_bin(path))
 })
@@ -482,7 +506,10 @@ test_that("/robots.txt", {
   expect_equal(resp$type, "text/plain")
   path <- system.file(
     package = "webfakes",
-    "examples", "httpbin", "data", "robots.txt"
+    "examples",
+    "httpbin",
+    "data",
+    "robots.txt"
   )
   expect_equal(resp$content, read_bin(path))
 })
@@ -493,7 +520,10 @@ test_that("/xml", {
   expect_equal(resp$type, "application/xml")
   path <- system.file(
     package = "webfakes",
-    "examples", "httpbin", "data", "example.xml"
+    "examples",
+    "httpbin",
+    "data",
+    "example.xml"
   )
   expect_equal(resp$content, read_bin(path))
 })
@@ -680,7 +710,7 @@ test_that("/cookies/set", {
   expect_true("HTTP/1.1 200 OK" %in% headers[[2]])
   expect_equal(resp$status_code, 200L)
   data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)
-  expect_equal(data, list(cookies = list(bar="baz", foo = "bar")))
+  expect_equal(data, list(cookies = list(bar = "baz", foo = "bar")))
   expect_snapshot(curl::handle_cookies(handle), variant = r_variant())
 })
 
@@ -694,7 +724,10 @@ test_that("/cookies/delete", {
   resp <- curl::curl_fetch_memory(url, handle = handle)
   headers <- curl::parse_headers(resp$headers, multiple = TRUE)
   expect_true("HTTP/1.1 302 Found" %in% headers[[1]])
-  expect_true("Set-Cookie: foo=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/" %in% headers[[1]])
+  expect_true(
+    "Set-Cookie: foo=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/" %in%
+      headers[[1]]
+  )
   expect_true("HTTP/1.1 200 OK" %in% headers[[2]])
   expect_equal(resp$status_code, 200L)
   data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE)

@@ -1,4 +1,3 @@
-
 #' Middleware to parse Cookies
 #'
 #' Adds the cookies as the `cookies` element of the request object.

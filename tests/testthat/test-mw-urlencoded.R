@@ -1,4 +1,3 @@
-
 app <- new_app()
 app$use(mw_urlencoded())
 app$post("/form", function(req, res) {

@@ -1,11 +1,8 @@
-
 app <- new_app()
 app$use(function(req, res) {
   tmp <- tempfile()
   saveRDS(list(req = req, res = res), file = tmp)
-  res$
-    set_status(200)$
-    send(normalizePath(tmp))
+  res$set_status(200)$send(normalizePath(tmp))
 })
 proc <- local_app_process(app)
 withr::local_options(list(HTTPUserAgent = "It is me, libcurl"))
@@ -21,7 +18,7 @@ withr::defer(unlink(tmp))
 
 skip_without_png_device <- function() {
   if (.Platform$OS.type == "windows") return()
-  if (! capabilities("png") || ! capabilities("X11")) {
+  if (!capabilities("png") || !capabilities("X11")) {
     skip("Needs a PNG device")
   }
 }
