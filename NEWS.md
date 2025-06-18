@@ -1,5 +1,11 @@
 # webfakes (development version)
 
+* webfakes now supports HTTPS (#110).
+
+* The cleanup of a `new_app_process()` (and thus `local_app_process()`)
+  is now faster. Instead of sending an interrupt first and waiting for
+  the subprocess to quite, it is killed instantly.
+
 # webfakes 1.3.2
 
 * New server option: `decode_url`. If set to `FALSE`, then the web server
