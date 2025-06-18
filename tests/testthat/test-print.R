@@ -17,7 +17,9 @@ withr::defer(unlink(tmp))
 # that macOS has a png device.
 
 skip_without_png_device <- function() {
-  if (.Platform$OS.type == "windows") return()
+  if (.Platform$OS.type == "windows") {
+    return()
+  }
   if (!capabilities("png") || !capabilities("X11")) {
     skip("Needs a PNG device")
   }

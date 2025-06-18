@@ -406,7 +406,9 @@ new_app <- function() {
     },
 
     listen = function(port = NULL, opts = server_opts(), cleanup = TRUE) {
-      if (is_na_scalar(port)) port <- NULL
+      if (is_na_scalar(port)) {
+        port <- NULL
+      }
       opts$port <- port
       self$.enable_keep_alive <- opts$enable_keep_alive
       opts$access_log_file <- sub("%p", Sys.getpid(), opts$access_log_file)
@@ -542,7 +544,9 @@ new_app <- function() {
             m <- path_match(req$method, req$path, handler)
             if (!isFALSE(m)) {
               res$.i <- i
-              if (is.list(m)) req$params <- m$params
+              if (is.list(m)) {
+                req$params <- m$params
+              }
               out <- handler$handler(req, res)
               if (!identical(out, "next")) break
             }
@@ -562,8 +566,7 @@ new_app <- function() {
             }
           }
         },
-        webfakes_error = function(err) {
-        }
+        webfakes_error = function(err) {}
       )
     },
 

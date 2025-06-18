@@ -1,5 +1,7 @@
 parse_authorization_header <- function(x) {
-  if (length(x) == 0) return(NULL)
+  if (length(x) == 0) {
+    return(NULL)
+  }
 
   scheme <- tolower(sub("[ ].*$", "", x))
   rest <- trimws(sub("^[^ ]+[ ]", "", x))

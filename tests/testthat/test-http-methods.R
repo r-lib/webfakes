@@ -42,7 +42,9 @@ test_methods <- c(
 
 app <- new_app()
 handler <- function(req, res) res$send_json(list(method = req$method))
-for (method in test_methods) app[[method]](paste0("/", method), handler)
+for (method in test_methods) {
+  app[[method]](paste0("/", method), handler)
+}
 web2 <- local_app_process(app, port = NA)
 
 test_that("the rest", {

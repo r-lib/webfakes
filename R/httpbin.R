@@ -35,7 +35,9 @@ httpbin_app <- function(log = interactive()) {
   app <- new_app()
 
   # Log requests by default
-  if (log) app$use("logger" = mw_log())
+  if (log) {
+    app$use("logger" = mw_log())
+  }
 
   # Parse all kinds of bodies
   app$use("json body parser" = mw_json())
@@ -252,7 +254,9 @@ httpbin_app <- function(log = interactive()) {
   }
 
   check_digest_auth <- function(req, credentials, user, passwd) {
-    if (is.null(credentials)) return(FALSE)
+    if (is.null(credentials)) {
+      return(FALSE)
+    }
     algorithm <- credentials[["algorithm"]]
     HA1_value <- hash1(
       credentials[["realm"]],
@@ -263,7 +267,9 @@ httpbin_app <- function(log = interactive()) {
     HA2_value <- hash2(credentials, req, algorithm)
 
     qop <- credentials[["qop"]] %||% "compat"
-    if (!qop %in% c("compat", "auth", "auth-int")) return(FALSE)
+    if (!qop %in% c("compat", "auth", "auth-int")) {
+      return(FALSE)
+    }
 
     response_hash <- if (qop == "compat") {
       hash(
@@ -624,7 +630,9 @@ httpbin_app <- function(log = interactive()) {
     list("/base64", new_regexp("/base64/(?<value>[\\+/=a-zA-Z0-9]*)")),
     function(req, res) {
       value <- req$params$value %||% ""
-      if (value == "") value <- "RXZlcnl0aGluZyBpcyBSc29tZQ=="
+      if (value == "") {
+        value <- "RXZlcnl0aGluZyBpcyBSc29tZQ=="
+      }
       plain <- charToRaw(base64_decode(value))
       res$set_type("application/octet-stream")$send(plain)
     }
@@ -722,7 +730,9 @@ httpbin_app <- function(log = interactive()) {
   app$get(new_regexp("^/stream/(?<n>[0-9]+)$"), function(req, res) {
     n <- suppressWarnings(as.integer(req$params$n))
     n <- min(n, 100)
-    if (length(n) == 0 || is.na(n)) return("next")
+    if (length(n) == 0 || is.na(n)) {
+      return("next")
+    }
     msg <- make_common_response(req, res)[c("url", "args", "headers", "origin")]
 
     res$set_type("application/json")
@@ -746,8 +756,9 @@ httpbin_app <- function(log = interactive()) {
         is.na(seed) ||
         length(chunk_size) == 0 ||
         is.na(chunk_size)
-    )
+    ) {
       return("next")
+    }
     oldseed <- .GlobalEnv$.Random.seed
     on.exit(set.seed(oldseed))
     set.seed(seed)
@@ -901,8 +912,12 @@ httpbin_app <- function(log = interactive()) {
     function(req, res) {
       n <- suppressWarnings(as.integer(req$params$n))
       o <- suppressWarnings(as.integer(req$params$offset))
-      if (length(o) == 0 || is.na(o)) o <- 1
-      if (length(n) == 0 || is.na(n)) return("next")
+      if (length(o) == 0 || is.na(o)) {
+        o <- 1
+      }
+      if (length(n) == 0 || is.na(n)) {
+        return("next")
+      }
       n <- min(max(1, n), 200)
       o <- min(max(1, o), n)
       links <- sprintf("<a href = \"/links/%d/%d\">%d</a>", n, 1:n, 1:n)

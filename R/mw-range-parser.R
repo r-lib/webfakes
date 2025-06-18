@@ -22,7 +22,9 @@
 mw_range_parser <- function() {
   function(req, res) {
     rh <- req$get_header("Range")
-    if (length(rh) == 0) return("next")
+    if (length(rh) == 0) {
+      return("next")
+    }
     req$ranges <- parse_range(rh)
     "next"
   }
@@ -30,7 +32,9 @@ mw_range_parser <- function() {
 
 parse_range <- function(rh) {
   rh <- trimws(rh)
-  if (length(rh) == 0 || !startsWith(rh, "bytes=")) return()
+  if (length(rh) == 0 || !startsWith(rh, "bytes=")) {
+    return()
+  }
   rh <- sub("^bytes=[ ]*", "", rh)
   rngs <- trimws(strsplit(rh, ",", fixed = TRUE)[[1]])
   res <- matrix(integer(1), nrow = length(rngs), ncol = 2)
@@ -65,7 +69,9 @@ parse_range <- function(rh) {
   res <- res[order(res[, 1]), , drop = FALSE]
 
   # check for overlapping intervals
-  if (intervals_overlap(res)) return()
+  if (intervals_overlap(res)) {
+    return()
+  }
 
   res
 }
@@ -77,6 +83,8 @@ parse_int <- function(x) {
 intervals_overlap <- function(x) {
   # assume that it is sorted on first column
   # then every interval needs to finish before the next one starts
-  if (nrow(x) <= 1) return(FALSE)
+  if (nrow(x) <= 1) {
+    return(FALSE)
+  }
   any(x[, 2][-nrow(x)] >= x[, 1][-1])
 }

@@ -267,14 +267,18 @@ oauth2_resource_app <- function(
   is_valid_refresh_token <- function(client_id, token) {
     expire_tokens()
     wh <- match(token, app$locals$refresh_tokens$token)
-    if (is.na(wh)) return(FALSE)
+    if (is.na(wh)) {
+      return(FALSE)
+    }
     # client ID must match as well
     app$locals$refresh_tokens$client_id == client_id
   }
 
   # For refresh tokens
   app$post(token_endpoint, function(req, res) {
-    if (req$form$grant_type != "refresh_token") return("next")
+    if (req$form$grant_type != "refresh_token") {
+      return("next")
+    }
     client_id <- req$form$client_id
     tpapps <- app$locals$tpapps
     if (!client_id %in% tpapps$client_id) {
@@ -346,8 +350,9 @@ oauth2_resource_app <- function(
       list(
         access_token = new_access_token(client_id, access_duration),
         expiry = access_duration,
-        refresh_token = if (refresh)
+        refresh_token = if (refresh) {
           new_refresh_token(client_id, refresh_duration)
+        }
       ),
       auto_unbox = TRUE,
       pretty = TRUE
@@ -381,7 +386,9 @@ oauth2_resource_app <- function(
   }
 
   app$get("/data", function(req, res) {
-    if (!app$is_authorized(req, res)) return()
+    if (!app$is_authorized(req, res)) {
+      return()
+    }
     res$send_json(list(data = "top secret!"))
   })
 
@@ -561,7 +568,9 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
 
   try_refresh <- function() {
     refresh_token <- app$locals$tokens$refresh_token
-    if (is.null(refresh_token)) return(FALSE)
+    if (is.null(refresh_token)) {
+      return(FALSE)
+    }
 
     data <- charToRaw(paste0(
       "refresh_token=",
@@ -583,7 +592,9 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
 
     resp <- curl::curl_fetch_memory(app$locals$token_url, handle = handle)
 
-    if (resp$status_code != 200L) return(FALSE)
+    if (resp$status_code != 200L) {
+      return(FALSE)
+    }
 
     tokens <- rawToChar(resp$content)
     app$locals$tokens <- jsonlite::fromJSON(tokens)

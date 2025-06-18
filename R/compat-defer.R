@@ -3,8 +3,11 @@
 # This drop-in file implements withr::defer(). Please find the most
 # recent version in withr's repository.
 
-defer <- function(expr, envir = parent.frame(), priority = c("first", "last")) {
-}
+defer <- function(
+  expr,
+  envir = parent.frame(),
+  priority = c("first", "last")
+) {}
 
 local({
   defer <<- defer <- function(

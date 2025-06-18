@@ -76,7 +76,9 @@ is.named <- function(x) {
 }
 
 set_envvar <- function(envs) {
-  if (length(envs) == 0) return()
+  if (length(envs) == 0) {
+    return()
+  }
 
   stopifnot(is.named(envs))
 
@@ -85,8 +87,12 @@ set_envvar <- function(envs) {
 
   both_set <- set & !is.na(old)
 
-  if (any(set)) do.call("Sys.setenv", as.list(envs[set]))
-  if (any(!set)) Sys.unsetenv(names(envs)[!set])
+  if (any(set)) {
+    do.call("Sys.setenv", as.list(envs[set]))
+  }
+  if (any(!set)) {
+    Sys.unsetenv(names(envs)[!set])
+  }
 
   invisible(old)
 }

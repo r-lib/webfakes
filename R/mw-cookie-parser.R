@@ -24,8 +24,12 @@ parse_cookies <- function(x) {
   lapply(parts, function(ck) {
     ck <- trimws(ck)
     key <- sub("^([^=]+)=.*$", "\\1", ck)
-    if (key == ck) return()
-    if (!is.null(dict[[key]])) return()
+    if (key == ck) {
+      return()
+    }
+    if (!is.null(dict[[key]])) {
+      return()
+    }
     value <- sub("^[^=]+=", "", ck)
     dict[[key]] <<- value
   })

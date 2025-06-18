@@ -128,7 +128,9 @@ new_response <- function(app, req) {
     },
 
     redirect = function(path, status = 302) {
-      if (self$.check_sent()) return(invisible(self))
+      if (self$.check_sent()) {
+        return(invisible(self))
+      }
       self$set_status(status)$set_header("Location", path)$set_type(
         "text/plain"
       )$send(paste0(
@@ -153,11 +155,15 @@ new_response <- function(app, req) {
     },
 
     send = function(body) {
-      if (self$.check_sent()) return(invisible(self))
+      if (self$.check_sent()) {
+        return(invisible(self))
+      }
       # We need to do these here, on_response middleware might depend on it
       self$.body <- body
       self$.set_defaults()
-      for (fn in self$.on_response) fn(self$req, self)
+      for (fn in self$.on_response) {
+        fn(self$req, self)
+      }
 
       response_send(self$req)
 
@@ -167,7 +173,9 @@ new_response <- function(app, req) {
     },
 
     send_chunk = function(data) {
-      if (self$.check_sent()) return(invisible(self))
+      if (self$.check_sent()) {
+        return(invisible(self))
+      }
       # The first chunk sends the headers automatically, but we make
       # sure to set chunked encoding
       if (!self$headers_sent) {
@@ -175,7 +183,9 @@ new_response <- function(app, req) {
         if (is.null(self$get_header("Content-Type"))) {
           self$set_header("Content-Type", "application/octet-stream")
         }
-        if (is.null(self$.status)) self$set_status(200L)
+        if (is.null(self$.status)) {
+          self$set_status(200L)
+        }
         self$.set_defaults()
       }
       enc <- self$get_header("Transfer-Encoding")
@@ -183,7 +193,9 @@ new_response <- function(app, req) {
         warning("Headers sent, cannot set chunked encoding now")
         return(invisible(self))
       }
-      if (is.character(data)) data <- charToRaw(paste(data, collapse = "\n"))
+      if (is.character(data)) {
+        data <- charToRaw(paste(data, collapse = "\n"))
+      }
       response_send_chunk(self$req, data)
       self$headers_sent <- TRUE
       invisible(self)
@@ -229,26 +241,34 @@ new_response <- function(app, req) {
     },
 
     set_header = function(field, value) {
-      if (self$.check_sent()) return(invisible(self))
+      if (self$.check_sent()) {
+        return(invisible(self))
+      }
       self$.headers[[field]] <- as.character(value)
       invisible(self)
     },
 
     add_header = function(field, value) {
-      if (self$.check_sent()) return(invisible(self))
+      if (self$.check_sent()) {
+        return(invisible(self))
+      }
       h <- structure(list(value), names = field)
       self$.headers <- append(self$.headers, h)
       invisible(self)
     },
 
     set_status = function(status) {
-      if (self$.check_sent()) return(invisible(self))
+      if (self$.check_sent()) {
+        return(invisible(self))
+      }
       self$.status <- as.integer(status)
       invisible(self)
     },
 
     set_type = function(type) {
-      if (self$.check_sent()) return(invisible(self))
+      if (self$.check_sent()) {
+        return(invisible(self))
+      }
       if (grepl("/", type)) {
         self$set_header("Content-Type", type)
       } else {
@@ -304,8 +324,12 @@ new_response <- function(app, req) {
       if (is.null(self$get_header("content-length"))) {
         warning("response$write() without a Content-Length header")
       }
-      if (is.null(self$.status)) self$set_status(200L)
-      if (is.character(data)) data <- charToRaw(paste(data, collapse = "\n"))
+      if (is.null(self$.status)) {
+        self$set_status(200L)
+      }
+      if (is.character(data)) {
+        data <- charToRaw(paste(data, collapse = "\n"))
+      }
       response_write(self$req, data)
       self$headers_sent <- TRUE
       invisible(self)
@@ -364,8 +388,11 @@ new_response <- function(app, req) {
 
     .body = NULL,
     .status = NULL,
-    .headers = if (!app$.enable_keep_alive) list("Connection" = "close") else
-      list(),
+    .headers = if (!app$.enable_keep_alive) {
+      list("Connection" = "close")
+    } else {
+      list()
+    },
     .on_response = NULL,
     .sent = FALSE,
     .stackptr = 1L

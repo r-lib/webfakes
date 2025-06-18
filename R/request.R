@@ -47,7 +47,9 @@
 NULL
 
 new_request <- function(app, self) {
-  if (isTRUE(self$.has_methods)) return(self)
+  if (isTRUE(self$.has_methods)) {
+    return(self)
+  }
   parsed_headers <- self$headers
   self$.has_methods <- TRUE
   self$app <- app

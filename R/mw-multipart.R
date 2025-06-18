@@ -24,12 +24,15 @@ mw_multipart <- function(type = "multipart/form-data") {
         function(x) grepl(x, ct),
         logical(1)
       ))
-    )
+    ) {
       return("next")
+    }
 
     parts <- str_trim(strsplit(ct, ";", fixed = TRUE)[[1]])
     bnd <- grep("boundary=", parts, value = TRUE)[1]
-    if (is.na(bnd)) return("next")
+    if (is.na(bnd)) {
+      return("next")
+    }
     bnd <- sub("^boundary=", "", bnd)
 
     tryCatch(
@@ -59,7 +62,9 @@ parse_multipart <- function(body, boundary) {
   # Find the locations of the boundary string
   indexes <- grepRaw(boundary, body, fixed = TRUE, all = TRUE)
 
-  if (!length(indexes)) stop("Boundary was not found in the body.")
+  if (!length(indexes)) {
+    stop("Boundary was not found in the body.")
+  }
 
   if (length(indexes) == 1) {
     if (length(body) < (boundary_length + 5)) {
@@ -112,7 +117,9 @@ multipart_sub <- function(bodydata) {
 
   #get parameter name
   m <- regexpr("; name=\\\"(.*?)\\\"", dispheader)
-  if (m < 0) stop('failed to find the name="..." header')
+  if (m < 0) {
+    stop('failed to find the name="..." header')
+  }
 
   namefield <- unquote(sub(
     "; name=",

@@ -20,12 +20,15 @@
 new_regexp <- function(x) structure(x, class = "webfakes_regexp")
 
 path_match <- function(method, path, handler) {
-  if (handler$method == "use") return(TRUE)
+  if (handler$method == "use") {
+    return(TRUE)
+  }
   if (
     (!handler$method %in% c("all", method)) &&
       !(handler$method == "get" && method == "head")
-  )
+  ) {
     return(FALSE)
+  }
   pattern_match(path, handler$path)
 }
 

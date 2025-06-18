@@ -156,18 +156,24 @@ new_app_process <- function(
     get_app = function() self$.app,
 
     get_port = function() {
-      if (self$get_state() == "not running" && auto_start) self$start()
+      if (self$get_state() == "not running" && auto_start) {
+        self$start()
+      }
       self[[".port"]]
     },
 
     get_ports = function() {
-      if (self$get_state() == "not running" && auto_start) self$start()
+      if (self$get_state() == "not running" && auto_start) {
+        self$start()
+      }
       self[[".ports"]]
     },
 
     stop = function() {
       self$.reset_env()
-      if (is.null(self$.process)) return(invisible(self))
+      if (is.null(self$.process)) {
+        return(invisible(self))
+      }
 
       if (!self$.process$is_alive()) {
         status <- self$.process$get_exit_status()
@@ -175,7 +181,9 @@ new_app_process <- function(
         try_silently(out <- self$.process$read_output())
         try_silently(err <- self$.process$read_error())
         cat0("webfakes process dead, exit code: ", status, "\n")
-        if (!is.null(out)) cat0("stdout:", out, "\n")
+        if (!is.null(out)) {
+          cat0("stdout:", out, "\n")
+        }
         if (!is.null(err)) cat0("stderr:", err, "\n")
       }
 
@@ -230,7 +238,9 @@ new_app_process <- function(
       https = FALSE,
       domain = "127.0.0.1"
     ) {
-      if (self$get_state() == "not running" && auto_start) self$start()
+      if (self$get_state() == "not running" && auto_start) {
+        self$start()
+      }
       if (!is.null(query)) {
         query <- paste0("?", paste0(names(query), "=", query, collapse = "&"))
       }
@@ -274,7 +284,9 @@ new_app_process <- function(
 
   reg.finalizer(self, function(x) x$.reset_env())
 
-  if (start) self$start()
+  if (start) {
+    self$start()
+  }
 
   self
 }

@@ -19,12 +19,16 @@ test_that("intervals_overlap", {
     rbind(1:2),
     rbind(1:2, 3:4)
   )
-  for (x in ok) expect_false(intervals_overlap(x), info = x)
+  for (x in ok) {
+    expect_false(intervals_overlap(x), info = x)
+  }
 
   bad <- list(
     rbind(c(1, 10), c(5, 10)),
     rbind(c(1, 20), c(1, 20)),
     rbind(c(1, 1), c(1, 4))
   )
-  for (x in bad) expect_true(intervals_overlap(x), info = x)
+  for (x in bad) {
+    expect_true(intervals_overlap(x), info = x)
+  }
 })

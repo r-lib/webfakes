@@ -14,7 +14,9 @@ test_that("uuid_random() format", {
   # all bits are used, except for the dashes and M and N
   pos <- setdiff(1:36, c(9, 14, 19, 24, 15, 20))
   xd <- format(as.hexmode(0:15))
-  for (p in pos) expect_true(all(xd %in% substr(uu, p, p)))
+  for (p in pos) {
+    expect_true(all(xd %in% substr(uu, p, p)))
+  }
 
   # all bits are used for N
   expect_true(all(c("8", "9", "a", "b") %in% substr(uu, 20, 20)))

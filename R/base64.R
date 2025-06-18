@@ -282,7 +282,9 @@ base64_decode <- function(x) {
       }
       if (idx > len) {
         if (i <= 4) {
-          if (i <= 2) return(rawToChar(out))
+          if (i <= 2) {
+            return(rawToChar(out))
+          }
           if (i == 3) {
             c[[3]] <- EQ
             c[[4]] <- EQ

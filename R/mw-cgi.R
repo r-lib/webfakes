@@ -134,8 +134,9 @@ cgi_env <- function(req) {
   url <- parse_url(req$url)
   c(
     CONTENT_LENGTH = length(req$.body),
-    CONTENT_TYPE = if (!is.null(req$get_header))
-      req$get_header("content-type") %||% "",
+    CONTENT_TYPE = if (!is.null(req$get_header)) {
+      req$get_header("content-type") %||% ""
+    },
     GATEWAY_INTERFACE = "CGI/1.1",
     PATH_INFO = req$path,
     QUERY_STRING = req$query_string,
@@ -160,9 +161,13 @@ split_cgi_output <- function(x) {
 
   body <- x[nlnl:length(x)]
   ndrop <- 1L
-  while (body[ndrop] != 0x0a) ndrop <- ndrop + 1L
+  while (body[ndrop] != 0x0a) {
+    ndrop <- ndrop + 1L
+  }
   ndrop <- ndrop + 1L
-  while (body[ndrop] != 0x0a) ndrop <- ndrop + 1L
+  while (body[ndrop] != 0x0a) {
+    ndrop <- ndrop + 1L
+  }
   body <- utils::tail(body, -ndrop)
 
   list(headers = headers, body = body)
@@ -186,7 +191,9 @@ parse_headers <- function(txt) {
 }
 
 parse_headers0 <- function(txt, multiple = FALSE) {
-  if (!length(txt)) return(NULL)
+  if (!length(txt)) {
+    return(NULL)
+  }
   if (is.raw(txt)) {
     txt <- rawToChar(txt)
   }

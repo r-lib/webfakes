@@ -33,8 +33,12 @@ mw_log <- function(format = "dev", stream = "stdout") {
     start <- Sys.time()
 
     fmt <- function(req, res) {
-      if (identical(stream, "stdout")) stream <- stdout()
-      if (identical(stream, "stderr")) stream <- stderr()
+      if (identical(stream, "stdout")) {
+        stream <- stdout()
+      }
+      if (identical(stream, "stderr")) {
+        stream <- stderr()
+      }
       len <- if (is.null(res$.body)) {
         0L # nocov
       } else if (is.raw(res$.body)) {
