@@ -2,11 +2,16 @@
 # PKG_CPPFLAGS=-UNDEBUG
 PKG_CPPFLAGS=-DUSE_MBEDTLS -Imbedtls/include
 PKG_CFLAGS=-DNO_CGI -DNO_FILES
-PKG_LIBS=libmbedtls.x @LIBS@
+PKG_LIBS=libmbedtls.a @LIBS@
 
 OBJECTS=@OBJECTS@
 
-$(SHLIB): libmbedtls.x
+all: $(SHLIB) mrproper
 
-libmbedtls.x: @MBED@
+$(SHLIB): libmbedtls.a
+
+libmbedtls.a: @MBED@
 	$(AR) r $@ $^
+
+mrproper: $(SHLIB)
+	rm -f libmbedtls.a
