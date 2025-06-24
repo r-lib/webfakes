@@ -35,7 +35,7 @@ A web application can be
 }
 
 The webfakes API is very much influenced by the
-\href{http://expressjs.com/}{express.js} project.
+\href{https://expressjs.com/}{express.js} project.
 \subsection{Create web app objects}{
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{new_app()

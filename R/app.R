@@ -21,7 +21,7 @@ pkg_data <- new.env(parent = emptyenv())
 #' * extended by simply adding new routes and/or middleware.
 #'
 #' The webfakes API is very much influenced by the
-#' [express.js](http://expressjs.com/) project.
+#' [express.js](https://expressjs.com/) project.
 #'
 #' ## Create web app objects
 #'
