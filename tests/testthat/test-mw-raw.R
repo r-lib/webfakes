@@ -1,10 +1,7 @@
-
 app <- new_app()
 app$use(mw_raw())
 app$post("/raw", function(req, res) {
-  res$
-    set_type("application/octet-stream")$
-    send(req$raw)
+  res$set_type("application/octet-stream")$send(req$raw)
 })
 web <- local_app_process(app)
 

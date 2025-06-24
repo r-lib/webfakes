@@ -1,4 +1,3 @@
-
 #' Middleware that calls a CGI script
 #'
 #' You can use it as an unconditional middleware in `app$use()`,
@@ -66,8 +65,11 @@
 #' })
 #' app3
 
-mw_cgi <- function(command, args = character(),
-                   timeout = as.difftime(Inf, units = "secs")) {
+mw_cgi <- function(
+  command,
+  args = character(),
+  timeout = as.difftime(Inf, units = "secs")
+) {
   command
   args
   timeout <- if (timeout == Inf) {
@@ -132,7 +134,9 @@ cgi_env <- function(req) {
   url <- parse_url(req$url)
   c(
     CONTENT_LENGTH = length(req$.body),
-    CONTENT_TYPE = if (!is.null(req$get_header)) req$get_header("content-type") %||% "",
+    CONTENT_TYPE = if (!is.null(req$get_header)) {
+      req$get_header("content-type") %||% ""
+    },
     GATEWAY_INTERFACE = "CGI/1.1",
     PATH_INFO = req$path,
     QUERY_STRING = req$query_string,
@@ -157,9 +161,13 @@ split_cgi_output <- function(x) {
 
   body <- x[nlnl:length(x)]
   ndrop <- 1L
-  while (body[ndrop] != 0x0a) ndrop <- ndrop + 1L
+  while (body[ndrop] != 0x0a) {
+    ndrop <- ndrop + 1L
+  }
   ndrop <- ndrop + 1L
-  while (body[ndrop] != 0x0a) ndrop <- ndrop + 1L
+  while (body[ndrop] != 0x0a) {
+    ndrop <- ndrop + 1L
+  }
   body <- utils::tail(body, -ndrop)
 
   list(headers = headers, body = body)
@@ -173,7 +181,7 @@ parse_status <- function(x) {
   status
 }
 
-parse_headers <- function (txt) {
+parse_headers <- function(txt) {
   headers <- grep(":", parse_headers0(txt), fixed = TRUE, value = TRUE)
   out <- lapply(headers, split_header)
   names <- tolower(vapply(out, `[[`, character(1), 1))
@@ -182,9 +190,10 @@ parse_headers <- function (txt) {
   values
 }
 
-parse_headers0 <- function (txt, multiple = FALSE) {
-  if (!length(txt))
+parse_headers0 <- function(txt, multiple = FALSE) {
+  if (!length(txt)) {
     return(NULL)
+  }
   if (is.raw(txt)) {
     txt <- rawToChar(txt)
   }
@@ -196,8 +205,7 @@ parse_headers0 <- function (txt, multiple = FALSE) {
   headers <- strsplit(sets, "\\r\\n|\\n|\\r")
   if (multiple) {
     headers
-  }
-  else {
+  } else {
     headers[[length(headers)]]
   }
 }

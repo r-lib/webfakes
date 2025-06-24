@@ -1,4 +1,3 @@
-
 #' App process that is cleaned up automatically
 #'
 #' You can start the process with an explicit `$start()` call.

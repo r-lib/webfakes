@@ -1,4 +1,3 @@
-
 #' Generic web app for testing HTTP clients
 #'
 #' A web app similar to `https://httpbin.org`.
@@ -23,7 +22,6 @@
 #' proc$stop()
 
 httpbin_app <- function(log = interactive()) {
-
   encode_files <- function(files) {
     for (i in seq_along(files)) {
       files[[i]]$value <- paste0(
@@ -37,11 +35,15 @@ httpbin_app <- function(log = interactive()) {
   app <- new_app()
 
   # Log requests by default
-  if (log) app$use("logger" = mw_log())
+  if (log) {
+    app$use("logger" = mw_log())
+  }
 
   # Parse all kinds of bodies
   app$use("json body parser" = mw_json())
-  app$use("text body parser" = mw_text(type = c("text/plain", "application/json")))
+  app$use(
+    "text body parser" = mw_text(type = c("text/plain", "application/json"))
+  )
   app$use("multipart body parser" = mw_multipart())
   app$use("URL encoded body parser" = mw_urlencoded())
   app$use("cookie parser" = mw_cookie_parser())
@@ -126,12 +128,12 @@ httpbin_app <- function(log = interactive()) {
       ))
     } else {
       if (error_status == 401L) {
-        res$
-          set_header("WWW-Authenticate", "Basic realm=\"Fake Realm\"")$
-          send_status(error_status)
+        res$set_header(
+          "WWW-Authenticate",
+          "Basic realm=\"Fake Realm\""
+        )$send_status(error_status)
       } else {
-        res$
-          send_status(error_status)
+        res$send_status(error_status)
       }
     }
   }
@@ -146,17 +148,15 @@ httpbin_app <- function(log = interactive()) {
 
   app$get("/bearer", function(req, res) {
     auth <- req$get_header("Authorization") %||% ""
-    if (! grepl("^Bearer ", auth)) {
-      res$
-        set_header("WWW-Authenticate", "bearer")$
-        send_status(401L)
+    if (!grepl("^Bearer ", auth)) {
+      res$set_header("WWW-Authenticate", "bearer")$send_status(401L)
     } else {
       token <- sub("^Bearer ", "", auth)
-      res$
-        send_json(
-          list(authenticated = TRUE, token = token),
-          auto_unbox = TRUE, pretty = TRUE
-        )
+      res$send_json(
+        list(authenticated = TRUE, token = token),
+        auto_unbox = TRUE,
+        pretty = TRUE
+      )
     }
   })
 
@@ -171,11 +171,17 @@ httpbin_app <- function(log = interactive()) {
 
   hash1 <- function(realm, username, password, algorithm) {
     realm <- realm %||% ""
-    hash(paste(collapse = ":", c(
-      username,
-      realm,
-      password
-    )), algorithm)
+    hash(
+      paste(
+        collapse = ":",
+        c(
+          username,
+          realm,
+          password
+        )
+      ),
+      algorithm
+    )
   }
 
   hash2 <- function(credentials, req, algorithm) {
@@ -183,17 +189,28 @@ httpbin_app <- function(log = interactive()) {
     query <- if (nchar(req$query_string %||% "")) paste0("?", req$query_string)
     req_uri <- paste0(req$path, query)
     if (qop == "auth") {
-      hash(paste(collapse = ":", c(
-        toupper(req[["method"]]),
-        req_uri
-      )), algorithm)
-
+      hash(
+        paste(
+          collapse = ":",
+          c(
+            toupper(req[["method"]]),
+            req_uri
+          )
+        ),
+        algorithm
+      )
     } else {
-      hash(paste0(collapse = ":", c(
-        toupper(req[["method"]]),
-        req_uri,
-        hash(req$.body %||% "", algorithm)
-      )), algorithm)
+      hash(
+        paste0(
+          collapse = ":",
+          c(
+            toupper(req[["method"]]),
+            req_uri,
+            hash(req$.body %||% "", algorithm)
+          )
+        ),
+        algorithm
+      )
     }
   }
 
@@ -209,12 +226,23 @@ httpbin_app <- function(log = interactive()) {
 
     wwwauth <- paste0(
       "Digest ",
-      "realm=\"", realm, "\", ",
-      "qop=\"", qop, "\", ",
-      "nonce=\"", nonce, "\", ",
-      "opaque=\"", opaque, "\", ",
-      "algorithm=", algorithm, ", ",
-      "stale=", stale
+      "realm=\"",
+      realm,
+      "\", ",
+      "qop=\"",
+      qop,
+      "\", ",
+      "nonce=\"",
+      nonce,
+      "\", ",
+      "opaque=\"",
+      opaque,
+      "\", ",
+      "algorithm=",
+      algorithm,
+      ", ",
+      "stale=",
+      stale
     )
 
     wwwauth
@@ -226,7 +254,9 @@ httpbin_app <- function(log = interactive()) {
   }
 
   check_digest_auth <- function(req, credentials, user, passwd) {
-    if (is.null(credentials)) return(FALSE)
+    if (is.null(credentials)) {
+      return(FALSE)
+    }
     algorithm <- credentials[["algorithm"]]
     HA1_value <- hash1(
       credentials[["realm"]],
@@ -237,27 +267,40 @@ httpbin_app <- function(log = interactive()) {
     HA2_value <- hash2(credentials, req, algorithm)
 
     qop <- credentials[["qop"]] %||% "compat"
-    if (! qop %in% c("compat", "auth", "auth-int")) return(FALSE)
+    if (!qop %in% c("compat", "auth", "auth-int")) {
+      return(FALSE)
+    }
 
     response_hash <- if (qop == "compat") {
-      hash(paste0(c(
-        HA1_value,
-        credentials[["nonce"]] %||% "",
-        HA2_value
-      ), collapse = ":"), algorithm)
-
+      hash(
+        paste0(
+          c(
+            HA1_value,
+            credentials[["nonce"]] %||% "",
+            HA2_value
+          ),
+          collapse = ":"
+        ),
+        algorithm
+      )
     } else {
-      if (any(! c("nonce", "nc", "cnonce", "qop") %in% names(credentials))) {
+      if (any(!c("nonce", "nc", "cnonce", "qop") %in% names(credentials))) {
         return(FALSE)
       }
-      hash(paste0(c(
-        HA1_value,
-        credentials[["nonce"]],
-        credentials[["nc"]],
-        credentials[["cnonce"]],
-        credentials[["qop"]],
-        HA2_value
-      ), collapse = ":"), algorithm)
+      hash(
+        paste0(
+          c(
+            HA1_value,
+            credentials[["nonce"]],
+            credentials[["nc"]],
+            credentials[["cnonce"]],
+            credentials[["qop"]],
+            HA2_value
+          ),
+          collapse = ":"
+        ),
+        algorithm
+      )
     }
 
     (credentials[["response"]] %||% "") == response_hash
@@ -266,11 +309,11 @@ httpbin_app <- function(log = interactive()) {
   digest_auth <- function(req, res, qop, user, passwd, algorithm, stale_after) {
     require_cookie_handling <-
       tolower(req$query$`require-cookie` %||% "") %in% c("1", "t", "true")
-    if (! algorithm %in% c("MD5", "SHA-256", "SHA-512")) {
+    if (!algorithm %in% c("MD5", "SHA-256", "SHA-512")) {
       algorithm <- "MD5"
     }
 
-    if (! qop %in% c("auth", "auth-int")) {
+    if (!qop %in% c("auth", "auth-int")) {
       qop <- NULL
     }
 
@@ -279,57 +322,57 @@ httpbin_app <- function(log = interactive()) {
       parse_authorization_header(authorization)
     }
 
-    if (is.null(authorization) ||
+    if (
+      is.null(authorization) ||
         is.null(credentials) ||
         tolower(credentials$scheme) != "digest" ||
         (require_cookie_handling && is.null(req$get_header("Cookie")))
-        ) {
+    ) {
       wwwauth <- digest_challenge_response(req, qop, algorithm)
-      res$
-        set_status(401L)$
-        add_cookie("stale_after", stale_after)$
-        add_cookie("fake", "fake_value")$
-        set_header("WWW-Authenticate", wwwauth)$
-        send("")
+      res$set_status(401L)$add_cookie("stale_after", stale_after)$add_cookie(
+        "fake",
+        "fake_value"
+      )$set_header("WWW-Authenticate", wwwauth)$send("")
       return()
     }
 
-    if (require_cookie_handling &&
-        (req$cookies[["fake"]] %||% "") != "fake_value") {
-      res$
-        add_cookie("fake", "fake_value")$
-        add_status(403L)$
-        send_json(
-          list(errors = "missing cookie set on challenge"),
-          pretty = TRUE
-        )
+    if (
+      require_cookie_handling &&
+        (req$cookies[["fake"]] %||% "") != "fake_value"
+    ) {
+      res$add_cookie("fake", "fake_value")$add_status(403L)$send_json(
+        list(errors = "missing cookie set on challenge"),
+        pretty = TRUE
+      )
       return()
     }
 
     current_nonce <- credentials$nonce
     stale_after_value <- req$cookies$stale_after %||% ""
-    if (identical(current_nonce, req$cookies[["last_nonce"]] %||% "") ||
-        stale_after_value == "0") {
+    if (
+      identical(current_nonce, req$cookies[["last_nonce"]] %||% "") ||
+        stale_after_value == "0"
+    ) {
       wwwauth <- digest_challenge_response(req, qop, algorithm, TRUE)
-      res$
-        set_status(401L)$
-        add_cookie("stale_after", stale_after)$
-        add_cookie("last_nonce", current_nonce)$
-        add_cookie("fake", "fake_value")$
-        set_header("WWW-Authenticate", wwwauth)$
-        send("")
+      res$set_status(401L)$add_cookie("stale_after", stale_after)$add_cookie(
+        "last_nonce",
+        current_nonce
+      )$add_cookie("fake", "fake_value")$set_header(
+        "WWW-Authenticate",
+        wwwauth
+      )$send("")
       return()
     }
 
     if (!check_digest_auth(req, credentials, user, passwd)) {
       wwwauth <- digest_challenge_response(req, qop, algorithm, FALSE)
-      res$
-        set_status(401L)$
-        add_cookie("stale_after", stale_after)$
-        add_cookie("last_nonce", current_nonce)$
-        add_cookie("fake", "fake_value")$
-        set_header("WWW-Authenticate", wwwauth)$
-        send("")
+      res$set_status(401L)$add_cookie("stale_after", stale_after)$add_cookie(
+        "last_nonce",
+        current_nonce
+      )$add_cookie("fake", "fake_value")$set_header(
+        "WWW-Authenticate",
+        wwwauth
+      )$send("")
       return()
     }
 
@@ -341,12 +384,11 @@ httpbin_app <- function(log = interactive()) {
       )
     }
 
-    res$
-      send_json(
-        list(authentication = TRUE, user = user),
-        pretty = TRUE,
-        auto_unbox = TRUE
-      )
+    res$send_json(
+      list(authentication = TRUE, user = user),
+      pretty = TRUE,
+      auto_unbox = TRUE
+    )
   }
 
   app$get("/digest-auth/:qop/:user/:passwd", function(req, res) {
@@ -434,7 +476,7 @@ httpbin_app <- function(log = interactive()) {
 
     parse <- function(x) {
       x <- strsplit(x, ",", fixed = TRUE)[[1]]
-      re_match(x, '\\s*(W/)?"?([^"]*)"?\\s*')$groups[,2]
+      re_match(x, '\\s*(W/)?"?([^"]*)"?\\s*')$groups[, 2]
     }
 
     if_none_match <- parse(req$get_header("If-None-Match") %||% "")
@@ -447,7 +489,7 @@ httpbin_app <- function(log = interactive()) {
         return()
       }
     } else if (length(if_match) > 0) {
-      if ((! etag %in% if_match) && (!"*" %in% if_match)) {
+      if ((!etag %in% if_match) && (!"*" %in% if_match)) {
         res$send_status(412)
         return()
       }
@@ -458,7 +500,6 @@ httpbin_app <- function(log = interactive()) {
   })
 
   rsp_hdrs <- function(req, res) {
-
     obj <- structure(list(), names = character())
     for (i in seq_along(req$query)) {
       key <- names(req$query)[i]
@@ -472,8 +513,10 @@ httpbin_app <- function(log = interactive()) {
   app$post("/response-headers", rsp_hdrs)
 
   app$get("/cache", function(req, res) {
-    if (is.null(req$get_header("If-Modified-Since")) &&
-        is.null(req$get_header("If-None-Match"))) {
+    if (
+      is.null(req$get_header("If-Modified-Since")) &&
+        is.null(req$get_header("If-None-Match"))
+    ) {
       res$set_header("Last-Modified", http_time_stamp())
       # etag is added by default
       common_response(req, res)
@@ -488,9 +531,9 @@ httpbin_app <- function(log = interactive()) {
       "next"
     } else {
       res$set_header(
-            "Cache-Control",
-            sprintf("public, max-age=%d", value)
-          )
+        "Cache-Control",
+        sprintf("public, max-age=%d", value)
+      )
       common_response(req, res)
     }
   })
@@ -498,12 +541,10 @@ httpbin_app <- function(log = interactive()) {
   # Response formats =====================================================
 
   app$get("/deny", function(req, res) {
-    res$
-      set_type("text/plain")$
-      send_file(
-        root = system.file(package = "webfakes"),
-        file.path("examples", "httpbin", "data", "deny.txt")
-      )
+    res$set_type("text/plain")$send_file(
+      root = system.file(package = "webfakes"),
+      file.path("examples", "httpbin", "data", "deny.txt")
+    )
   })
 
   app$get("/brotli", function(req, res) {
@@ -512,10 +553,10 @@ httpbin_app <- function(log = interactive()) {
     json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
     data <- charToRaw(json)
     datax <- brotli::brotli_compress(data)
-    res$
-      set_type("application/json")$
-      set_header("Content-Encoding", "brotli")$
-      send(datax)
+    res$set_type("application/json")$set_header(
+      "Content-Encoding",
+      "brotli"
+    )$send(datax)
   })
 
   app$get("/gzip", function(req, res) {
@@ -530,10 +571,10 @@ httpbin_app <- function(log = interactive()) {
     flush(con2)
     close(con2)
     gzipped <- readBin(tmp, "raw", file.info(tmp)$size)
-    res$
-      set_type("application/json")$
-      set_header("Content-Encoding", "gzip")$
-      send(gzipped)
+    res$set_type("application/json")$set_header(
+      "Content-Encoding",
+      "gzip"
+    )$send(gzipped)
   })
 
   app$get("/deflate", function(req, res) {
@@ -542,19 +583,17 @@ httpbin_app <- function(log = interactive()) {
     json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
     data <- charToRaw(json)
     datax <- zip::deflate(data)
-    res$
-      set_type("application/json")$
-      set_header("Content-Encoding", "deflate")$
-      send(datax$output)
+    res$set_type("application/json")$set_header(
+      "Content-Encoding",
+      "deflate"
+    )$send(datax$output)
   })
 
   app$get("/encoding/utf8", function(req, res) {
-    res$
-      set_type("text/html; charset=utf-8")$
-      send_file(
-        root = system.file(package = "webfakes"),
-        file.path("examples", "httpbin", "data", "utf8.html")
-      )
+    res$set_type("text/html; charset=utf-8")$send_file(
+      root = system.file(package = "webfakes"),
+      file.path("examples", "httpbin", "data", "utf8.html")
+    )
   })
 
   app$get("/html", function(req, res) {
@@ -587,15 +626,17 @@ httpbin_app <- function(log = interactive()) {
 
   # Dynamic data =========================================================
 
-  app$get(list("/base64", new_regexp("/base64/(?<value>[\\+/=a-zA-Z0-9]*)")),
-          function(req, res) {
-    value <- req$params$value %||% ""
-    if (value == "") value <- "RXZlcnl0aGluZyBpcyBSc29tZQ=="
-    plain <- charToRaw(base64_decode(value))
-    res$
-      set_type("application/octet-stream")$
-      send(plain)
-  })
+  app$get(
+    list("/base64", new_regexp("/base64/(?<value>[\\+/=a-zA-Z0-9]*)")),
+    function(req, res) {
+      value <- req$params$value %||% ""
+      if (value == "") {
+        value <- "RXZlcnl0aGluZyBpcyBSc29tZQ=="
+      }
+      plain <- charToRaw(base64_decode(value))
+      res$set_type("application/octet-stream")$send(plain)
+    }
+  )
 
   app$get("/bytes/:n", function(req, res) {
     n <- suppressWarnings(as.integer(req$params$n))
@@ -603,10 +644,8 @@ httpbin_app <- function(log = interactive()) {
       return("next")
     } else {
       n <- min(n, 10000)
-      bytes <- as.raw(as.integer(floor(stats::runif(n, min=0, max=256))))
-      res$
-        set_type("application/octet-stream")$
-        send(bytes)
+      bytes <- as.raw(as.integer(floor(stats::runif(n, min = 0, max = 256))))
+      res$set_type("application/octet-stream")$send(bytes)
     }
   })
 
@@ -670,10 +709,10 @@ httpbin_app <- function(log = interactive()) {
         pause = pause
       )
 
-      res$
-        set_header("Content-Length", numbytes)$
-        set_header("Content-Type", "application/octet-stream")$
-        set_status(code)
+      res$set_header("Content-Length", numbytes)$set_header(
+        "Content-Type",
+        "application/octet-stream"
+      )$set_status(code)
 
       if (delay > 0) return(res$delay(delay))
     }
@@ -691,7 +730,9 @@ httpbin_app <- function(log = interactive()) {
   app$get(new_regexp("^/stream/(?<n>[0-9]+)$"), function(req, res) {
     n <- suppressWarnings(as.integer(req$params$n))
     n <- min(n, 100)
-    if (length(n) == 0 || is.na(n)) return("next")
+    if (length(n) == 0 || is.na(n)) {
+      return("next")
+    }
     msg <- make_common_response(req, res)[c("url", "args", "headers", "origin")]
 
     res$set_type("application/json")
@@ -708,15 +749,23 @@ httpbin_app <- function(log = interactive()) {
     n <- min(n, 100 * 1024)
     seed <- suppressWarnings(as.integer(req$query$seed %||% 42))
     chunk_size <- suppressWarnings(as.integer(req$query$chunk_size %||% 10240))
-    if (length(n) == 0 || is.na(n) || length(seed) == 0 || is.na(seed) ||
-        length(chunk_size) == 0 || is.na(chunk_size)) return("next")
+    if (
+      length(n) == 0 ||
+        is.na(n) ||
+        length(seed) == 0 ||
+        is.na(seed) ||
+        length(chunk_size) == 0 ||
+        is.na(chunk_size)
+    ) {
+      return("next")
+    }
     oldseed <- .GlobalEnv$.Random.seed
     on.exit(set.seed(oldseed))
     set.seed(seed)
-    bytes <- as.raw(as.integer(floor(stats::runif(n, min=0, max=256))))
+    bytes <- as.raw(as.integer(floor(stats::runif(n, min = 0, max = 256))))
     nc <- ceiling(n / chunk_size)
     for (i in seq_len(nc)) {
-      from <- (i-1)*chunk_size + 1
+      from <- (i - 1) * chunk_size + 1
       to <- min(length(bytes), i * chunk_size)
       res$send_chunk(bytes[from:to])
     }
@@ -733,11 +782,10 @@ httpbin_app <- function(log = interactive()) {
       return("next")
     }
 
-    res$
-      set_header("ETag", paste0("range", numbytes))$
-      set_header("Accept-Ranges", "bytes")$
-      set_header("Content-Length", numbytes)$
-      send_status(200L)
+    res$set_header("ETag", paste0("range", numbytes))$set_header(
+      "Accept-Ranges",
+      "bytes"
+    )$set_header("Content-Length", numbytes)$send_status(200L)
   })
 
   app$get(re_range, function(req, res) {
@@ -748,11 +796,12 @@ httpbin_app <- function(log = interactive()) {
       }
 
       if (numbytes < 0 || numbytes > 100 * 1024) {
-        res$
-          set_header("ETag", paste0("range", numbytes))$
-          set_header("Accept-Ranges", "bytes")$
-          set_status(404L)$
-          send("number of bytes must be in the range (0, 102400].")
+        res$set_header("ETag", paste0("range", numbytes))$set_header(
+          "Accept-Ranges",
+          "bytes"
+        )$set_status(404L)$send(
+          "number of bytes must be in the range (0, 102400]."
+        )
         return()
       }
 
@@ -784,13 +833,14 @@ httpbin_app <- function(log = interactive()) {
 
       if (!is.null(ranges)) {
         ranges[ranges == Inf] <- numbytes
-        if (any(ranges[,2] >= numbytes)) {
-          res$
-          set_header("ETag", paste0("range", numbytes))$
-          set_header("Accept-Ranges", "bytes")$
-          set_header("Content-Range", paste0("bytes */", numbytes))$
-          set_header("Content-Length", 0L)$
-          send_status(416L)
+        if (any(ranges[, 2] >= numbytes)) {
+          res$set_header("ETag", paste0("range", numbytes))$set_header(
+            "Accept-Ranges",
+            "bytes"
+          )$set_header(
+            "Content-Range",
+            paste0("bytes */", numbytes)
+          )$set_header("Content-Length", 0L)$send_status(416L)
           return()
         }
       }
@@ -807,23 +857,22 @@ httpbin_app <- function(log = interactive()) {
 
       # First part, so send status and headers
       if (is.null(ranges)) {
-        res$
-          set_header("ETag", paste0("range", numbytes))$
-          set_header("Accept-Ranges", "bytes")$
-          set_header("Content-Length", numbytes)$
-          set_status(200L)
-
+        res$set_header("ETag", paste0("range", numbytes))$set_header(
+          "Accept-Ranges",
+          "bytes"
+        )$set_header("Content-Length", numbytes)$set_status(200L)
       } else if (nrow(ranges) == 1) {
         # A single range
-        res$
-          set_header("ETag", paste0("range", numbytes))$
-          set_header("Accept-Ranges", "bytes")$
-          set_header(
-            "Content-Range",
-            sprintf("bytes=%d-%d/%d", ranges[1, 1], ranges[1, 2], numbytes)
-          )$
-          set_header("Content-Length", ranges[1, 2] - ranges[1, 1] + 1L)$
-          set_status(206L)
+        res$set_header("ETag", paste0("range", numbytes))$set_header(
+          "Accept-Ranges",
+          "bytes"
+        )$set_header(
+          "Content-Range",
+          sprintf("bytes=%d-%d/%d", ranges[1, 1], ranges[1, 2], numbytes)
+        )$set_header(
+          "Content-Length",
+          ranges[1, 2] - ranges[1, 1] + 1L
+        )$set_status(206L)
 
         # This is all we need to send
         res$locals$range$bytes <- substr(
@@ -831,7 +880,6 @@ httpbin_app <- function(log = interactive()) {
           ranges[1, 1] + 1,
           ranges[1, 2] + 1L
         )
-
       } else {
         # This cannot happen now, we do not support multiple ranges
         # Maybe later
@@ -859,25 +907,29 @@ httpbin_app <- function(log = interactive()) {
     res$send_json(ret, auto_unbox = TRUE, pretty = TRUE)
   })
 
-  app$get(new_regexp("^/links/(?<n>[0-9]+)(/(?<offset>[0-9]+))?$"),
-          function(req, res) {
-    n <- suppressWarnings(as.integer(req$params$n))
-    o <- suppressWarnings(as.integer(req$params$offset))
-    if (length(o) == 0 || is.na(o)) o <- 1
-    if (length(n) == 0 || is.na(n)) return("next")
-    n <- min(max(1, n), 200)
-    o <- min(max(1, o), n)
-    links <- sprintf("<a href = \"/links/%d/%d\">%d</a>", n, 1:n, 1:n)
-    links[o] <- o
-    html <- paste0(
-      "<html><head><title>Links</title></head><body>",
-      paste(links, collapse = " "),
-      "</body></html>"
-    )
-    res$
-      set_type("html")$
-      send(html)
-  })
+  app$get(
+    new_regexp("^/links/(?<n>[0-9]+)(/(?<offset>[0-9]+))?$"),
+    function(req, res) {
+      n <- suppressWarnings(as.integer(req$params$n))
+      o <- suppressWarnings(as.integer(req$params$offset))
+      if (length(o) == 0 || is.na(o)) {
+        o <- 1
+      }
+      if (length(n) == 0 || is.na(n)) {
+        return("next")
+      }
+      n <- min(max(1, n), 200)
+      o <- min(max(1, o), n)
+      links <- sprintf("<a href = \"/links/%d/%d\">%d</a>", n, 1:n, 1:n)
+      links[o] <- o
+      html <- paste0(
+        "<html><head><title>Links</title></head><body>",
+        paste(links, collapse = " "),
+        "</body></html>"
+      )
+      res$set_type("html")$send(html)
+    }
+  )
 
   # Cookies ==============================================================
 
@@ -924,11 +976,8 @@ httpbin_app <- function(log = interactive()) {
       message = "Client did not request a supported media type.",
       accept = ok
     )
-    if (is.null(act) || ! act %in% ok) {
-      res$
-        set_status(406)$
-        set_type("application/json")$
-        send_json(msg)
+    if (is.null(act) || !act %in% ok) {
+      res$set_status(406)$set_type("application/json")$send_json(msg)
     } else {
       fls <- c(
         "image/webp" = "Rlogo.webp",
@@ -944,14 +993,16 @@ httpbin_app <- function(log = interactive()) {
     }
   })
 
-  app$get(new_regexp("/image/(?<format>jpeg|png|svg|webp)"),
-          function(req, res) {
-    filename <- paste0("Rlogo.", req$params$format)
-    res$send_file(
-      root = system.file(package = "webfakes"),
-      file.path("examples", "httpbin", "images", filename)
-    )
-  })
+  app$get(
+    new_regexp("/image/(?<format>jpeg|png|svg|webp)"),
+    function(req, res) {
+      filename <- paste0("Rlogo.", req$params$format)
+      res$send_file(
+        root = system.file(package = "webfakes"),
+        file.path("examples", "httpbin", "images", filename)
+      )
+    }
+  )
 
   # Redirects ============================================================
 

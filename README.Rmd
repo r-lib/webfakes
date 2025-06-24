@@ -8,7 +8,10 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, setup, echo = FALSE, message = FALSE}
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
 knitr::opts_chunk$set(
   comment = "#>",
   tidy = FALSE,
@@ -79,7 +82,8 @@ Start a web app at the beginning of your tests or test file, and stop it after.
 Here is an example with the testthat package.
 Suppose you want to test that your `get_hello()` function can query an API:
 
-```{r include = FALSE}
+```{r}
+#| include: false
 library(testthat)
 ```
 
@@ -101,11 +105,13 @@ test_that("can use hello API", {
 
 When testing HTTP clients you can often use the built in `httpbin_app()`:
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
 httpbin <- webfakes::local_app_process(webfakes::httpbin_app())
 ```
 
-```{r include = FALSE}
+```{r}
+#| include: false
 suppressMessages(
   httpbin <- webfakes::local_app_process(webfakes::httpbin_app())
 )

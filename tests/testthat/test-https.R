@@ -1,4 +1,3 @@
-
 test_that("HTTPS", {
   skip_on_cran()
   app <- new_app()

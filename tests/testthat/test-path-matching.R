@@ -1,4 +1,3 @@
-
 test_that("middleware", {
   expect_true(path_match("foobar", "foobar2", list(method = "use")))
 })
@@ -44,8 +43,11 @@ named_list <- function() structure(list(), names = character())
 test_that("regexp", {
   good <- list(
     list("/foo", new_regexp("^/fo+$"), list(params = named_list())),
-    list("/", list(new_regexp("/foobar"), new_regexp("^/$")),
-         list(params = named_list()))
+    list(
+      "/",
+      list(new_regexp("/foobar"), new_regexp("^/$")),
+      list(params = named_list())
+    )
   )
   for (x in good) {
     expect_equal(
@@ -64,8 +66,11 @@ test_that("regexp", {
 
 test_that("list of things", {
   good <- list(
-    list("/foo", list("/foo2", new_regexp("/foo")),
-         list(params = named_list())),
+    list(
+      "/foo",
+      list("/foo2", new_regexp("/foo")),
+      list(params = named_list())
+    ),
     list("/", list(new_regexp("notthis"), "/"), TRUE)
   )
   for (x in good) {
@@ -81,7 +86,6 @@ test_that("list of things", {
   for (x in bad) {
     expect_false(path_match("get", x[[1]], list(method = "get", path = x[[2]])))
   }
-
 })
 
 test_that("regexp with capture groups", {

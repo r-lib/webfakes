@@ -1,4 +1,3 @@
-
 test_that("get", {
   url <- httpbin$url("/get")
   resp <- curl::curl_fetch_memory(url)
@@ -29,12 +28,23 @@ test_that("post", {
   expect_equal(data$path, "/post")
 })
 
-test_methods <- c("connect", "delete", "head", "mkcol", "options",
-                  "patch", "propfind", "put", "report")
+test_methods <- c(
+  "connect",
+  "delete",
+  "head",
+  "mkcol",
+  "options",
+  "patch",
+  "propfind",
+  "put",
+  "report"
+)
 
 app <- new_app()
 handler <- function(req, res) res$send_json(list(method = req$method))
-for (method in test_methods) app[[method]](paste0("/", method), handler)
+for (method in test_methods) {
+  app[[method]](paste0("/", method), handler)
+}
 web2 <- local_app_process(app, port = NA)
 
 test_that("the rest", {

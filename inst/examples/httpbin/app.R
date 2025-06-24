@@ -1,4 +1,3 @@
-
 library(webfakes)
 
 app <- httpbin_app()

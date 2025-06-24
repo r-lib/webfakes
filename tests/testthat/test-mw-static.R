@@ -1,12 +1,13 @@
-
 app <- new_app()
 app$use(mw_etag())
 app$use(mw_static(root = test_path("fixtures", "static")))
 set_headers <- function(req, res) {
   res$set_header("foo", "bar")
 }
-app$use(mw_static(root = test_path("fixtures", "static2"),
-                  set_headers = set_headers))
+app$use(mw_static(
+  root = test_path("fixtures", "static2"),
+  set_headers = set_headers
+))
 app$get("/static.html", function(req, res) {
   res$send("this is never reached")
 })

@@ -1,4 +1,3 @@
-
 test_that("parse_query", {
   expect_snapshot({
     parse_query("foo")

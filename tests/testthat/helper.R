@@ -1,4 +1,3 @@
-
 test_response_app <- function() {
   app <- new_app()
 
@@ -38,29 +37,21 @@ test_response_app <- function() {
   })
 
   app$get("/write", function(req, res) {
-    res$
-      write("hello ")$
-      write("world!")
+    res$write("hello ")$write("world!")
   })
 
   app$get("/write-header", function(req, res) {
-    res$
-      set_header("foo", "bar")$
-      write("hello ")$
-      write("world!")
+    res$set_header("foo", "bar")$write("hello ")$write("world!")
   })
 
   app$get("/write-wait", function(req, res) {
     res$locals$turn <- (res$locals$turn %||% 0) + 1L
     if (res$locals$turn == 1) {
-      res$
-        set_header("content-length", nchar("hello world!"))$
-        write("hell")$
-        delay(0.01)
+      res$set_header("content-length", nchar("hello world!"))$write(
+        "hell"
+      )$delay(0.01)
     } else if (res$locals$turn == 2) {
-      res$
-        write("o world")$
-        delay(0.01)
+      res$write("o world")$delay(0.01)
     } else {
       res$send("!")
     }
@@ -69,14 +60,11 @@ test_response_app <- function() {
   app$get("/send-chunk", function(req, res) {
     res$locals$turn <- (res$locals$turn %||% 0) + 1L
     if (res$locals$turn == 1) {
-      res$
-        set_header("Content-Type", "text/plain")$
-        send_chunk("first chunk\n")$
-        delay(0.01)
+      res$set_header("Content-Type", "text/plain")$send_chunk(
+        "first chunk\n"
+      )$delay(0.01)
     } else if (res$locals$turn == 2) {
-      res$
-        send_chunk("second chunk\n")$
-        delay(0.01)
+      res$send_chunk("second chunk\n")$delay(0.01)
     } else {
       res$send_chunk("third and final chunk\n")
     }

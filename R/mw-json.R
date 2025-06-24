@@ -1,4 +1,3 @@
-
 #' Middleware to parse a JSON body
 #'
 #' Adds the parsed object as the `json` element of the request object.
@@ -18,19 +17,21 @@
 #' app$use(mw_json())
 #' app
 
-mw_json <- function(type = "application/json",
-                     simplifyVector = FALSE,
-                     ...) {
-  type; simplifyVector; list(...)
+mw_json <- function(type = "application/json", simplifyVector = FALSE, ...) {
+  type
+  simplifyVector
+  list(...)
   function(req, res) {
     ct <- req$get_header("Content-Type") %||% ""
-    if (! ct %in% tolower(type)) return("next")
+    if (!ct %in% tolower(type)) {
+      return("next")
+    }
     if (!is.null(req$.body)) {
       req$json <- jsonlite::fromJSON(
         rawToChar(req$.body),
         simplifyVector = simplifyVector,
         ...
-        )
+      )
     }
     "next"
   }

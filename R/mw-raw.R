@@ -1,4 +1,3 @@
-
 #' Middleware to read the raw body of a request
 #'
 #' Adds the raw body, as a raw object to the `raw` field of the request.
@@ -17,7 +16,9 @@
 mw_raw <- function(type = "application/octet-stream") {
   function(req, res) {
     ct <- req$get_header("Content-Type") %||% ""
-    if (! ct %in% tolower(type)) return("next")
+    if (!ct %in% tolower(type)) {
+      return("next")
+    }
     req$raw <- req$.body
     "next"
   }

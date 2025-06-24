@@ -1,4 +1,3 @@
-
 `%||%` <- function(l, r) if (is.null(l)) r else l
 
 `%|NA|%` <- function(l, r) if (is_na_scalar(l)) r else l
@@ -39,7 +38,6 @@ unquote <- function(str) {
   len <- nchar(str)
   if (substr(str, 1, 1) == '"' && substr(str, len, len) == '"') {
     substr(str, 2, len - 1)
-
   } else {
     str
   }
@@ -78,7 +76,9 @@ is.named <- function(x) {
 }
 
 set_envvar <- function(envs) {
-  if (length(envs) == 0) return()
+  if (length(envs) == 0) {
+    return()
+  }
 
   stopifnot(is.named(envs))
 
@@ -87,8 +87,12 @@ set_envvar <- function(envs) {
 
   both_set <- set & !is.na(old)
 
-  if (any(set))  do.call("Sys.setenv", as.list(envs[set]))
-  if (any(!set)) Sys.unsetenv(names(envs)[!set])
+  if (any(set)) {
+    do.call("Sys.setenv", as.list(envs[set]))
+  }
+  if (any(!set)) {
+    Sys.unsetenv(names(envs)[!set])
+  }
 
   invisible(old)
 }
@@ -115,7 +119,7 @@ parse_url <- function(url) {
     "^(?<protocol>[a-zA-Z0-9]+)://",
     "(?:(?<username>[^@/:]+)(?::(?<password>[^@/]+))?@)?",
     "(?<host>[^/]+)",
-    "(?<path>.*)$"            # don't worry about query params here...
+    "(?<path>.*)$" # don't worry about query params here...
   )
 
   re_match(url, re_url)$groups
@@ -156,8 +160,7 @@ set_seed <- function(seed) {
   }
 }
 
-local_options <- function(.new = list(), ...,
-                          .local_envir = parent.frame()) {
+local_options <- function(.new = list(), ..., .local_envir = parent.frame()) {
   .new <- utils::modifyList(as.list(.new), list(...))
   old <- do.call(options, .new)
   defer(do.call(options, old), .local_envir)

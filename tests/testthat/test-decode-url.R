@@ -1,4 +1,3 @@
-
 test_that("decode_url option", {
   app <- webfakes::new_app()
   app$get(

@@ -1,4 +1,3 @@
-
 test_that("oauth2", {
   skip_on_cran()
 
@@ -24,7 +23,8 @@ test_that("oauth2", {
   url <- paste0(
     regi_url,
     "?name=3P%20app",
-    "&redirect_uri=", redi_url
+    "&redirect_uri=",
+    redi_url
   )
   resp <- curl::curl_fetch_memory(url)
   expect_equal(resp$status_code, 200L)
@@ -33,12 +33,15 @@ test_that("oauth2", {
   # Now set this data on the third party app
   # In real life this is included in the config of the third party app
   # by its admin
-  auth_data <- jsonlite::toJSON(list(
-    auth_url = auth_url,
-    token_url = toke_url,
-    client_id = regdata$client_id,
-    client_secret = regdata$client_secret
-  ), auto_unbox = TRUE)
+  auth_data <- jsonlite::toJSON(
+    list(
+      auth_url = auth_url,
+      token_url = toke_url,
+      client_id = regdata$client_id,
+      client_secret = regdata$client_secret
+    ),
+    auto_unbox = TRUE
+  )
   handle <- curl::new_handle()
   curl::handle_setheaders(
     handle,
@@ -93,7 +96,8 @@ test_that("oauth + httr", {
   url <- paste0(
     regi_url,
     "?name=httr%20local%20app",
-    "&redirect_uri=", httr::oauth_callback()
+    "&redirect_uri=",
+    httr::oauth_callback()
   )
   reg_resp <- httr::GET(url)
   httr::stop_for_status(reg_resp)
@@ -120,7 +124,8 @@ test_that("oauth + httr", {
   expect_message(
     cnt <- httr::content(
       httr::GET(rsapp$url("/data"), config = token),
-      as = "parsed", type = "application/json"
+      as = "parsed",
+      type = "application/json"
     ),
     "Auto-refreshing stale OAuth"
   )
@@ -132,8 +137,15 @@ test_that("oauth + httr", {
   endpoints <- parse_url(map_chr(strsplit(loglines, " "), "[[", 2))$path
   expect_equal(
     endpoints,
-    c("/register", "/authorize", "/authorize/decision",
-      "/token", "/data", "/token", "/data")
+    c(
+      "/register",
+      "/authorize",
+      "/authorize/decision",
+      "/token",
+      "/data",
+      "/token",
+      "/data"
+    )
   )
   status <- map_chr(strsplit(loglines, " "), "[[", 3)
   expect_equal(

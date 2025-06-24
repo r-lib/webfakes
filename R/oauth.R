@@ -1,4 +1,3 @@
-
 #' Fake OAuth 2.0 resource and authorization app
 #'
 #' @includeRmd man/rmd-fragments/oauth2.Rmd description
@@ -90,12 +89,14 @@
 #' @export
 #' @family OAuth2.0 functions
 
-oauth2_resource_app <- function(access_duration = 3600L,
-                                refresh_duration = 7200L,
-                                refresh = TRUE, seed = NULL,
-                                authorize_endpoint = "/authorize",
-                                token_endpoint = "/token") {
-
+oauth2_resource_app <- function(
+  access_duration = 3600L,
+  refresh_duration = 7200L,
+  refresh = TRUE,
+  seed = NULL,
+  authorize_endpoint = "/authorize",
+  token_endpoint = "/token"
+) {
   access_duration
   refresh_duration
   refresh
@@ -122,9 +123,9 @@ oauth2_resource_app <- function(access_duration = 3600L,
 
   app$get("/register", function(req, res) {
     if (is.null(req$query$name) || is.null(req$query$redirect_uri)) {
-      res$
-        set_status(400L)$
-        send("Cannot register without 'name' and 'redirect_uri'")
+      res$set_status(400L)$send(
+        "Cannot register without 'name' and 'redirect_uri'"
+      )
       return()
     }
 
@@ -140,19 +141,15 @@ oauth2_resource_app <- function(access_duration = 3600L,
   })
 
   app$get(authorize_endpoint, function(req, res) {
-
     # Missing or invalid client id
     client_id <- req$query$client_id
     if (is.null(client_id)) {
-      res$
-        set_status(400L)$
-        send("Invalid authorization request, no client id")
+      res$set_status(400L)$send("Invalid authorization request, no client id")
       return()
-
-    } else if (! client_id %in% app$locals$tpapps$client_id) {
-      res$
-        set_status(400L)$
-        send("Invalid authorization request, unknown client id")
+    } else if (!client_id %in% app$locals$tpapps$client_id) {
+      res$set_status(400L)$send(
+        "Invalid authorization request, unknown client id"
+      )
       return()
     }
 
@@ -161,12 +158,12 @@ oauth2_resource_app <- function(access_duration = 3600L,
 
     # Bad redirect URL?
     if (req$query$redirect_uri %||% "" != tprec$redirect_uri) {
-      res$
-        set_status(400L)$
-        send(paste0(
-          "Invalid authorization request, redirect URL mismatch: ",
-          req$query$redirect_uri %||% "", " vs ", tprec$redirect_uri
-        ))
+      res$set_status(400L)$send(paste0(
+        "Invalid authorization request, redirect URL mismatch: ",
+        req$query$redirect_uri %||% "",
+        " vs ",
+        tprec$redirect_uri
+      ))
       return()
     }
 
@@ -174,17 +171,13 @@ oauth2_resource_app <- function(access_duration = 3600L,
     app$locals$states <- c(app$locals$states, set_name(client_id, state))
 
     html <- res$render("authorize", list(state = state, app = tprec$name))
-    res$
-      set_type("text/html")$
-      send(html)
+    res$set_type("text/html")$send(html)
   })
 
   app$post(paste0(authorize_endpoint, "/decision"), function(req, res) {
     state <- req$form$state
-    if (is.null(state) || ! state %in% names(app$locals$states)) {
-      res$
-        set_status(400L)$
-        send("Invalid decision, no state")
+    if (is.null(state) || !state %in% names(app$locals$states)) {
+      res$set_status(400L)$send("Invalid decision, no state")
       return()
     }
 
@@ -202,20 +195,21 @@ oauth2_resource_app <- function(access_duration = 3600L,
 
       red_uri <- paste0(tprec$redirect_uri, "?code=", code, "&state=", state)
       res$redirect(red_uri)$send()
-
     } else {
-      res$
-        send("Maybe next time.")
+      res$send("Maybe next time.")
     }
   })
 
   local_app_seed <- function(.local_envir = parent.frame()) {
     old_seed <- get_seed()
     set_seed(app$locals$seed)
-    defer({
-      app$locals$seed <- get_seed()
-      set_seed(old_seed)
-    }, envir = .local_envir)
+    defer(
+      {
+        app$locals$seed <- get_seed()
+        set_seed(old_seed)
+      },
+      envir = .local_envir
+    )
   }
 
   new_access_token <- function(client_id, duration) {
@@ -251,13 +245,15 @@ oauth2_resource_app <- function(access_duration = 3600L,
   expire_tokens <- function() {
     if (!is.null(app$locals$tokens)) {
       app$locals$tokens <- app$locals$tokens[
-        app$locals$tokens$expiry > Sys.time(),,
+        app$locals$tokens$expiry > Sys.time(),
+        ,
         drop = FALSE
       ]
     }
     if (!is.null(app$locals$refresh_tokens)) {
       app$locals$refresh_tokens <- app$locals$refresh_tokens[
-        app$locals$refresh_tokens$expiry > Sys.time(),,
+        app$locals$refresh_tokens$expiry > Sys.time(),
+        ,
         drop = FALSE
       ]
     }
@@ -271,128 +267,128 @@ oauth2_resource_app <- function(access_duration = 3600L,
   is_valid_refresh_token <- function(client_id, token) {
     expire_tokens()
     wh <- match(token, app$locals$refresh_tokens$token)
-    if (is.na(wh)) return(FALSE)
+    if (is.na(wh)) {
+      return(FALSE)
+    }
     # client ID must match as well
     app$locals$refresh_tokens$client_id == client_id
   }
 
   # For refresh tokens
   app$post(token_endpoint, function(req, res) {
-    if (req$form$grant_type != "refresh_token") return("next")
+    if (req$form$grant_type != "refresh_token") {
+      return("next")
+    }
     client_id <- req$form$client_id
     tpapps <- app$locals$tpapps
-    if (! client_id %in% tpapps$client_id) {
-      res$
-        set_status(400L)$
-        send("Invalid client id")
+    if (!client_id %in% tpapps$client_id) {
+      res$set_status(400L)$send("Invalid client id")
       return()
     }
     tprec <- tpapps[match(client_id, tpapps$client_id), ]
 
     if (req$form$client_secret %||% "" != tprec$client_secret) {
-      res$
-        set_status(400L)$
-        send("Invalid token request, client secret mismatch")
+      res$set_status(400L)$send("Invalid token request, client secret mismatch")
       return()
     }
 
     if (!is_valid_refresh_token(client_id, req$form$refresh_token)) {
-      res$
-        set_status(400L)$
-        send_json(list(error = "invalid_request"), auto_unbox = TRUE)
+      res$set_status(400L)$send_json(
+        list(error = "invalid_request"),
+        auto_unbox = TRUE
+      )
       return()
     }
 
-    res$send_json(list(
-      access_token = new_access_token(client_id, access_duration),
-      expiry = access_duration,
-      refresh_token = new_refresh_token(client_id, refresh_duration)
-    ), auto_unbox = TRUE)
+    res$send_json(
+      list(
+        access_token = new_access_token(client_id, access_duration),
+        expiry = access_duration,
+        refresh_token = new_refresh_token(client_id, refresh_duration)
+      ),
+      auto_unbox = TRUE
+    )
   })
 
   # For regular tokens
   app$post(token_endpoint, function(req, res) {
     if (req$form$grant_type %||% "" != "authorization_code") {
-      res$
-        set_status(400L)$
-        send("Invalid grant type, must be 'authorization_code'")
+      res$set_status(400L)$send(
+        "Invalid grant type, must be 'authorization_code'"
+      )
       return()
     }
 
-    if (! req$form$code %in% app$locals$codes) {
-      res$
-        set_status(400L)$
-        send("Unknown authorization code")
+    if (!req$form$code %in% app$locals$codes) {
+      res$set_status(400L)$send("Unknown authorization code")
       return()
     }
 
     tpapps <- app$locals$tpapps
 
     client_id <- req$form$client_id
-    if (! client_id %in% tpapps$client_id) {
-      res$
-        set_status(400L)$
-        send("Invalid client id")
+    if (!client_id %in% tpapps$client_id) {
+      res$set_status(400L)$send("Invalid client id")
       return()
     }
 
     tprec <- tpapps[match(client_id, tpapps$client_id), ]
 
     if (req$form$client_secret %||% "" != tprec$client_secret) {
-      res$
-        set_status(400L)$
-        send("Invalid token request, client secret mismatch")
+      res$set_status(400L)$send("Invalid token request, client secret mismatch")
       return()
     }
 
     if (req$form$redirect_uri %||% "" != tprec$redirect_uri) {
-      res$
-        set_status(400L)$
-        send("Invalid token request, redirect URL mismatch")
+      res$set_status(400L)$send("Invalid token request, redirect URL mismatch")
       return()
     }
 
     app$locals$codes <- setdiff(app$locals$codes, req$query$code)
 
-    res$send_json(list(
-      access_token = new_access_token(client_id, access_duration),
-      expiry = access_duration,
-      refresh_token =
-        if (refresh) new_refresh_token(client_id, refresh_duration)
-      ), auto_unbox = TRUE, pretty = TRUE)
+    res$send_json(
+      list(
+        access_token = new_access_token(client_id, access_duration),
+        expiry = access_duration,
+        refresh_token = if (refresh) {
+          new_refresh_token(client_id, refresh_duration)
+        }
+      ),
+      auto_unbox = TRUE,
+      pretty = TRUE
+    )
   })
 
   app$get("/locals", function(req, res) {
-    res$
-      set_status(200L)$
-      send_json(list(
+    res$set_status(200L)$send_json(
+      list(
         apps = app$locals$tpapps,
         access = app$locals$tokens,
         refresh = app$locals$refresh_tokens
-      ), auto_unbox = TRUE)
+      ),
+      auto_unbox = TRUE
+    )
   })
 
   app$is_authorized <- function(req, res) {
     expire_tokens()
     if (!("Authorization" %in% names(req$headers))) {
-      res$
-        set_status(401L)$
-        send("Missing bearer token")
+      res$set_status(401L)$send("Missing bearer token")
       return(FALSE)
     }
 
     token <- gsub("Bearer ", "", req$headers$Authorization[[1]])
     if (!is_valid_token(token)) {
-      res$
-        set_status(401L)$
-        send("Invalid bearer token")
+      res$set_status(401L)$send("Invalid bearer token")
       return(FALSE)
     }
     TRUE
   }
 
   app$get("/data", function(req, res) {
-    if (!app$is_authorized(req, res)) return()
+    if (!app$is_authorized(req, res)) {
+      return()
+    }
     res$send_json(list(data = "top secret!"))
   })
 
@@ -455,18 +451,20 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
   app$locals$client_secret <- NA_character_
 
   app$post("/login/config", function(req, res) {
-    if (is.null(req$json$auth_url) || is.null(req$json$token_url) ||
-        is.null(req$json$client_id) || is.null(req$json$client_secret)) {
-      res$
-        set_status(400L)$
-        send("Need `client_id` and `client_secret` to config auth")
+    if (
+      is.null(req$json$auth_url) ||
+        is.null(req$json$token_url) ||
+        is.null(req$json$client_id) ||
+        is.null(req$json$client_secret)
+    ) {
+      res$set_status(400L)$send(
+        "Need `client_id` and `client_secret` to config auth"
+      )
       return()
     }
 
     if (!is.na(app$locals$auth_url)) {
-      res$
-        set_status(400L)$
-        send("Auth already configured")
+      res$set_status(400L)$send("Auth already configured")
       return()
     }
 
@@ -478,35 +476,34 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
     res$send_json(list(response = "Authorization configured"))
   })
 
-  app$get("/login", function (req, res) {
-
+  app$get("/login", function(req, res) {
     state <- generate_token()
     app$locals$state <- state
 
     url <- paste0(
       app$locals$auth_url,
-      "?client_id=", app$locals$client_id,
-      "&redirect_uri=", paste0(req$url, "/redirect"),
-      "&state=", state
+      "?client_id=",
+      app$locals$client_id,
+      "&redirect_uri=",
+      paste0(req$url, "/redirect"),
+      "&state=",
+      state
     )
     res$redirect(url)$send()
   })
 
   # I could not convince curl to redirect a POST to a GET, so both are good
-  app$all("/login/redirect", function (req, res) {
-
+  app$all("/login/redirect", function(req, res) {
     code <- req$query$code
     state <- req$query$state
     if (is.null(code) || is.null(state)) {
-      res$
-        set_status(400L)$
-        send("Invalid request via auth server, no 'code' or 'state'.")
+      res$set_status(400L)$send(
+        "Invalid request via auth server, no 'code' or 'state'."
+      )
       return()
     }
     if (state != app$locals$state) {
-      res$
-        set_status(400L)$
-        send("Unknown state in request via auth server")
+      res$set_status(400L)$send("Unknown state in request via auth server")
       return()
     }
 
@@ -514,10 +511,17 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
     handle <- curl::new_handle()
     data <- charToRaw(paste0(
       "grant_type=authorization_code&",
-      "code=", code, "&",
-      "client_id=", app$locals$client_id, "&",
-      "client_secret=", app$locals$client_secret, "&",
-      "redirect_uri=", req$url
+      "code=",
+      code,
+      "&",
+      "client_id=",
+      app$locals$client_id,
+      "&",
+      "client_secret=",
+      app$locals$client_secret,
+      "&",
+      "redirect_uri=",
+      req$url
     ))
     curl::handle_setheaders(
       handle,
@@ -533,12 +537,10 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
     resp <- curl::curl_fetch_memory(app$locals$token_url, handle = handle)
 
     if (resp$status_code != 200L) {
-      res$
-        set_status(500L)$
-        send(paste0(
-          "Failed to acquire authorization token. ",
-          rawToChar(resp$content)
-        ))
+      res$set_status(500L)$send(paste0(
+        "Failed to acquire authorization token. ",
+        rawToChar(resp$content)
+      ))
       return()
     }
 
@@ -549,14 +551,11 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
   })
 
   app$redirect_hook <- function(res, tokens) {
-    res$
-      send_json(text = tokens)
+    res$send_json(text = tokens)
   }
 
   app$get("/locals", function(req, res) {
-    res$
-      set_status(200L)$
-      send_json(app$locals$tokens, auto_unbox = TRUE)
+    res$set_status(200L)$send_json(app$locals$tokens, auto_unbox = TRUE)
   })
 
   get_data <- function() {
@@ -569,10 +568,14 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
 
   try_refresh <- function() {
     refresh_token <- app$locals$tokens$refresh_token
-    if (is.null(refresh_token)) return(FALSE)
+    if (is.null(refresh_token)) {
+      return(FALSE)
+    }
 
     data <- charToRaw(paste0(
-      "refresh_token=", refresh_token, "&",
+      "refresh_token=",
+      refresh_token,
+      "&",
       "grant_type=refresh_token"
     ))
     handle <- curl::new_handle()
@@ -589,7 +592,9 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
 
     resp <- curl::curl_fetch_memory(app$locals$token_url, handle = handle)
 
-    if (resp$status_code != 200L) return(FALSE)
+    if (resp$status_code != 200L) {
+      return(FALSE)
+    }
 
     tokens <- rawToChar(resp$content)
     app$locals$tokens <- jsonlite::fromJSON(tokens)
@@ -604,10 +609,7 @@ oauth2_third_party_app <- function(name = "Third-Party app") {
       if (try_refresh()) resp <- get_data()
     }
 
-    res$
-      set_status(resp$status_code)$
-      set_type(resp$type)$
-      send(resp$content)
+    res$set_status(resp$status_code)$set_type(resp$type)$send(resp$content)
   })
 }
 
@@ -642,7 +644,10 @@ oauth2_login <- function(login_url) {
   stvl <- xml2::xml_attr(input, "value")
 
   data <- charToRaw(paste0(
-    stnm, "=", stvl, "&",
+    stnm,
+    "=",
+    stvl,
+    "&",
     "action=yes"
   ))
 
@@ -709,8 +714,9 @@ oauth2_httr_login <- function(expr) {
     withCallingHandlers(
       expr,
       message = function(msg) {
-        if (grepl("^Please point your browser to the following url:",
-                  msg$message)) {
+        if (
+          grepl("^Please point your browser to the following url:", msg$message)
+        ) {
           invokeRestart("muffleMessage")
         }
         if (grepl("^http", msg$message)) {
