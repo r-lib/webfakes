@@ -6,7 +6,12 @@ PKG_LIBS=libmbedtls.a @LIBS@
 
 OBJECTS=@OBJECTS@
 
+all: $(SHLIB) mrproper
+
 $(SHLIB): libmbedtls.a
 
 libmbedtls.a: @MBED@
 	$(AR) r $@ $^
+
+mrproper: $(SHLIB)
+	rm -f libmbedtls.a
