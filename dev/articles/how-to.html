@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">webfakes</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.3.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.4.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,7 +131,7 @@ known yet.</p>
 <code class="sourceCode R"><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span><span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/httpbin_app.html">httpbin_app</a></span><span class="op">(</span><span class="op">)</span>, start <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="fu">local_env</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>GITHUB_API <span class="op">=</span> <span class="st">"{url}"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:45373/"</span></span>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:41165/"</span></span>
 <span><span class="va">http</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_API"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] ""</span></span></code></pre></div>
@@ -155,14 +155,14 @@ subprocess with <code><a href="../reference/new_app_process.html">new_app_proces
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:45671/"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:42067/"</span></span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For
 example:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $time</span></span>
-<span><span class="co">#&gt; [1] "2025-06-24 17:29:43"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2025-06-25 17:19:11"</span></span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>
@@ -347,8 +347,8 @@ at 0, not 1.</p>
 <span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
 <span><span class="co">#&gt; Request failed [401]. Retrying in 1 seconds...</span></span>
 <span><span class="co">#&gt; Request failed [401]. Retrying in 3.7 seconds...</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:39501/unstable]</span></span>
-<span><span class="co">#&gt;   Date: 2025-06-24 17:29</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:44633/unstable]</span></span>
+<span><span class="co">#&gt;   Date: 2025-06-25 17:19</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 17 B</span></span></code></pre></div>
@@ -399,8 +399,8 @@ it.</p>
 <span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"vcr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:45685/packages?name=vcr]</span></span>
-<span><span class="co">#&gt;   Date: 2025-06-24 17:29</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:38281/packages?name=vcr]</span></span>
+<span><span class="co">#&gt;   Date: 2025-06-25 17:19</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 18 B</span></span>
@@ -413,8 +413,8 @@ it.</p>
 <span><span class="co">#&gt; [1] "vcr"</span></span>
 <span></span>
 <span><span class="fu">post_package</span><span class="op">(</span><span class="st">"httptest"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Response [http://127.0.0.1:45685/packages?name=httptest]</span></span>
-<span><span class="co">#&gt;   Date: 2025-06-24 17:29</span></span>
+<span><span class="co">#&gt; Response [http://127.0.0.1:38281/packages?name=httptest]</span></span>
+<span><span class="co">#&gt;   Date: 2025-06-25 17:19</span></span>
 <span><span class="co">#&gt;   Status: 200</span></span>
 <span><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span><span class="co">#&gt;   Size: 29 B</span></span>
@@ -721,9 +721,9 @@ different connection speed. This is how it goes:</p>
 <span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu">curl</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/curl/reference/curl_fetch.html" class="external-link">curl_fetch_memory</a></span><span class="op">(</span><span class="va">slow</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/bytes/200"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">resp</span><span class="op">$</span><span class="va">times</span></span>
 <span><span class="co">#&gt;      redirect    namelookup       connect   pretransfer starttransfer </span></span>
-<span><span class="co">#&gt;      0.000000      0.000026      0.000157      0.000203      0.007725 </span></span>
+<span><span class="co">#&gt;      0.000000      0.000028      0.000195      0.000246      0.007882 </span></span>
 <span><span class="co">#&gt;         total </span></span>
-<span><span class="co">#&gt;      2.008053</span></span></code></pre></div>
+<span><span class="co">#&gt;      2.008344</span></span></code></pre></div>
 <p><code>throttle</code> gives the number of bytes per second, so
 downloading 200 random bytes from the fake app will take about 2
 seconds.</p>
