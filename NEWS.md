@@ -31,7 +31,7 @@ No changes.
 
 * `tmpl_glue()` now works correctly on platforms with an issue in
   `readChar(..., useBytes = TRUE)`, e.g. on macOS 14.x Sonoma:
-  <https://bugs.r-project.org/show_bug.cgi?id=18605>.
+  https://bugs.r-project.org/show_bug.cgi?id=18605.
 
 # webfakes 1.2.0
 
