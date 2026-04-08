@@ -2,6 +2,8 @@
 
 ## webfakes (development version)
 
+No changes.
+
 ## webfakes 1.4.0
 
 CRAN release: 2025-06-24
