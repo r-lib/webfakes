@@ -1,5 +1,7 @@
 # webfakes (development version)
 
+No changes.
+
 # webfakes 1.4.0
 
 * webfakes now supports HTTPS (#110).
