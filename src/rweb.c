@@ -2,6 +2,7 @@
 #include <R.h>
 #include <R_ext/Rdynload.h>
 #include <Rinternals.h>
+#include <Rversion.h>
 
 #include "civetweb.h"
 #include "errors.h"
@@ -14,6 +15,10 @@
 #else
 #include <unistd.h>
 #include <poll.h>
+#endif
+
+#if (defined(R_VERSION) && R_VERSION < R_Version(4, 5, 0))
+#define R_getVar(x,y,z) Rf_findVar(x,y)
 #endif
 
 /* --------------------------------------------------------------------- */
@@ -59,7 +64,7 @@ void R_init_webfakes(DllInfo *dll) {
   R_registerRoutines(dll, NULL, callMethods, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
-  cleancall_fns_dot_call = Rf_findVar(Rf_install(".Call"), R_BaseEnv);
+  cleancall_fns_dot_call = R_getVar(Rf_install(".Call"), R_BaseEnv, TRUE);
   /* Once we require some features we need to check the return value. */
   mg_init_library(0);
 }
@@ -343,7 +348,7 @@ static int begin_request(struct mg_connection *conn) {
 
 static int register_request(struct server_user_data *srv_data, SEXP req) {
   SEXP nextid = PROTECT(Rf_install("nextid"));
-  int id = INTEGER(Rf_findVar(nextid, srv_data->requests))[0] + 1;
+  int id = INTEGER(R_getVar(nextid, srv_data->requests, TRUE))[0] + 1;
   SEXP xid = PROTECT(ScalarInteger(id));
   Rf_defineVar(nextid, xid, srv_data->requests);
   SEXP cid = PROTECT(asChar(xid));
@@ -368,9 +373,9 @@ static void release_all_requests(SEXP requests) {
     const char *nm = CHAR(STRING_ELT(nms, i));
     if (!strcmp("nextid", nm)) continue;
     SEXP sym = PROTECT(Rf_installChar(STRING_ELT(nms, i)));
-    SEXP req = Rf_findVar(sym, requests);
+    SEXP req = R_getVar(sym, requests, TRUE);
     if (!isNull(req)) {
-      SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+      SEXP xconn = R_getVar(Rf_install(".xconn"), req, TRUE);
       struct mg_connection *conn = R_ExternalPtrAddr(xconn);
       if (conn) {
 #ifndef NDEBUG
@@ -698,7 +703,7 @@ static void response_cleanup(void *ptr) {
     conn_data->req_todo = WEBFAKES_DONE;
     deregister_request(srv_data, conn_data->id);
     SEXP req = conn_data->req;
-    SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+    SEXP xconn = R_getVar(Rf_install(".xconn"), req, TRUE);
     R_ClearExternalPtr(xconn);
     conn_data->req = R_NilValue;
     pthread_cond_signal(&conn_data->finish_cond);
@@ -708,7 +713,7 @@ static void response_cleanup(void *ptr) {
 }
 
 SEXP response_delay(SEXP req, SEXP secs) {
-  SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+  SEXP xconn = R_getVar(Rf_install(".xconn"), req, TRUE);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
   if (conn == 0) {
 #ifndef NDEBUG
@@ -744,7 +749,7 @@ SEXP response_delay(SEXP req, SEXP secs) {
 }
 
 SEXP response_send_headers(SEXP req) {
-  SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+  SEXP xconn = R_getVar(Rf_install(".xconn"), req, TRUE);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
   if (conn == 0) {
 #ifndef NDEBUG
@@ -758,11 +763,11 @@ SEXP response_send_headers(SEXP req) {
 
   r_call_on_early_exit(response_cleanup, conn);
 
-  SEXP http_version = PROTECT(Rf_findVar(Rf_install("http_version"), req));
-  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
-  SEXP headers = PROTECT(Rf_findVar(Rf_install(".headers"), res));
+  SEXP http_version = PROTECT(R_getVar(Rf_install("http_version"), req, TRUE));
+  SEXP res = PROTECT(R_getVar(Rf_install("res"), req, TRUE));
+  SEXP headers = PROTECT(R_getVar(Rf_install(".headers"), res, TRUE));
   SEXP names = PROTECT(Rf_getAttrib(headers, R_NamesSymbol));
-  SEXP status = PROTECT(Rf_findVar(Rf_install(".status"), res));
+  SEXP status = PROTECT(R_getVar(Rf_install(".status"), res, TRUE));
   int ret, i, nh = isNull(headers) ? 0 : LENGTH(headers);
 
   CHK(mg_printf(conn, "HTTP/%s %d %s\r\n", CHAR(STRING_ELT(http_version, 0)),
@@ -784,7 +789,7 @@ SEXP response_send_headers(SEXP req) {
 }
 
 SEXP response_send(SEXP req) {
-  SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+  SEXP xconn = R_getVar(Rf_install(".xconn"), req, TRUE);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
   if (conn == 0) {
 #ifndef NDEBUG
@@ -795,13 +800,13 @@ SEXP response_send(SEXP req) {
 #ifndef NDEBUG
   fprintf(stderr, "conn %p: sending response body\n", (void*) conn);
 #endif
-  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
-  SEXP headers_sent = Rf_findVar(Rf_install("headers_sent"), res);
+  SEXP res = PROTECT(R_getVar(Rf_install("res"), req, TRUE));
+  SEXP headers_sent = R_getVar(Rf_install("headers_sent"), res, TRUE);
   if (! LOGICAL(headers_sent)[0]) response_send_headers(req);
 
   struct connection_user_data *conn_data = mg_get_user_connection_data(conn);
   r_call_on_early_exit(response_cleanup, conn);
-  SEXP body = Rf_findVar(Rf_install(".body"), res);
+  SEXP body = R_getVar(Rf_install(".body"), res, TRUE);
   int ret;
 
   if (TYPEOF(body) == RAWSXP) {
@@ -842,11 +847,11 @@ SEXP response_send(SEXP req) {
 }
 
 SEXP response_write(SEXP req, SEXP data) {
-  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
-  SEXP headers_sent = PROTECT(Rf_findVar(Rf_install("headers_sent"), res));
+  SEXP res = PROTECT(R_getVar(Rf_install("res"), req, TRUE));
+  SEXP headers_sent = PROTECT(R_getVar(Rf_install("headers_sent"), res, TRUE));
   if (! LOGICAL(headers_sent)[0]) response_send_headers(req);
 
-  SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+  SEXP xconn = R_getVar(Rf_install(".xconn"), req, TRUE);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
   if (conn == 0) {
 #ifndef NDEBUG
@@ -870,11 +875,11 @@ SEXP response_write(SEXP req, SEXP data) {
 }
 
 SEXP response_send_chunk(SEXP req, SEXP data) {
-  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
-  SEXP headers_sent = PROTECT(Rf_findVar(Rf_install("headers_sent"), res));
+  SEXP res = PROTECT(R_getVar(Rf_install("res"), req, TRUE));
+  SEXP headers_sent = PROTECT(R_getVar(Rf_install("headers_sent"), res, TRUE));
   if (! LOGICAL(headers_sent)[0]) response_send_headers(req);
 
-  SEXP xconn = Rf_findVar(Rf_install(".xconn"), req);
+  SEXP xconn = R_getVar(Rf_install(".xconn"), req, TRUE);
   struct mg_connection *conn = R_ExternalPtrAddr(xconn);
   if (conn == 0) {
 #ifndef NDEBUG
@@ -901,7 +906,7 @@ SEXP response_send_error(SEXP req, SEXP message, SEXP status) {
 #ifndef NDEBUG
   fprintf(stderr, "sending 500 response");
 #endif
-  SEXP res = PROTECT(Rf_findVar(Rf_install("res"), req));
+  SEXP res = PROTECT(R_getVar(Rf_install("res"), req, TRUE));
   Rf_defineVar(Rf_install(".body"), message, res);
   Rf_defineVar(Rf_install(".status"), status, res);
   UNPROTECT(1);
