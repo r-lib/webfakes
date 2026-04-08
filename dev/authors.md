@@ -33,12 +33,12 @@ Source:
 [`DESCRIPTION`](https://github.com/r-lib/webfakes/blob/main/DESCRIPTION)
 
 Csárdi G (2026). *webfakes: Fake Web Apps for HTTP Testing*. R package
-version 1.4.0.9000, <https://webfakes.r-lib.org/>.
+version 1.4.1.9000, <https://webfakes.r-lib.org/>.
 
     @Manual{,
       title = {webfakes: Fake Web Apps for HTTP Testing},
       author = {Gábor Csárdi},
       year = {2026},
-      note = {R package version 1.4.0.9000},
+      note = {R package version 1.4.1.9000},
       url = {https://webfakes.r-lib.org/},
     }
