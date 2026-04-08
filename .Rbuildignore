@@ -25,3 +25,4 @@
 ^src/libmbedtls.x$
 ^[\.]?air\.toml$
 ^\.vscode$
+^[.]dev$
