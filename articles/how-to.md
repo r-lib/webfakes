@@ -1,0 +1,762 @@
+# How to use webfakes in your tests
+
+## How do I use webfakes in my package?
+
+First, you need to add webfakes to the `DESCRIPTION` file of your
+package. Use the `Suggests` field, as webfakes is only needed for
+testing:
+
+    ...
+    Suggests:
+      webfakes,
+      testthat
+    ...
+
+Then, unless the URL to the web service is an argument of your package
+functions, you might need to tweak your package code slightly to make
+sure every call to a real web service can be targeted at another URL
+instead (of a fake app). See next subsection.
+
+Last but not least, you need to decide if you want a single web app for
+all your test cases. The alternative is to use different apps for some
+or all test files. Occasionally you may want to use a special app for a
+single test case. Each app runs in a new subprocess, and it takes
+typically about 100-400ms to start.
+
+See the sections later on on writing tests with a single app or multiple
+apps.
+
+## How do I make my app connect to webfakes when the tests are running?
+
+In the typical scenario, you want your package to connect to the test
+app only when running the tests. If the URL to the web service is not an
+argument of the functions, one way to achieve this is to allow
+specifying the web server URL(s) via environment variables. E.g. when
+writing a GitHub API client, your package can check use `GITHUB_URL`
+environment variable.
+
+E.g.
+
+``` r
+service_url <- function() {
+    Sys.getenv("GITHUB_URL", "https://api.github.com")
+}
+
+# rest of the package code
+
+foobar <- function() {
+    httr::GET(service_url())
+}
+```
+
+When this is not set, the package connects to the proper GitHub API.
+When testing, you can point it to your test app.
+
+[`new_app_process()`](https://webfakes.r-lib.org/reference/new_app_process.md)
+helps you setting up temporary environment variables. These are active
+while the process is running, and they are removed or reset in
+`$stop()`. For example:
+
+In `$local_env()` environment variables, webfakes replaces `{url}` with
+the actual app URL. This is needed by default, because the web server
+process starts up only later, so the URL is not known yet.
+
+``` r
+http <- webfakes::local_app_process(webfakes::httpbin_app(), start = TRUE)
+http$local_env(list(GITHUB_API = "{url}"))
+Sys.getenv("GITHUB_API")
+#> [1] "http://127.0.0.1:43667/"
+http$stop()
+Sys.getenv("GITHUB_API")
+#> [1] ""
+```
+
+## How can I write my own app?
+
+You create a new app with
+[`new_app()`](https://webfakes.r-lib.org/reference/new_app.md). This
+returns an object with methods to add middleware and API endpoints to
+it. For example, a simple app that returns the current time in JSON
+would look like this:
+
+``` r
+time <- webfakes::new_app()
+time$get("/time", function(req, res) {
+  res$send_json(list(time = format(Sys.time())), auto_unbox = TRUE)
+})
+```
+
+Now you can start this app on a random port using `web$listen()`.
+Alternatively, you can start it in a subprocess with
+[`new_app_process()`](https://webfakes.r-lib.org/reference/new_app_process.md).
+
+``` r
+web <- webfakes::new_app_process(time)
+web$url()
+#> [1] "http://127.0.0.1:36317/"
+```
+
+Use `web$url()` to query the URL of the app. For example:
+
+``` r
+url <- web$url("/time")
+httr::content(httr::GET(url))
+#> $time
+#> [1] "2026-04-08 11:17:06"
+```
+
+`web$stop()` stops the app and the subprocess as well:
+
+``` r
+web$stop()
+web$get_state()
+#> [1] "not running"
+```
+
+[`local_app_process()`](https://webfakes.r-lib.org/reference/local_app_process.md)
+is similar to
+[`new_app_process()`](https://webfakes.r-lib.org/reference/new_app_process.md),
+but it stops the server process at the end of the calling block. This
+means that the process is automatically cleaned up at the end of a
+`test_that()` block or at the end of the test file.
+
+You can create your app at the beginning of your test file. Or, if you
+want to use the same app in multiple test files, use a [testthat helper
+file](https://testthat.r-lib.org/reference/test_file.html#special-files).
+Sometimes it useful if your users can create and use your test app, for
+example to create reproducible examples. You can include a (possibly
+internal) function in your package, that creates the app.
+
+See `?new_app()`, `?new_app_process()` and
+[`?local_app_process`](https://webfakes.r-lib.org/reference/local_app_process.md)
+for more details.
+
+## How do I use `httpbin_app()` (or another app) with testthat?
+
+You can use testthat’s setup files. You start the app in a setup file
+and also register a teardown expression for it.
+[`local_app_process()`](https://webfakes.r-lib.org/reference/local_app_process.md)
+can do both in one go. Your `tests/testthat/setup-http.R` may look like
+this:
+
+``` r
+http <- webfakes::local_app_process(
+  webfakes::httpbin_app(),
+  .local_envir = testthat::teardown_env()
+)
+```
+
+(Before testthat 3.0.0, you had to write the teardown expression in a
+`tests/testthat/teardown-http.R` file. That still works, but a single
+setup file is considered to be better practice, see [this testthat
+vignette](https://testthat.r-lib.org/articles/test-fixtures.html).)
+
+In the test cases you can query the `http` app process to get the URLs
+you need to connect to:
+
+``` r
+test_that("fails on 404", {
+  url <- http$url("/status/404")
+  response <- httr::GET(url)
+  expect_error(
+    httr::stop_for_status(response),
+    class = "http_404"
+  )
+})
+#> Test passed with 1 success 🥇.
+```
+
+When writing your tests interactively, you may create a `http` app
+process in the global environment, for convenience. You can
+[`source()`](https://rdrr.io/r/base/source.html) your `setup-http.R`
+file for this. Alternatively, you can start the app process in a helper
+file. See “How do I start the app when writing the tests?” just below.
+
+## How do I start the app when writing the tests?
+
+It is convenient to start the webfakes server process(es) when working
+on the tests interactively, e.g. when using `devtools::load_all()`. With
+[`local_app_process()`](https://webfakes.r-lib.org/reference/local_app_process.md)
+in the testthat `setup*.R` file this is not automatic, because
+`devtools::load_all()` does not run these files. So you would need to
+source the `setup*.R` files manually, which is error prone.
+
+One solution is to create server processes in the testthat `helper*.R`
+files. `load_all()` executes the helper files by default. So instead of
+using a setup file, you can simply do this in the `helper-http.R` file:
+
+``` r
+httpbin <- local_app_process(httpbin_app())
+```
+
+If the app process is created in the helper file, then it is ready use
+after `load_all()`, and (by default) the actual process will be started
+at the first `$url()` or `$get_port()` call. You can also start it
+manually with `$start()`.
+
+Processes created in helper files are not cleaned up automatically at
+the end of the test suite, unless you clean them up by registering a
+`$stop()` call in a setup file, like this:
+
+``` r
+withr::defer(httpbin$stop(), testthat::teardown_env())
+```
+
+In practice this is not necessary, because `R CMD check` runs the tests
+in a separate process, and when that finishes, the webfakes processes
+are cleaned up as well.
+
+When running `devtools::test()`,
+[`testthat::test_local()`](https://testthat.r-lib.org/reference/test_package.html)
+or another testthat function to run (part of) the test suite in the
+current session, the `helper*.R` files are (re)loaded first. This will
+terminate the currently running app processes, if any, and create new
+app process objects. Should the test suite auto-start some of the test
+processes from `helper*.R`, these will not be cleaned up at the end of
+the test suite, but only at the next `load_all()` or `test()` call, or
+at the end of the R session. This lets you run your test code
+interactively, either via `test()` or manually, without thinking too
+much about the webfakes processes.
+
+## Can I have an app for a single testthat test file?
+
+To run a web app for a single test file, start it with
+[`new_app_process()`](https://webfakes.r-lib.org/reference/new_app_process.md)
+at the beginning of the file, and register its cleanup using
+[`withr::defer()`](https://withr.r-lib.org/reference/defer.html). Even
+simpler, use
+[`local_app_process()`](https://webfakes.r-lib.org/reference/local_app_process.md)
+which is the same as
+[`new_app_process()`](https://webfakes.r-lib.org/reference/new_app_process.md)
+but it automatically stops the web server process, at the end of the
+test file:
+
+``` r
+app <- webfakes::new_app()
+app$get("/hello/:user", function(req, res) {
+  res$send(paste0("Hello ", req$params$user, "!"))
+})
+```
+
+``` r
+web <- webfakes::local_app_process(app)
+```
+
+Then in the test cases, use `web$url()` to get the URL to connect to.
+
+``` r
+test_that("can use hello API", {
+  url <- web$url("/hello/Gabor")
+  expect_equal(httr::content(httr::GET(url)), "Hello Gabor!")
+})
+#> No encoding supplied: defaulting to UTF-8.
+#> Test passed with 1 success 🎊.
+```
+
+## Can I use an app for a single testthat test?
+
+Sure. For this you need to create the app process within the
+[`testthat::test_that()`](https://testthat.r-lib.org/reference/test_that.html)
+test case.
+[`local_app_process()`](https://webfakes.r-lib.org/reference/local_app_process.md)
+automatically cleans it up at the end of the block. It goes like this:
+
+``` r
+test_that("query works", {
+  app <- webfakes::new_app()
+  app$get("/hello", function(req, res) res$send("hello there"))
+  web <- webfakes::local_app_process(app)
+
+  echo <- httr::content(httr::GET(web$url("/hello")))
+  expect_equal(echo, "hello there")
+})
+#> No encoding supplied: defaulting to UTF-8.
+#> Test passed with 1 success 🌈.
+```
+
+## How do I test a sequence of requests?
+
+To test a sequence of requests, the app needs state information that is
+kept between requests. `app$locals` is an environment that belongs to
+the app, and it can be used to record information and then retrieve it
+in future requests. You could store anything in `app$locals`, something
+simple like a counter variable, something fancier like a sqlite
+database. You can add something to `app$locals` via methods or directly
+after creating the app.
+
+``` r
+store <- webfakes::new_app()
+store$locals$packages <- list("webfakes")
+ls(store$locals)
+#> [1] "packages"
+store$locals$packages
+#> [[1]]
+#> [1] "webfakes"
+```
+
+E.g. here is an end point that fails three times, then succeeds once,
+fails again three times, etc.
+
+Note that the `counter` created by the code below starts at 0, not 1.
+
+``` r
+flaky <- webfakes::new_app()
+flaky$get("/unstable", function(req, res) {
+  if (identical(res$app$locals$counter, 3L)) {
+    res$app$locals$counter <- NULL
+    res$send_json(object = list(result = "ok"))
+  } else {
+    res$app$locals$counter <- c(res$app$locals$counter, 0L)[[1]] + 1L
+    res$send_status(401)
+  }
+})
+```
+
+Let’s run this app in another process and connect to it:
+
+``` r
+pr <- webfakes::new_app_process(flaky)
+url <- pr$url("/unstable")
+httr::RETRY("GET", url, times = 4)
+#> Request failed [401]. Retrying in 1 seconds...
+#> Request failed [401]. Retrying in 1 seconds...
+#> Request failed [401]. Retrying in 3.7 seconds...
+#> Response [http://127.0.0.1:46687/unstable]
+#>   Date: 2026-04-08 11:17
+#>   Status: 200
+#>   Content-Type: application/json
+#>   Size: 17 B
+```
+
+Another example where we send information to an app and then retrieve
+it. On a POST request we store the `name` query parameter in
+`app$locals$packages`, which can be queried with a GET request.
+
+``` r
+store <- webfakes::new_app()
+# Initial "data" for the app
+store$locals$packages <- list("webfakes")
+# Get method
+store$get("/packages", function(req, res) {
+  res$send_json(res$app$locals$packages, auto_unbox = TRUE)
+})
+# Post method, store information from the query
+store$post("/packages", function(req, res) {
+  res$app$locals$packages <- c(res$app$locals$packages, req$query$name)
+  res$send_json(res$app$locals$packages, auto_unbox = TRUE)
+})
+```
+
+Now we start the app in a subprocess, and run a GET query against it.
+
+``` r
+web <- webfakes::local_app_process(store, start = TRUE)
+# Get current information
+get_packages <- function() {
+  httr::content(
+    httr::GET(
+      httr::modify_url(
+        web$url(), 
+        path = "packages"
+        )
+      )
+    )
+}
+get_packages()
+#> [[1]]
+#> [1] "webfakes"
+```
+
+Let’s POST some new information.
+
+``` r
+post_package <- function(name) {
+  httr::POST(
+  httr::modify_url(
+    web$url(),  
+    path = "packages",
+    query = list(name = name)
+  )
+)
+}
+post_package("vcr")
+#> Response [http://127.0.0.1:40531/packages?name=vcr]
+#>   Date: 2026-04-08 11:17
+#>   Status: 200
+#>   Content-Type: application/json
+#>   Size: 18 B
+# Get current information
+get_packages()
+#> [[1]]
+#> [1] "webfakes"
+#> 
+#> [[2]]
+#> [1] "vcr"
+
+post_package("httptest")
+#> Response [http://127.0.0.1:40531/packages?name=httptest]
+#>   Date: 2026-04-08 11:17
+#>   Status: 200
+#>   Content-Type: application/json
+#>   Size: 29 B
+# Get current information
+get_packages()
+#> [[1]]
+#> [1] "webfakes"
+#> 
+#> [[2]]
+#> [1] "vcr"
+#> 
+#> [[3]]
+#> [1] "httptest"
+```
+
+Stop the app process:
+
+``` r
+web$stop()
+```
+
+## How can I debug an app?
+
+To debug an app, it is best to run it in the main R process, i.e. *not*
+via
+[`new_app_process()`](https://webfakes.r-lib.org/reference/new_app_process.md).
+You can add breakpoints, or
+[`browser()`](https://rdrr.io/r/base/browser.html) calls to your handler
+functions, and then invoke your app from another process. You might find
+the `curl` command line tool to send HTTP requests to the app, or you
+can just use another R process. Here is an example. We will simply print
+the incoming request object to the screen now. For a real debugging
+session you probably want to place a
+[`browser()`](https://rdrr.io/r/base/browser.html) command there.
+
+``` r
+app <- webfakes::new_app()
+app$get("/debug", function(req, res) {
+  print(req)
+  res$send("Got your back")
+})
+```
+
+Now start the app on port 3000:
+
+``` r
+app$listen(port = 3000)
+```
+
+    #> Running webfakes web app on port 3000
+
+Connect to the app from another R or `curl` process:
+
+``` sh
+curl -v http://127.0.0.1:3000/debug
+```
+
+    #> *   Trying 127.0.0.1...
+    #> * TCP_NODELAY set
+    #> * Connected to 127.0.0.1 (127.0.0.1) port 3000 (#0)
+    #> > GET /debug HTTP/1.1
+    #> > Host: 127.0.0.1:3000
+    #> > User-Agent: curl/7.54.0
+    #> > Accept: */*
+    #> >
+    #> < HTTP/1.1 200 OK
+    #> < Content-Type: text/plain
+    #> < Content-Length: 13
+    #> <
+    #> * Connection #0 to host 127.0.0.1 left intact
+    #> Got your back
+
+Your main R session will print the incoming request:
+
+    #> <webfakes_request>
+    #> method:
+    #>   get
+    #> url:
+    #>   http://127.0.0.1:3000/debug
+    #> client:
+    #>   127.0.0.1
+    #> query:
+    #> headers:
+    #>   Host: 127.0.0.1:3000
+    #>   User-Agent: curl/7.54.0
+    #>   Accept: */*
+    #> fields and methods:
+    #>   app                    # the webfakes_app the request belongs to
+    #>   headers                # HTTP request headers
+    #>   hostname               # server hostname, the Host header
+    #>   method                 # HTTP method of request (lowercase)
+    #>   path                   # server path
+    #>   protocol               # http or https
+    #>   query_string           # raw query string without '?'
+    #>   query                  # named list of query parameters
+    #>   remote_addr            # IP address of the client
+    #>   url                    # full URL of the request
+    #>   get_header(field)      # get a request header
+    #>  # see ?webfakes_request for details
+
+Press `CTRL+C` or `ESC` to interrupt the app in the main session.
+
+## How can I test HTTPS requests?
+
+Serving HTTPS from `localhost` or `127.0.0.1` instead of HTTP is easy,
+all you need to do is 1. Set the port to an HTTPS port by adding an
+`"s"` suffix to the port number. Use `"0s"` for an OS assigned free
+port: `r new_app_process(app, port = "0s")` By default webfakes uses the
+server key + certificate in the file at
+`r system.file("cert/localhost/server.pem", package = "webfakes")` This
+certificate includes `localhost`, `127.0.0.1` and
+`localhost.localdomain`. If you need another domain or IP address,
+you’ll need to create your own certificate. The `generate.sh` file in
+the same directory helps with that. 2. Specify the certificate bundle to
+the HTTP client you are using. For the default server key use the
+`ca.crt` file from the webfakes package:
+`r system.file("cert/localhost/ca.crt", package = "webfakes")` See
+examples for HTTP clients below.
+
+If you are using the curl package, use the `ca_info` option in
+[`curl::new_handle()`](https://jeroen.r-universe.dev/curl/reference/handle.html)
+or
+[`curl::handle_setopt()`](https://jeroen.r-universe.dev/curl/reference/handle.html):
+
+``` r
+cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
+curl::curl_fetch_memory(
+  http$url("/path/to/endpoint"), 
+  handle = curl::new_handle(cainfo = cainfo)
+)
+```
+
+For the httr package, use `httr::config(cainfo = ...)`:
+
+``` r
+httr::GET(
+  http$url("/headers", https = TRUE), 
+  httr::config(cainfo = cainfo)
+)
+```
+
+For the httr2 package:
+
+``` r
+httr2::request("https://example.com") |>
+  httr2::req_options(cainfo = cainfo) |>
+  httr2::req_perform()
+```
+
+For [`utils::download.file`](https://rdrr.io/r/utils/download.file.html)
+point the `CURL_CA_BUNDLE` environment variable to the `ca.crt` file.
+Don’t forget to undo this, once the HTTP request is done.
+
+``` r
+Sys.setenv(
+  CURL_CA_BUNDLE = system.file("cert/localhost/ca.crt", package = "webfakes")
+)
+download.file(http$url("/path/to/endpoint"), res <- tempfile())
+```
+
+### Special considerations for tests on Windows
+
+Unfortunately things are not that simple on Windows, for the HTTP
+clients. As far as I can tell, it is not easily possible to make the
+HTTP clients accept a new self-signed certificate. It is possible with
+libcurl, though, but you need to set the `CURL_SSL_BACKEND=openssl`
+environment variable. (And libcurl must be built with openssl support of
+course.) You need to set this env var *before* loading libcurl, so it is
+best to set it before starting R. One way to do this in the tests is to
+run the tests in a subprocess, with the callr package. Look at the
+`test-https.R` file in webfakes for a complete, current example. The
+tests use this helper function, defined in `helper.R`:
+
+``` r
+callr_curl <- function(url, options = list()) {
+  callr::r(
+    function(url, options) {
+      h <- curl::new_handle()
+      curl::handle_setopt(h, .list = options)
+      curl::curl_fetch_memory(url, handle = h)
+    },
+    list(url = url, options = options),
+    env = c(
+      callr::rcmd_safe_env(),
+      CURL_SSL_BACKEND = "openssl",
+      CURL_CA_BUNDLE = if ("cainfo" %in% names(options)) options$cainfo
+    )
+  )
+}
+```
+
+Example test case:
+
+``` r
+# ...
+  cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
+  resp <- if (.Platform$OS.type == "windows") {
+    callr_curl(http$url("/hello"), list(cainfo = cainfo))
+  } else {
+    curl::curl_fetch_memory(
+      http$url("/hello"),
+      handle = curl::new_handle(cainfo = cainfo)
+    )
+  }
+# ...
+```
+
+It seems like a good idea to `skip_on_cran()` HTTPS tests, at least on
+Windows, because this setup is not yet tested enough to consider it
+robust.
+
+webfakes uses [Mbed
+TLS](https://www.trustedfirmware.org/projects/mbed-tls/) for serving
+HTTPS.
+
+## How can I run a server on multiple ports?
+
+You can specify multiple port numbers, in a vector. webfakes will then
+listen on all those ports. You can also mix HTTP and HTTP ports.
+
+To redirect from an HTTP port to an HTTPS port, append an `"r"` suffix
+to the HTTP port number. THis port will be redirected to the next HTTPS
+port. E.g.
+
+``` r
+new_app_process(app, port = c("3000r", "3001s"))
+```
+
+will redirect HTTP from port 3000 to HTTPS on port 3001.
+
+To redirect from an OS assigned HTTP port to an OS assigned HTTPS port,
+use zeros for the port numbers:
+
+``` r
+http <- new_app_process(app, port = c("0r", "0s"))
+```
+
+Then you can use `http$get_ports()` to query all port numbers.
+
+You can also use
+
+``` r
+http$url(..., https = TRUE)
+```
+
+to get an HTTPS URL instead of the default one (the one with the first
+port).
+
+## Can I test asynchronous or parallel HTTP requests?
+
+R is single threaded and a webfakes app runs an R interpreter, so it
+cannot process multiple requests at the same time. The web server itself
+runs in a separate thread, and it can also process each request in a
+separate thread, but at any time only one request can use the R
+interpreter.
+
+This is important, because sometimes test requests may take longer to
+process. For example the `/delay/:secs` end point of
+[`httpbin_app()`](https://webfakes.r-lib.org/reference/httpbin_app.md)
+wait for the specified number of seconds before responding, to simulate
+a slow web server. If this wait is implemented via the standard
+[`Sys.sleep()`](https://rdrr.io/r/base/Sys.sleep.html) R function, then
+no other requests can be processed until the sleep is over. To avoid
+this, webfakes can put the waiting request on hold, return from the R
+interpreter, and respond to other incoming requests. Indeed, the
+`/delay/` end point is implemented using this feature.
+
+However, the request thread of the web server is still busy while on
+hold, so to take advantage of this, you need to allow multiple threads.
+The `num_threads` argument of the `$listen()` method of `webfakes_app`
+lets you specify the number of request threads the web server will use.
+Similarly, the `num_threads` argument of
+[`local_app_process()`](https://webfakes.r-lib.org/reference/local_app_process.md)
+lets you modify the number of threads.
+
+When testing asynchronous or parallel code, that might invoke multiple,
+possibly delayed requests, it is best to increase the number of threads.
+The code below calls the same API request concurrently, three times.
+Each request takes 1 second to answer, but if the web server has more
+than three threads, together they’ll still take about 1 second.
+
+``` r
+web <- webfakes::local_app_process(
+  webfakes::httpbin_app(),
+  opts = webfakes::server_opts(num_threads = 6, enable_keep_alive = TRUE)
+)
+```
+
+``` r
+testthat::test_that("parallel requests", {
+  url <- web$url("/delay/0.5")
+  p <- curl::new_pool()
+  handles <- replicate(3, curl::new_handle(url = url))
+  resps <- list()
+  for (handle in handles) {
+    curl::multi_add(
+      handle,
+      done = function(x) resps <<- c(resps, list(x)),
+      fail = stop,
+      pool = p
+    )
+  }
+  st <- system.time(curl::multi_run(timeout = 3, pool = p))
+  testthat::expect_true(st[["elapsed"]] < 1.5)
+})
+#> Test passed with 1 success 🎊.
+```
+
+(If this should fail for you and webfakes appears to process the
+requests sequentially, see [issue
+\#108](https://github.com/r-lib/webfakes/issues/108) for possible
+workarounds.)
+
+## How to make sure that my code works with the *real* API?
+
+Indeed, if you use webfakes for your test cases, then they never touch
+the real web server. As you might suspect, this is not ideal, especially
+when you do not control the server. The web service might change their
+API, and your test cases will fail to warn you.
+
+One practical solution is to write (at least some) flexible tests, that
+can run against a local fake webserver, or a real one, and you have a
+quick switch to change their behavior. I have found that environment
+variables work great for this.
+
+E.g. if the `FAKE_HTTP_TESTS` environment variable is not set, the tests
+run with the real web server, otherwise they use a fake one. Another
+solution, that works best is the HTTP requests are in the downstream
+package code, is to introduce one environment variable for each API you
+need to connect to. These might be set to the real API servers, or to
+the fake ones.
+
+Once you have some tests that can use both kinds or servers, you can set
+up your continuous integration (CI) framework, to run the tests agains
+the real server (say) once a day. This special CI run makes sure that
+your code works well with the real API. You can run all the other tests,
+locally and in the CI, against the fake local web server.
+
+See the question on [how webfakes helps you setting environment
+variables that point to your local
+server](#how-do-i-make-my-app-connect-to-webfakes-when-the-tests-are-running-).
+
+## How do I simulate a slow internet connection?
+
+You need to use the `throttle` server option when you start your web
+app. This means that you can run the very same app with different
+connection speed. This is how it goes:
+
+``` r
+library(webfakes)
+slow <- new_app_process(
+  httpbin_app(),
+  opts = server_opts(throttle = 100)
+)
+resp <- curl::curl_fetch_memory(slow$url("/bytes/200"))
+resp$times
+#>      redirect    namelookup       connect   pretransfer starttransfer 
+#>      0.000000      0.000044      0.000169      0.000216      0.007487 
+#>         total 
+#>      2.007962
+```
+
+`throttle` gives the number of bytes per second, so downloading 200
+random bytes from the fake app will take about 2 seconds.
