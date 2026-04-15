@@ -65,7 +65,7 @@ process starts up only later, so the URL is not known yet.
 http <- webfakes::local_app_process(webfakes::httpbin_app(), start = TRUE)
 http$local_env(list(GITHUB_API = "{url}"))
 Sys.getenv("GITHUB_API")
-#> [1] "http://127.0.0.1:38893/"
+#> [1] "http://127.0.0.1:36237/"
 http$stop()
 Sys.getenv("GITHUB_API")
 #> [1] ""
@@ -93,7 +93,7 @@ Alternatively, you can start it in a subprocess with
 ``` r
 web <- webfakes::new_app_process(time)
 web$url()
-#> [1] "http://127.0.0.1:35289/"
+#> [1] "http://127.0.0.1:37931/"
 ```
 
 Use `web$url()` to query the URL of the app. For example:
@@ -102,7 +102,7 @@ Use `web$url()` to query the URL of the app. For example:
 url <- web$url("/time")
 httr::content(httr::GET(url))
 #> $time
-#> [1] "2026-04-08 11:20:13"
+#> [1] "2026-04-15 07:25:12"
 ```
 
 `web$stop()` stops the app and the subprocess as well:
@@ -321,8 +321,8 @@ httr::RETRY("GET", url, times = 4)
 #> Request failed [401]. Retrying in 1 seconds...
 #> Request failed [401]. Retrying in 1 seconds...
 #> Request failed [401]. Retrying in 3.7 seconds...
-#> Response [http://127.0.0.1:34171/unstable]
-#>   Date: 2026-04-08 11:20
+#> Response [http://127.0.0.1:46657/unstable]
+#>   Date: 2026-04-15 07:25
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 17 B
@@ -380,8 +380,8 @@ post_package <- function(name) {
 )
 }
 post_package("vcr")
-#> Response [http://127.0.0.1:38867/packages?name=vcr]
-#>   Date: 2026-04-08 11:20
+#> Response [http://127.0.0.1:41893/packages?name=vcr]
+#>   Date: 2026-04-15 07:25
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 18 B
@@ -394,8 +394,8 @@ get_packages()
 #> [1] "vcr"
 
 post_package("httptest")
-#> Response [http://127.0.0.1:38867/packages?name=httptest]
-#>   Date: 2026-04-08 11:20
+#> Response [http://127.0.0.1:41893/packages?name=httptest]
+#>   Date: 2026-04-15 07:25
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 29 B
@@ -753,9 +753,9 @@ slow <- new_app_process(
 resp <- curl::curl_fetch_memory(slow$url("/bytes/200"))
 resp$times
 #>      redirect    namelookup       connect   pretransfer starttransfer 
-#>      0.000000      0.000031      0.000149      0.000186      0.007385 
+#>      0.000000      0.000025      0.000130      0.000174      0.007747 
 #>         total 
-#>      2.007717
+#>      2.008193
 ```
 
 `throttle` gives the number of bytes per second, so downloading 200

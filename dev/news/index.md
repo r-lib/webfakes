@@ -4,6 +4,8 @@
 
 ## webfakes 1.4.1
 
+CRAN release: 2026-04-08
+
 No changes.
 
 ## webfakes 1.4.0

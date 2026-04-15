@@ -148,7 +148,7 @@ Alternatively, you can start it in a subprocess with
 ``` r
 web <- webfakes::new_app_process(time)
 web$url()
-#> [1] "http://127.0.0.1:43791/"
+#> [1] "http://127.0.0.1:43331/"
 ```
 
 Use `web$url()` to query the URL of the app. For example:
@@ -157,7 +157,7 @@ Use `web$url()` to query the URL of the app. For example:
 url <- web$url("/time")
 httr::content(httr::GET(url))
 #> $time
-#> [1] "2026-04-08 11:20:33"
+#> [1] "2026-04-15 07:25:32"
 ```
 
 `web$stop()` stops the app and the subprocess as well:
