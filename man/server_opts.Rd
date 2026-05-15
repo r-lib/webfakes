@@ -10,6 +10,7 @@ server_opts(
   num_threads = 1,
   interfaces = "127.0.0.1",
   enable_keep_alive = FALSE,
+  keep_alive_timeout_ms = 5000,
   access_log_file = remote,
   error_log_file = TRUE,
   tcp_nodelay = FALSE,
@@ -36,6 +37,11 @@ interface if you know what you are doing. webfakes was not designed
 to serve public web pages.}
 
 \item{enable_keep_alive}{Whether the server keeps connections alive.}
+
+\item{keep_alive_timeout_ms}{Idle timeout in milliseconds for keep-alive
+connections. If a client does not send another request within this
+window, the server closes the connection. If
+\code{enable_keep_alive} is not \code{TRUE} then it is ignored.}
 
 \item{access_log_file}{\code{TRUE}, \code{FALSE}, or a path. See 'Logging'
 below.}

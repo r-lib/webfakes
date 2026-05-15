@@ -27,6 +27,7 @@ server_start <- function(opts = server_opts()) {
     "listening_ports" = ports,
     "num_threads" = opts$num_threads,
     "enable_keep_alive" = c("no", "yes")[[opts$enable_keep_alive + 1]],
+    "keep_alive_timeout_ms" = as.character(opts$keep_alive_timeout_ms),
     "access_log_file" = opts$access_log_file %|NA|% "",
     "error_log_file" = opts$error_log_file %|NA|% "",
     "tcp_nodelay" = c("0", "1")[[opts$tcp_nodelay + 1]],
@@ -59,6 +60,10 @@ server_start <- function(opts = server_opts()) {
 #'   interface if you know what you are doing. webfakes was not designed
 #'   to serve public web pages.
 #' @param enable_keep_alive Whether the server keeps connections alive.
+#' @param keep_alive_timeout_ms Idle timeout in milliseconds for keep-alive
+#'   connections. If a client does not send another request within this
+#'   window, the server closes the connection. If
+#'  `enable_keep_alive` is not `TRUE` then it is ignored.
 #' @param access_log_file `TRUE`, `FALSE`, or a path. See 'Logging'
 #'   below.
 #' @param error_log_file `TRUE`, `FALSE`, or a path. See 'Logging'
@@ -102,6 +107,7 @@ server_opts <- function(
   num_threads = 1,
   interfaces = "127.0.0.1",
   enable_keep_alive = FALSE,
+  keep_alive_timeout_ms = 5000,
   access_log_file = remote,
   error_log_file = TRUE,
   tcp_nodelay = FALSE,
