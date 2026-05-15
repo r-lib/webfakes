@@ -46,6 +46,90 @@ test_that("/post", {
   )
 })
 
+test_that("/post echoes a raw string body in `data` (#115)", {
+  url <- httpbin$url("/post")
+  body <- charToRaw("some string")
+  handle <- curl::new_handle()
+  # Suppress curl's default Content-Type: application/x-www-form-urlencoded,
+  # mirroring what httr2::req_body_raw() sends (no Content-Type at all).
+  curl::handle_setheaders(handle, "Content-Type" = "")
+  curl::handle_setopt(
+    handle,
+    customrequest = "POST",
+    postfieldsize = length(body),
+    postfields = body
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(data$data, "some string")
+})
+
+test_that("/post echoes a raw body with explicit application/octet-stream", {
+  url <- httpbin$url("/post")
+  body <- charToRaw("some string")
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "content-type" = "application/octet-stream")
+  curl::handle_setopt(
+    handle,
+    customrequest = "POST",
+    postfieldsize = length(body),
+    postfields = body
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(data$data, "some string")
+})
+
+test_that("/post echoes control bytes via JSON escapes", {
+  url <- httpbin$url("/post")
+  body <- as.raw(1:10)
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "Content-Type" = "")
+  curl::handle_setopt(
+    handle,
+    customrequest = "POST",
+    postfieldsize = length(body),
+    postfields = body
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  data <- jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE)
+  expect_equal(charToRaw(data$data), body)
+})
+
+test_that("/post echoes a body containing 0x00 as \\u0000 on the wire", {
+  url <- httpbin$url("/post")
+  body <- as.raw(c(0x00, 0x01, 0x41, 0x00, 0x42))
+  handle <- curl::new_handle()
+  curl::handle_setheaders(handle, "Content-Type" = "")
+  curl::handle_setopt(
+    handle,
+    customrequest = "POST",
+    postfieldsize = length(body),
+    postfields = body
+  )
+  resp <- curl::curl_fetch_memory(url, handle = handle)
+  expect_equal(resp$status_code, 200L)
+  txt <- rawToChar(resp$content)
+  # The raw JSON on the wire must contain the 6 ASCII chars backslash-u-0000
+  # (a real null byte cannot appear in JSON). The test only asserts the wire
+  # format -- decoding it back into an R string is up to the client.
+  expect_true(grepl("\\u0000", txt, fixed = TRUE))
+  expect_match(txt, "\"data\":\\s*\"\\\\u0000\\\\u0001A\\\\u0000B\"")
+})
+
+test_that("raw_body_as_data encodes null bytes as JSON escapes", {
+  out <- raw_body_as_data(as.raw(c(0x00, 0x41)))
+  expect_s3_class(out, "json")
+  expect_equal(as.character(out), "\"\\u0000A\"")
+  # plain text path: no class, normal character
+  out2 <- raw_body_as_data(charToRaw("hello"))
+  expect_false(inherits(out2, "json"))
+  expect_equal(out2, "hello")
+})
+
 test_that("/post and multipart data", {
   on.exit(rm(tmp), add = TRUE)
   tmp <- tempfile()

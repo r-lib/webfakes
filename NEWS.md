@@ -14,6 +14,10 @@
 * Route matching now ignores trailing slashes. Use regular expressions
   (`new_regexp()`) if you need exact trailing slash matching (#120).
 
+* `httpbin_app()`'s `/post`, `/put`, `/patch`, `/delete` and `/anything*`
+  endpoints now return the request body in the `data` field for any
+  `Content-Type`, matching `httpbin.org` (#115).
+
 # webfakes 1.4.1
 
 No changes.

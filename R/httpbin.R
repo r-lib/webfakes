@@ -21,6 +21,36 @@
 #' cat(rawToChar(resp$content))
 #' proc$stop()
 
+raw_body_as_data <- function(body) {
+  bytes <- as.integer(body)
+  if (!any(bytes == 0L)) {
+    return(rawToChar(body))
+  }
+  # R character vectors can't hold an embedded 0x00, so produce the JSON
+  # encoding of the field by hand and let jsonlite::toJSON pass it through
+  # via the asJSON,json method (json_verbatim = TRUE on the toJSON call).
+  parts <- vapply(
+    bytes,
+    function(b) {
+      if (b == 0x00L) "\\u0000"
+      else if (b == 0x22L) "\\\""
+      else if (b == 0x5cL) "\\\\"
+      else if (b == 0x08L) "\\b"
+      else if (b == 0x09L) "\\t"
+      else if (b == 0x0aL) "\\n"
+      else if (b == 0x0cL) "\\f"
+      else if (b == 0x0dL) "\\r"
+      else if (b < 0x20L) sprintf("\\u%04x", b)
+      else rawToChar(as.raw(b))
+    },
+    character(1)
+  )
+  structure(
+    paste0("\"", paste(parts, collapse = ""), "\""),
+    class = "json"
+  )
+}
+
 httpbin_app <- function(log = interactive()) {
   encode_files <- function(files) {
     for (i in seq_along(files)) {
@@ -58,9 +88,18 @@ httpbin_app <- function(log = interactive()) {
   })
 
   make_common_response <- function(req, res) {
+    data <- req$text
+    if (
+      is.null(data) &&
+        is.null(req$form) &&
+        length(req$files) == 0 &&
+        length(req$.body) > 0
+    ) {
+      data <- raw_body_as_data(req$.body)
+    }
     ret <- list(
       args = as.list(req$query),
-      data = req$text,
+      data = data,
       files = encode_files(req$files),
       form = req$form,
       headers = req$headers,
@@ -74,7 +113,12 @@ httpbin_app <- function(log = interactive()) {
 
   common_response <- function(req, res) {
     ret <- make_common_response(req, res)
-    res$send_json(object = ret, auto_unbox = TRUE, pretty = TRUE)
+    res$send_json(
+      object = ret,
+      auto_unbox = TRUE,
+      pretty = TRUE,
+      json_verbatim = TRUE
+    )
   }
 
   # Main page
@@ -550,7 +594,12 @@ httpbin_app <- function(log = interactive()) {
   app$get("/brotli", function(req, res) {
     ret <- make_common_response(req, res)
     ret$brotli <- TRUE
-    json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
+    json <- jsonlite::toJSON(
+      ret,
+      auto_unbox = TRUE,
+      pretty = TRUE,
+      json_verbatim = TRUE
+    )
     data <- charToRaw(json)
     datax <- brotli::brotli_compress(data)
     res$set_type("application/json")$set_header(
@@ -562,7 +611,12 @@ httpbin_app <- function(log = interactive()) {
   app$get("/gzip", function(req, res) {
     ret <- make_common_response(req, res)
     ret$gzipped <- TRUE
-    json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
+    json <- jsonlite::toJSON(
+      ret,
+      auto_unbox = TRUE,
+      pretty = TRUE,
+      json_verbatim = TRUE
+    )
     tmp <- tempfile()
     on.exit(unlink(tmp), add = TRUE)
     con <- file(tmp, open = "wb")
@@ -580,7 +634,12 @@ httpbin_app <- function(log = interactive()) {
   app$get("/deflate", function(req, res) {
     ret <- make_common_response(req, res)
     ret$deflated <- TRUE
-    json <- jsonlite::toJSON(ret, auto_unbox = TRUE, pretty = TRUE)
+    json <- jsonlite::toJSON(
+      ret,
+      auto_unbox = TRUE,
+      pretty = TRUE,
+      json_verbatim = TRUE
+    )
     data <- charToRaw(json)
     datax <- zip::deflate(data)
     res$set_type("application/json")$set_header(
@@ -662,7 +721,8 @@ httpbin_app <- function(log = interactive()) {
       res$locals$response <- jsonlite::toJSON(
         make_common_response(req, res),
         auto_unbox = TRUE,
-        pretty = TRUE
+        pretty = TRUE,
+        json_verbatim = TRUE
       )
       content_length <- nchar(res$locals$response, type = "bytes")
       res$set_header('Content-Length', content_length)
