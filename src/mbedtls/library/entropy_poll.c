@@ -40,7 +40,9 @@
 
 #include <windows.h>
 #include <bcrypt.h>
+#if !defined(__MINGW32__)
 #include <intsafe.h>
+#endif
 
 #if defined(__MINGW32__)
 // MINGW
