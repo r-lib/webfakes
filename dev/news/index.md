@@ -2,6 +2,12 @@
 
 ## webfakes (development version)
 
+- New `keep_alive_timeout_ms` option in
+  [`server_opts()`](https://webfakes.r-lib.org/dev/reference/server_opts.md)
+  to configure the idle timeout of keep-alive connections. The default
+  is 5000 ms, up from the underlying CivetWeb default of 500 ms
+  ([\#114](https://github.com/r-lib/webfakes/issues/114)).
+
 - Handler functions may now declare a `locals` argument, in which case
   webfakes passes `app$locals` to it directly, without having to access
   it through `req$app$locals`
