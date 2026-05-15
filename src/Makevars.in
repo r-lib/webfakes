@@ -11,7 +11,7 @@ all: $(SHLIB) mrproper
 $(SHLIB): libmbedtls.a
 
 libmbedtls.a: @MBED@
-	$(AR) rs $@ $^
+	$(AR) rcs $@ $^
 
 mrproper: $(SHLIB)
 	rm -f libmbedtls.a
