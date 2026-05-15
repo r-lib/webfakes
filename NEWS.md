@@ -1,5 +1,11 @@
 # webfakes (development version)
 
+# webfakes 1.4.1
+
+No changes.
+
+# webfakes 1.4.0
+
 * webfakes now supports HTTPS (#110).
 
 * The cleanup of a `new_app_process()` (and thus `local_app_process()`)
@@ -27,7 +33,7 @@ No changes.
 
 * `tmpl_glue()` now works correctly on platforms with an issue in
   `readChar(..., useBytes = TRUE)`, e.g. on macOS 14.x Sonoma:
-  <https://bugs.r-project.org/show_bug.cgi?id=18605>.
+  https://bugs.r-project.org/show_bug.cgi?id=18605.
 
 # webfakes 1.2.0
 

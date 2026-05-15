@@ -12,8 +12,8 @@
       new_app_process(app, start = TRUE)
     Condition
       Error:
-      ! failed to start webfakes app process: in callr subprocess.
-      Caused by error:
+      ! ! failed to start webfakes app process: in callr subprocess.
+      Caused by error in `app$listen(port = port, opts = opts)`:
       ! oops
 
 ---
