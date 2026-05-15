@@ -21,6 +21,12 @@
   if you need exact trailing slash matching
   ([\#120](https://github.com/r-lib/webfakes/issues/120)).
 
+- [`httpbin_app()`](https://webfakes.r-lib.org/dev/reference/httpbin_app.md)’s
+  `/post`, `/put`, `/patch`, `/delete` and `/anything*` endpoints now
+  return the request body in the `data` field for any `Content-Type`,
+  matching `httpbin.org`
+  ([\#115](https://github.com/r-lib/webfakes/issues/115)).
+
 ## webfakes 1.4.1
 
 CRAN release: 2026-04-08
