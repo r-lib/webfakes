@@ -152,7 +152,7 @@ you need to connect to:
         class = "http_404"
       )
     })
-    #> Test passed
+    #> Test passed with 1 success.
 
 When writing your tests interactively, you may create a `http` app
 process in the global environment, for convenience. You can
@@ -229,7 +229,7 @@ Then in the test cases, use `web$url()` to get the URL to connect to.
       expect_equal(httr::content(httr::GET(url)), "Hello Gabor!")
     })
     #> No encoding supplied: defaulting to UTF-8.
-    #> Test passed
+    #> Test passed with 1 success.
 
 ### Can I use an app for a single testthat test?
 
@@ -248,7 +248,7 @@ automatically cleans it up at the end of the block. It goes like this:
       expect_equal(echo, "hello there")
     })
     #> No encoding supplied: defaulting to UTF-8.
-    #> Test passed
+    #> Test passed with 1 success.
 
 ### How do I test a sequence of requests?
 
@@ -646,7 +646,7 @@ than three threads, together they'll still take about 1 second.
       st <- system.time(curl::multi_run(timeout = 3, pool = p))
       testthat::expect_true(st[["elapsed"]] < 1.5)
     })
-    #> Test passed
+    #> Test passed with 1 success.
 
 (If this should fail for you and webfakes appears to process the
 requests sequentially, see [issue

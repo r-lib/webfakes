@@ -43,7 +43,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="webfakes-development-version">webfakes (development version)<a class="anchor" aria-label="anchor" href="#webfakes-development-version"></a></h2>
-<ul><li><p>webfakes now builds on platforms where <code>ar</code> does not writes a symbol index by default (<a href="https://github.com/barracuda156" class="external-link">@barracuda156</a>, <a href="https://github.com/r-lib/webfakes/issues/121" class="external-link">#121</a>).</p></li>
+<ul><li><p>Handler functions may now declare a <code>locals</code> argument, in which case webfakes passes <code>app$locals</code> to it directly, without having to access it through <code>req$app$locals</code> (<a href="https://github.com/r-lib/webfakes/issues/112" class="external-link">#112</a>).</p></li>
+<li><p>webfakes now builds on platforms where <code>ar</code> does not writes a symbol index by default (<a href="https://github.com/barracuda156" class="external-link">@barracuda156</a>, <a href="https://github.com/r-lib/webfakes/issues/121" class="external-link">#121</a>).</p></li>
 <li><p>webfakes now parses HTTP date headers (e.g. <code>Date</code>, <code>Last-Modified</code>, <code>Expires</code>) correctly regardless of the user’s <code>LC_TIME</code> setting (<a href="https://github.com/lbm364dl" class="external-link">@lbm364dl</a>, <a href="https://github.com/r-lib/webfakes/issues/124" class="external-link">#124</a>).</p></li>
 <li><p>Route matching now ignores trailing slashes. Use regular expressions (<code><a href="../reference/new_regexp.html">new_regexp()</a></code>) if you need exact trailing slash matching (<a href="https://github.com/r-lib/webfakes/issues/120" class="external-link">#120</a>).</p></li>
 </ul></div>

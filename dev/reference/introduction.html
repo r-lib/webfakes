@@ -106,7 +106,7 @@ See for example the <a href="https://docs.ropensci.org/vcr/" class="external-lin
 
 <div class="section">
 <h3 id="using-webfakes-httpbin-app-with-testthat">Using <code><a href="httpbin_app.html">webfakes::httpbin_app()</a></code> with testthat<a class="anchor" aria-label="anchor" href="#using-webfakes-httpbin-app-with-testthat"></a></h3>
-
+<p><!-- does not work with in-body style options --></p>
 
 <p>You can use testthat's setup files. You start the app in a setup file and also register a teardown expression for it. <code><a href="local_app_process.html">local_app_process()</a></code> can do both in one go. Your <code>tests/testthat/setup-http.R</code> may look like this:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">http</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/local_app_process.html">local_app_process</a></span><span class="op">(</span></span>
@@ -123,7 +123,7 @@ See for example the <a href="https://docs.ropensci.org/vcr/" class="external-lin
 <span>    class <span class="op">=</span> <span class="st">"http_404"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Test passed</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; Test passed with 1 success.</span></span></code></pre><p></p></div>
 <p>When writing your tests interactively, you may create a <code>http</code> app process in the global environment, for convenience. You can <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code> your <code>setup-http.R</code> file for this. Alternatively, you can start the app process in a helper file. See "How do I start the app when writing the tests?" just below.</p>
 <p>You can also create a web server for a test file, or even for a single test case.
 See <code><a href="../articles/how-to.html">vignette("how-to")</a></code> for details how.</p>
@@ -134,7 +134,9 @@ See <code><a href="../articles/how-to.html">vignette("how-to")</a></code> for de
 
 
 <p>If the builtin <code><a href="httpbin_app.html">httpbin_app()</a></code> is not appropriate for your tests, you can write your own app.
-You can also extend the <code><a href="httpbin_app.html">httpbin_app()</a></code> app, if you don't want to start from scratch.</p>
+You can also extend the <code><a href="httpbin_app.html">httpbin_app()</a></code> app, if you don't want to start from scratch.
+<!-- does not work with in-body style options --></p>
+
 <p>You create a new app with <code><a href="new_app.html">new_app()</a></code>.
 This returns an object with methods to add middleware and API
 endpoints to it.

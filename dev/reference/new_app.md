@@ -367,6 +367,15 @@ middleware that counts the number of requests can be implemented as:
       "next"
     })
 
+As a shortcut, a handler function may declare a `locals` argument, in
+which case webfakes passes `app$locals` to it directly:
+
+    app$use(function(req, res, locals) {
+      if (is.null(locals$num)) locals$num <- 0L
+      locals$num <- locals$num + 1L
+      "next"
+    })
+
 [webfakes_response](https://webfakes.r-lib.org/dev/reference/webfakes_response.md)
 objects also have a `locals` environment, that is initially populated as
 a copy of `app$locals`.

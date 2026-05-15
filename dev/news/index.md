@@ -2,6 +2,11 @@
 
 ## webfakes (development version)
 
+- Handler functions may now declare a `locals` argument, in which case
+  webfakes passes `app$locals` to it directly, without having to access
+  it through `req$app$locals`
+  ([\#112](https://github.com/r-lib/webfakes/issues/112)).
+
 - webfakes now builds on platforms where `ar` does not writes a symbol
   index by default ([@barracuda156](https://github.com/barracuda156),
   [\#121](https://github.com/r-lib/webfakes/issues/121)).
