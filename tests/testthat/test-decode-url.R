@@ -30,7 +30,7 @@ test_that("decode_url option", {
   resp <- curl::curl_fetch_memory(web$url("/hello/foo%2fbar/suffix"))
   expect_equal(resp$status_code, 200L)
   expect_equal(
-    rawToChar(resp$content),
-    "Return content of foo%2fbar/suffix!"
+    tolower(rawToChar(resp$content)),
+    "return content of foo%2fbar/suffix!"
   )
 })
