@@ -1,5 +1,11 @@
 test_that("http_time_stamp ignores local locale", {
-  withr::local_locale(LC_TIME = "es_ES.UTF-8")
+  skip_on_cran()
+  envir <- environment()
+  tryCatch(
+    withr::local_locale(LC_TIME = "es_ES.UTF-8", .local_envir = envir),
+    warning = function(w) skip("es_ES.UTF-8 locale not available"),
+    error = function(e) skip("es_ES.UTF-8 locale not available")
+  )
 
   expect_equal(Sys.getlocale("LC_TIME"), "es_ES.UTF-8")
 
