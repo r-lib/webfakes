@@ -1,5 +1,9 @@
 # webfakes (development version)
 
+* webfakes now parses HTTP date headers (e.g. `Date`, `Last-Modified`,
+  `Expires`) correctly regardless of the user's `LC_TIME` setting
+  (@lbm364dl, #124).
+
 # webfakes 1.4.1
 
 No changes.
