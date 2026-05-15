@@ -118,6 +118,7 @@ Errors that happen in the R request handler functions are caught and the
 server will send an HTTP 500 response, with the R error message:
 
 ``` r
+
 while (TRUE) {
   req <- server_poll(srv)
   tryCatch(

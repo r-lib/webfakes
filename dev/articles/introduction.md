@@ -82,6 +82,7 @@ can do both in one go. Your `tests/testthat/setup-http.R` may look like
 this:
 
 ``` r
+
 http <- webfakes::local_app_process(
   webfakes::httpbin_app(),
   .local_envir = testthat::teardown_env()
@@ -97,6 +98,7 @@ In the test cases you can query the `http` app process to get the URLs
 you need to connect to:
 
 ``` r
+
 test_that("fails on 404", {
   url <- http$url("/status/404")
   response <- httr::GET(url)
@@ -135,6 +137,7 @@ it. For example, a simple app that returns the current time in JSON
 would look like this:
 
 ``` r
+
 time <- webfakes::new_app()
 time$get("/time", function(req, res) {
   res$send_json(list(time = format(Sys.time())), auto_unbox = TRUE)
@@ -146,23 +149,26 @@ Alternatively, you can start it in a subprocess with
 [`new_app_process()`](https://webfakes.r-lib.org/dev/reference/new_app_process.md).
 
 ``` r
+
 web <- webfakes::new_app_process(time)
 web$url()
-#> [1] "http://127.0.0.1:43331/"
+#> [1] "http://127.0.0.1:43925/"
 ```
 
 Use `web$url()` to query the URL of the app. For example:
 
 ``` r
+
 url <- web$url("/time")
 httr::content(httr::GET(url))
 #> $time
-#> [1] "2026-04-15 07:25:32"
+#> [1] "2026-05-15 08:48:15"
 ```
 
 `web$stop()` stops the app and the subprocess as well:
 
 ``` r
+
 web$stop()
 web$get_state()
 #> [1] "not running"

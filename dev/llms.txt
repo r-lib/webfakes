@@ -60,6 +60,7 @@ Lightweight fake web apps for testing. Built using the
 Install the release version from CRAN:
 
 ``` r
+
 install.packages("webfakes")
 ```
 
@@ -67,6 +68,7 @@ If you need the development version of the package, install it from
 GitHub:
 
 ``` r
+
 pak::pak("r-lib/webfakes")
 ```
 
@@ -81,6 +83,7 @@ helps you clean up the web server process after the test block, or test
 file. It is similar to the `withr::local_*` functions.
 
 ``` r
+
 app <- webfakes::new_app()
 app$get("/hello/:user", function(req, res) {
   res$send(paste0("Hello ", req$params$user, "!"))
@@ -97,10 +100,12 @@ When testing HTTP clients you can often use the built in
 [`httpbin_app()`](https://webfakes.r-lib.org/dev/reference/httpbin_app.md):
 
 ``` r
+
 httpbin <- webfakes::local_app_process(webfakes::httpbin_app())
 ```
 
 ``` r
+
 test_that("HTTP errors are caught", {
   url <- httpbin$url("/status/404")
   resp <- httr::GET(url)
