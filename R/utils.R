@@ -178,6 +178,9 @@ map_chr <- function(X, FUN, ...) {
 #' @export
 
 http_time_stamp <- function(t = Sys.time()) {
+  old <- Sys.getlocale("LC_TIME")
+  on.exit(Sys.setlocale("LC_TIME", old), add = TRUE)
+  Sys.setlocale("LC_TIME", "C")
   t <- as.POSIXlt(t, tz = "UTC")
   strftime(t, "%a, %d %b %Y %H:%M:%S GMT")
 }
