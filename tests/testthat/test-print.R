@@ -20,7 +20,7 @@ skip_without_png_device <- function() {
   if (.Platform$OS.type == "windows") {
     return()
   }
-  if (!capabilities("png") || !capabilities("X11")) {
+  if (!capabilities("png") || !suppressWarnings(capabilities("X11"))) {
     skip("Needs a PNG device")
   }
 }
