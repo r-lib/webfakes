@@ -1,5 +1,8 @@
 # webfakes (development version)
 
+* webfakes now builds on platforms where `ar` does not writes a symbol
+  index by default (@barracuda156, #121).
+
 # webfakes 1.4.1
 
 No changes.
