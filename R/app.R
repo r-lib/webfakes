@@ -320,6 +320,17 @@ pkg_data <- new.env(parent = emptyenv())
 #' })
 #' ```
 #'
+#' As a shortcut, a handler function may declare a `locals` argument, in
+#' which case webfakes passes `app$locals` to it directly:
+#'
+#' ```
+#' app$use(function(req, res, locals) {
+#'   if (is.null(locals$num)) locals$num <- 0L
+#'   locals$num <- locals$num + 1L
+#'   "next"
+#' })
+#' ```
+#'
 #' [webfakes_response] objects also have a `locals` environment, that is
 #' initially populated as a copy of `app$locals`.
 #'
@@ -547,7 +558,11 @@ new_app <- function() {
               if (is.list(m)) {
                 req$params <- m$params
               }
-              out <- handler$handler(req, res)
+              out <- if (isTRUE(handler$wants_locals)) {
+                handler$handler(req, res, locals = self$locals)
+              } else {
+                handler$handler(req, res)
+              }
               if (!identical(out, "next")) break
             }
           }
@@ -590,7 +605,8 @@ parse_handlers <- function(method, path, ...) {
         method = method,
         path = path,
         handler = handler,
-        name = names(handlers)[h]
+        name = names(handlers)[h],
+        wants_locals = "locals" %in% names(formals(handler))
       )
       ans <- c(ans, list(rec))
     } else {

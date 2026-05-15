@@ -68,7 +68,10 @@ The advantages of using your own webfakes server, over mocking:
 }
 }
 
-\subsection{Using \code{webfakes::httpbin_app()} with testthat}{
+\subsection{Using \code{webfakes::httpbin_app()} with testthat}{\if{html}{\out{
+<!-- does not work with in-body style options -->
+}}
+
 
 You can use testthat's setup files. You start the app in a setup file and also register a teardown expression for it. \code{local_app_process()} can do both in one go. Your \code{tests/testthat/setup-http.R} may look like this:
 
@@ -90,7 +93,7 @@ In the test cases you can query the \code{http} app process to get the URLs you 
     class = "http_404"
   )
 \})
-#> Test passed
+#> Test passed with 1 success.
 }\if{html}{\out{</div>}}
 
 When writing your tests interactively, you may create a \code{http} app process in the global environment, for convenience. You can \code{source()} your \code{setup-http.R} file for this. Alternatively, you can start the app process in a helper file. See "How do I start the app when writing the tests?" just below.
@@ -102,7 +105,10 @@ See \code{vignette("how-to")} for details how.
 \subsection{Writing apps}{
 
 If the builtin \code{httpbin_app()} is not appropriate for your tests, you can write your own app.
-You can also extend the \code{httpbin_app()} app, if you don't want to start from scratch.
+You can also extend the \code{httpbin_app()} app, if you don't want to start from scratch.\if{html}{\out{
+<!-- does not work with in-body style options -->
+}}
+
 
 You create a new app with \code{new_app()}.
 This returns an object with methods to add middleware and API

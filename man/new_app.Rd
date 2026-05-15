@@ -342,6 +342,16 @@ middleware that counts the number of requests can be implemented as:
 \})
 }\if{html}{\out{</div>}}
 
+As a shortcut, a handler function may declare a \code{locals} argument, in
+which case webfakes passes \code{app$locals} to it directly:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{app$use(function(req, res, locals) \{
+  if (is.null(locals$num)) locals$num <- 0L
+  locals$num <- locals$num + 1L
+  "next"
+\})
+}\if{html}{\out{</div>}}
+
 \link{webfakes_response} objects also have a \code{locals} environment, that is
 initially populated as a copy of \code{app$locals}.
 }

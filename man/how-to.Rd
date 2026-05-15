@@ -69,7 +69,10 @@ Sys.getenv("GITHUB_API")
 }\if{html}{\out{</div>}}
 }
 
-\subsection{How can I write my own app?}{
+\subsection{How can I write my own app?}{\if{html}{\out{
+<!-- does not work with in-body style options -->
+}}
+
 
 You create a new app with \code{new_app()}.
 This returns an object with methods to add middleware and API
@@ -120,7 +123,10 @@ creates the app.
 See \code{?new_app()}, \code{?new_app_process()} and \code{?local_app_process} for more details.
 }
 
-\subsection{How do I use \code{httpbin_app()} (or another app) with testthat?}{
+\subsection{How do I use \code{httpbin_app()} (or another app) with testthat?}{\if{html}{\out{
+<!-- does not work with in-body style options -->
+}}
+
 
 You can use testthat's setup files. You start the app in a setup file and also register a teardown expression for it. \code{local_app_process()} can do both in one go. Your \code{tests/testthat/setup-http.R} may look like this:
 
@@ -142,7 +148,7 @@ In the test cases you can query the \code{http} app process to get the URLs you 
     class = "http_404"
   )
 \})
-#> Test passed
+#> Test passed with 1 success.
 }\if{html}{\out{</div>}}
 
 When writing your tests interactively, you may create a \code{http} app process in the global environment, for convenience. You can \code{source()} your \code{setup-http.R} file for this. Alternatively, you can start the app process in a helper file. See "How do I start the app when writing the tests?" just below.
@@ -198,7 +204,7 @@ Then in the test cases, use \code{web$url()} to get the URL to connect to.
   expect_equal(httr::content(httr::GET(url)), "Hello Gabor!")
 \})
 #> No encoding supplied: defaulting to UTF-8.
-#> Test passed
+#> Test passed with 1 success.
 }\if{html}{\out{</div>}}
 }
 
@@ -218,7 +224,7 @@ It goes like this:
   expect_equal(echo, "hello there")
 \})
 #> No encoding supplied: defaulting to UTF-8.
-#> Test passed
+#> Test passed with 1 success.
 }\if{html}{\out{</div>}}
 }
 
@@ -623,7 +629,7 @@ Each request takes 1 second to answer, but if the web server has more than three
   st <- system.time(curl::multi_run(timeout = 3, pool = p))
   testthat::expect_true(st[["elapsed"]] < 1.5)
 \})
-#> Test passed
+#> Test passed with 1 success.
 }\if{html}{\out{</div>}}
 
 (If this should fail for you and webfakes appears to process the
