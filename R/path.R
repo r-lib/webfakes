@@ -40,19 +40,32 @@ pattern_match <- function(path, patterns) {
     patterns <- as.list(patterns)
   }
 
+  npath <- drop_trailing_slash(path)
   for (p in patterns) {
-    if (!inherits(p, "webfakes_regexp") && grepl(":", p)) {
-      p <- path_to_regexp(p)
-    }
     if (inherits(p, "webfakes_regexp")) {
       m <- re_match(path, p)
       if (m$match) return(list(params = as.list(m$groups)))
     } else {
-      if (path == p) return(TRUE)
+      p <- drop_trailing_slash(p)
+      if (grepl(":", p)) {
+        p <- path_to_regexp(p)
+        m <- re_match(npath, p)
+        if (m$match) return(list(params = as.list(m$groups)))
+      } else {
+        if (npath == p) return(TRUE)
+      }
     }
   }
 
   FALSE
+}
+
+drop_trailing_slash <- function(x) {
+  if (nchar(x) > 1 && substr(x, nchar(x), nchar(x)) == "/") {
+    substr(x, 1, nchar(x) - 1)
+  } else {
+    x
+  }
 }
 
 path_to_regexp <- function(path) {

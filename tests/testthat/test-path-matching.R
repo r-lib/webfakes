@@ -136,3 +136,43 @@ test_that("tokens", {
     )
   }
 })
+
+test_that("trailing slash is ignored for literal and parameterized paths (#120)", {
+  cases <- list(
+    list("/foo", "/foo/"),
+    list("/foo/", "/foo"),
+    list("/foo/", "/foo/"),
+    list("/foo/bar", "/foo/bar/"),
+    list("/foo/bar/", "/foo/bar")
+  )
+  for (x in cases) {
+    expect_true(
+      path_match("get", x[[1]], list(method = "get", path = x[[2]])),
+      info = paste(x[[1]], "vs", x[[2]])
+    )
+  }
+
+  param_cases <- list(
+    list("/foo", "/:x/", list(params = list(x = "foo"))),
+    list("/foo/", "/:x", list(params = list(x = "foo"))),
+    list("/foo/", "/:x/", list(params = list(x = "foo")))
+  )
+  for (x in param_cases) {
+    expect_equal(
+      path_match("get", x[[1]], list(method = "get", path = x[[2]])),
+      x[[3]]
+    )
+  }
+
+  # Root path is preserved, not stripped to empty
+  expect_true(path_match("get", "/", list(method = "get", path = "/")))
+
+  # User-supplied regex is left alone — they're in control
+  expect_false(
+    isTRUE(path_match(
+      "get",
+      "/foo/",
+      list(method = "get", path = new_regexp("^/foo$"))
+    ))
+  )
+})

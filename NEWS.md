@@ -7,6 +7,9 @@
   `Expires`) correctly regardless of the user's `LC_TIME` setting
   (@lbm364dl, #124).
 
+* Route matching now ignores trailing slashes. Use regular expressions
+  (`new_regexp()`) if you need exact trailing slash matching (#120).
+
 # webfakes 1.4.1
 
 No changes.
