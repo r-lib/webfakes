@@ -35,7 +35,7 @@ curl::parse_headers_list(resp$headers)
 #> [1] "close"
 #> 
 #> $date
-#> [1] "Fri, 15 May 2026 09:08:21 GMT"
+#> [1] "Fri, 15 May 2026 09:11:15 GMT"
 #> 
 #> $`content-type`
 #> [1] "application/json"
@@ -44,20 +44,20 @@ curl::parse_headers_list(resp$headers)
 #> [1] "313"
 #> 
 #> $etag
-#> [1] "\"a3e7890d\""
+#> [1] "\"e0634a18\""
 #> 
 cat(rawToChar(resp$content))
 #> {
 #>   "args": {},
 #>   "headers": {
-#>     "Host": "127.0.0.1:44121",
+#>     "Host": "127.0.0.1:36803",
 #>     "User-Agent": "R/4.6.0 R (4.6.0 x86_64-pc-linux-gnu x86_64 linux-gnu) on GitHub Actions",
 #>     "Accept": "*/*",
 #>     "Accept-Encoding": "deflate, gzip, br, zstd"
 #>   },
 #>   "origin": "127.0.0.1",
 #>   "path": "/get",
-#>   "url": "http://127.0.0.1:44121/get"
+#>   "url": "http://127.0.0.1:36803/get"
 #> }
 proc$stop()
 ```
