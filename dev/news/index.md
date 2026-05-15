@@ -11,6 +11,11 @@
   ([@lbm364dl](https://github.com/lbm364dl),
   [\#124](https://github.com/r-lib/webfakes/issues/124)).
 
+- Route matching now ignores trailing slashes. Use regular expressions
+  ([`new_regexp()`](https://webfakes.r-lib.org/dev/reference/new_regexp.md))
+  if you need exact trailing slash matching
+  ([\#120](https://github.com/r-lib/webfakes/issues/120)).
+
 ## webfakes 1.4.1
 
 CRAN release: 2026-04-08
