@@ -27,9 +27,9 @@ including the fake \code{\link[=oauth2_third_party_app]{oauth2_third_party_app()
 See \code{test-oauth.R} in webfakes for an example.
 }
 \seealso{
-Other OAuth2.0 functions: 
-\code{\link{oauth2_httr_login}()},
-\code{\link{oauth2_resource_app}()},
-\code{\link{oauth2_third_party_app}()}
+Other OAuth2.0 functions:
+\code{\link[=oauth2_httr_login]{oauth2_httr_login()}},
+\code{\link[=oauth2_resource_app]{oauth2_resource_app()}},
+\code{\link[=oauth2_third_party_app]{oauth2_third_party_app()}}
 }
 \concept{OAuth2.0 functions}

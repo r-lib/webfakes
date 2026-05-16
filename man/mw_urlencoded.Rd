@@ -23,16 +23,16 @@ app$use(mw_urlencoded())
 app
 }
 \seealso{
-Other middleware: 
-\code{\link{mw_cgi}()},
-\code{\link{mw_cookie_parser}()},
-\code{\link{mw_etag}()},
-\code{\link{mw_json}()},
-\code{\link{mw_log}()},
-\code{\link{mw_multipart}()},
-\code{\link{mw_range_parser}()},
-\code{\link{mw_raw}()},
-\code{\link{mw_static}()},
-\code{\link{mw_text}()}
+Other middleware:
+\code{\link[=mw_cgi]{mw_cgi()}},
+\code{\link[=mw_cookie_parser]{mw_cookie_parser()}},
+\code{\link[=mw_etag]{mw_etag()}},
+\code{\link[=mw_json]{mw_json()}},
+\code{\link[=mw_log]{mw_log()}},
+\code{\link[=mw_multipart]{mw_multipart()}},
+\code{\link[=mw_range_parser]{mw_range_parser()}},
+\code{\link[=mw_raw]{mw_raw()}},
+\code{\link[=mw_static]{mw_static()}},
+\code{\link[=mw_text]{mw_text()}}
 }
 \concept{middleware}

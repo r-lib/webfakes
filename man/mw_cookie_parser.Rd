@@ -17,16 +17,16 @@ It ignores cookies in an invalid format. It ignores duplicate cookies:
 if two cookies have the same name, only the first one is included.
 }
 \seealso{
-Other middleware: 
-\code{\link{mw_cgi}()},
-\code{\link{mw_etag}()},
-\code{\link{mw_json}()},
-\code{\link{mw_log}()},
-\code{\link{mw_multipart}()},
-\code{\link{mw_range_parser}()},
-\code{\link{mw_raw}()},
-\code{\link{mw_static}()},
-\code{\link{mw_text}()},
-\code{\link{mw_urlencoded}()}
+Other middleware:
+\code{\link[=mw_cgi]{mw_cgi()}},
+\code{\link[=mw_etag]{mw_etag()}},
+\code{\link[=mw_json]{mw_json()}},
+\code{\link[=mw_log]{mw_log()}},
+\code{\link[=mw_multipart]{mw_multipart()}},
+\code{\link[=mw_range_parser]{mw_range_parser()}},
+\code{\link[=mw_raw]{mw_raw()}},
+\code{\link[=mw_static]{mw_static()}},
+\code{\link[=mw_text]{mw_text()}},
+\code{\link[=mw_urlencoded]{mw_urlencoded()}}
 }
 \concept{middleware}

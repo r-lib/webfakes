@@ -64,9 +64,9 @@ access token of the app if needed.
 For more details see \code{vignette("oauth", package = "webfakes")}.
 }
 \seealso{
-Other OAuth2.0 functions: 
-\code{\link{oauth2_httr_login}()},
-\code{\link{oauth2_login}()},
-\code{\link{oauth2_resource_app}()}
+Other OAuth2.0 functions:
+\code{\link[=oauth2_httr_login]{oauth2_httr_login()}},
+\code{\link[=oauth2_login]{oauth2_login()}},
+\code{\link[=oauth2_resource_app]{oauth2_resource_app()}}
 }
 \concept{OAuth2.0 functions}

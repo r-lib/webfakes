@@ -127,9 +127,9 @@ App representing the API server (resource/authorization)
 }
 
 \seealso{
-Other OAuth2.0 functions: 
-\code{\link{oauth2_httr_login}()},
-\code{\link{oauth2_login}()},
-\code{\link{oauth2_third_party_app}()}
+Other OAuth2.0 functions:
+\code{\link[=oauth2_httr_login]{oauth2_httr_login()}},
+\code{\link[=oauth2_login]{oauth2_login()}},
+\code{\link[=oauth2_third_party_app]{oauth2_third_party_app()}}
 }
 \concept{OAuth2.0 functions}
