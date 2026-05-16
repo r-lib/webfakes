@@ -1,4 +1,4 @@
-# webfakes (development version)
+# webfakes 1.5.0
 
 * New `keep_alive_timeout_ms` option in `server_opts()` to configure the
   idle timeout of keep-alive connections. The default is 5000 ms, up from
