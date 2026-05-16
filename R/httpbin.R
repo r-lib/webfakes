@@ -1,10 +1,14 @@
 raw_body_as_data <- function(body) {
   bytes <- as.integer(body)
-  if (!any(bytes == 0L) && !any(bytes >= 0x80L)) {
-    return(rawToChar(body))
+  if (!any(bytes == 0L)) {
+    s <- rawToChar(body)
+    if (validUTF8(s)) {
+      Encoding(s) <- "UTF-8"
+      return(s)
+    }
   }
   # Either the body contains an embedded 0x00 (which R character vectors
-  # cannot hold) or it contains non-ASCII bytes (which would make the JSON
+  # cannot hold) or it is not valid UTF-8 (which would make the JSON
   # response invalid UTF-8 if passed through rawToChar). Produce the JSON
   # encoding of the field by hand and let jsonlite::toJSON pass it through
   # via the asJSON,json method (json_verbatim = TRUE on the toJSON call).
