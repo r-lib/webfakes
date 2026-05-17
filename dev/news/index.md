@@ -2,6 +2,10 @@
 
 ## webfakes (development version)
 
+## webfakes 1.5.0
+
+CRAN release: 2026-05-16
+
 - New `keep_alive_timeout_ms` option in
   [`server_opts()`](https://webfakes.r-lib.org/dev/reference/server_opts.md)
   to configure the idle timeout of keep-alive connections. The default
