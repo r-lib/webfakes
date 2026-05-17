@@ -1,6 +1,43 @@
 # Changelog
 
+## webfakes 1.5.0
+
+CRAN release: 2026-05-16
+
+- New `keep_alive_timeout_ms` option in
+  [`server_opts()`](https://webfakes.r-lib.org/reference/server_opts.md)
+  to configure the idle timeout of keep-alive connections. The default
+  is 5000 ms, up from the underlying CivetWeb default of 500 ms
+  ([\#114](https://github.com/r-lib/webfakes/issues/114)).
+
+- Handler functions may now declare a `locals` argument, in which case
+  webfakes passes `app$locals` to it directly, without having to access
+  it through `req$app$locals`
+  ([\#112](https://github.com/r-lib/webfakes/issues/112)).
+
+- webfakes now builds on platforms where `ar` does not writes a symbol
+  index by default ([@barracuda156](https://github.com/barracuda156),
+  [\#121](https://github.com/r-lib/webfakes/issues/121)).
+
+- webfakes now parses HTTP date headers (e.g. `Date`, `Last-Modified`,
+  `Expires`) correctly regardless of the user’s `LC_TIME` setting
+  ([@lbm364dl](https://github.com/lbm364dl),
+  [\#124](https://github.com/r-lib/webfakes/issues/124)).
+
+- Route matching now ignores trailing slashes. Use regular expressions
+  ([`new_regexp()`](https://webfakes.r-lib.org/reference/new_regexp.md))
+  if you need exact trailing slash matching
+  ([\#120](https://github.com/r-lib/webfakes/issues/120)).
+
+- [`httpbin_app()`](https://webfakes.r-lib.org/reference/httpbin_app.md)’s
+  `/post`, `/put`, `/patch`, `/delete` and `/anything*` endpoints now
+  return the request body in the `data` field for any `Content-Type`,
+  matching `httpbin.org`
+  ([\#115](https://github.com/r-lib/webfakes/issues/115)).
+
 ## webfakes 1.4.1
+
+CRAN release: 2026-04-08
 
 No changes.
 

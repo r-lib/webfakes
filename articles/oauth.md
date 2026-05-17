@@ -1,6 +1,7 @@
 # OAuth2.0 webfakes apps
 
 ``` r
+
 library(webfakes)
 ```
 
@@ -29,6 +30,7 @@ First we need to create the resource server, which also performs the
 authorization, and we create variables holding its different URLs.
 
 ``` r
+
 templog <- tempfile()
 rsapp <- new_app_process(
   oauth2_resource_app(
@@ -49,9 +51,9 @@ rsapp
 #> auto_start:
 #>   TRUE
 #> process id:
-#>   9331
+#>   8813
 #> http url:
-#>   http://127.0.0.1:44289/
+#>   http://127.0.0.1:39441/
 #> fields and methods:
 #>   get_app()              # get the app object
 #>   get_port()             # query (first) port of the app
@@ -72,6 +74,7 @@ Then we create the third-party app, and we create variables holding its
 different URLs.
 
 ``` r
+
 tpapp <- new_app_process(
   oauth2_third_party_app("3P app"),
   opts = server_opts(num_threads = 3)
@@ -87,9 +90,9 @@ tpapp
 #> auto_start:
 #>   TRUE
 #> process id:
-#>   9344
+#>   8826
 #> http url:
-#>   http://127.0.0.1:35077/
+#>   http://127.0.0.1:34009/
 #> fields and methods:
 #>   get_app()              # get the app object
 #>   get_port()             # query (first) port of the app
@@ -109,6 +112,7 @@ do this automatically, without user interaction. We need to send the
 name of our third party app, and its redirect URL, as query parameters.
 
 ``` r
+
 url <- paste0(
   regi_url,
   "?name=3P%20app",
@@ -116,8 +120,8 @@ url <- paste0(
 )
 reg_resp <- httr::GET(url)
 reg_resp
-#> Response [http://127.0.0.1:44289/register?name=3P%20app&redirect_uri=http://127.0.0.1:35077/login/redirect]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:39441/register?name=3P%20app&redirect_uri=http://127.0.0.1:34009/login/redirect]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 184 B
@@ -130,17 +134,17 @@ regdata
 #> 
 #> $client_id
 #> $client_id[[1]]
-#> [1] "id-34ef085576d8018e15b400c2333bee"
+#> [1] "id-16d5e87731a90d88afc0c565de4b54"
 #> 
 #> 
 #> $client_secret
 #> $client_secret[[1]]
-#> [1] "secret-d3a7e8df86d750f0ca990d98e9ea1b"
+#> [1] "secret-12b4499c2b63720a9dc7796cca654f"
 #> 
 #> 
 #> $redirect_uri
 #> $redirect_uri[[1]]
-#> [1] "http://127.0.0.1:35077/login/redirect"
+#> [1] "http://127.0.0.1:34009/login/redirect"
 ```
 
 The resource app replies with the client id and the client secret. We’ll
@@ -150,6 +154,7 @@ party app has an API endpoint, `/login/config` (already in `conf_url`)
 to configure them.
 
 ``` r
+
 auth_data <- list(
   auth_url = auth_url,
   token_url = toke_url,
@@ -162,8 +167,8 @@ httr::POST(
   body = auth_data,
   encode = "json"
 )
-#> Response [http://127.0.0.1:35077/login/config]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:34009/login/config]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 41 B
@@ -175,6 +180,7 @@ Now a user can go to the login URL of the third party app, `/login` in
 our fake app, to authenticate. To start the web page from R, you can run
 
 ``` r
+
 browseURL(tpapp$url("/login"))
 ```
 
@@ -195,6 +201,7 @@ If you want to change this behavior, you can define the `redirect_hook`
 function in the third party app. For example:
 
 ``` r
+
 thirdp <- oauth2_third_party_app("3P app")
 thirdp$redirect_hook <- function(res, tokens) {
   res$
@@ -217,9 +224,9 @@ tpapp2
 #> auto_start:
 #>   TRUE
 #> process id:
-#>   9358
+#>   8840
 #> http url:
-#>   http://127.0.0.1:43747/
+#>   http://127.0.0.1:41573/
 #> fields and methods:
 #>   get_app()              # get the app object
 #>   get_port()             # query (first) port of the app
@@ -238,8 +245,8 @@ url2 <- paste0(
 )
 reg_resp2 <- httr::GET(url2)
 reg_resp2
-#> Response [http://127.0.0.1:44289/register?name=3P%20app2&redirect_uri=http://127.0.0.1:43747/login/redirect]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:39441/register?name=3P%20app2&redirect_uri=http://127.0.0.1:41573/login/redirect]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 185 B
@@ -252,17 +259,17 @@ regdata2
 #> 
 #> $client_id
 #> $client_id[[1]]
-#> [1] "id-31407c591a2acc14803fe43224ae04"
+#> [1] "id-c46c76275061dac25d2c9b7a8b4a01"
 #> 
 #> 
 #> $client_secret
 #> $client_secret[[1]]
-#> [1] "secret-646ed440ab60915db2eed1753d95a6"
+#> [1] "secret-e0730d3568f9215fbefc38327466bc"
 #> 
 #> 
 #> $redirect_uri
 #> $redirect_uri[[1]]
-#> [1] "http://127.0.0.1:43747/login/redirect"
+#> [1] "http://127.0.0.1:41573/login/redirect"
 auth_data2 <- list(
   auth_url = auth_url,
   token_url = toke_url,
@@ -275,8 +282,8 @@ httr::POST(
   body = auth_data2,
   encode = "json"
 )
-#> Response [http://127.0.0.1:43747/login/config]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:41573/login/config]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 41 B
@@ -285,6 +292,7 @@ httr::POST(
 Then again you can authenticate at the new app with
 
 ``` r
+
 browseURL(tpapp2$url("/login"))
 ```
 
@@ -294,6 +302,7 @@ The fake third party app also has an endpoint to return the saved
 tokens:
 
 ``` r
+
 httr::content(httr::GET(tpapp2$url("/locals")))
 #> $access_token
 #> [1] "token-08e1470fb2bbfa9216925390655281"
@@ -314,10 +323,11 @@ resource app and needs authentication. If you run the following without
 the OAuth dance, your access is denied. But now it works fine:
 
 ``` r
+
 resp_data <- httr::GET(tpapp2$url("/data"))
 resp_data
-#> Response [http://127.0.0.1:43747/data]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:41573/data]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 24 B
@@ -343,6 +353,7 @@ as redirect URI, which is what you do when creating an app for an R
 package that uses OAuth2.0 to authenticate to a resource server.
 
 ``` r
+
 url3 <- paste0(
   regi_url,
   "?name=3P%20app2",
@@ -350,8 +361,8 @@ url3 <- paste0(
 )
 reg_resp3 <- httr::GET(url3)
 reg_resp3
-#> Response [http://127.0.0.1:44289/register?name=3P%20app2&redirect_uri=http://localhost:1410/]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:39441/register?name=3P%20app2&redirect_uri=http://localhost:1410/]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 170 B
@@ -364,12 +375,12 @@ regdata3
 #> 
 #> $client_id
 #> $client_id[[1]]
-#> [1] "id-48d4d2bc9c51138efd352da29e86bb"
+#> [1] "id-0c8e2d8e4c1c60f81686620d3c29af"
 #> 
 #> 
 #> $client_secret
 #> $client_secret[[1]]
-#> [1] "secret-ce53651d2e9b15d77bbbcfdf4412cb"
+#> [1] "secret-60fa3435194c8eecde6f3bbe51aca3"
 #> 
 #> 
 #> $redirect_uri
@@ -380,6 +391,7 @@ regdata3
 Now we set the registration data on the third-party app.
 
 ``` r
+
 app <- httr::oauth_app(
   "3P app2",
   key = regdata3$client_id[[1]],
@@ -396,6 +408,7 @@ endpoint <- httr::oauth_endpoint(
 Now we can launch the token creation.
 
 ``` r
+
 token <- oauth2_httr_login(
   httr::oauth2.0_token(endpoint, app, cache = FALSE)
 )
@@ -405,13 +418,14 @@ token <- oauth2_httr_login(
 ```
 
 ``` r
+
 token
 #> <Token>
 #> <oauth_endpoint>
-#>  authorize: http://127.0.0.1:44289/authorize
-#>  access:    http://127.0.0.1:44289/token
+#>  authorize: http://127.0.0.1:39441/authorize
+#>  access:    http://127.0.0.1:39441/token
 #> <oauth_app> 3P app2
-#>   key:    id-48d4d2bc9c51138efd352da29e86bb
+#>   key:    id-0c8e2d8e4c1c60f81686620d3c29af
 #>   secret: <hidden>
 #> <credentials> access_token, expiry, refresh_token
 #> ---
@@ -420,9 +434,10 @@ token
 Without the token, the query to the resource server fails:
 
 ``` r
+
 httr::GET(rsapp$url("/data"))
-#> Response [http://127.0.0.1:44289/data]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:39441/data]
+#>   Date: 2026-05-17 08:22
 #>   Status: 401
 #>   Content-Type: text/plain
 #>   Size: 20 B
@@ -432,6 +447,7 @@ With the token, it is successful. httr also automatically refreshes the
 token if needed.
 
 ``` r
+
 httr::content(
   httr::GET(rsapp$url("/data"), config = token),
   as = "text"
@@ -453,6 +469,7 @@ own endpoints and middleware to it. E.g. here we add logging via
 endpoint.
 
 ``` r
+
 rsapp2 <- oauth2_resource_app(
   refresh_duration = .Machine$integer.max,
   access_duration = 10L
@@ -486,6 +503,7 @@ The resource app has a `/locals` endpoint, that returns all data stored
 in the app, this includes the tokens and the refresh tokens:
 
 ``` r
+
 httr::content(
   httr::GET(rsapp$url("/locals"))
 )
@@ -495,13 +513,13 @@ httr::content(
 #> [1] "3P app"
 #> 
 #> $apps[[1]]$client_id
-#> [1] "id-34ef085576d8018e15b400c2333bee"
+#> [1] "id-16d5e87731a90d88afc0c565de4b54"
 #> 
 #> $apps[[1]]$client_secret
-#> [1] "secret-d3a7e8df86d750f0ca990d98e9ea1b"
+#> [1] "secret-12b4499c2b63720a9dc7796cca654f"
 #> 
 #> $apps[[1]]$redirect_uri
-#> [1] "http://127.0.0.1:35077/login/redirect"
+#> [1] "http://127.0.0.1:34009/login/redirect"
 #> 
 #> 
 #> $apps[[2]]
@@ -509,13 +527,13 @@ httr::content(
 #> [1] "3P app2"
 #> 
 #> $apps[[2]]$client_id
-#> [1] "id-31407c591a2acc14803fe43224ae04"
+#> [1] "id-c46c76275061dac25d2c9b7a8b4a01"
 #> 
 #> $apps[[2]]$client_secret
-#> [1] "secret-646ed440ab60915db2eed1753d95a6"
+#> [1] "secret-e0730d3568f9215fbefc38327466bc"
 #> 
 #> $apps[[2]]$redirect_uri
-#> [1] "http://127.0.0.1:43747/login/redirect"
+#> [1] "http://127.0.0.1:41573/login/redirect"
 #> 
 #> 
 #> $apps[[3]]
@@ -523,10 +541,10 @@ httr::content(
 #> [1] "3P app2"
 #> 
 #> $apps[[3]]$client_id
-#> [1] "id-48d4d2bc9c51138efd352da29e86bb"
+#> [1] "id-0c8e2d8e4c1c60f81686620d3c29af"
 #> 
 #> $apps[[3]]$client_secret
-#> [1] "secret-ce53651d2e9b15d77bbbcfdf4412cb"
+#> [1] "secret-60fa3435194c8eecde6f3bbe51aca3"
 #> 
 #> $apps[[3]]$redirect_uri
 #> [1] "http://localhost:1410/"
@@ -536,70 +554,70 @@ httr::content(
 #> $access
 #> $access[[1]]
 #> $access[[1]]$client_id
-#> [1] "id-34ef085576d8018e15b400c2333bee"
+#> [1] "id-16d5e87731a90d88afc0c565de4b54"
 #> 
 #> $access[[1]]$token
 #> [1] "token-c6be45eee35844e7ec1d6ada44bc15"
 #> 
 #> $access[[1]]$expiry
-#> [1] "2026-04-08 11:17:39"
+#> [1] "2026-05-17 08:22:40"
 #> 
 #> 
 #> $access[[2]]
 #> $access[[2]]$client_id
-#> [1] "id-31407c591a2acc14803fe43224ae04"
+#> [1] "id-c46c76275061dac25d2c9b7a8b4a01"
 #> 
 #> $access[[2]]$token
 #> [1] "token-08e1470fb2bbfa9216925390655281"
 #> 
 #> $access[[2]]$expiry
-#> [1] "2026-04-08 11:17:39"
+#> [1] "2026-05-17 08:22:40"
 #> 
 #> 
 #> $access[[3]]
 #> $access[[3]]$client_id
-#> [1] "id-48d4d2bc9c51138efd352da29e86bb"
+#> [1] "id-0c8e2d8e4c1c60f81686620d3c29af"
 #> 
 #> $access[[3]]$token
 #> [1] "token-1f46a0366717828ac5cc842c163a31"
 #> 
 #> $access[[3]]$expiry
-#> [1] "2026-04-08 11:17:40"
+#> [1] "2026-05-17 08:22:41"
 #> 
 #> 
 #> 
 #> $refresh
 #> $refresh[[1]]
 #> $refresh[[1]]$client_id
-#> [1] "id-34ef085576d8018e15b400c2333bee"
+#> [1] "id-16d5e87731a90d88afc0c565de4b54"
 #> 
 #> $refresh[[1]]$token
 #> [1] "refresh-token-ee3f1285a6f4585e9f410375e0512d"
 #> 
 #> $refresh[[1]]$expiry
-#> [1] "2094-04-26 14:31:36"
+#> [1] "2094-06-04 11:36:37"
 #> 
 #> 
 #> $refresh[[2]]
 #> $refresh[[2]]$client_id
-#> [1] "id-31407c591a2acc14803fe43224ae04"
+#> [1] "id-c46c76275061dac25d2c9b7a8b4a01"
 #> 
 #> $refresh[[2]]$token
 #> [1] "refresh-token-f70b06b589156b9b5d462b040c500c"
 #> 
 #> $refresh[[2]]$expiry
-#> [1] "2094-04-26 14:31:36"
+#> [1] "2094-06-04 11:36:37"
 #> 
 #> 
 #> $refresh[[3]]
 #> $refresh[[3]]$client_id
-#> [1] "id-48d4d2bc9c51138efd352da29e86bb"
+#> [1] "id-0c8e2d8e4c1c60f81686620d3c29af"
 #> 
 #> $refresh[[3]]$token
 #> [1] "refresh-token-81d2b2f09bcf64302605ab6a9750b3"
 #> 
 #> $refresh[[3]]$expiry
-#> [1] "2094-04-26 14:31:37"
+#> [1] "2094-06-04 11:36:38"
 ```
 
 ## Case study for OAuth2.0 testing
@@ -609,6 +627,7 @@ GitHub. In this section we’ll show how you can use webfakes to test this
 function.
 
 ``` r
+
 gh_base <- function() {
   Sys.getenv("FAKE_GH_API_BASE", "https://api.github.com")
 }
@@ -663,6 +682,7 @@ the other options as you please. Then in R set the `GH_CLIENT_ID` and
 secret of the app:
 
 ``` r
+
 Sys.setenv(GH_CLIENT_ID = "<your client id here>")
 Sys.setenv(GH_CLIENT_SECRET = "<your client secret here>")
 ```
@@ -674,6 +694,7 @@ authorization is automatic. In a real package you could cache the
 OAuth2.0 tokens on the machine, e.g. using the keyring package.
 
 ``` r
+
 gh_repos()
 ```
 
@@ -699,6 +720,7 @@ Let’s write a test case now for `gh_repos()`. We will use
 `oauth2_repource_app()` to fake GitHub.
 
 ``` r
+
 testthat::test_that("gh_repos", {
   testthat::skip_on_cran()
   fake_app <- oauth2_resource_app(token_endpoint = "/access_token")

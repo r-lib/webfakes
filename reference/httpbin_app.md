@@ -35,7 +35,7 @@ curl::parse_headers_list(resp$headers)
 #> [1] "close"
 #> 
 #> $date
-#> [1] "Wed, 08 Apr 2026 11:16:55 GMT"
+#> [1] "Sun, 17 May 2026 08:21:55 GMT"
 #> 
 #> $`content-type`
 #> [1] "application/json"
@@ -44,20 +44,20 @@ curl::parse_headers_list(resp$headers)
 #> [1] "313"
 #> 
 #> $etag
-#> [1] "\"f449cb98\""
+#> [1] "\"e3778782\""
 #> 
 cat(rawToChar(resp$content))
 #> {
 #>   "args": {},
 #>   "headers": {
-#>     "Host": "127.0.0.1:37293",
-#>     "User-Agent": "R/4.5.3 R (4.5.3 x86_64-pc-linux-gnu x86_64 linux-gnu) on GitHub Actions",
+#>     "Host": "127.0.0.1:41431",
+#>     "User-Agent": "R/4.6.0 R (4.6.0 x86_64-pc-linux-gnu x86_64 linux-gnu) on GitHub Actions",
 #>     "Accept": "*/*",
 #>     "Accept-Encoding": "deflate, gzip, br, zstd"
 #>   },
 #>   "origin": "127.0.0.1",
 #>   "path": "/get",
-#>   "url": "http://127.0.0.1:37293/get"
+#>   "url": "http://127.0.0.1:41431/get"
 #> }
 proc$stop()
 ```

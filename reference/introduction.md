@@ -127,7 +127,7 @@ you need to connect to:
         class = "http_404"
       )
     })
-    #> Test passed
+    #> Test passed with 1 success.
 
 When writing your tests interactively, you may create a `http` app
 process in the global environment, for convenience. You can

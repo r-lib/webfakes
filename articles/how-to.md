@@ -38,6 +38,7 @@ environment variable.
 E.g.
 
 ``` r
+
 service_url <- function() {
     Sys.getenv("GITHUB_URL", "https://api.github.com")
 }
@@ -62,10 +63,11 @@ the actual app URL. This is needed by default, because the web server
 process starts up only later, so the URL is not known yet.
 
 ``` r
+
 http <- webfakes::local_app_process(webfakes::httpbin_app(), start = TRUE)
 http$local_env(list(GITHUB_API = "{url}"))
 Sys.getenv("GITHUB_API")
-#> [1] "http://127.0.0.1:43667/"
+#> [1] "http://127.0.0.1:34017/"
 http$stop()
 Sys.getenv("GITHUB_API")
 #> [1] ""
@@ -80,6 +82,7 @@ it. For example, a simple app that returns the current time in JSON
 would look like this:
 
 ``` r
+
 time <- webfakes::new_app()
 time$get("/time", function(req, res) {
   res$send_json(list(time = format(Sys.time())), auto_unbox = TRUE)
@@ -91,23 +94,26 @@ Alternatively, you can start it in a subprocess with
 [`new_app_process()`](https://webfakes.r-lib.org/reference/new_app_process.md).
 
 ``` r
+
 web <- webfakes::new_app_process(time)
 web$url()
-#> [1] "http://127.0.0.1:36317/"
+#> [1] "http://127.0.0.1:35849/"
 ```
 
 Use `web$url()` to query the URL of the app. For example:
 
 ``` r
+
 url <- web$url("/time")
 httr::content(httr::GET(url))
 #> $time
-#> [1] "2026-04-08 11:17:06"
+#> [1] "2026-05-17 08:22:06"
 ```
 
 `web$stop()` stops the app and the subprocess as well:
 
 ``` r
+
 web$stop()
 web$get_state()
 #> [1] "not running"
@@ -140,6 +146,7 @@ can do both in one go. Your `tests/testthat/setup-http.R` may look like
 this:
 
 ``` r
+
 http <- webfakes::local_app_process(
   webfakes::httpbin_app(),
   .local_envir = testthat::teardown_env()
@@ -155,6 +162,7 @@ In the test cases you can query the `http` app process to get the URLs
 you need to connect to:
 
 ``` r
+
 test_that("fails on 404", {
   url <- http$url("/status/404")
   response <- httr::GET(url)
@@ -186,6 +194,7 @@ files. `load_all()` executes the helper files by default. So instead of
 using a setup file, you can simply do this in the `helper-http.R` file:
 
 ``` r
+
 httpbin <- local_app_process(httpbin_app())
 ```
 
@@ -199,6 +208,7 @@ the end of the test suite, unless you clean them up by registering a
 `$stop()` call in a setup file, like this:
 
 ``` r
+
 withr::defer(httpbin$stop(), testthat::teardown_env())
 ```
 
@@ -232,6 +242,7 @@ but it automatically stops the web server process, at the end of the
 test file:
 
 ``` r
+
 app <- webfakes::new_app()
 app$get("/hello/:user", function(req, res) {
   res$send(paste0("Hello ", req$params$user, "!"))
@@ -239,12 +250,14 @@ app$get("/hello/:user", function(req, res) {
 ```
 
 ``` r
+
 web <- webfakes::local_app_process(app)
 ```
 
 Then in the test cases, use `web$url()` to get the URL to connect to.
 
 ``` r
+
 test_that("can use hello API", {
   url <- web$url("/hello/Gabor")
   expect_equal(httr::content(httr::GET(url)), "Hello Gabor!")
@@ -262,6 +275,7 @@ test case.
 automatically cleans it up at the end of the block. It goes like this:
 
 ``` r
+
 test_that("query works", {
   app <- webfakes::new_app()
   app$get("/hello", function(req, res) res$send("hello there"))
@@ -285,6 +299,7 @@ database. You can add something to `app$locals` via methods or directly
 after creating the app.
 
 ``` r
+
 store <- webfakes::new_app()
 store$locals$packages <- list("webfakes")
 ls(store$locals)
@@ -300,6 +315,7 @@ fails again three times, etc.
 Note that the `counter` created by the code below starts at 0, not 1.
 
 ``` r
+
 flaky <- webfakes::new_app()
 flaky$get("/unstable", function(req, res) {
   if (identical(res$app$locals$counter, 3L)) {
@@ -315,14 +331,15 @@ flaky$get("/unstable", function(req, res) {
 Let’s run this app in another process and connect to it:
 
 ``` r
+
 pr <- webfakes::new_app_process(flaky)
 url <- pr$url("/unstable")
 httr::RETRY("GET", url, times = 4)
 #> Request failed [401]. Retrying in 1 seconds...
 #> Request failed [401]. Retrying in 1 seconds...
 #> Request failed [401]. Retrying in 3.7 seconds...
-#> Response [http://127.0.0.1:46687/unstable]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:32843/unstable]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 17 B
@@ -333,6 +350,7 @@ it. On a POST request we store the `name` query parameter in
 `app$locals$packages`, which can be queried with a GET request.
 
 ``` r
+
 store <- webfakes::new_app()
 # Initial "data" for the app
 store$locals$packages <- list("webfakes")
@@ -350,6 +368,7 @@ store$post("/packages", function(req, res) {
 Now we start the app in a subprocess, and run a GET query against it.
 
 ``` r
+
 web <- webfakes::local_app_process(store, start = TRUE)
 # Get current information
 get_packages <- function() {
@@ -370,6 +389,7 @@ get_packages()
 Let’s POST some new information.
 
 ``` r
+
 post_package <- function(name) {
   httr::POST(
   httr::modify_url(
@@ -380,8 +400,8 @@ post_package <- function(name) {
 )
 }
 post_package("vcr")
-#> Response [http://127.0.0.1:40531/packages?name=vcr]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:34715/packages?name=vcr]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 18 B
@@ -394,8 +414,8 @@ get_packages()
 #> [1] "vcr"
 
 post_package("httptest")
-#> Response [http://127.0.0.1:40531/packages?name=httptest]
-#>   Date: 2026-04-08 11:17
+#> Response [http://127.0.0.1:34715/packages?name=httptest]
+#>   Date: 2026-05-17 08:22
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 29 B
@@ -414,6 +434,7 @@ get_packages()
 Stop the app process:
 
 ``` r
+
 web$stop()
 ```
 
@@ -432,6 +453,7 @@ session you probably want to place a
 [`browser()`](https://rdrr.io/r/base/browser.html) command there.
 
 ``` r
+
 app <- webfakes::new_app()
 app$get("/debug", function(req, res) {
   print(req)
@@ -442,6 +464,7 @@ app$get("/debug", function(req, res) {
 Now start the app on port 3000:
 
 ``` r
+
 app$listen(port = 3000)
 ```
 
@@ -521,6 +544,7 @@ or
 [`curl::handle_setopt()`](https://jeroen.r-universe.dev/curl/reference/handle.html):
 
 ``` r
+
 cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
 curl::curl_fetch_memory(
   http$url("/path/to/endpoint"), 
@@ -531,6 +555,7 @@ curl::curl_fetch_memory(
 For the httr package, use `httr::config(cainfo = ...)`:
 
 ``` r
+
 httr::GET(
   http$url("/headers", https = TRUE), 
   httr::config(cainfo = cainfo)
@@ -540,6 +565,7 @@ httr::GET(
 For the httr2 package:
 
 ``` r
+
 httr2::request("https://example.com") |>
   httr2::req_options(cainfo = cainfo) |>
   httr2::req_perform()
@@ -550,6 +576,7 @@ point the `CURL_CA_BUNDLE` environment variable to the `ca.crt` file.
 Don’t forget to undo this, once the HTTP request is done.
 
 ``` r
+
 Sys.setenv(
   CURL_CA_BUNDLE = system.file("cert/localhost/ca.crt", package = "webfakes")
 )
@@ -570,6 +597,7 @@ run the tests in a subprocess, with the callr package. Look at the
 tests use this helper function, defined in `helper.R`:
 
 ``` r
+
 callr_curl <- function(url, options = list()) {
   callr::r(
     function(url, options) {
@@ -590,6 +618,7 @@ callr_curl <- function(url, options = list()) {
 Example test case:
 
 ``` r
+
 # ...
   cainfo <- system.file("cert/localhost/ca.crt", package = "webfakes")
   resp <- if (.Platform$OS.type == "windows") {
@@ -621,6 +650,7 @@ to the HTTP port number. THis port will be redirected to the next HTTPS
 port. E.g.
 
 ``` r
+
 new_app_process(app, port = c("3000r", "3001s"))
 ```
 
@@ -630,6 +660,7 @@ To redirect from an OS assigned HTTP port to an OS assigned HTTPS port,
 use zeros for the port numbers:
 
 ``` r
+
 http <- new_app_process(app, port = c("0r", "0s"))
 ```
 
@@ -638,6 +669,7 @@ Then you can use `http$get_ports()` to query all port numbers.
 You can also use
 
 ``` r
+
 http$url(..., https = TRUE)
 ```
 
@@ -678,6 +710,7 @@ Each request takes 1 second to answer, but if the web server has more
 than three threads, together they’ll still take about 1 second.
 
 ``` r
+
 web <- webfakes::local_app_process(
   webfakes::httpbin_app(),
   opts = webfakes::server_opts(num_threads = 6, enable_keep_alive = TRUE)
@@ -685,6 +718,7 @@ web <- webfakes::local_app_process(
 ```
 
 ``` r
+
 testthat::test_that("parallel requests", {
   url <- web$url("/delay/0.5")
   p <- curl::new_pool()
@@ -745,6 +779,7 @@ app. This means that you can run the very same app with different
 connection speed. This is how it goes:
 
 ``` r
+
 library(webfakes)
 slow <- new_app_process(
   httpbin_app(),
@@ -753,9 +788,9 @@ slow <- new_app_process(
 resp <- curl::curl_fetch_memory(slow$url("/bytes/200"))
 resp$times
 #>      redirect    namelookup       connect   pretransfer starttransfer 
-#>      0.000000      0.000044      0.000169      0.000216      0.007487 
+#>      0.000000      0.000026      0.000126      0.000159      0.008107 
 #>         total 
-#>      2.007962
+#>      2.008560
 ```
 
 `throttle` gives the number of bytes per second, so downloading 200

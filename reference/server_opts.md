@@ -11,6 +11,7 @@ server_opts(
   num_threads = 1,
   interfaces = "127.0.0.1",
   enable_keep_alive = FALSE,
+  keep_alive_timeout_ms = 5000,
   access_log_file = remote,
   error_log_file = TRUE,
   tcp_nodelay = FALSE,
@@ -47,6 +48,13 @@ server_opts(
 - enable_keep_alive:
 
   Whether the server keeps connections alive.
+
+- keep_alive_timeout_ms:
+
+  Idle timeout in milliseconds for keep-alive connections. If a client
+  does not send another request within this window, the server closes
+  the connection. If `enable_keep_alive` is not `TRUE` then it is
+  ignored.
 
 - access_log_file:
 
@@ -118,11 +126,14 @@ server_opts()
 #> $enable_keep_alive
 #> [1] FALSE
 #> 
+#> $keep_alive_timeout_ms
+#> [1] 5000
+#> 
 #> $access_log_file
 #> [1] NA
 #> 
 #> $error_log_file
-#> [1] "/tmp/RtmpTrk1uA/webfakes/error.log"
+#> [1] "/tmp/Rtmp7gLEw3/webfakes/error.log"
 #> 
 #> $tcp_nodelay
 #> [1] FALSE
