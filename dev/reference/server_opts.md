@@ -133,7 +133,7 @@ server_opts()
 #> [1] NA
 #> 
 #> $error_log_file
-#> [1] "/tmp/RtmpK7xEbJ/webfakes/error.log"
+#> [1] "/tmp/Rtmpe3s1Mn/webfakes/error.log"
 #> 
 #> $tcp_nodelay
 #> [1] FALSE
