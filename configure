@@ -18,7 +18,7 @@ if [ "$R_OSTYPE" = "windows" ]; then WINDOWS=true; fi
 
 OBJECTS=`ls src/*.c | sed 's/[.]c$/.o/' | sed 's|^src/||'`
 OBJECTS="`echo $OBJECTS | tr '\n' ' '`"
-MBED="$OBJECTS `ls src/mbedtls/library/*.c | sed 's/[.]c$/.o/' | sed 's|^src/||'`"
+MBED="`ls src/mbedtls/library/*.c | sed 's/[.]c$/.o/' | sed 's|^src/||'`"
 MBED="`echo $MBED | tr '\n' ' '`"
 
 if [ -n "$WINDOWS" ]; then
