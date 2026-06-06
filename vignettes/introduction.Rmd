@@ -34,7 +34,7 @@ With webfakes you can easily start a custom web app, that is running on the loca
 
 ## Webfakes vs mocking
 
-Mocking is a general technique to mimic the behavior of a function or object that is needed in test case.
+Mocking is a general technique to mimic the behavior of a function or object that is needed in a test case.
 In the case of HTTP requests, this typically means that both the request and its response are recorded when the tests run the first time, and saved to disk.
 Subsequent test runs intercept the HTTP requests, match them against the recorded requests and then replay the corresponding recorded response.
 See for example the [vcr](https://docs.ropensci.org/vcr/) and [httptest](https://enpiar.com/r/httptest/) R packages.

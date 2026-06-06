@@ -81,7 +81,7 @@ Webfakes web server options
 \verb{<log-dir>} is set to the contents of the \code{WEBFAKES_LOG_DIR}
 environment variable, if it is set. Otherwise it is set to
 \verb{<tmpdir>/webfakes} for local apps and \verb{<tmpdir>/<pid>/webfakes} for
-remote apps (started with \code{new_app_procss()}).
+remote apps (started with \code{new_app_process()}).
 
 \verb{<tmpdir>} is the session temporary directory of the \emph{main process}.
 

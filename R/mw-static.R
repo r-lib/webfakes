@@ -8,7 +8,7 @@
 #'
 #' @param root Root path of the served files. Everything under this
 #' directory is served automatically. Directory lists are not currently
-#' supports.
+#' supported.
 #' @param set_headers Callback function to call before a file is served.
 #' @return Handler function.
 #'

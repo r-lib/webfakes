@@ -62,7 +62,7 @@
 #'    * `expires`: Expiry date in GMT. It must be a POSIXct object, and
 #'       will be formatted correctly.
 #'    * 'http_only': if TRUE, then it sets the 'HttpOnly' attribute, so
-#'      Javasctipt cannot access the cookie.
+#'      JavaScript cannot access the cookie.
 #'    * `max_age`: Maximum age, in number of seconds.
 #'    * `path`: Path for the cookie, defaults to "/".
 #'    * `same_site`: The 'SameSite' cookie attribute. Possible values are

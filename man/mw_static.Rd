@@ -9,7 +9,7 @@ mw_static(root, set_headers = NULL)
 \arguments{
 \item{root}{Root path of the served files. Everything under this
 directory is served automatically. Directory lists are not currently
-supports.}
+supported.}
 
 \item{set_headers}{Callback function to call before a file is served.}
 }

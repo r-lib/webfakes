@@ -68,7 +68,7 @@ been sent out already, then it throws a warning, and does nothing.
 \item \code{expires}: Expiry date in GMT. It must be a POSIXct object, and
 will be formatted correctly.
 \item 'http_only': if TRUE, then it sets the 'HttpOnly' attribute, so
-Javasctipt cannot access the cookie.
+JavaScript cannot access the cookie.
 \item \code{max_age}: Maximum age, in number of seconds.
 \item \code{path}: Path for the cookie, defaults to "/".
 \item \code{same_site}: The 'SameSite' cookie attribute. Possible values are

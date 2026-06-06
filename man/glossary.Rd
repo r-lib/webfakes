@@ -18,7 +18,7 @@ Sometimes we call it a \emph{fake} web app, to emphasize that we use it for test
 You can create a webfakes app with the \code{new_app()} function.
 A webfakes app is an R object that you can save to disk with \code{saveRDS()} , and you can also include it in your package.
 
-You can start an with its \verb{$listen()} method.
+You can start an app with its \verb{$listen()} method.
 Since the main R process runs that test suite code, you usually run them in a subprocess, see \code{new_app_process()} or \code{local_app_process()}.
 }
 
@@ -95,7 +95,7 @@ Route paths may have parameters or they can be regular expressions in webfakes.
 
 \subsection{routing}{
 
-Routing is the process of going over the handlers stack, and calling handler functions, one after the other, until one handles the request.
+Routing is the process of going over the handler stack, and calling handler functions, one after the other, until one handles the request.
 If a handler function is a \emph{route}, then the router only calls it if its path matches the request URL.
 }
 }

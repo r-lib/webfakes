@@ -18,7 +18,7 @@ The typical workflow of creating a web application is:
 \enumerate{
 \item Create a \code{webfakes_app} object with \code{new_app()}.
 \item Add middleware and/or routes to it.
-\item Start is with the \code{webfakes_app$listen()} method, or start it in
+\item Start it with the \code{webfakes_app$listen()} method, or start it in
 another process with \code{\link[=new_app_process]{new_app_process()}}.
 \item Make queries to the web app.
 \item Stop it via \code{CTRL+C} / \code{ESC}, or, if it is running in another

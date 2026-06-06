@@ -90,7 +90,7 @@ server_start <- function(opts = server_opts()) {
 #' `<log-dir>` is set to the contents of the `WEBFAKES_LOG_DIR`
 #' environment variable, if it is set. Otherwise it is set to
 #' `<tmpdir>/webfakes` for local apps and `<tmpdir>/<pid>/webfakes` for
-#' remote apps (started with `new_app_procss()`).
+#' remote apps (started with `new_app_process()`).
 #'
 #' `<tmpdir>` is the session temporary directory of the _main process_.
 #'

@@ -7,7 +7,7 @@ pkg_data <- new.env(parent = emptyenv())
 #'
 #' 1. Create a `webfakes_app` object with `new_app()`.
 #' 1. Add middleware and/or routes to it.
-#' 1. Start is with the `webfakes_app$listen()` method, or start it in
+#' 1. Start it with the `webfakes_app$listen()` method, or start it in
 #'    another process with [new_app_process()].
 #' 1. Make queries to the web app.
 #' 1. Stop it via `CTRL+C` / `ESC`, or, if it is running in another
