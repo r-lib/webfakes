@@ -14,4 +14,4 @@
 /src/Makevars
 /src/*.a
 /src/*.x
-/.dev
+/.cache
