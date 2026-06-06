@@ -23,7 +23,7 @@ or all test files. Occasionally you may want to use a special app for a
 single test case. Each app runs in a new subprocess, and it takes
 typically about 100-400ms to start.
 
-See the sections later on on writing tests with a single app or multiple
+See the later sections on writing tests with a single app or multiple
 apps.
 
 ## How do I make my app connect to webfakes when the tests are running?
@@ -54,9 +54,9 @@ When this is not set, the package connects to the proper GitHub API.
 When testing, you can point it to your test app.
 
 [`new_app_process()`](https://webfakes.r-lib.org/dev/reference/new_app_process.md)
-helps you setting up temporary environment variables. These are active
-while the process is running, and they are removed or reset in
-`$stop()`. For example:
+helps you set up temporary environment variables. These are active while
+the process is running, and they are removed or reset in `$stop()`. For
+example:
 
 In `$local_env()` environment variables, webfakes replaces `{url}` with
 the actual app URL. This is needed by default, because the web server
@@ -67,7 +67,7 @@ process starts up only later, so the URL is not known yet.
 http <- webfakes::local_app_process(webfakes::httpbin_app(), start = TRUE)
 http$local_env(list(GITHUB_API = "{url}"))
 Sys.getenv("GITHUB_API")
-#> [1] "http://127.0.0.1:33441/"
+#> [1] "http://127.0.0.1:35647/"
 http$stop()
 Sys.getenv("GITHUB_API")
 #> [1] ""
@@ -97,7 +97,7 @@ Alternatively, you can start it in a subprocess with
 
 web <- webfakes::new_app_process(time)
 web$url()
-#> [1] "http://127.0.0.1:34293/"
+#> [1] "http://127.0.0.1:40413/"
 ```
 
 Use `web$url()` to query the URL of the app. For example:
@@ -107,7 +107,7 @@ Use `web$url()` to query the URL of the app. For example:
 url <- web$url("/time")
 httr::content(httr::GET(url))
 #> $time
-#> [1] "2026-06-06 21:41:21"
+#> [1] "2026-06-06 21:52:42"
 ```
 
 `web$stop()` stops the app and the subprocess as well:
@@ -338,8 +338,8 @@ httr::RETRY("GET", url, times = 4)
 #> Request failed [401]. Retrying in 1 seconds...
 #> Request failed [401]. Retrying in 1 seconds...
 #> Request failed [401]. Retrying in 3.7 seconds...
-#> Response [http://127.0.0.1:36643/unstable]
-#>   Date: 2026-06-06 21:41
+#> Response [http://127.0.0.1:45613/unstable]
+#>   Date: 2026-06-06 21:52
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 17 B
@@ -400,8 +400,8 @@ post_package <- function(name) {
 )
 }
 post_package("vcr")
-#> Response [http://127.0.0.1:42989/packages?name=vcr]
-#>   Date: 2026-06-06 21:41
+#> Response [http://127.0.0.1:33349/packages?name=vcr]
+#>   Date: 2026-06-06 21:52
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 18 B
@@ -414,8 +414,8 @@ get_packages()
 #> [1] "vcr"
 
 post_package("httptest")
-#> Response [http://127.0.0.1:42989/packages?name=httptest]
-#>   Date: 2026-06-06 21:41
+#> Response [http://127.0.0.1:33349/packages?name=httptest]
+#>   Date: 2026-06-06 21:52
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 29 B
@@ -643,10 +643,10 @@ HTTPS.
 ## How can I run a server on multiple ports?
 
 You can specify multiple port numbers, in a vector. webfakes will then
-listen on all those ports. You can also mix HTTP and HTTP ports.
+listen on all those ports. You can also mix HTTP and HTTPS ports.
 
 To redirect from an HTTP port to an HTTPS port, append an `"r"` suffix
-to the HTTP port number. THis port will be redirected to the next HTTPS
+to the HTTP port number. This port will be redirected to the next HTTPS
 port. E.g.
 
 ``` r
@@ -757,7 +757,7 @@ variables work great for this.
 
 E.g. if the `FAKE_HTTP_TESTS` environment variable is not set, the tests
 run with the real web server, otherwise they use a fake one. Another
-solution, that works best is the HTTP requests are in the downstream
+solution, that works best when the HTTP requests are in the downstream
 package code, is to introduce one environment variable for each API you
 need to connect to. These might be set to the real API servers, or to
 the fake ones.
@@ -768,8 +768,8 @@ the real server (say) once a day. This special CI run makes sure that
 your code works well with the real API. You can run all the other tests,
 locally and in the CI, against the fake local web server.
 
-See the question on [how webfakes helps you setting environment
-variables that point to your local
+See the question on [how webfakes helps you set environment variables
+that point to your local
 server](#how-do-i-make-my-app-connect-to-webfakes-when-the-tests-are-running-).
 
 ## How do I simulate a slow internet connection?
@@ -788,9 +788,9 @@ slow <- new_app_process(
 resp <- curl::curl_fetch_memory(slow$url("/bytes/200"))
 resp$times
 #>      redirect    namelookup       connect   pretransfer starttransfer 
-#>      0.000000      0.000032      0.000160      0.000208      0.006836 
+#>      0.000000      0.000033      0.000174      0.000213      0.006504 
 #>         total 
-#>      2.007301
+#>      2.006948
 ```
 
 `throttle` gives the number of bytes per second, so downloading 200

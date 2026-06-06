@@ -37,7 +37,7 @@ the local machine.
 ### Webfakes vs mocking
 
 Mocking is a general technique to mimic the behavior of a function or
-object that is needed in test case. In the case of HTTP requests, this
+object that is needed in a test case. In the case of HTTP requests, this
 typically means that both the request and its response are recorded when
 the tests run the first time, and saved to disk. Subsequent test runs
 intercept the HTTP requests, match them against the recorded requests

@@ -1,6 +1,6 @@
 # Webfakes internals
 
-## Why civetwet?
+## Why civetweb?
 
 - Civetweb is small and simple. C code only. Embedding it is trivial.
 - The main developer is nice and very responsive. The project is active.
@@ -22,7 +22,7 @@
   only handles GET and POST requests, and does not give you enough
   information about the requests. It also does not support delaying a
   response.
-- Mongoose is am embedded web server, that civetweb was forked from
+- Mongoose is an embedded web server, that civetweb was forked from
   originally. Its license is GPL-2, so it is more restrictive.
 
 ## Multithreading
@@ -243,4 +243,4 @@ threads quit as well. Then the finalizer calls the civetweb function
 `mg_stop()`. `mg_stop()` has its own shutdown flag and waits for all
 request and worker threads to quit. Given that we just cleaned up all of
 them, there shouldn’t be too many, and if there were any just coming in,
-they’ll also observe out shutdown flag and quit quickly.
+they’ll also observe our shutdown flag and quit quickly.

@@ -17,7 +17,7 @@ mw_static(root, set_headers = NULL)
 - root:
 
   Root path of the served files. Everything under this directory is
-  served automatically. Directory lists are not currently supports.
+  served automatically. Directory lists are not currently supported.
 
 - set_headers:
 

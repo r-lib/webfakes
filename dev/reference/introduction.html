@@ -70,7 +70,7 @@ R code that needs an HTTP connection is not trivial to test:</p><ul><li><p>Conne
 <h3 id="webfakes-vs-mocking">Webfakes vs mocking<a class="anchor" aria-label="anchor" href="#webfakes-vs-mocking"></a></h3>
 
 
-<p>Mocking is a general technique to mimic the behavior of a function or object that is needed in test case.
+<p>Mocking is a general technique to mimic the behavior of a function or object that is needed in a test case.
 In the case of HTTP requests, this typically means that both the request and its response are recorded when the tests run the first time, and saved to disk.
 Subsequent test runs intercept the HTTP requests, match them against the recorded requests and then replay the corresponding recorded response.
 See for example the <a href="https://docs.ropensci.org/vcr/" class="external-link">vcr</a> and <a href="https://enpiar.com/r/httptest/" class="external-link">httptest</a> R packages.</p>

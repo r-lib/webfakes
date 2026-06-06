@@ -10,7 +10,7 @@
   [![ROR](https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg)](https://ror.org/03wc8by49)
 
 - **Civetweb contributors**. Contributor.  
-  see inst/credits/ciwetweb.md
+  see inst/credits/civetweb.md
 
 - **Redoc contributors**. Contributor.  
   see inst/credits/redoc.md

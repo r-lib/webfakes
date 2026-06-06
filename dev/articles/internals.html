@@ -75,7 +75,7 @@
     
     
 <div class="section level2">
-<h2 id="why-civetwet">Why civetwet?<a class="anchor" aria-label="anchor" href="#why-civetwet"></a>
+<h2 id="why-civetweb">Why civetweb?<a class="anchor" aria-label="anchor" href="#why-civetweb"></a>
 </h2>
 <ul>
 <li>Civetweb is small and simple. C code only. Embedding it is
@@ -104,7 +104,7 @@ do this temporarily. But the internal web server is very limited, it
 only handles GET and POST requests, and does not give you enough
 information about the requests. It also does not support delaying a
 response.</li>
-<li>Mongoose is am embedded web server, that civetweb was forked from
+<li>Mongoose is an embedded web server, that civetweb was forked from
 originally. Its license is GPL-2, so it is more restrictive.</li>
 </ul>
 </div>
@@ -325,7 +325,7 @@ these threads quit as well. Then the finalizer calls the civetweb
 function <code>mg_stop()</code>. <code>mg_stop()</code> has its own
 shutdown flag and waits for all request and worker threads to quit.
 Given that we just cleaned up all of them, there shouldn’t be too many,
-and if there were any just coming in, they’ll also observe out shutdown
+and if there were any just coming in, they’ll also observe our shutdown
 flag and quit quickly.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

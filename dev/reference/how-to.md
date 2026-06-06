@@ -27,7 +27,7 @@ or all test files. Occasionally you may want to use a special app for a
 single test case. Each app runs in a new subprocess, and it takes
 typically about 100-400ms to start.
 
-See the sections later on on writing tests with a single app or multiple
+See the later sections on writing tests with a single app or multiple
 apps.
 
 ### How do I make my app connect to webfakes when the tests are running?
@@ -55,9 +55,9 @@ When this is not set, the package connects to the proper GitHub API.
 When testing, you can point it to your test app.
 
 [`new_app_process()`](https://webfakes.r-lib.org/dev/reference/new_app_process.md)
-helps you setting up temporary environment variables. These are active
-while the process is running, and they are removed or reset in
-`$stop()`. For example:
+helps you set up temporary environment variables. These are active while
+the process is running, and they are removed or reset in `$stop()`. For
+example:
 
 In `$local_env()` environment variables, webfakes replaces `{url}` with
 the actual app URL. This is needed by default, because the web server
@@ -568,10 +568,10 @@ HTTPS.
 ### How can I run a server on multiple ports?
 
 You can specify multiple port numbers, in a vector. webfakes will then
-listen on all those ports. You can also mix HTTP and HTTP ports.
+listen on all those ports. You can also mix HTTP and HTTPS ports.
 
 To redirect from an HTTP port to an HTTPS port, append an `"r"` suffix
-to the HTTP port number. THis port will be redirected to the next HTTPS
+to the HTTP port number. This port will be redirected to the next HTTPS
 port. E.g.
 
     new_app_process(app, port = c("3000r", "3001s"))
@@ -667,7 +667,7 @@ variables work great for this.
 
 E.g. if the `FAKE_HTTP_TESTS` environment variable is not set, the tests
 run with the real web server, otherwise they use a fake one. Another
-solution, that works best is the HTTP requests are in the downstream
+solution, that works best when the HTTP requests are in the downstream
 package code, is to introduce one environment variable for each API you
 need to connect to. These might be set to the real API servers, or to
 the fake ones.
@@ -678,8 +678,8 @@ the real server (say) once a day. This special CI run makes sure that
 your code works well with the real API. You can run all the other tests,
 locally and in the CI, against the fake local web server.
 
-See the question on [how webfakes helps you setting environment
-variables that point to your local
+See the question on [how webfakes helps you set environment variables
+that point to your local
 server](#how-do-i-make-my-app-connect-to-webfakes-when-the-tests-are-running-).
 
 ### How do I simulate a slow internet connection?

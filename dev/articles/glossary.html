@@ -88,8 +88,8 @@ emphasize that we use it for testing real web apps and APIs.</p>
 function. A webfakes app is an R object that you can save to disk with
 <code><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS()</a></code> , and you can also include it in your
 package.</p>
-<p>You can start an with its <code>$listen()</code> method. Since the
-main R process runs that test suite code, you usually run them in a
+<p>You can start an app with its <code>$listen()</code> method. Since
+the main R process runs that test suite code, you usually run them in a
 subprocess, see <code><a href="../reference/new_app_process.html">new_app_process()</a></code> or
 <code><a href="../reference/local_app_process.html">local_app_process()</a></code>.</p>
 </div>
@@ -187,7 +187,7 @@ expressions in webfakes.</p>
 <div class="section level2">
 <h2 id="routing">routing<a class="anchor" aria-label="anchor" href="#routing"></a>
 </h2>
-<p>Routing is the process of going over the handlers stack, and calling
+<p>Routing is the process of going over the handler stack, and calling
 handler functions, one after the other, until one handles the request.
 If a handler function is a <em>route</em>, then the router only calls it
 if its path matches the request URL.</p>

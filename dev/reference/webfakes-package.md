@@ -29,7 +29,7 @@ Other contributors:
 - Posit Software, PBC ([ROR](https://ror.org/03wc8by49)) \[copyright
   holder, funder\]
 
-- Civetweb contributors (see inst/credits/ciwetweb.md) \[contributor\]
+- Civetweb contributors (see inst/credits/civetweb.md) \[contributor\]
 
 - Redoc contributors (see inst/credits/redoc.md) \[contributor\]
 

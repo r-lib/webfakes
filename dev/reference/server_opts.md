@@ -100,7 +100,7 @@ List of options that can be passed to `webfakes_app$listen()` (see
 `<log-dir>` is set to the contents of the `WEBFAKES_LOG_DIR` environment
 variable, if it is set. Otherwise it is set to `<tmpdir>/webfakes` for
 local apps and `<tmpdir>/<pid>/webfakes` for remote apps (started with
-`new_app_procss()`).
+[`new_app_process()`](https://webfakes.r-lib.org/dev/reference/new_app_process.md)).
 
 `<tmpdir>` is the session temporary directory of the *main process*.
 
@@ -133,7 +133,7 @@ server_opts()
 #> [1] NA
 #> 
 #> $error_log_file
-#> [1] "/tmp/Rtmph0HhWv/webfakes/error.log"
+#> [1] "/tmp/Rtmpv4Oj3R/webfakes/error.log"
 #> 
 #> $tcp_nodelay
 #> [1] FALSE

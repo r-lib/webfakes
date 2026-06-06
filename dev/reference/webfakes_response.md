@@ -89,7 +89,7 @@ Fields and methods:
     be formatted correctly.
 
   - 'http_only': if TRUE, then it sets the 'HttpOnly' attribute, so
-    Javasctipt cannot access the cookie.
+    JavaScript cannot access the cookie.
 
   - `max_age`: Maximum age, in number of seconds.
 

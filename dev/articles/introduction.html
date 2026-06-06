@@ -105,7 +105,7 @@ to.</li>
 <h2 id="webfakes-vs-mocking">Webfakes vs mocking<a class="anchor" aria-label="anchor" href="#webfakes-vs-mocking"></a>
 </h2>
 <p>Mocking is a general technique to mimic the behavior of a function or
-object that is needed in test case. In the case of HTTP requests, this
+object that is needed in a test case. In the case of HTTP requests, this
 typically means that both the request and its response are recorded when
 the tests run the first time, and saved to disk. Subsequent test runs
 intercept the HTTP requests, match them against the recorded requests
@@ -219,14 +219,14 @@ subprocess with <code><a href="../reference/new_app_process.html">new_app_proces
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span> <span class="op">&lt;-</span> <span class="fu">webfakes</span><span class="fu">::</span><span class="fu"><a href="../reference/new_app_process.html">new_app_process</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "http://127.0.0.1:39389/"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "http://127.0.0.1:44765/"</span></span></code></pre></div>
 <p>Use <code>web$url()</code> to query the URL of the app. For
 example:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="va">web</span><span class="op">$</span><span class="fu">url</span><span class="op">(</span><span class="st">"/time"</span><span class="op">)</span></span>
 <span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/content.html" class="external-link">content</a></span><span class="op">(</span><span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $time</span></span>
-<span><span class="co">#&gt; [1] "2026-06-06 21:41:43"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2026-06-06 21:53:03"</span></span></code></pre></div>
 <p><code>web$stop()</code> stops the app and the subprocess as well:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web</span><span class="op">$</span><span class="kw">stop</span><span class="op">(</span><span class="op">)</span></span>

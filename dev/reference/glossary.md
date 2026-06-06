@@ -21,8 +21,9 @@ function. A webfakes app is an R object that you can save to disk with
 [`saveRDS()`](https://rdrr.io/r/base/readRDS.html) , and you can also
 include it in your package.
 
-You can start an with its `$listen()` method. Since the main R process
-runs that test suite code, you usually run them in a subprocess, see
+You can start an app with its `$listen()` method. Since the main R
+process runs that test suite code, you usually run them in a subprocess,
+see
 [`new_app_process()`](https://webfakes.r-lib.org/dev/reference/new_app_process.md)
 or
 [`local_app_process()`](https://webfakes.r-lib.org/dev/reference/local_app_process.md).
@@ -117,7 +118,7 @@ expressions in webfakes.
 
 ### routing
 
-Routing is the process of going over the handlers stack, and calling
+Routing is the process of going over the handler stack, and calling
 handler functions, one after the other, until one handles the request.
 If a handler function is a *route*, then the router only calls it if its
 path matches the request URL.

@@ -20,7 +20,7 @@ The typical workflow of creating a web application is:
 
 2.  Add middleware and/or routes to it.
 
-3.  Start is with the `webfakes_app$listen()` method, or start it in
+3.  Start it with the `webfakes_app$listen()` method, or start it in
     another process with
     [`new_app_process()`](https://webfakes.r-lib.org/dev/reference/new_app_process.md).
 

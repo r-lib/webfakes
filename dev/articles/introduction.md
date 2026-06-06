@@ -27,7 +27,7 @@ the local machine.
 ## Webfakes vs mocking
 
 Mocking is a general technique to mimic the behavior of a function or
-object that is needed in test case. In the case of HTTP requests, this
+object that is needed in a test case. In the case of HTTP requests, this
 typically means that both the request and its response are recorded when
 the tests run the first time, and saved to disk. Subsequent test runs
 intercept the HTTP requests, match them against the recorded requests
@@ -152,7 +152,7 @@ Alternatively, you can start it in a subprocess with
 
 web <- webfakes::new_app_process(time)
 web$url()
-#> [1] "http://127.0.0.1:39389/"
+#> [1] "http://127.0.0.1:44765/"
 ```
 
 Use `web$url()` to query the URL of the app. For example:
@@ -162,7 +162,7 @@ Use `web$url()` to query the URL of the app. For example:
 url <- web$url("/time")
 httr::content(httr::GET(url))
 #> $time
-#> [1] "2026-06-06 21:41:43"
+#> [1] "2026-06-06 21:53:03"
 ```
 
 `web$stop()` stops the app and the subprocess as well:
