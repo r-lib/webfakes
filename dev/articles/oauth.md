@@ -51,9 +51,9 @@ rsapp
 #> auto_start:
 #>   TRUE
 #> process id:
-#>   9235
+#>   9045
 #> http url:
-#>   http://127.0.0.1:34335/
+#>   http://127.0.0.1:39437/
 #> fields and methods:
 #>   get_app()              # get the app object
 #>   get_port()             # query (first) port of the app
@@ -90,9 +90,9 @@ tpapp
 #> auto_start:
 #>   TRUE
 #> process id:
-#>   9248
+#>   9058
 #> http url:
-#>   http://127.0.0.1:34499/
+#>   http://127.0.0.1:33205/
 #> fields and methods:
 #>   get_app()              # get the app object
 #>   get_port()             # query (first) port of the app
@@ -120,8 +120,8 @@ url <- paste0(
 )
 reg_resp <- httr::GET(url)
 reg_resp
-#> Response [http://127.0.0.1:34335/register?name=3P%20app&redirect_uri=http://127.0.0.1:34499/login/redirect]
-#>   Date: 2026-06-05 14:04
+#> Response [http://127.0.0.1:39437/register?name=3P%20app&redirect_uri=http://127.0.0.1:33205/login/redirect]
+#>   Date: 2026-06-06 21:41
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 184 B
@@ -134,17 +134,17 @@ regdata
 #> 
 #> $client_id
 #> $client_id[[1]]
-#> [1] "id-9cf911a4a447a13ae40cedc2ca58f4"
+#> [1] "id-ecbc99ae5ac1feac00eb5020187711"
 #> 
 #> 
 #> $client_secret
 #> $client_secret[[1]]
-#> [1] "secret-4531321753b139e6e4b37172dd2850"
+#> [1] "secret-e544b49785e38a2223c77c925c2a5e"
 #> 
 #> 
 #> $redirect_uri
 #> $redirect_uri[[1]]
-#> [1] "http://127.0.0.1:34499/login/redirect"
+#> [1] "http://127.0.0.1:33205/login/redirect"
 ```
 
 The resource app replies with the client id and the client secret. We’ll
@@ -167,8 +167,8 @@ httr::POST(
   body = auth_data,
   encode = "json"
 )
-#> Response [http://127.0.0.1:34499/login/config]
-#>   Date: 2026-06-05 14:04
+#> Response [http://127.0.0.1:33205/login/config]
+#>   Date: 2026-06-06 21:41
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 41 B
@@ -224,9 +224,9 @@ tpapp2
 #> auto_start:
 #>   TRUE
 #> process id:
-#>   9262
+#>   9072
 #> http url:
-#>   http://127.0.0.1:33687/
+#>   http://127.0.0.1:44589/
 #> fields and methods:
 #>   get_app()              # get the app object
 #>   get_port()             # query (first) port of the app
@@ -245,8 +245,8 @@ url2 <- paste0(
 )
 reg_resp2 <- httr::GET(url2)
 reg_resp2
-#> Response [http://127.0.0.1:34335/register?name=3P%20app2&redirect_uri=http://127.0.0.1:33687/login/redirect]
-#>   Date: 2026-06-05 14:04
+#> Response [http://127.0.0.1:39437/register?name=3P%20app2&redirect_uri=http://127.0.0.1:44589/login/redirect]
+#>   Date: 2026-06-06 21:41
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 185 B
@@ -259,17 +259,17 @@ regdata2
 #> 
 #> $client_id
 #> $client_id[[1]]
-#> [1] "id-4977aa1f96f9347b56f0f6b85df61b"
+#> [1] "id-6e28cf7dac82cae0361785e9324dfa"
 #> 
 #> 
 #> $client_secret
 #> $client_secret[[1]]
-#> [1] "secret-0d46cc1050dbaa0f1cfda238919f73"
+#> [1] "secret-714c42fd3067064b2a517e69d4af4a"
 #> 
 #> 
 #> $redirect_uri
 #> $redirect_uri[[1]]
-#> [1] "http://127.0.0.1:33687/login/redirect"
+#> [1] "http://127.0.0.1:44589/login/redirect"
 auth_data2 <- list(
   auth_url = auth_url,
   token_url = toke_url,
@@ -282,8 +282,8 @@ httr::POST(
   body = auth_data2,
   encode = "json"
 )
-#> Response [http://127.0.0.1:33687/login/config]
-#>   Date: 2026-06-05 14:04
+#> Response [http://127.0.0.1:44589/login/config]
+#>   Date: 2026-06-06 21:41
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 41 B
@@ -326,8 +326,8 @@ the OAuth dance, your access is denied. But now it works fine:
 
 resp_data <- httr::GET(tpapp2$url("/data"))
 resp_data
-#> Response [http://127.0.0.1:33687/data]
-#>   Date: 2026-06-05 14:04
+#> Response [http://127.0.0.1:44589/data]
+#>   Date: 2026-06-06 21:41
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 24 B
@@ -361,8 +361,8 @@ url3 <- paste0(
 )
 reg_resp3 <- httr::GET(url3)
 reg_resp3
-#> Response [http://127.0.0.1:34335/register?name=3P%20app2&redirect_uri=http://localhost:1410/]
-#>   Date: 2026-06-05 14:04
+#> Response [http://127.0.0.1:39437/register?name=3P%20app2&redirect_uri=http://localhost:1410/]
+#>   Date: 2026-06-06 21:41
 #>   Status: 200
 #>   Content-Type: application/json
 #>   Size: 170 B
@@ -375,12 +375,12 @@ regdata3
 #> 
 #> $client_id
 #> $client_id[[1]]
-#> [1] "id-6deda3979b282f87345c4182731647"
+#> [1] "id-37d033f5fbd1c08cce7901f73d618e"
 #> 
 #> 
 #> $client_secret
 #> $client_secret[[1]]
-#> [1] "secret-1f96c8a2542475d1ebe6a56fa7aadf"
+#> [1] "secret-9441ba88d283ccb61593278d3b4d8e"
 #> 
 #> 
 #> $redirect_uri
@@ -422,10 +422,10 @@ token <- oauth2_httr_login(
 token
 #> <Token>
 #> <oauth_endpoint>
-#>  authorize: http://127.0.0.1:34335/authorize
-#>  access:    http://127.0.0.1:34335/token
+#>  authorize: http://127.0.0.1:39437/authorize
+#>  access:    http://127.0.0.1:39437/token
 #> <oauth_app> 3P app2
-#>   key:    id-6deda3979b282f87345c4182731647
+#>   key:    id-37d033f5fbd1c08cce7901f73d618e
 #>   secret: <hidden>
 #> <credentials> access_token, expiry, refresh_token
 #> ---
@@ -436,8 +436,8 @@ Without the token, the query to the resource server fails:
 ``` r
 
 httr::GET(rsapp$url("/data"))
-#> Response [http://127.0.0.1:34335/data]
-#>   Date: 2026-06-05 14:04
+#> Response [http://127.0.0.1:39437/data]
+#>   Date: 2026-06-06 21:41
 #>   Status: 401
 #>   Content-Type: text/plain
 #>   Size: 20 B
@@ -513,13 +513,13 @@ httr::content(
 #> [1] "3P app"
 #> 
 #> $apps[[1]]$client_id
-#> [1] "id-9cf911a4a447a13ae40cedc2ca58f4"
+#> [1] "id-ecbc99ae5ac1feac00eb5020187711"
 #> 
 #> $apps[[1]]$client_secret
-#> [1] "secret-4531321753b139e6e4b37172dd2850"
+#> [1] "secret-e544b49785e38a2223c77c925c2a5e"
 #> 
 #> $apps[[1]]$redirect_uri
-#> [1] "http://127.0.0.1:34499/login/redirect"
+#> [1] "http://127.0.0.1:33205/login/redirect"
 #> 
 #> 
 #> $apps[[2]]
@@ -527,13 +527,13 @@ httr::content(
 #> [1] "3P app2"
 #> 
 #> $apps[[2]]$client_id
-#> [1] "id-4977aa1f96f9347b56f0f6b85df61b"
+#> [1] "id-6e28cf7dac82cae0361785e9324dfa"
 #> 
 #> $apps[[2]]$client_secret
-#> [1] "secret-0d46cc1050dbaa0f1cfda238919f73"
+#> [1] "secret-714c42fd3067064b2a517e69d4af4a"
 #> 
 #> $apps[[2]]$redirect_uri
-#> [1] "http://127.0.0.1:33687/login/redirect"
+#> [1] "http://127.0.0.1:44589/login/redirect"
 #> 
 #> 
 #> $apps[[3]]
@@ -541,10 +541,10 @@ httr::content(
 #> [1] "3P app2"
 #> 
 #> $apps[[3]]$client_id
-#> [1] "id-6deda3979b282f87345c4182731647"
+#> [1] "id-37d033f5fbd1c08cce7901f73d618e"
 #> 
 #> $apps[[3]]$client_secret
-#> [1] "secret-1f96c8a2542475d1ebe6a56fa7aadf"
+#> [1] "secret-9441ba88d283ccb61593278d3b4d8e"
 #> 
 #> $apps[[3]]$redirect_uri
 #> [1] "http://localhost:1410/"
@@ -554,70 +554,70 @@ httr::content(
 #> $access
 #> $access[[1]]
 #> $access[[1]]$client_id
-#> [1] "id-9cf911a4a447a13ae40cedc2ca58f4"
+#> [1] "id-ecbc99ae5ac1feac00eb5020187711"
 #> 
 #> $access[[1]]$token
 #> [1] "token-c6be45eee35844e7ec1d6ada44bc15"
 #> 
 #> $access[[1]]$expiry
-#> [1] "2026-06-05 14:04:14"
+#> [1] "2026-06-06 21:41:56"
 #> 
 #> 
 #> $access[[2]]
 #> $access[[2]]$client_id
-#> [1] "id-4977aa1f96f9347b56f0f6b85df61b"
+#> [1] "id-6e28cf7dac82cae0361785e9324dfa"
 #> 
 #> $access[[2]]$token
 #> [1] "token-08e1470fb2bbfa9216925390655281"
 #> 
 #> $access[[2]]$expiry
-#> [1] "2026-06-05 14:04:14"
+#> [1] "2026-06-06 21:41:57"
 #> 
 #> 
 #> $access[[3]]
 #> $access[[3]]$client_id
-#> [1] "id-6deda3979b282f87345c4182731647"
+#> [1] "id-37d033f5fbd1c08cce7901f73d618e"
 #> 
 #> $access[[3]]$token
 #> [1] "token-1f46a0366717828ac5cc842c163a31"
 #> 
 #> $access[[3]]$expiry
-#> [1] "2026-06-05 14:04:15"
+#> [1] "2026-06-06 21:41:58"
 #> 
 #> 
 #> 
 #> $refresh
 #> $refresh[[1]]
 #> $refresh[[1]]$client_id
-#> [1] "id-9cf911a4a447a13ae40cedc2ca58f4"
+#> [1] "id-ecbc99ae5ac1feac00eb5020187711"
 #> 
 #> $refresh[[1]]$token
 #> [1] "refresh-token-ee3f1285a6f4585e9f410375e0512d"
 #> 
 #> $refresh[[1]]$expiry
-#> [1] "2094-06-23 17:18:11"
+#> [1] "2094-06-25 00:55:53"
 #> 
 #> 
 #> $refresh[[2]]
 #> $refresh[[2]]$client_id
-#> [1] "id-4977aa1f96f9347b56f0f6b85df61b"
+#> [1] "id-6e28cf7dac82cae0361785e9324dfa"
 #> 
 #> $refresh[[2]]$token
 #> [1] "refresh-token-f70b06b589156b9b5d462b040c500c"
 #> 
 #> $refresh[[2]]$expiry
-#> [1] "2094-06-23 17:18:11"
+#> [1] "2094-06-25 00:55:54"
 #> 
 #> 
 #> $refresh[[3]]
 #> $refresh[[3]]$client_id
-#> [1] "id-6deda3979b282f87345c4182731647"
+#> [1] "id-37d033f5fbd1c08cce7901f73d618e"
 #> 
 #> $refresh[[3]]$token
 #> [1] "refresh-token-81d2b2f09bcf64302605ab6a9750b3"
 #> 
 #> $refresh[[3]]$expiry
-#> [1] "2094-06-23 17:18:12"
+#> [1] "2094-06-25 00:55:55"
 ```
 
 ## Case study for OAuth2.0 testing
